@@ -40,8 +40,8 @@ def BART_M(X, X_er, Y, Y_er, m=250):
     
     with pm.Model() as model_BART:
         
-        X_in = pm.Data('X', X, mutable=True)
-        X_in_er = pm.Data('X_er', X_er, mutable=True)
+        X_in = pm.Data('X', X)
+        X_in_er = pm.Data('X_er', X_er)
         
         X_normal = pm.Normal('X_dist', mu=X_in, sigma=X_in_er, shape=X_in.shape)
         
@@ -82,8 +82,8 @@ def BART_R(X, X_er, Y, Y_er, m=250):
     
     with pm.Model() as model_BART:
         
-        X_in = pm.Data('X', X, mutable=True)
-        X_in_er = pm.Data('X_er', X_er, mutable=True)
+        X_in = pm.Data('X', X)
+        X_in_er = pm.Data('X_er', X_er)
         
         X_normal = pm.Normal('X_dist', mu=X_in, sigma=X_in_er, shape=X_in.shape)
         

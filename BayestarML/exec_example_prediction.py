@@ -11,15 +11,17 @@ from predict import predict3, predict4
 
 def main():
     X, X_er = prepare_pred4("Datasets/dataset_A_trimmed_8cols_NASAFLAG.csv")
-    pred, w4 = predict4(X, X_er, 'radius', test=True)
-    pred, w4 = predict4(X, X_er, 'mass')
-    pred.to_csv("Results/NASAFLAG_8col_radius_res.csv")
-    w4.to_csv("Results/NASAFLAG_8col_A_radius_w.csv")
-    
+    # will need to change the traces in predict4 if you re-train
+    # trace files aren't included in the github repo due to size
+    _, bhs_pred, w4 = predict4(X, X_er, 'mass', test=True) # disregards X, X_er for test=True / uses test values
+    _, pred, w4 = predict4(X, X_er, 'mass') # make predictions on new data (X, X_er)
+
+    pred_val = pred.mean(0)
+    pred_err = pred.std(0)
+    # same but for models trained with 3 input parameters
     X3, X3_er = prepare_pred3("Datasets/dataset_B_trimmed_6cols_NASAFLAG.csv")
-    pred3, w3 = predict3(X3, X3_er, 'radius')
-    pred3.to_csv("Results/NASAFLAG_6col_radius_res.csv")
-    w3.to_csv("Results/NASAFLAG_6col_radius_w.csv")
+    _, pred3, w3 = predict3(X3, X3_er, 'radius')
+
     
 
     

@@ -9,6 +9,7 @@ import numpy as np
 import pytensor.tensor as tt
 import pymc as pm
 from scipy.spatial.distance import pdist
+from sklearn.cluster import KMeans
 
 
 class SparseLatent:
@@ -152,192 +153,155 @@ def get_ℓ_prior(points):
     ℓ_μ = ℓ_l + 3 * ℓ_σ
     return ℓ_μ, ℓ_σ
 
-def GP_4(x_train, x_train_er, y_train):
-    
+def _farthest_point_sampling(X, M, seed=0):
+    rng = np.random.default_rng(seed)
+    X = np.asarray(X, dtype=float)
+    n = len(X)
+    idx = [rng.integers(n)]
+    d2 = np.full(n, np.inf)
+    for _ in range(1, M):
+        d2 = np.minimum(d2, np.sum((X - X[idx[-1]])**2, axis=1))
+        idx.append(int(np.argmax(d2)))
+    return X[idx]
+
+def make_inducing_points(
+    X, X_er=None, M=None, method="kmeans",
+    add_bounds=True, weight_by_error=True, seed=0
+):
     """
-    Construct a 4-dimensional sparse latent Gaussian process model with input uncertainties.
-
-    Builds a hierarchical GP where both the predictive mean (μ) and the log noise variance (σ)
-    are modeled as sparse latent Gaussian processes. Each input feature and its uncertainty
-    has an individual kernel with InverseGamma-Gamma hyperpriors. 
-
-    Parameters
-    ----------
-    x_train : pandas.DataFrame
-        Training inputs with 4 features (e.g., Teff, logg, Meta, L).
-    x_train_er : pandas.DataFrame
-        Corresponding measurement errors for each input feature.
-    y_train : array-like
-        Observed target values.
-
-    Returns
-    -------
-    tuple
-        (gp_model, μ_gp, lg_σ_gp, Xu, Xu_er)
-        - gp_model : pm.Model
-            The constructed PyMC Gaussian process model.
-        - μ_gp : SparseLatent
-            Sparse latent GP modeling the predictive mean.
-        - lg_σ_gp : SparseLatent
-            Sparse latent GP modeling the log noise variance.
-        - Xu : ndarray
-            Inducing points for the mean process.
-        - Xu_er : ndarray
-            Inducing points for the uncertainty process.
+    Assumes X is already standardised (per-feature).
     """
-    
-    Xu = np.array(x_train)[1::39]
-    Xu_er = np.array(x_train_er)[1::39]
-    
-    with pm.Model() as gp_model:
-        X_mu = pm.MutableData("X_mu", x_train)
-        X_er = pm.MutableData("X_er", x_train_er.copy())
-        Y = pm.MutableData('y_data', y_train)
+    X = np.asarray(X, dtype=float)
+    N, D = X.shape
+    if M is None:
+        M = max(50, min(N // 10, 800))
 
-        
-        ls_logg_mu, ls_logg_sd = get_ℓ_prior(np.array(x_train['logg']))
-        ls_teff_mu, ls_teff_sd = get_ℓ_prior(np.array(x_train['Teff']))
-        ls_meta_mu, ls_meta_sd = get_ℓ_prior(np.array(x_train['Meta']))
-        ls_L_mu, ls_L_sd = get_ℓ_prior(np.array(x_train['L']))
-        
-        ls_logg = pm.InverseGamma("ls_logg", mu=ls_logg_mu, sigma=ls_logg_sd) 
-        eta_logg = pm.Gamma("eta_logg", alpha=2, beta=1) 
-        cov_logg = eta_logg**2 * pm.gp.cov.ExpQuad(input_dim=4, ls=ls_logg, active_dims=[1]) + pm.gp.cov.WhiteNoise(sigma=1e-5)
-        
-        ls_teff = pm.InverseGamma("ls_teff", mu=ls_teff_mu, sigma=ls_teff_sd) 
-        eta_teff = pm.Gamma("eta_teff", alpha=2, beta=1) 
-        cov_teff = eta_teff**2 * pm.gp.cov.ExpQuad(input_dim=4, ls=ls_teff, active_dims=[0]) + pm.gp.cov.WhiteNoise(sigma=1e-5)
-        
-        ls_L = pm.InverseGamma("ls_L", mu=ls_L_mu, sigma=ls_L_sd) 
-        eta_L = pm.Gamma("eta_L", alpha=2, beta=1) 
-        cov_L = eta_L**2 * pm.gp.cov.ExpQuad(input_dim=4, ls=ls_L, active_dims=[3]) + pm.gp.cov.WhiteNoise(sigma=1e-5)
-        
-        ls_meta = pm.InverseGamma("ls_meta", mu=ls_meta_mu, sigma=ls_meta_sd) 
-        eta_meta = pm.Gamma("eta_meta", alpha=2, beta=1) 
-        cov_meta = eta_meta**2 * pm.gp.cov.ExpQuad(input_dim=4, ls=ls_meta, active_dims=[2]) + pm.gp.cov.WhiteNoise(sigma=1e-5)
-        
-        cov1 = cov_teff * cov_logg * cov_meta * cov_L
-        
-        μ_gp = SparseLatent(cov1)
-        μ_f = μ_gp.prior("μ", X_mu, Xu)
-        
-        ls_elogg_mu, ls_elogg_sd = get_ℓ_prior(np.array(x_train_er['elogg']))
-        ls_eteff_mu, ls_eteff_sd = get_ℓ_prior(np.array(x_train_er['eTeff']))
-        ls_eL_mu, ls_eL_sd = get_ℓ_prior(np.array(x_train_er['eL']))
-        ls_emeta_mu, ls_emeta_sd = get_ℓ_prior(np.array(x_train_er['eMeta']))
-        
-        ls_elogg = pm.InverseGamma("ls_elogg", mu=ls_elogg_mu, sigma=ls_elogg_sd) 
-        eta_elogg = pm.Gamma("eta_elogg", alpha=2, beta=1) 
-        cov_elogg = eta_elogg**2 * pm.gp.cov.ExpQuad(input_dim=4, ls=ls_elogg, active_dims=[1]) + pm.gp.cov.WhiteNoise(sigma=1e-5)
-        
-        ls_eteff = pm.InverseGamma("ls_eteff", mu=ls_eteff_mu, sigma=ls_eteff_sd) 
-        eta_eteff = pm.Gamma("eta_eteff", alpha=2, beta=1) 
-        cov_eteff = eta_eteff**2 * pm.gp.cov.ExpQuad(input_dim=4, ls=ls_eteff, active_dims=[0]) + pm.gp.cov.WhiteNoise(sigma=1e-5)
-        
-        ls_eL = pm.InverseGamma("ls_eL", mu=ls_eL_mu, sigma=ls_eL_sd) 
-        eta_eL = pm.Gamma("eta_eL", alpha=2, beta=1) 
-        cov_eL = eta_eL**2 * pm.gp.cov.ExpQuad(input_dim=4, ls=ls_eL, active_dims=[3]) + pm.gp.cov.WhiteNoise(sigma=1e-5)
-        
-        ls_emeta = pm.InverseGamma("ls_emeta", mu=ls_emeta_mu, sigma=ls_emeta_sd) 
-        eta_emeta = pm.Gamma("eta_emeta", alpha=2, beta=1) 
-        cov_emeta = eta_emeta**2 * pm.gp.cov.ExpQuad(input_dim=4, ls=ls_emeta, active_dims=[2]) + pm.gp.cov.WhiteNoise(sigma=1e-5)
-        
-        cov2 = cov_eteff * cov_elogg * cov_emeta * cov_eL
-        
-        lg_σ_gp = SparseLatent(cov2)
+    # error-based weights (optional)
+    sample_weight = None
+    if X_er is not None and weight_by_error:
+        er = np.asarray(X_er, dtype=float)
+        var = (er**2).mean(axis=1) + 1e-12
+        sample_weight = 1.0 / var
 
-        lg_σ_f = lg_σ_gp.prior("lg_σ_f", X_er, Xu_er)
-        σ_f = pm.Deterministic("σ_f", pm.math.exp(lg_σ_f))
+    if method == "kmeans":
+        km = KMeans(n_clusters=M, n_init=10, random_state=seed)
+        km.fit(X, sample_weight=sample_weight)
+        Xu = km.cluster_centers_
+    else:  # 'fps'
+        Xu = _farthest_point_sampling(X, M, seed=seed)
 
-        y = pm.Normal("y", mu=μ_f, sigma=σ_f, observed=Y)
-        
-        return gp_model, μ_gp, lg_σ_gp, Xu, Xu_er
-    
-def GP_3(x_train, x_train_er, y_train):
+    if add_bounds:
+        lb = X.min(axis=0, keepdims=True)
+        ub = X.max(axis=0, keepdims=True)
+        Xu = np.vstack([lb, Xu, ub])
+
+    return Xu.astype(float)
+
+def make_Xu_er(X_er, M=60, method="kmeans", add_bounds=True, standardise=True, seed=0):
+    Xe = np.asarray(X_er, float)
+    if standardise:
+        mu, sd = Xe.mean(0, keepdims=True), Xe.std(0, keepdims=True) + 1e-12
+        Z = (Xe - mu)/sd
+    else:
+        Z = Xe
+
+    if method == "kmeans":
+        km = KMeans(n_clusters=M, n_init=10, random_state=seed)
+        km.fit(Z)
+        Zu = km.cluster_centers_
+
+    Xu_er = Zu * (sd if standardise else 1) + (mu if standardise else 0)
+
+    if add_bounds:
+        lb, ub = Xe.min(0, keepdims=True), Xe.max(0, keepdims=True)
+        Xu_er = np.vstack([lb, Xu_er, ub])
+
+    return Xu_er.astype(float)
+
+def sparse_fully_heteroscedastic_gp(
+    X, X_err, y,
+    M_mean=60,
+    M_var=60,
+    seed=0,
+):
     """
-    Construct a 3-dimensional sparse latent Gaussian process model with input uncertainties.
-
-    Similar to `GP_4`, but for inputs with three physical features (e.g., Teff, logg, Meta).
-    Models both the GP mean and log noise variance with sparse latent Gaussian processes,
-    incorporating input measurement errors into the covariance structure.
-
-    Parameters
-    ----------
-    x_train : pandas.DataFrame
-        Training inputs with 3 features.
-    x_train_er : pandas.DataFrame
-        Corresponding measurement errors for each input feature.
-    y_train : array-like
-        Observed target values.
-
-    Returns
-    -------
-    tuple
-        (gp_model, μ_gp, lg_σ_gp, Xu, Xu_er)
-        - gp_model : pm.Model
-            The constructed PyMC Gaussian process model.
-        - μ_gp : SparseLatent
-            Sparse latent GP modeling the predictive mean.
-        - lg_σ_gp : SparseLatent
-            Sparse latent GP modeling the log noise variance.
-        - Xu : ndarray
-            Inducing points for the mean process.
-        - Xu_er : ndarray
-            Inducing points for the uncertainty process.
+    X      : (N, D) inputs
+    X_err  : (N, D) input errors (same D, or D_err different if you want)
+    y      : (N,) targets
     """
-    
-    Xu = np.array(x_train)[1::39]
-    Xu_er = np.array(x_train_er)[1::39]
-    
-    with pm.Model() as gp_model:
-        X_mu = pm.ConstantData("X_mu", x_train)
-        X_er = pm.ConstantData("X_er", x_train_er.copy())
-        
-        ls_logg_mu, ls_logg_sd = get_ℓ_prior(np.array(x_train['logg']))
-        ls_teff_mu, ls_teff_sd = get_ℓ_prior(np.array(x_train['Teff']))
-        ls_meta_mu, ls_meta_sd = get_ℓ_prior(np.array(x_train['Meta']))
-        
-        ls_logg = pm.InverseGamma("ls_logg", mu=ls_logg_mu, sigma=ls_logg_sd) 
-        eta_logg = pm.Gamma("eta_logg", alpha=2, beta=1) 
-        cov_logg = eta_logg**2 * pm.gp.cov.ExpQuad(input_dim=3, ls=ls_logg, active_dims=[1]) + pm.gp.cov.WhiteNoise(sigma=1e-5)
-        
-        ls_teff = pm.InverseGamma("ls_teff", mu=ls_teff_mu, sigma=ls_teff_sd) 
-        eta_teff = pm.Gamma("eta_teff", alpha=2, beta=1) 
-        cov_teff = eta_teff**2 * pm.gp.cov.ExpQuad(input_dim=3, ls=ls_teff, active_dims=[0]) + pm.gp.cov.WhiteNoise(sigma=1e-5)
-        
-        
-        ls_meta = pm.InverseGamma("ls_meta", mu=ls_meta_mu, sigma=ls_meta_sd) 
-        eta_meta = pm.Gamma("eta_meta", alpha=2, beta=1) 
-        cov_meta = eta_meta**2 * pm.gp.cov.ExpQuad(input_dim=3, ls=ls_meta, active_dims=[2]) + pm.gp.cov.WhiteNoise(sigma=1e-5)
-        
-        cov1 = cov_teff * cov_logg * cov_meta 
-        
-        μ_gp = SparseLatent(cov1)
-        μ_f = μ_gp.prior("μ", X_mu, Xu)
-        
-        ls_elogg_mu, ls_elogg_sd = get_ℓ_prior(np.array(x_train_er['elogg']))
-        ls_eteff_mu, ls_eteff_sd = get_ℓ_prior(np.array(x_train_er['eTeff']))
-        ls_emeta_mu, ls_emeta_sd = get_ℓ_prior(np.array(x_train_er['eMeta']))
-        
-        ls_elogg = pm.InverseGamma("ls_elogg", mu=ls_elogg_mu, sigma=ls_elogg_sd) 
-        eta_elogg = pm.Gamma("eta_elogg", alpha=2, beta=1) 
-        cov_elogg = eta_elogg**2 * pm.gp.cov.ExpQuad(input_dim=3, ls=ls_elogg, active_dims=[1]) + pm.gp.cov.WhiteNoise(sigma=1e-5)
-        
-        ls_eteff = pm.InverseGamma("ls_eteff", mu=ls_eteff_mu, sigma=ls_eteff_sd) 
-        eta_eteff = pm.Gamma("eta_eteff", alpha=2, beta=1) 
-        cov_eteff = eta_eteff**2 * pm.gp.cov.ExpQuad(input_dim=3, ls=ls_eteff, active_dims=[0]) + pm.gp.cov.WhiteNoise(sigma=1e-5)
-        
-        
-        ls_emeta = pm.InverseGamma("ls_emeta", mu=ls_emeta_mu, sigma=ls_emeta_sd) 
-        eta_emeta = pm.Gamma("eta_emeta", alpha=2, beta=1) 
-        cov_emeta = eta_emeta**2 * pm.gp.cov.ExpQuad(input_dim=3, ls=ls_emeta, active_dims=[2]) + pm.gp.cov.WhiteNoise(sigma=1e-5)
-        
-        cov2 = cov_eteff * cov_elogg * cov_emeta 
-        
-        lg_σ_gp = SparseLatent(cov2)
-        lg_σ_f = lg_σ_gp.prior("lg_σ_f", X_er, Xu_er)
-        σ_f = pm.Deterministic("σ_f", pm.math.exp(lg_σ_f))
 
-        y = pm.Normal("y", mu=μ_f, sigma=σ_f, observed=y_train)
+    X = np.asarray(X, float)
+    X_err = np.asarray(X_err, float)
+    y = np.asarray(y, float)
+    N, D = X.shape
+    D_err = X_err.shape[1]
+
+    # Inducing points for mean GP
+    Xu = make_inducing_points(X, X_er=X_err, M=M_mean,
+                              method="kmeans",
+                              add_bounds=True,
+                              weight_by_error=True,
+                              seed=seed)
+    
+    X_var = np.hstack([X[:,:2], X_err[:,:2]])  # use only Teff and logg to model log variance
+    # X_var = X_err 
+    Xu_var = make_inducing_points(X_var, M=M_var,
+                                  method="kmeans",
+                                  add_bounds=True,
+                                  weight_by_error=False,  # maybe off here
+                                  seed=seed)
+    
+    with pm.Model() as model:
+        X_mu  = pm.Data("X_mu",  X)
+        # X_er  = pm.ConstantData("X_er",  X_err)
+
+        # -------- mean GP: ARD kernel over X --------
+        # Build per-dimension ℓ priors, then pack into a vector
+        ls_mu_list = []
+        ls_sd_list = []
+        for d in range(D):
+            μ_d, σ_d = get_ℓ_prior(X[:, d])
+            ls_mu_list.append(μ_d)
+            ls_sd_list.append(σ_d)
         
-        return gp_model, μ_gp, lg_σ_gp, Xu, Xu_er
+        ls_mu_vec = np.array(ls_mu_list)
+        ls_sd_vec = np.array(ls_sd_list)
+        ls = pm.InverseGamma("ls", mu=ls_mu_vec, sigma=ls_sd_vec, shape=D)
+        eta = pm.Gamma("eta", alpha=2, beta=1)
+
+        cov_mean = eta**2 * pm.gp.cov.ExpQuad(input_dim=D, ls=ls) \
+                   + pm.gp.cov.WhiteNoise(sigma=1e-5)
+
+        μ_gp = SparseLatent(cov_mean)
+        μ_f  = μ_gp.prior("μ", X_mu, Xu)
+
+        X_var_data = pm.Data("X_var", X_var)
+        D_var = X_var.shape[1]
+
+        # Priors for ARD lengthscales over concatenated space
+        ls_v_mu_list, ls_v_sd_list = [], []
+        for d in range(D_var):
+            μ_d, σ_d = get_ℓ_prior(X_var[:, d])
+            ls_v_mu_list.append(μ_d)
+            ls_v_sd_list.append(σ_d)
+
+        ls_v_mu_vec = np.array(ls_v_mu_list)
+        ls_v_sd_vec = np.array(ls_v_sd_list)
+
+        ls_v  = pm.InverseGamma("ls_var", mu=ls_v_mu_vec, sigma=ls_v_sd_vec, shape=D_var)
+        # eta_v = pm.LogNormal("eta_var", mu=np.log(0.2), sigma=0.35)
+        eta_v = pm.Gamma("eta_var", alpha=2, beta=1)
+
+        cov_var = eta_v**2 * pm.gp.cov.ExpQuad(input_dim=D_var, ls=ls_v) \
+                  + pm.gp.cov.WhiteNoise(sigma=1e-5)
+        
+        alpha_log_var = pm.Normal("alpha_log_var", mu=0.0, sigma=1.0)
+        log_var_gp = SparseLatent(cov_var)
+        log_var_latent  = log_var_gp.prior("log_var_f", X_var_data, Xu_var)
+        log_var = pm.Deterministic("log_var", alpha_log_var + log_var_latent)
+        σ_f     = pm.Deterministic("σ_f", pm.math.exp(0.5 * log_var))
+
+        # -------- likelihood --------
+        y_obs = pm.Normal("y", mu=μ_f, sigma=σ_f, observed=y)
+
+    return model, μ_gp, log_var_gp, Xu, Xu_var

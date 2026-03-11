@@ -190,9 +190,8 @@ def sample_post_pred_HBNN_para(trace, X, X_er, n_hidden, n_param, target,
     Returns
     -------
     tuple
-        (pred_matrix, lpd_HBNN)
-        - pred_matrix : ndarray, shape (4, N_test)
-            Stacked [mean, std, hdi_lower, hdi_upper] of posterior predictive.
+        (y_draws, lpd_HBNN)
+        - denormalised y_draws : ndarray, shape (nb of posterior predictive draws, N_test)
         - lpd_HBNN : ndarray
             Pointwise LOO log predictive densities for the model.
     """
@@ -243,15 +242,8 @@ def sample_post_pred_HBNN_para(trace, X, X_er, n_hidden, n_param, target,
             predictions[idx_slice] = Y
             print(f"finished chain {chain_done+1}/{n_chains}")
             
-    # np.savetxt("pp_HBNN_rad.txt", predictions)
 
-    hdi = az.hdi(predictions).T
-    mean_pred = denormalise_val(predictions.mean(axis=0), target)
-    std_pred  = denormalise_err(predictions.std(axis=0), target)
-
-
-    return np.vstack([mean_pred, std_pred, denormalise_val(hdi[0], target),
-                      denormalise_val(hdi[1], target)]), lpd_HBNN
+    return denormalise_val(predictions, target), lpd_HBNN
 
 
 
@@ -294,236 +286,362 @@ def forward_pass(x_latent, w_in_1, b1, w_1_2, b2, w_2_out, b_out):
     # Final output (linear)
     return layer2 @ w_2_out + b_out
 
-def sample_post_pred_HBNN(trace, X, X_er, n_hidden, n_param, target):
-    """
-    Sequential posterior predictive sampling for a hierarchical Bayesian neural network (HBNN).
+# def sample_post_pred_HBNN(trace, X, X_er, n_hidden, n_param, target):
+#     """
+#     Sequential posterior predictive sampling for a hierarchical Bayesian neural network (HBNN).
 
-    Draws predictions from the posterior distribution of an HBNN model by iterating over
-    all posterior samples. For each draw, the function samples latent input variables
-    conditioned on observed features and their measurement errors, then performs a
-    forward pass through the network to obtain predictive samples.
+#     Draws predictions from the posterior distribution of an HBNN model by iterating over
+#     all posterior samples. For each draw, the function samples latent input variables
+#     conditioned on observed features and their measurement errors, then performs a
+#     forward pass through the network to obtain predictive samples.
 
-    Parameters
-    ----------
-    trace : arviz.InferenceData
-        Posterior samples from a fitted HBNN model.
-    X : array-like, shape (N_test, n_param)
-        Test input data.
-    X_er : array-like, shape (N_test, n_param)
-        Measurement uncertainties for each test input feature.
-    n_hidden : int
-        Number of hidden units per layer in the neural network.
-    n_param : int
-        Dimensionality of the input features (e.g., 3 or 4).
-    target : Any
-        Normalization context used by `denormalise_val` and `denormalise_err`.
+#     Parameters
+#     ----------
+#     trace : arviz.InferenceData
+#         Posterior samples from a fitted HBNN model.
+#     X : array-like, shape (N_test, n_param)
+#         Test input data.
+#     X_er : array-like, shape (N_test, n_param)
+#         Measurement uncertainties for each test input feature.
+#     n_hidden : int
+#         Number of hidden units per layer in the neural network.
+#     n_param : int
+#         Dimensionality of the input features (e.g., 3 or 4).
+#     target : Any
+#         Normalization context used by `denormalise_val` and `denormalise_err`.
 
-    Returns
-    -------
-    tuple
-        (pred, lpd_HBNN)
-        - pred : ndarray, shape (2, N_test)
-            Posterior predictive mean and standard deviation for each test input,
-            denormalized to the original target scale.
-        - lpd_HBNN : ndarray
-            Pointwise LOO log predictive densities for the HBNN model.
-    """
-    lpd_HBNN = find_pointwise_loo(trace)
+#     Returns
+#     -------
+#     tuple
+#         (pred, lpd_HBNN)
+#         - pred : ndarray, shape (2, N_test)
+#             Posterior predictive mean and standard deviation for each test input,
+#             denormalized to the original target scale.
+#         - lpd_HBNN : ndarray
+#             Pointwise LOO log predictive densities for the HBNN model.
+#     """
+#     lpd_HBNN = find_pointwise_loo(trace)
     
-    if n_param == 4:
-        n_chol = 10
-    if n_param == 3:
-        n_chol = 6
+#     if n_param == 4:
+#         n_chol = 10
+#     if n_param == 3:
+#         n_chol = 6
     
-    posterior = trace.posterior
-    n_chains = posterior.sizes["chain"]
-    n_draws = posterior.sizes["draw"]
-    S = n_chains * n_draws
+#     posterior = trace.posterior
+#     n_chains = posterior.sizes["chain"]
+#     n_draws = posterior.sizes["draw"]
+#     S = n_chains * n_draws
     
-    x_test_er = np.array(X_er)
-    x_test_ar = np.array(X)
+#     x_test_er = np.array(X_er)
+#     x_test_ar = np.array(X)
     
-    posterior = trace.posterior
-    # Flatten chain/draw so we get S = n_chains * n_draws samples
-    n_chains = posterior.sizes["chain"]
-    n_draws  = posterior.sizes["draw"]
-    S        = n_chains * n_draws
+#     posterior = trace.posterior
+#     # Flatten chain/draw so we get S = n_chains * n_draws samples
+#     n_chains = posterior.sizes["chain"]
+#     n_draws  = posterior.sizes["draw"]
+#     S        = n_chains * n_draws
 
-    # Extract relevant variables as numpy arrays 
+#     # Extract relevant variables as numpy arrays 
     
-    corr_draws = np.array(posterior["Omega_corr"]).reshape(S, n_param, n_param) 
+#     corr_draws = np.array(posterior["Omega_corr"]).reshape(S, n_param, n_param) 
 
-    # Cholesky factor from the LKJ prior
-    chol_draws = np.array(posterior["Omega"]).reshape(S, n_chol)
+#     # Cholesky factor from the LKJ prior
+#     chol_draws = np.array(posterior["Omega"]).reshape(S, n_chol)
 
 
-    # NN weights/biases
-    w_in_1_draws = np.array(posterior["w_in_1"]).reshape(S, n_hidden, n_param)   # shape => (S, n_hidden, 4)
-    b_1_draws    = np.array(posterior["bias_1"]).reshape(S, n_hidden)
-    w_1_2_draws  = np.array(posterior["w_1_2"]).reshape(S, n_hidden, n_hidden)   
-    b_2_draws    = np.array(posterior["bias_2"]).reshape(S, n_hidden)      
-    w_2_out_draws = np.array(posterior["w_2_out"]).reshape(S, n_hidden)   
-    b_out_draws   = np.array(posterior["bias_out"]).reshape(S,)
+#     # NN weights/biases
+#     w_in_1_draws = np.array(posterior["w_in_1"]).reshape(S, n_hidden, n_param)   # shape => (S, n_hidden, 4)
+#     b_1_draws    = np.array(posterior["bias_1"]).reshape(S, n_hidden)
+#     w_1_2_draws  = np.array(posterior["w_1_2"]).reshape(S, n_hidden, n_hidden)   
+#     b_2_draws    = np.array(posterior["bias_2"]).reshape(S, n_hidden)      
+#     w_2_out_draws = np.array(posterior["w_2_out"]).reshape(S, n_hidden)   
+#     b_out_draws   = np.array(posterior["bias_out"]).reshape(S,)
 
-    N_test = X.shape[0]
-    predictions = np.zeros((S, N_test))
+#     N_test = X.shape[0]
+#     predictions = np.zeros((S, N_test))
     
-    total_steps = S           # every posterior draw × every test sta
+#     total_steps = S           # every posterior draw × every test sta
 
-    pbar = tqdm(total=total_steps, desc="Posterior‑predictive draws")
+#     pbar = tqdm(total=total_steps, desc="Posterior‑predictive draws")
 
-    # Loop over each posterior sample and each test row
-    s_idx = 0
-    for chain_i in range(n_chains):
-        print("Sampling chain number: ", chain_i, '/', n_chains)
-        for draw_i in range(n_draws):
-            # Extract this draw's parameters
-            chol_s = chol_draws[s_idx]
-            w_in_1_s = w_in_1_draws[s_idx]
-            b_1_s    = b_1_draws[s_idx]
-            w_1_2_s  = w_1_2_draws[s_idx]
-            b_2_s    = b_2_draws[s_idx]
-            w_2_out_s = w_2_out_draws[s_idx]
-            b_out_s   = b_out_draws[s_idx]
+#     # Loop over each posterior sample and each test row
+#     s_idx = 0
+#     for chain_i in range(n_chains):
+#         print("Sampling chain number: ", chain_i, '/', n_chains)
+#         for draw_i in range(n_draws):
+#             # Extract this draw's parameters
+#             chol_s = chol_draws[s_idx]
+#             w_in_1_s = w_in_1_draws[s_idx]
+#             b_1_s    = b_1_draws[s_idx]
+#             w_1_2_s  = w_1_2_draws[s_idx]
+#             b_2_s    = b_2_draws[s_idx]
+#             w_2_out_s = w_2_out_draws[s_idx]
+#             b_out_s   = b_out_draws[s_idx]
 
-            for i in range(N_test):
-                #print(x_test_ar[i])
-                x_obs_i = x_test_ar[i]         
-                x_err_i = x_test_er[i]           
+#             for i in range(N_test):
+#                 #print(x_test_ar[i])
+#                 x_obs_i = x_test_ar[i]         
+#                 x_err_i = x_test_er[i]           
 
-                # 1) sample X_latent_i ~ p(X_latent|X_obs=x_obs_i)
-                x_latent_i = sample_latent_given_obs(
-                    x_obs_i,
-                    x_err_i,      # stdev for each feature
-                    chol_s,
-                    n_param
-                )
+#                 # 1) sample X_latent_i ~ p(X_latent|X_obs=x_obs_i)
+#                 x_latent_i = sample_latent_given_obs(
+#                     x_obs_i,
+#                     x_err_i,      # stdev for each feature
+#                     chol_s,
+#                     n_param
+#                 )
 
-                # 2) forward pass to get y_pred
-                y_pred_i = forward_pass(
-                    x_latent_i,
-                    w_in_1_s, b_1_s,
-                    w_1_2_s,  b_2_s,
-                    w_2_out_s, b_out_s
-                )
+#                 # 2) forward pass to get y_pred
+#                 y_pred_i = forward_pass(
+#                     x_latent_i,
+#                     w_in_1_s, b_1_s,
+#                     w_1_2_s,  b_2_s,
+#                     w_2_out_s, b_out_s
+#                 )
 
-                predictions[s_idx, i] = y_pred_i 
-                #pbar.update() 
-                #print('tick')
+#                 predictions[s_idx, i] = y_pred_i 
+#                 #pbar.update() 
+#                 #print('tick')
             
-            s_idx += 1
-            pbar.update(1) 
-    pbar.close()
+#             s_idx += 1
+#             pbar.update(1) 
+#     pbar.close()
     
-    pred = np.array([denormalise_val(predictions.mean(axis=0), target),
-                      denormalise_err(predictions.std(axis=0), target)])
+#     pred = np.array([denormalise_val(predictions.mean(axis=0), target),
+#                       denormalise_err(predictions.std(axis=0), target)])
     
     
-    return pred, lpd_HBNN
+#     return pred, lpd_HBNN
 
 def posterior_predictive_GP(
-    gp_model, μ_gp, lg_σ_gp, trace,
-    X_new_raw, X_er_new_raw, Xu, Xu_er,
-    n_param, target):
+    gp_model, mu_gp, log_var_gp, trace,
+    X_new_raw, X_er_new_raw, Xu, Xu_var,
+    n_param, target,
+    var_cols_x=(0,1),        # columns of X used in variance GP
+    var_cols_xerr=(0,1),     # columns of X_err used in variance GP
+    random_seed=42,
+):
     """
-    Generate posterior predictive samples from a hierarchical sparse GP model.
-
-    Computes predictive means and uncertainties for new inputs using a pair of
-    Gaussian processes — one modeling the mean function (μ_GP) and one modeling
-    the log noise variance (σ_GP). Missing input values are imputed via latent
-    normal variables before prediction.
+    Posterior predictive for sparse fully heteroscedastic GP
+    with log-variance GP:
+        log_var = alpha_log_var + latent_GP(X_var)
+        sigma   = exp(0.5 * log_var)
 
     Parameters
     ----------
     gp_model : pm.Model
-        The fitted PyMC GP model containing both mean and noise processes.
-    μ_gp : SparseLatent
-        Sparse latent GP modeling the predictive mean.
-    lg_σ_gp : SparseLatent
-        Sparse latent GP modeling the log noise variance.
+        Fitted PyMC model.
+    mu_gp : SparseLatent
+        Sparse latent GP for the mean.
+    log_var_gp : SparseLatent
+        Sparse latent GP for log variance.
     trace : arviz.InferenceData
-        Posterior samples from the fitted GP model.
-    X_new_raw : array-like, shape (N_new, n_param)
-        New input data for the mean process; may include NaN values.
-    X_er_new_raw : array-like, shape (N_new, n_param)
-        New input data for the noise process; may include NaN values.
+        Posterior samples.
+    X_new_raw : array, shape (N_new, D)
+        New inputs for mean GP, may contain NaNs.
+    X_er_new_raw : array, shape (N_new, D_err)
+        New input errors, may contain NaNs.
     Xu : ndarray
-        Inducing points used for the mean GP.
-    Xu_er : ndarray
-        Inducing points used for the noise GP.
+        Inducing points for mean GP.
+    Xu_var : ndarray
+        Inducing points for variance GP.
     n_param : int
-        Number of input dimensions.
+        Number of mean-GP input dimensions.
     target : Any
-        Normalization context for denormalizing predictions and errors.
+        Used by denormalise_val / denormalise_err.
+    var_cols_x : tuple
+        Columns from X used in variance GP.
+    var_cols_xerr : tuple
+        Columns from X_err used in variance GP.
+    random_seed : int
+        RNG seed for posterior predictive y draws.
 
     Returns
     -------
-    tuple
-        (stats, lpd_GP)
-        - stats : ndarray, shape (4, N_new)
-            Stacked posterior predictive summaries:
-            [mean, std, lower_hdi, upper_hdi], all denormalized.
-        - lpd_GP : ndarray
-            Pointwise LOO log predictive densities for the GP model.
+    denormalised y_draws : ndarray, shape (nb of posterior predictive draws, N_test)
+    lpd_GP : ndarray
+        Pointwise LOO log predictive density.
     """
     lpd_GP = find_pointwise_loo(trace)
+
+    X_new_raw = np.asarray(X_new_raw, float)
+    X_er_new_raw = np.asarray(X_er_new_raw, float)
+
     N_new = X_new_raw.shape[0]
 
-    # Build masks for missing sata
+    # Missingness masks for mean GP inputs
     mask_mu = ~np.isfinite(X_new_raw)
-    mask_er = ~np.isfinite(X_er_new_raw)
+
+    # Build variance-GP raw design matrix exactly as in training
+    X_var_new_raw = np.hstack([
+        X_new_raw[:, var_cols_x],
+        X_er_new_raw[:, var_cols_xerr],
+    ])
+
+    mask_var = ~np.isfinite(X_var_new_raw)
+    D_var = X_var_new_raw.shape[1]
+
+    rng = np.random.default_rng(random_seed)
 
     with gp_model:
+        # Observed placeholders
         X_mu_obs = X_new_raw
-        X_er_obs = X_er_new_raw
+        X_var_obs = X_var_new_raw
 
-        # Latent replacements
+        # Latent imputations for missing mean inputs
         X_mu_latent = pm.Normal(
-            "X_new_latent", mu=0, sigma=1,
-            shape=(N_new, n_param)
-        )
-        X_er_latent = pm.Normal(
-            "X_er_new_latent", mu=0, sigma=1,
-            shape=(N_new, n_param)
+            "X_new_latent",
+            mu=0.0,
+            sigma=1.0,
+            shape=(N_new, n_param),
         )
 
-        # Stitch together observed and latent
+        # Latent imputations for missing variance inputs
+        X_var_latent = pm.Normal(
+            "X_var_new_latent",
+            mu=0.0,
+            sigma=1.0,
+            shape=(N_new, D_var),
+        )
+
+        # Fill missing values
         X_new = tt.where(mask_mu, X_mu_latent, X_mu_obs)
+        X_var_new = tt.where(mask_var, X_var_latent, X_var_obs)
 
-        X_er_new = tt.where(mask_er, X_er_latent, X_er_obs)
+        # Mean GP conditional
+        f_mu_pred = mu_gp.conditional_marginal("f_mu_pred", X_new, Xu)
 
+        # Log-variance GP conditional
+        log_var_pred_latent = log_var_gp.conditional_marginal(
+            "log_var_pred_latent",
+            X_var_new,
+            Xu_var,
+        )
 
-        # Conditional GPs
-        f_mu_pred   = μ_gp.conditional_marginal("f_mu_pred", X_new, Xu)
-        f_logσ_pred = lg_σ_gp.conditional_marginal("σ_pred", X_er_new, Xu_er)
+        # Add intercept from fitted model
+        log_var_pred = pm.Deterministic(
+            "log_var_pred",
+            gp_model["alpha_log_var"] + log_var_pred_latent
+        )
 
-        # Joint posterior predictive over both
+        y = pm.Normal("y_pred", mu=f_mu_pred, sigma=pm.math.exp(0.5 * log_var_pred), shape=N_new)
+
+        # Draw posterior predictive samples
         ppc = pm.sample_posterior_predictive(
             trace,
-            var_names=["f_mu_pred","σ_pred"]
+            var_names=["f_mu_pred", "log_var_pred", "y_pred"],
+            predictions=True,
+            random_seed=random_seed,
         )
+
+    # Posterior predictive draws for y
+    y_draws = ppc.predictions["y_pred"].stack(sample=("chain", "draw")).values
+
+    return denormalise_val(y_draws, target).T, lpd_GP
+
+# def posterior_predictive_GP(
+#     gp_model, μ_gp, lg_σ_gp, trace,
+#     X_new_raw, X_er_new_raw, Xu, Xu_er,
+#     n_param, target):
+#     """
+#     Generate posterior predictive samples from a hierarchical sparse GP model.
+
+#     Computes predictive means and uncertainties for new inputs using a pair of
+#     Gaussian processes — one modeling the mean function (μ_GP) and one modeling
+#     the log noise variance (σ_GP). Missing input values are imputed via latent
+#     normal variables before prediction.
+
+#     Parameters
+#     ----------
+#     gp_model : pm.Model
+#         The fitted PyMC GP model containing both mean and noise processes.
+#     μ_gp : SparseLatent
+#         Sparse latent GP modeling the predictive mean.
+#     lg_σ_gp : SparseLatent
+#         Sparse latent GP modeling the log noise variance.
+#     trace : arviz.InferenceData
+#         Posterior samples from the fitted GP model.
+#     X_new_raw : array-like, shape (N_new, n_param)
+#         New input data for the mean process; may include NaN values.
+#     X_er_new_raw : array-like, shape (N_new, n_param)
+#         New input data for the noise process; may include NaN values.
+#     Xu : ndarray
+#         Inducing points used for the mean GP.
+#     Xu_er : ndarray
+#         Inducing points used for the noise GP.
+#     n_param : int
+#         Number of input dimensions.
+#     target : Any
+#         Normalization context for denormalizing predictions and errors.
+
+#     Returns
+#     -------
+#     tuple
+#         (stats, lpd_GP)
+#         - stats : ndarray, shape (4, N_new)
+#             Stacked posterior predictive summaries:
+#             [mean, std, lower_hdi, upper_hdi], all denormalized.
+#         - lpd_GP : ndarray
+#             Pointwise LOO log predictive densities for the GP model.
+#     """
+#     lpd_GP = find_pointwise_loo(trace)
+#     N_new = X_new_raw.shape[0]
+
+#     # Build masks for missing sata
+#     mask_mu = ~np.isfinite(X_new_raw)
+#     mask_er = ~np.isfinite(X_er_new_raw)
+
+#     with gp_model:
+#         X_mu_obs = X_new_raw
+#         X_er_obs = X_er_new_raw
+
+#         # Latent replacements
+#         X_mu_latent = pm.Normal(
+#             "X_new_latent", mu=0, sigma=1,
+#             shape=(N_new, n_param)
+#         )
+#         X_er_latent = pm.Normal(
+#             "X_er_new_latent", mu=0, sigma=1,
+#             shape=(N_new, n_param)
+#         )
+
+#         # Stitch together observed and latent
+#         X_new = tt.where(mask_mu, X_mu_latent, X_mu_obs)
+
+#         X_er_new = tt.where(mask_er, X_er_latent, X_er_obs)
+
+
+#         # Conditional GPs
+#         f_mu_pred   = μ_gp.conditional_marginal("f_mu_pred", X_new, Xu)
+#         f_logσ_pred = lg_σ_gp.conditional_marginal("σ_pred", X_er_new, Xu_er)
+
+#         # Joint posterior predictive over both
+#         ppc = pm.sample_posterior_predictive(
+#             trace,
+#             var_names=["f_mu_pred","σ_pred"]
+#         )
         
-        arr = ppc.posterior_predictive['f_mu_pred']
-        arr_combined = arr.stack(sample=("chain", "draw")).values
+#         arr = ppc.posterior_predictive['f_mu_pred']
+#         arr_combined = arr.stack(sample=("chain", "draw")).values
 
-        print(arr_combined.shape)
-        # np.savetxt("post_pred_GP_rad.txt", arr_combined)
+#         print(arr_combined.shape)
+#         # np.savetxt("post_pred_GP_rad.txt", arr_combined)
 
 
         
-        summary_stats = az.summary(ppc.posterior_predictive, var_names="f_mu_pred")
+#         summary_stats = az.summary(ppc.posterior_predictive, var_names="f_mu_pred")
 
-        sum_er = az.summary(ppc.posterior_predictive, var_names="σ_pred")
-        summary_er = denormalise_err(np.exp(sum_er['mean']), target)
+#         sum_er = az.summary(ppc.posterior_predictive, var_names="σ_pred")
+#         summary_er = denormalise_err(np.exp(sum_er['mean']), target)
 
-        Y_pred = denormalise_val(summary_stats['mean'], target)
-        er_stat = np.sqrt(np.array(summary_er)**2 + (denormalise_err(np.array(summary_stats['sd']), target))**2)
+#         Y_pred = denormalise_val(summary_stats['mean'], target)
+#         er_stat = np.sqrt(np.array(summary_er)**2 + (denormalise_err(np.array(summary_stats['sd']), target))**2)
 
-        hdi_low = - np.array(summary_er) + denormalise_val(np.array(summary_stats['hdi_3%']), target)
-        hdi_hi = np.array(summary_er) + denormalise_val(np.array(summary_stats['hdi_97%']), target)
-        stats = np.array([Y_pred, er_stat, hdi_low, hdi_hi])
+#         hdi_low = - np.array(summary_er) + denormalise_val(np.array(summary_stats['hdi_3%']), target)
+#         hdi_hi = np.array(summary_er) + denormalise_val(np.array(summary_stats['hdi_97%']), target)
+#         stats = np.array([Y_pred, er_stat, hdi_low, hdi_hi])
 
-    return stats, lpd_GP
+#     return stats, lpd_GP
 
 def sample_pred_BART(model, X, X_er, target, draws=1000, chains=2):
     """
@@ -552,21 +670,16 @@ def sample_pred_BART(model, X, X_er, target, draws=1000, chains=2):
     Returns
     -------
     tuple
-        (all_result, lpd_BART)
-        - all_result : ndarray, shape (4, N)
-            Stacked posterior predictive summaries:
-            [mean, std, lower_hdi, upper_hdi], all denormalized.
+        (denormalised y_draws, lpd_BART)
+        - denormalised y_draws : ndarray, shape (nb of posterior predictive draws, N_test)
         - lpd_BART : ndarray
             Pointwise LOO log predictive densities for the BART model.
     """
     with model:
         trace = pm.sample(draws=draws, tune=draws, chains=chains)
         trace.extend(pm.compute_log_likelihood(trace))
-        pp = pm.sample_posterior_predictive(trace)
-    arr = pp.posterior_predictive['y']
-    arr_combined = arr.stack(sample=("chain", "draw")).values
+        # pp = pm.sample_posterior_predictive(trace)
 
-    np.savetxt("post_pred_BART_rad.txt", arr_combined)
     lpd_BART = find_pointwise_loo(trace)
     # print(az.rhat(trace))
         
@@ -574,18 +687,11 @@ def sample_pred_BART(model, X, X_er, target, draws=1000, chains=2):
         pm.set_data({'X': X,
                      'X_er': X_er
             })
-        pred = pm.sample_posterior_predictive(trace)
-        
-        summary = az.summary(pred.posterior_predictive)
-        
-        res, res_er, hdi_lo, hdi_hi = (denormalise_val(summary["mean"], target),
-                                       denormalise_err(summary['sd'], target),
-                                       denormalise_val(summary['hdi_3%'], target),
-                                       denormalise_val(summary['hdi_97%'], target))
-        all_result = np.array([np.array(res), np.array(res_er),
-                               np.array(hdi_lo), np.array(hdi_hi)])
-        
-    return all_result, lpd_BART
+        pred = pm.sample_posterior_predictive(trace, predictions=True)
+
+        y_draws = pred.predictions["y"].stack(sample=("chain", "draw")).values
+    
+    return denormalise_val(y_draws, target).T, lpd_BART
 
 
 

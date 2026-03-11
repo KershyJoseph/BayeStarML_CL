@@ -72,7 +72,7 @@ def HBNN_M3(X_train, Y, X_error, Y_error, n_hidden):
         
         ann_input = pm.Deterministic('ann_input', X_latent)
         
-        ann_output = pm.MutableData("ann_output" , Y)
+        ann_output = pm.Data("ann_output" , Y)
         
 
         # Weights from input to hidden layer
@@ -187,7 +187,7 @@ def HBNN_M4(X_train, Y, X_error, Y_error, n_hidden):
         
         ann_input = pm.Deterministic('ann_input', X_latent)
         
-        ann_output = pm.MutableData("ann_output" , Y) #, dims="obs_id")
+        ann_output = pm.Data("ann_output" , Y) #, dims="obs_id")
         
 
         # Weights from input to hidden layer
@@ -295,7 +295,7 @@ def HBNN_R4(X_train, Y, X_error, Y_error, n_hidden):
         
         ann_input = pm.Deterministic('ann_input', X_latent)
         
-        ann_output = pm.MutableData("ann_output" , Y) #, dims="obs_id")
+        ann_output = pm.Data("ann_output" , Y) #, dims="obs_id")
         
 
         # Weights from input to hidden layer
@@ -398,7 +398,7 @@ def HBNN_R3(X_train, Y, X_error, Y_error, n_hidden):
         
         ann_input = pm.Deterministic('ann_input', X_latent)
         
-        ann_output = pm.MutableData("ann_output" , Y)
+        ann_output = pm.Data("ann_output" , Y)
         
 
         # Weights from input to hidden layer
