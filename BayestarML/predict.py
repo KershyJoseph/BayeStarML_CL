@@ -202,12 +202,12 @@ def predict3(X, X_er, target, test=False):
     ) = return_train_test(df_train)
     
     
-    x_train3 = x_train[['Teff', 'logg', 'Meta']]
-    x_train3_er = x_train_er[['eTeff', 'elogg', 'eMeta']]
+    x_train3 = x_train[['Teff', 'logg', 'Fe/H']]
+    x_train3_er = x_train_er[['eTeff', 'elogg', 'eFe/H']]
     
     if test == True:
-        X = x_test[['Teff', 'logg', 'Meta']]
-        X_er = x_test_err[['eTeff', 'elogg', 'eMeta']]
+        X = x_test[['Teff', 'logg', 'Fe/H']]
+        X_er = x_test_err[['eTeff', 'elogg', 'eFe/H']]
     
     if target == 'mass':
         

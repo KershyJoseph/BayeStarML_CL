@@ -24,11 +24,11 @@ df_train = get_dataset('Datasets/data_sample_mass_radius.txt', 'MS')
 
 unorm_mass = denormalise_val(mass_test, 'mass')
 
-x_train = x_train[['Teff', 'logg', 'Meta', 'L']]
-x_train_er = x_train_er[['eTeff', 'elogg', 'eMeta', 'eL']]
+x_train = x_train[['Teff', 'logg', 'Fe/H', 'L']]
+x_train_er = x_train_er[['eTeff', 'elogg', 'eFe/H', 'eL']]
 
-x_test = x_test[['Teff', 'logg', 'Meta', 'L']]
-x_test_er = x_test_err[['eTeff', 'elogg', 'eMeta', 'eL']]
+x_test = x_test[['Teff', 'logg', 'Fe/H', 'L']]
+x_test_er = x_test_err[['eTeff', 'elogg', 'eFe/H', 'eL']]
 
 # print(x_test3_er)
 
@@ -42,7 +42,7 @@ def main():
     trace = train(model, "Radius_output/GP_mass_full_w_int_lognorm_60_40.nc", draw=1000, chains=2)
     # trace = az.from_netcdf("Radius_output/GP_hetero_new_2026_mass_4param_gamma_etav_80_40.nc")
     
-        
+    
     # trace.extend(pm.compute_log_likelihood(trace, model=model, var_names='y'))
     
     r_hat_values = az.rhat(trace)

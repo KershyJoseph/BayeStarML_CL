@@ -44,7 +44,7 @@ def return_norm(df):
     Parameters
     ----------
     df : pandas.DataFrame
-        Input DataFrame containing stellar parameters (`Teff`, `logg`, `Meta`, `L`, `M`)
+        Input DataFrame containing stellar parameters (`Teff`, `logg`, `Fe/H`, `L`, `M`)
         and their asymmetric uncertainties (`eX1`, `eX2` for lower/upper errors).
 
     Returns
@@ -54,18 +54,18 @@ def return_norm(df):
         Mean and standard deviation for each variable, in the order:
         effective temperature, surface gravity, metallicity, luminosity, and mass.
     """
-    df1 = df[['eTeff1', 'elogg1', 'eMeta1', 'eL1', 'eM1']].copy()
-    df2 = df[['eTeff2', 'elogg2', 'eMeta2', 'eL2', 'eM2']].copy()
-    df2.columns = ['eTeff1', 'elogg1', 'eMeta1', 'eL1', 'eM1']
+    df1 = df[['eTeff1', 'elogg1', 'eFe/H1', 'eL1', 'eM1']].copy()
+    df2 = df[['eTeff2', 'elogg2', 'eFe/H2', 'eL2', 'eM2']].copy()
+    df2.columns = ['eTeff1', 'elogg1', 'eFe/H1', 'eL1', 'eM1']
 
     # Mean error if non-symmetric
     X_error = (df1 + df2) / 2 
 
 
-    X_error.columns = ['eTeff', 'elogg', 'eMeta', 'eL', 'eM']
+    X_error.columns = ['eTeff', 'elogg', 'eFe/H', 'eL', 'eM']
 
-    X = pd.concat([df[['Teff', 'L', 'Meta', 'logg']],
-                   X_error[['eTeff', 'elogg', 'eMeta', 'eL']]],
+    X = pd.concat([df[['Teff', 'L', 'Fe/H', 'logg']],
+                   X_error[['eTeff', 'elogg', 'eFe/H', 'eL']]],
                   axis=1)
     Y = pd.concat([df['M'], X_error['eM']], axis=1)
     
@@ -77,7 +77,7 @@ def return_norm(df):
     # Extract relevant columns for stellar mass prediction
     teff = X_train['Teff']
     logg = X_train['logg']
-    met = X_train['Meta']
+    met = X_train['Fe/H']
     lum = X_train['L']  
     mass = Y_train["M"]       
 
@@ -118,18 +118,18 @@ def return_train_test(df, normalised=True):
     if you want both just call twice
 
     """
-    df1 = df[['eTeff1', 'elogg1', 'eMeta1', 'eL1', 'eM1', 'eR1']].copy()
-    df2 = df[['eTeff2', 'elogg2', 'eMeta2', 'eL2', 'eM2', 'eR2']].copy()
-    df2.columns = ['eTeff1', 'elogg1', 'eMeta1', 'eL1', 'eM1', 'eR1']
+    df1 = df[['eTeff1', 'elogg1', 'eFe/H1', 'eL1', 'eM1', 'eR1']].copy()
+    df2 = df[['eTeff2', 'elogg2', 'eFe/H2', 'eL2', 'eM2', 'eR2']].copy()
+    df2.columns = ['eTeff1', 'elogg1', 'eFe/H1', 'eL1', 'eM1', 'eR1']
 
     # Mean error if non-symmetric
     X_error = (df1 + df2) / 2 
 
 
-    X_error.columns = ['eTeff', 'elogg', 'eMeta', 'eL', 'eM', 'eR']
+    X_error.columns = ['eTeff', 'elogg', 'eFe/H', 'eL', 'eM', 'eR']
 
-    X = pd.concat([df[['Teff', 'L', 'Meta', 'logg']],
-                   X_error[['eTeff', 'elogg', 'eMeta', 'eL']]],
+    X = pd.concat([df[['Teff', 'L', 'Fe/H', 'logg']],
+                   X_error[['eTeff', 'elogg', 'eFe/H', 'eL']]],
                   axis=1)
     Y = pd.concat([df['M'], X_error['eM'], df['R'], X_error['eR']], axis=1)
     
@@ -141,7 +141,7 @@ def return_train_test(df, normalised=True):
     # Extract relevant columns for stellar mass prediction
     teff = X_train['Teff']
     logg = X_train['logg']
-    met = X_train['Meta']
+    met = X_train['Fe/H']
     lum = X_train['L']  
     #print(lum)
     mass = Y_train["M"]       
@@ -179,7 +179,7 @@ def return_train_test(df, normalised=True):
     # Uncertainties for the inputs
     eteff = X_train['eTeff'] / steff
     elog = X_train['elogg'] / slogg
-    emet = abs(X_train['eMeta']) / smet
+    emet = abs(X_train['eFe/H']) / smet
     elum = X_train['eL'] / slum  
     emass = Y_train['eM'] / smass
     erad = Y_train['eR'] / srad
@@ -189,7 +189,7 @@ def return_train_test(df, normalised=True):
 
     teff_test = X_test['Teff']
     logg_test = X_test['logg']
-    met_test = X_test['Meta']
+    met_test = X_test['Fe/H']
     lum_test = X_test['L'] 
     mass_test = Y_test['M']
     rad_test = Y_test['R']
@@ -205,7 +205,7 @@ def return_train_test(df, normalised=True):
 
     eteff_test = X_test['eTeff'] / steff
     elog_test = X_test['elogg'] / slogg
-    emet_test = abs(X_test['eMeta']) / smet
+    emet_test = abs(X_test['eFe/H']) / smet
     elum_test = X_test['eL'] / slum 
     emass_test = Y_test['eM'] / smass
     erad_test = Y_test['eR'] / srad
@@ -225,13 +225,13 @@ def prepare_pred4(filename):
     Normalize input data and return DataFrames for normalized values and errors.
     
     Parameters:
-    - teff, logg, meta, l: Input values (can be scalars or arrays)
-    - eteff, elogg, emeta, el: Associated errors (can be scalars or arrays)
+    - teff, logg, Fe/H, l: Input values (can be scalars or arrays)
+    - eteff, elogg, eFe/H, el: Associated errors (can be scalars or arrays)
     - codeword: Value that indicates missing data (will be converted to NaN)
     
     Returns:
-    - x_test: DataFrame with normalized values (columns: 'Teff', 'logg', 'Meta', 'L')
-    - x_test_error: DataFrame with normalized errors (columns: 'eTeff', 'elogg', 'eMeta', 'eL')
+    - x_test: DataFrame with normalized values (columns: 'Teff', 'logg', 'Fe/H', 'L')
+    - x_test_error: DataFrame with normalized errors (columns: 'eTeff', 'elogg', 'eFe/H', 'eL')
     """
     
     X = pd.read_csv(filename)
@@ -254,14 +254,14 @@ def prepare_pred4(filename):
     norm_data = {
         'Teff': normalize(X['Teff'], mteff, steff),
         'logg': normalize(X['logg'], mlogg, slogg),
-        'Meta': normalize(X['Meta'], mmet, smet),
+        'Fe/H': normalize(X['Fe/H'], mmet, smet),
         'L': normalize(X['L'], mlum, slum)
     }
     
     error_data = {
         'eTeff': normalize_error(X['eTeff'], steff),
         'elogg': normalize_error(X['elogg'], slogg),
-        'eMeta': normalize_error(X['eMeta'], smet),
+        'eFe/H': normalize_error(X['eFe/H'], smet),
         'eL': normalize_error(X['eL'], slum)
     }
     
@@ -281,13 +281,13 @@ def prepare_pred3(filename):
     Normalize input data and return DataFrames for normalized values and errors.
     
     Parameters:
-    - teff, logg, meta, l: Input values (can be scalars or arrays)
-    - eteff, elogg, emeta, el: Associated errors (can be scalars or arrays)
+    - teff, logg, Fe/H, l: Input values (can be scalars or arrays)
+    - eteff, elogg, eFe/H, el: Associated errors (can be scalars or arrays)
     - codeword: Value that indicates missing data (will be converted to NaN)
     
     Returns:
-    - x_test: DataFrame with normalized values (columns: 'Teff', 'logg', 'Meta', 'L')
-    - x_test_error: DataFrame with normalized errors (columns: 'eTeff', 'elogg', 'eMeta', 'eL')
+    - x_test: DataFrame with normalized values (columns: 'Teff', 'logg', 'Fe/H', 'L')
+    - x_test_error: DataFrame with normalized errors (columns: 'eTeff', 'elogg', 'eFe/H', 'eL')
     """
     
     X = pd.read_csv(filename)
@@ -310,13 +310,13 @@ def prepare_pred3(filename):
     norm_data = {
         'Teff': normalize(X['Teff'], mteff, steff),
         'logg': normalize(X['logg'], mlogg, slogg),
-        'Meta': normalize(X['Meta'], mmet, smet)
+        'Fe/H': normalize(X['Fe/H'], mmet, smet)
     }
     
     error_data = {
         'eTeff': normalize_error(X['eTeff'], steff),
         'elogg': normalize_error(X['elogg'], slogg),
-        'eMeta': normalize_error(X['eMeta'], smet)
+        'eFe/H': normalize_error(X['eFe/H'], smet)
     }
     
     if (not hasattr(X['Teff'], '__len__') or isinstance(X['Teff'], str)) and X['Teff'] is not None:
