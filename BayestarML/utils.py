@@ -36,10 +36,13 @@ def get_dataset(data_file, star_class):
     data_MS = data[data['class'] == star_class]
     # select Main Sequence Stars
     df = data_MS[
-        ['Seq','R', 'eR1', 'eR2', 'M', 'eM1', 'eM2', 'Teff', 'eTeff1',
-         'eTeff2', 'logg', 'elogg1', 'elogg2', 'Fe/H', 'eFe/H1',
-         'eFe/H2', 'L',
-         'eL1', 'eL2']].copy()
+        ['R', 'eR1', 'eR2',
+         'M', 'eM1', 'eM2',
+         'Teff', 'eTeff1', 'eTeff2',
+         'logg', 'elogg1', 'elogg2',
+         'Fe/H', 'eFe/H1', 'eFe/H2',
+         'L', 'eL1', 'eL2']
+         ].copy()
 
     # clean NA values (simply remove the corresponding rows)
     df.dropna(inplace=True, axis=0)

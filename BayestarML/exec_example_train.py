@@ -17,7 +17,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_absolute_error
 
-df_train = get_dataset('Datasets/data_sample_mass_radius.txt', 'MS')
+df_train = get_dataset('Datasets/MS_sample.txt', 'MS')
 (x_train, x_train_er, x_test, x_test_err, mass_train, emass_train,
   mass_test, emass_test, rad_train, erad_train, rad_test, erad_test
 ) = return_train_test(df_train)
