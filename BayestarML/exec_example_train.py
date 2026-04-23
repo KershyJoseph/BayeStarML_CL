@@ -37,7 +37,7 @@ def main():
     # model = hbnn.HBNN_R3(x_train3, rad_train, x_train3_er, erad_train, 15)
     model, μ_gp, lg_σ_gp, Xu, Xu_er = gp.sparse_fully_heteroscedastic_gp(x_train,
                                                                         x_train_er,
-                                                                        mass_train, 60, 40)
+                                                                        mass_train, 30, 30)
     
     trace = train(model, "Radius_output/GP_mass_full_w_int_lognorm_60_40.nc", draw=1000, chains=2)
     # trace = az.from_netcdf("Radius_output/GP_hetero_new_2026_mass_4param_gamma_etav_80_40.nc")
