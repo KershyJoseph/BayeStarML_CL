@@ -114,7 +114,7 @@ def return_train_test(df, normalised=True):
     mass, emass, mass_test, emass_test
     For non normalised: X_train, X_test, Y_train, Y_test / where errors and
     data are combined
-    
+
     if you want both just call twice
 
     """
@@ -125,14 +125,13 @@ def return_train_test(df, normalised=True):
     # Mean error if non-symmetric
     X_error = (df1 + df2) / 2 
 
-
     X_error.columns = ['eTeff', 'elogg', 'eFe/H', 'eL', 'eM', 'eR']
 
     X = pd.concat([df[['Teff', 'L', 'Fe/H', 'logg']],
                    X_error[['eTeff', 'elogg', 'eFe/H', 'eL']]],
                   axis=1)
     Y = pd.concat([df['M'], X_error['eM'], df['R'], X_error['eR']], axis=1)
-    
+
     # do split
     X_train, X_test, Y_train, Y_test = train_test_split(X, Y,
                                                         test_size=0.2,
@@ -213,27 +212,27 @@ def return_train_test(df, normalised=True):
     x_test_error = pd.concat([eteff_test, elog_test, emet_test, elum_test],
                              axis=1)
 
-    
+
     if normalised == True:
         return x_train, x_train_er, x_test, x_test_error, mass, emass, mass_test, emass_test, rad, erad, rad_test, erad_test
-    
+
     if normalised == False:
         return X_train, X_test, Y_train, Y_test
-    
+
 def prepare_pred4(filename):
     """
     Normalize input data and return DataFrames for normalized values and errors.
-    
+
     Parameters:
     - teff, logg, Fe/H, l: Input values (can be scalars or arrays)
     - eteff, elogg, eFe/H, el: Associated errors (can be scalars or arrays)
     - codeword: Value that indicates missing data (will be converted to NaN)
-    
+
     Returns:
     - x_test: DataFrame with normalized values (columns: 'Teff', 'logg', 'Fe/H', 'L')
     - x_test_error: DataFrame with normalized errors (columns: 'eTeff', 'elogg', 'eFe/H', 'eL')
     """
-    
+
     X = pd.read_csv(filename)
     df = get_dataset('Datasets/data_sample_mass_radius.txt', 'MS')
     mteff, mlogg, mmet, mlum, mtmass, steff, slogg, smet, slum, smass = return_norm(df)
@@ -243,13 +242,13 @@ def prepare_pred4(filename):
         if value is None:
             return np.nan
         return (np.array(value) - mean) / std
-    
+
     # Helper function to normalize errors (absolute value)
     def normalize_error(error, std):
         if error is None:
             return np.nan
         return abs(np.array(error)) / std
-    
+
     # Normalize each parameter and its error
     norm_data = {
         'Teff': normalize(X['Teff'], mteff, steff),
@@ -257,14 +256,13 @@ def prepare_pred4(filename):
         'Fe/H': normalize(X['Fe/H'], mmet, smet),
         'L': normalize(X['L'], mlum, slum)
     }
-    
+
     error_data = {
         'eTeff': normalize_error(X['eTeff'], steff),
         'elogg': normalize_error(X['elogg'], slogg),
         'eFe/H': normalize_error(X['eFe/H'], smet),
         'eL': normalize_error(X['eL'], slum)
     }
-    
 
     # For scalar inputs, we need to create a single-row DataFrame
     if (not hasattr(X['Teff'], '__len__') or isinstance(X['Teff'], str)) and X['Teff'] is not None:
@@ -273,23 +271,23 @@ def prepare_pred4(filename):
     else:
         x_test = pd.DataFrame(norm_data)
         x_test_error = pd.DataFrame(error_data)
-    
+
     return x_test, x_test_error
 
 def prepare_pred3(filename):
     """
     Normalize input data and return DataFrames for normalized values and errors.
-    
+
     Parameters:
     - teff, logg, Fe/H, l: Input values (can be scalars or arrays)
     - eteff, elogg, eFe/H, el: Associated errors (can be scalars or arrays)
     - codeword: Value that indicates missing data (will be converted to NaN)
-    
+
     Returns:
     - x_test: DataFrame with normalized values (columns: 'Teff', 'logg', 'Fe/H', 'L')
     - x_test_error: DataFrame with normalized errors (columns: 'eTeff', 'elogg', 'eFe/H', 'eL')
     """
-    
+
     X = pd.read_csv(filename)
     df = get_dataset('Datasets/data_sample_mass_radius.txt', 'MS')
     mteff, mlogg, mmet, mlum, mtmass, steff, slogg, smet, slum, smass = return_norm(df)
@@ -299,32 +297,32 @@ def prepare_pred3(filename):
         if value is None:
             return np.nan
         return (np.array(value) - mean) / std
-    
+
     # Helper function to normalize errors (absolute value)
     def normalize_error(error, std):
         if error is None:
             return np.nan
         return abs(np.array(error)) / std
-    
+
     # Normalize each parameter and its error
     norm_data = {
         'Teff': normalize(X['Teff'], mteff, steff),
         'logg': normalize(X['logg'], mlogg, slogg),
         'Fe/H': normalize(X['Fe/H'], mmet, smet)
     }
-    
+
     error_data = {
         'eTeff': normalize_error(X['eTeff'], steff),
         'elogg': normalize_error(X['elogg'], slogg),
         'eFe/H': normalize_error(X['eFe/H'], smet)
     }
-    
+
     if (not hasattr(X['Teff'], '__len__') or isinstance(X['Teff'], str)) and X['Teff'] is not None:
         x_test = pd.DataFrame(norm_data, index=[0])
         x_test_error = pd.DataFrame(error_data, index=[0])
     else:
         x_test = pd.DataFrame(norm_data)
         x_test_error = pd.DataFrame(error_data)
-    
+
     return x_test, x_test_error
 

@@ -49,7 +49,6 @@ def get_dataset(data_file, star_class):
     df_complete = data_MS.loc[df.index].copy()
 
     return df_complete
-    
 
 def find_pointwise_loo(trace):
     """

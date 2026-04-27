@@ -17,9 +17,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_absolute_error
 
-df_train = get_dataset('Datasets/MS_sample.txt', 'MS')
+df_train = get_dataset('DataExploring/MS_sample_31.txt', 'MS')
+
 (x_train, x_train_er, x_test, x_test_err, mass_train, emass_train,
-  mass_test, emass_test, rad_train, erad_train, rad_test, erad_test
+ mass_test, emass_test, rad_train, erad_train, rad_test, erad_test
 ) = return_train_test(df_train)
 
 unorm_mass = denormalise_val(mass_test, 'mass')
@@ -37,14 +38,13 @@ def main():
     # model = hbnn.HBNN_R3(x_train3, rad_train, x_train3_er, erad_train, 15)
     model, μ_gp, lg_σ_gp, Xu, Xu_er = gp.sparse_fully_heteroscedastic_gp(x_train,
                                                                         x_train_er,
-                                                                        mass_train, 30, 30)
-    
-    trace = train(model, "Radius_output/GP_mass_full_w_int_lognorm_60_40.nc", draw=1000, chains=2)
+                                                                        mass_train, 10, 5)
+
+    trace = train(model, "Radius_output/GP_mass_full_w_int_lognorm_60_40.nc", draw=100, chains=2)
     # trace = az.from_netcdf("Radius_output/GP_hetero_new_2026_mass_4param_gamma_etav_80_40.nc")
-    
-    
+
     # trace.extend(pm.compute_log_likelihood(trace, model=model, var_names='y'))
-    
+
     r_hat_values = az.rhat(trace)
     all_rhats = []
     for var in r_hat_values.data_vars:
@@ -52,19 +52,19 @@ def main():
         all_rhats.append((var, max_rhat))
 
     print(all_rhats)
-    
+
     print(az.loo(trace))
-    
+
     pred, lpd = posterior_predictive_GP(model, μ_gp, lg_σ_gp, trace,
                                          x_test, x_test_err, Xu, Xu_er, 4, 'mass')
     print(pred.std(0))
     print(pred.mean(0))
     print(unorm_mass)
-    
+
     print('MAE: ', mean_absolute_error(unorm_mass, pred.mean(0)))
-    
+
     print('MARD', mard(unorm_mass, pred.mean(0)))
-    
+
     print('MRD', mrd(unorm_mass, pred.mean(0)))
 
     plt.figure(figsize=(8, 6))
