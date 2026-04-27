@@ -31,8 +31,6 @@ x_train_er = x_train_er[['eTeff', 'elogg', 'eFe/H', 'eL']]
 x_test = x_test[['Teff', 'logg', 'Fe/H', 'L']]
 x_test_er = x_test_err[['eTeff', 'elogg', 'eFe/H', 'eL']]
 
-# print(x_test3_er)
-
 def main():
  
     # model = hbnn.HBNN_R3(x_train3, rad_train, x_train3_er, erad_train, 15)
@@ -56,7 +54,7 @@ def main():
     print(az.loo(trace))
 
     pred, lpd = posterior_predictive_GP(model, μ_gp, lg_σ_gp, trace,
-                                         x_test, x_test_err, Xu, Xu_er, 4, 'mass')
+                                        x_test, x_test_err, Xu, Xu_er, 4, 'mass')
     print(pred.std(0))
     print(pred.mean(0))
     print(unorm_mass)
@@ -81,7 +79,7 @@ def main():
     plt.hlines(0, unorm_mass.min(), unorm_mass.max(), 'r', linestyle='--')
     plt.xlabel('True Mass')
     plt.ylabel('Residual Mass')
-    # plt.title('GP Predictions with Uncertainty')
+    #plt.title('GP Predictions with Uncertainty')
     plt.legend()
     plt.show()
 
