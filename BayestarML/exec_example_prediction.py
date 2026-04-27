@@ -22,8 +22,5 @@ def main():
     X3, X3_er = prepare_pred3("Datasets/dataset_B_trimmed_6cols_NASAFLAG.csv")
     _, pred3, w3 = predict3(X3, X3_er, 'radius')
 
-    
-
-    
 if __name__ == '__main__':
     main()
