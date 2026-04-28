@@ -6,8 +6,6 @@ Created on Mon Jul 14 17:55:32 2025
 @author: LamirelFamily
 """
 
-
-
 MU = {
     "Teff": 6214.635897435897,   
     "logg": 4.103562701135996,
