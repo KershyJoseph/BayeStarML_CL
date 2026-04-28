@@ -24,7 +24,7 @@ df_train = get_dataset('DataExploring/MS_sample_31.txt', 'MS')
 ) = return_train_test(df_train)
 
 unorm_mass = denormalise_val(mass_test, 'mass')
-unorm_mass = denormalise_val(rad_test, 'radius')
+unorm_radius = denormalise_val(rad_test, 'radius')
 
 x_train = x_train[['Teff', 'logg', 'Fe/H', 'L']]
 x_train_er = x_train_er[['eTeff', 'elogg', 'eFe/H', 'eL']]
@@ -92,10 +92,61 @@ def radius_train_GP(M_mean, M_var):
     # model = hbnn.HBNN_R3(x_train3, rad_train, x_train3_er, erad_train, 15)
     model, μ_gp, lg_σ_gp, Xu, Xu_er = gp.sparse_fully_heteroscedastic_gp(x_train,
                                                                         x_train_er,
-                                                                        mass_train, M_mean, M_var)
+                                                                        rad_train, M_mean, M_var)
 
     trace = train(model,
-                  "Output/GP_mass_full_w_int_lognorm_"+str(M_mean)+"_"+str(M_var)+".nc",
+                  "Output/GP_radius_full_w_int_lognorm_"+str(M_mean)+"_"+str(M_var)+".nc",
+                  draw=100, chains=2)
+    # trace = az.from_netcdf("Radius_output/GP_hetero_new_2026_mass_4param_gamma_etav_80_40.nc")
+
+    # trace.extend(pm.compute_log_likelihood(trace, model=model, var_names='y'))
+
+    r_hat_values = az.rhat(trace)
+    all_rhats = []
+    for var in r_hat_values.data_vars:
+        max_rhat = r_hat_values[var].max().values.item()
+        all_rhats.append((var, max_rhat))
+
+    print(all_rhats)
+
+    print(az.loo(trace))
+
+    pred, lpd = posterior_predictive_GP(model, μ_gp, lg_σ_gp, trace,
+                                        x_test, x_test_err, Xu, Xu_er, 4, 'radius')
+    print(pred.std(0))
+    print(pred.mean(0))
+    print(unorm_radius)
+
+    print('MAE: ', mean_absolute_error(unorm_radius, pred.mean(0)))
+
+    print('MARD', mard(unorm_radius, pred.mean(0)))
+
+    print('MRD', mrd(unorm_radius, pred.mean(0)))
+
+    plt.figure(figsize=(8, 6))
+    plt.errorbar(unorm_radius, pred.mean(0), yerr=pred.std(0), fmt='o', label='Predictions with Uncertainty', alpha=0.7)
+    plt.plot([unorm_radius.min(), unorm_radius.max()], [unorm_radius.min(), unorm_radius.max()], 'r--')
+    plt.xlabel('True Radius')
+    plt.ylabel('Predicted Radius')
+    plt.title('GP Predictions with Uncertainty')
+    plt.legend()
+    plt.savefig("Outputs/GP_radius_predictions.pdf")
+
+    plt.figure(figsize=(8, 6))
+    plt.errorbar(unorm_radius, pred.mean(0) - unorm_radius, yerr=pred.std(0), fmt='o', label='Predictions with Uncertainty', alpha=0.7)
+    plt.hlines(0, unorm_radius.min(), unorm_radius.max(), 'r', linestyle='--')
+    plt.xlabel('True Mass')
+    plt.ylabel('Residual Mass')
+    plt.legend()
+    plt.savefig("Outputs/GP_radius_residuals.pdf")
+
+def mass_train_NN(n_hidden):
+    """Function to train GP on mass prediction
+    """
+    model = hbnn.HBNN_M4(x_train, mass_train, x_train_er, emass_train, n_hidden) #R4 better?
+
+    trace = train(model,
+                  "Output/NN_mass_M4_"+str(n_hidden)+"_nrns.nc",
                   draw=100, chains=2)
     # trace = az.from_netcdf("Radius_output/GP_hetero_new_2026_mass_4param_gamma_etav_80_40.nc")
 
@@ -142,4 +193,5 @@ def radius_train_GP(M_mean, M_var):
 
 
 if __name__ == '__main__':
-    
+    #pick which function to run when file is run
+    mass_train_GP()
