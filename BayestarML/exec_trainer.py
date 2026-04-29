@@ -30,7 +30,7 @@ x_train = x_train[['Teff', 'logg', 'Fe/H', 'L']]
 x_train_er = x_train_er[['eTeff', 'elogg', 'eFe/H', 'eL']]
 
 x_test = x_test[['Teff', 'logg', 'Fe/H', 'L']]
-x_test_er = x_test_err[['eTeff', 'elogg', 'eFe/H', 'eL']]
+x_test_err = x_test_err[['eTeff', 'elogg', 'eFe/H', 'eL']]
 
 def mass_train_GP(M_mean, M_var):
     """Function to train GP on mass prediction
@@ -162,8 +162,8 @@ def mass_train_NN(n_hidden):
 
     print(az.loo(trace))
 
-    pred, lpd = posterior_predictive_GP(model, μ_gp, lg_σ_gp, trace,
-                                        x_test, x_test_err, Xu, Xu_er, 4, 'mass')
+    pred, lpd = sample_post_pred_HBNN_para(trace, x_test, x_test_err, n_hidden, 4, "mass")
+    
     print(pred.std(0))
     print(pred.mean(0))
     print(unorm_mass)
