@@ -194,4 +194,4 @@ def mass_train_NN(n_hidden):
 
 if __name__ == '__main__':
     #pick which function to run when file is run
-    mass_train_GP()
+    mass_train_GP(60,60)

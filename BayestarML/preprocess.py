@@ -141,9 +141,9 @@ def return_train_test(df, normalised=True):
     teff = X_train['Teff']
     logg = X_train['logg']
     met = X_train['Fe/H']
-    lum = X_train['L']  
+    lum = X_train['L']
     #print(lum)
-    mass = Y_train["M"]       
+    mass = Y_train["M"]
     rad = Y_train['R']
 
     # Compute means and standard deviations for standardization
@@ -153,8 +153,8 @@ def return_train_test(df, normalised=True):
     mlum = np.mean(lum)
     mtmass = np.mean(mass)
     mrad = np.mean(rad)
-    
-    #print(mteff, mlogg, mmet, mlum, mtmass, mrad)
+
+    print(mteff, mlogg, mmet, mlum, mtmass, mrad)
 
     steff = np.std(teff)
     slogg = np.std(logg)
@@ -163,7 +163,7 @@ def return_train_test(df, normalised=True):
     smass = np.std(mass)
     srad = np.std(rad)
     
-    #print(steff, slogg, smet, slum, smass, srad)
+    print(steff, slogg, smet, slum, smass, srad)
 
     # Standardize inputs 
     teff = (teff - mteff) / steff
@@ -172,8 +172,6 @@ def return_train_test(df, normalised=True):
     lum = (lum - mlum) / slum
     mass = (mass - mtmass) / smass
     rad = (rad - mrad) / srad
-
-
 
     # Uncertainties for the inputs
     eteff = X_train['eTeff'] / steff
