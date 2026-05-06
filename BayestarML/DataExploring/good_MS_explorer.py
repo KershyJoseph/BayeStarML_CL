@@ -25,6 +25,3 @@ plt.xlabel("Spectral Type")
 plt.ylabel("Frequency")
 plt.savefig("DataExploring/types_hist_MS.pdf")
 plt.show()
-
-#see test and train data - and print means and stds
-X_train, X_test, Y_train, Y_test = return_train_test(df, normalised=False)

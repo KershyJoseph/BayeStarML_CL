@@ -16,8 +16,11 @@ import pymc as pm
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_absolute_error
+import tracemalloc
 
-df_train = get_dataset('DataExploring/MS_sample_31.txt', 'MS')
+tracemalloc.start() #for memory usage estimate
+
+df_train = get_dataset('DataExploring/good_MS.txt', 'MS')
 
 (x_train, x_train_er, x_test, x_test_err, mass_train, emass_train,
  mass_test, emass_test, rad_train, erad_train, rad_test, erad_test
@@ -41,9 +44,9 @@ def mass_train_GP(M_mean, M_var):
                                                                         mass_train, M_mean, M_var)
 
     trace = train(model,
-                  "Output/GP_mass_full_w_int_lognorm_"+str(M_mean)+"_"+str(M_var)+".nc",
+                  "Outputs/GP_mass_full_w_int_lognorm_"+str(M_mean)+"_"+str(M_var)+".nc",
                   draw=100, chains=2)
-    # trace = az.from_netcdf("Radius_output/GP_hetero_new_2026_mass_4param_gamma_etav_80_40.nc")
+    # trace = az.from_netcdf("Radius_Outputs/GP_hetero_new_2026_mass_4param_gamma_etav_80_40.nc")
 
     # trace.extend(pm.compute_log_likelihood(trace, model=model, var_names='y'))
 
@@ -61,7 +64,7 @@ def mass_train_GP(M_mean, M_var):
                                         x_test, x_test_err, Xu, Xu_er, 4, 'mass')
     print(pred.std(0))
     print(pred.mean(0))
-    print(unorm_mass)
+    print("Unorm mass: ", unorm_mass)
 
     print('MAE: ', mean_absolute_error(unorm_mass, pred.mean(0)))
 
@@ -95,7 +98,7 @@ def radius_train_GP(M_mean, M_var):
                                                                         rad_train, M_mean, M_var)
 
     trace = train(model,
-                  "Output/GP_radius_full_w_int_lognorm_"+str(M_mean)+"_"+str(M_var)+".nc",
+                  "Outputs/GP_radius_full_w_int_lognorm_"+str(M_mean)+"_"+str(M_var)+".nc",
                   draw=100, chains=2)
     # trace = az.from_netcdf("Radius_output/GP_hetero_new_2026_mass_4param_gamma_etav_80_40.nc")
 
@@ -141,12 +144,12 @@ def radius_train_GP(M_mean, M_var):
     plt.savefig("Outputs/GP_radius_residuals.pdf")
 
 def mass_train_NN(n_hidden):
-    """Function to train GP on mass prediction
+    """Function to train NN on mass prediction
     """
     model = hbnn.HBNN_M4(x_train, mass_train, x_train_er, emass_train, n_hidden) #R4 better?
 
     trace = train(model,
-                  "Output/NN_mass_M4_"+str(n_hidden)+"_nrns.nc",
+                  "Outputs/NN_mass_M4_"+str(n_hidden)+"_nrns.nc",
                   draw=100, chains=2)
     # trace = az.from_netcdf("Radius_output/GP_hetero_new_2026_mass_4param_gamma_etav_80_40.nc")
 
@@ -179,9 +182,9 @@ def mass_train_NN(n_hidden):
     plt.plot([unorm_mass.min(), unorm_mass.max()], [unorm_mass.min(), unorm_mass.max()], 'r--')
     plt.xlabel('True Mass')
     plt.ylabel('Predicted Mass')
-    plt.title('GP Predictions with Uncertainty')
+    plt.title('NN Predictions with Uncertainty')
     plt.legend()
-    plt.savefig("Outputs/GP_mass_predictions.pdf")
+    plt.savefig("Outputs/NN_mass_predictions.pdf")
 
     plt.figure(figsize=(8, 6))
     plt.errorbar(unorm_mass, pred.mean(0) - unorm_mass, yerr=pred.std(0), fmt='o', label='Predictions with Uncertainty', alpha=0.7)
@@ -189,9 +192,71 @@ def mass_train_NN(n_hidden):
     plt.xlabel('True Mass')
     plt.ylabel('Residual Mass')
     plt.legend()
-    plt.savefig("Outputs/GP_mass_residuals.pdf")
+    plt.savefig("Outputs/NN_mass_residuals.pdf")
+
+def radius_train_NN(n_hidden):
+    """Function to train NN on radius prediction
+    """
+    model = hbnn.HBNN_M4(x_train, rad_train, x_train_er, erad_train, n_hidden) #R4 better?
+
+    trace = train(model,
+                  "Outputs/NN_radius_M4_"+str(n_hidden)+"_nrns.nc",
+                  draw=100, chains=2)
+    # trace = az.from_netcdf("Radius_output/GP_hetero_new_2026_mass_4param_gamma_etav_80_40.nc")
+
+    # trace.extend(pm.compute_log_likelihood(trace, model=model, var_names='y'))
+
+    r_hat_values = az.rhat(trace)
+    all_rhats = []
+    for var in r_hat_values.data_vars:
+        max_rhat = r_hat_values[var].max().values.item()
+        all_rhats.append((var, max_rhat))
+
+    print(all_rhats)
+
+    print(az.loo(trace))
+
+    pred, lpd = sample_post_pred_HBNN_para(trace, x_test, x_test_err, n_hidden, 4, "radius")
+    
+    print(pred.std(0))
+    print(pred.mean(0))
+    print(unorm_radius)
+
+    print('MAE: ', mean_absolute_error(unorm_radius, pred.mean(0)))
+
+    print('MARD', mard(unorm_radius, pred.mean(0)))
+
+    print('MRD', mrd(unorm_radius, pred.mean(0)))
+
+    plt.figure(figsize=(8, 6))
+    plt.errorbar(unorm_radius, pred.mean(0), yerr=pred.std(0), fmt='o', label='Predictions with Uncertainty', alpha=0.7)
+    plt.plot([unorm_radius.min(), unorm_radius.max()], [unorm_radius.min(), unorm_radius.max()], 'r--')
+    plt.xlabel('True Radius')
+    plt.ylabel('Predicted Radius')
+    plt.title('NN Predictions with Uncertainty')
+    plt.legend()
+    plt.savefig("Outputs/NN_radius_predictions.pdf")
+
+    plt.figure(figsize=(8, 6))
+    plt.errorbar(unorm_radius, pred.mean(0) - unorm_radius, yerr=pred.std(0), fmt='o', label='Predictions with Uncertainty', alpha=0.7)
+    plt.hlines(0, unorm_radius.min(), unorm_radius.max(), 'r', linestyle='--')
+    plt.xlabel('True Radius')
+    plt.ylabel('Residual Radius')
+    plt.legend()
+    plt.savefig("Outputs/NN_radius_residuals.pdf")
 
 
 if __name__ == '__main__':
-    #pick which function to run when file is run
+    #pick which function(s) to run when file is run
     mass_train_GP(60,60)
+    radius_train_GP(60,60)
+    mass_train_NN(15)
+    radius_train_NN(15)
+    
+    #from Gemini
+    snapshot = tracemalloc.take_snapshot()
+    top_stats = snapshot.statistics('lineno')
+    print("[ Top 10 memory consumers ]")
+    for stat in top_stats[:10]:
+        print(stat)
+
