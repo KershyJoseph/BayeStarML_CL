@@ -17,9 +17,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_absolute_error
 import tracemalloc
-import pytensor
 
-pytensor.cache.clear_cache()
 tracemalloc.start() #for memory usage estimate
 
 df_train = get_dataset('DataExploring/good_MS.txt', 'MS')
@@ -196,7 +194,7 @@ def mass_train_NN(n_hidden, draw=1000, chains=4):
     plt.legend()
     plt.savefig("Outputs/NN_mass_residuals.pdf")
 
-def radius_train_NN(n_hidden, draw=1000, chains=4):
+def radius_train_NN(n_hidden, draw=1000, chains=4): 
     """Function to train NN on radius prediction
     """
     model = hbnn.HBNN_M4(x_train, rad_train, x_train_er, erad_train, n_hidden) #R4 better?
