@@ -146,7 +146,7 @@ def radius_train_GP(M_mean, M_var):
 def mass_train_NN(n_hidden, draw=1000, chains=4):
     """Function to train NN on mass prediction
     """
-    model = hbnn.HBNN_M4(x_train, mass_train, x_train_er, emass_train, n_hidden) #or R4 better?
+    model = hbnn.HBNN_R4(x_train, mass_train, x_train_er, emass_train, n_hidden) #or R4 better?
 
     model.debug(verbose='True')
 
@@ -253,7 +253,7 @@ if __name__ == '__main__':
     # mass_train_GP(60,60)
     # radius_train_GP(60,60)
     mass_train_NN(15, 200, 2)
-    radius_train_NN(15, 200, 2)
+    #radius_train_NN(15, 200, 2)
     
     #from Gemini
     snapshot = tracemalloc.take_snapshot()

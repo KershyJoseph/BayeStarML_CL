@@ -131,8 +131,7 @@ def HBNN_M4(X_train, Y, X_error, Y_error, n_hidden):
 
     Similar to `HBNN_M3`, but extended to four input variables. Latent inputs are 
     drawn from a multivariate normal with an LKJCholeskyCov prior, capturing correlations 
-    between features. The neural network uses two hidden layers with LeakyReLU activations 
-    and a Student-t output likelihood for robustness to outliers.
+    between features. The neural network uses two hidden layers with LeakyReLU activations and a Student-t output likelihood for robustness to outliers.
 
     Parameters
     ----------
