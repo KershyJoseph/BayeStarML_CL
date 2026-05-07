@@ -148,7 +148,7 @@ def mass_train_NN(n_hidden, draw=1000, chains=4):
     """
     model = hbnn.HBNN_M4(x_train, mass_train, x_train_er, emass_train, n_hidden) #or R4 better?
 
-    model.debug()
+    model.debug(verbose='True')
 
     trace = train(model,
                   "Outputs/NN_mass_M4_"+str(n_hidden)+"_nrns.nc",
