@@ -3,7 +3,6 @@ JK 27/04/26
 """
 import pandas as pd
 import matplotlib.pyplot as plt
-from preprocess import return_train_test
 import seaborn as sns
 
 df = pd.read_csv("DataExploring/good_MS.txt", sep='\t')
