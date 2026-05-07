@@ -17,7 +17,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_absolute_error
 import tracemalloc
+import pytensor
 
+pytensor.cache.clear_cache()
 tracemalloc.start() #for memory usage estimate
 
 df_train = get_dataset('DataExploring/good_MS.txt', 'MS')
@@ -143,14 +145,14 @@ def radius_train_GP(M_mean, M_var):
     plt.legend()
     plt.savefig("Outputs/GP_radius_residuals.pdf")
 
-def mass_train_NN(n_hidden):
+def mass_train_NN(n_hidden, draw=1000, chains=4):
     """Function to train NN on mass prediction
     """
     model = hbnn.HBNN_M4(x_train, mass_train, x_train_er, emass_train, n_hidden) #or R4 better?
 
     trace = train(model,
                   "Outputs/NN_mass_M4_"+str(n_hidden)+"_nrns.nc",
-                  draw=1000, chains=4)
+                  draw=draw, chains=chains)
     # trace = az.from_netcdf("Radius_output/GP_hetero_new_2026_mass_4param_gamma_etav_80_40.nc")
 
     # trace.extend(pm.compute_log_likelihood(trace, model=model, var_names='y'))
@@ -167,9 +169,9 @@ def mass_train_NN(n_hidden):
 
     pred, lpd = sample_post_pred_HBNN_para(trace, x_test, x_test_err, n_hidden, 4, "mass")
     
-    print(pred.std(0))
-    print(pred.mean(0))
-    print(unorm_mass)
+    print("stdvs: ", pred.std(0))
+    print("means: ", pred.mean(0))
+    print("test set: ", unorm_mass)
 
     print('MAE: ', mean_absolute_error(unorm_mass, pred.mean(0)))
 
@@ -194,14 +196,14 @@ def mass_train_NN(n_hidden):
     plt.legend()
     plt.savefig("Outputs/NN_mass_residuals.pdf")
 
-def radius_train_NN(n_hidden):
+def radius_train_NN(n_hidden, draw=1000, chains=4):
     """Function to train NN on radius prediction
     """
     model = hbnn.HBNN_M4(x_train, rad_train, x_train_er, erad_train, n_hidden) #R4 better?
 
     trace = train(model,
                   "Outputs/NN_radius_M4_"+str(n_hidden)+"_nrns.nc",
-                  draw=100, chains=2)
+                  draw=draw, chains=chains)
     # trace = az.from_netcdf("Radius_output/GP_hetero_new_2026_mass_4param_gamma_etav_80_40.nc")
 
     # trace.extend(pm.compute_log_likelihood(trace, model=model, var_names='y'))
@@ -212,15 +214,15 @@ def radius_train_NN(n_hidden):
         max_rhat = r_hat_values[var].max().values.item()
         all_rhats.append((var, max_rhat))
 
-    print(all_rhats)
+    print("rhats: ", all_rhats)
 
-    print(az.loo(trace))
+    print("loo trace: ", az.loo(trace))
 
     pred, lpd = sample_post_pred_HBNN_para(trace, x_test, x_test_err, n_hidden, 4, "radius")
     
-    print(pred.std(0))
-    print(pred.mean(0))
-    print(unorm_radius)
+    print("stdvs: ", pred.std(0))
+    print("means: ", pred.mean(0))
+    print("test set: ", unorm_radius)
 
     print('MAE: ', mean_absolute_error(unorm_radius, pred.mean(0)))
 
@@ -248,10 +250,10 @@ def radius_train_NN(n_hidden):
 
 if __name__ == '__main__':
     #pick which function(s) to run when file is run
-    mass_train_GP(60,60)
-    radius_train_GP(60,60)
-    #mass_train_NN(15)
-    #radius_train_NN(15)
+    # mass_train_GP(60,60)
+    # radius_train_GP(60,60)
+    mass_train_NN(15, 200, 2)
+    radius_train_NN(15, 200, 2)
     
     #from Gemini
     snapshot = tracemalloc.take_snapshot()
