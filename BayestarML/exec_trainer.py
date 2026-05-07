@@ -146,12 +146,11 @@ def radius_train_GP(M_mean, M_var):
 def mass_train_NN(n_hidden):
     """Function to train NN on mass prediction
     """
-    model = hbnn.HBNN_M4(x_train, mass_train, x_train_er, emass_train, n_hidden) #R4 better?
+    model = hbnn.HBNN_M4(x_train, mass_train, x_train_er, emass_train, n_hidden) #or R4 better?
 
     trace = train(model,
                   "Outputs/NN_mass_M4_"+str(n_hidden)+"_nrns.nc",
-                  draw=100, chains=2)
-    # trace = az.from_netcdf("Radius_output/GP_hetero_new_2026_mass_4param_gamma_etav_80_40.nc")
+                  draw=1000, chains=4)
 
     # trace.extend(pm.compute_log_likelihood(trace, model=model, var_names='y'))
 
@@ -161,9 +160,9 @@ def mass_train_NN(n_hidden):
         max_rhat = r_hat_values[var].max().values.item()
         all_rhats.append((var, max_rhat))
 
-    print(all_rhats)
+    print("rhats: ", all_rhats)
 
-    print(az.loo(trace))
+    print("loo trace: ", az.loo(trace))
 
     pred, lpd = sample_post_pred_HBNN_para(trace, x_test, x_test_err, n_hidden, 4, "mass")
     

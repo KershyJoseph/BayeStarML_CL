@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-df = pd.read_csv("DataExploring/datos_todos_20260417.txt", sep="\t", comment="#")
+df = pd.read_csv("DataExploring/datos_todos_v20260505.txt", sep="\t", comment="#")
 
 check_params = ["eM1", "eR1", "elogg1", "eL1", "eFe/H1", "eTeff1"]
 df_all6_MS = df[(df["class"]=="MS") & 
@@ -35,26 +35,49 @@ df_good_MS.to_csv("DataExploring/good_MS.txt", index=False, na_rep="NA", sep="\t
 
 #see err dist
 fig, ax = plt.subplots(2,3)
-ax[0,0].hist(df_good_errs["percent_eL"], bins='fd')
-ax[0,0].set_title("L percent err")
 
-ax[0,1].hist(df_good_errs["percent_eR"], bins='fd')
-ax[0,1].set_title("R percent err")
+ax[0,0].hist(df_good_errs["percent_eM"], bins='auto')
+ax[0,0].vlines(7,0,150,linestyle='--',color='r',label="7%")
+ax[0,0].set_title("M")
+ax[0,0].set_ylabel("Number")
+ax[0,0].set_xlabel("% Error")
+ax[0,0].legend()
 
-ax[0,2].hist(df_good_errs["percent_eM"], bins='fd')
-ax[0,2].set_title("M percent err")
+ax[0,1].hist(df_good_errs["percent_eR"], bins='auto')
+ax[0,1].vlines(7,0,100,linestyle='--',color='r',label="7%")
+ax[0,1].set_title("R")
+ax[0,1].set_xlabel("% Error")
+ax[0,1].legend()
 
-ax[1,0].hist(df_good_errs["percent_eTeff"], bins='fd')
-ax[1,0].set_title("Teff percent err")
+ax[0,2].hist(df_good_errs["percent_eL"], bins='auto')
+ax[0,2].vlines(10,0,250,linestyle='--',color='r',label="10%")
+ax[0,2].set_title("L")
+ax[0,2].set_xlabel("% Error")
+ax[0,2].legend()
 
-ax[1,1].hist(df_good_errs["elogg1"], bins='fd')
-ax[1,1].set_title("logg err")
+ax[1,0].hist(df_good_errs["eTeff1"], bins='auto')
+ax[1,0].vlines(100,0,220,linestyle='--',color='r',label="100K")
+ax[1,0].set_title("T$_{eff}$") #how to make not italic...
+ax[1,0].set_ylabel("Number")
+ax[1,0].set_xlabel("Error (K)")
+ax[1,0].set_xlim(0,500)
+ax[1,0].legend()
 
-ax[1,2].hist(df_good_errs["eFe/H1"], bins='fd')
-ax[1,2].set_title("Fe/H err")
+ax[1,1].hist(df_good_errs["elogg1"], bins='auto')
+ax[1,1].vlines(0.05,0,220,linestyle='--',color='r',label="0.05dex")
+ax[1,1].set_title("log(g)")
+ax[1,1].set_xlabel("Error (dex)")
+ax[1,1].set_xlim(0,0.2)
+ax[1,1].legend()
+
+ax[1,2].hist(df_good_errs["eFe/H1"], bins='auto')
+ax[1,2].vlines(.15,0,250,linestyle='--',color='r',label="0.15dex")
+ax[1,2].set_title("Fe/H")
+ax[1,2].set_xlabel("Error (dex)")
+ax[1,2].legend()
 
 plt.tight_layout()
-plt.savefig("DataExploring/db_new_err_dists.png")
+plt.savefig("DataExploring/db_new_err_dists.pdf")
 
 def make_MS_sample(N):
     """Cheeky tiny MS sample to practice on. N is roughly how many stars.
