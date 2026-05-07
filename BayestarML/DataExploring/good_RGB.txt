@@ -1,4 +1,4 @@
-ID	M	eM1	eM2	R	eR1	eR2	Teff	eTeff1	eTeff2	Fe/H	eFe/H1	eFe/H2	Ref	M/H	e1_M/H	e2_M/H	logg	elogg1	elogg2	logg_from_M,R	L	eL1	eL2	L_from_SB	class	type	orbit_a(Rsol)	eOrbit_a	R/a	detached	well_detached	source	mode	database
+ID	M	eM1	eM2	R	eR1	eR2	Teff	eTeff1	eTeff2	Fe/H	eFe/H1	eFe/H2	Ref	M/H	eM/H1	eM/H2	logg	elogg1	elogg2	logg_from_M,R	L	eL1	eL2	L_from_SB	class	type	orbit_a(Rsol)	eOrbit_a	R/a	detached	well_detached	source	mode	database
 KIC11235323_A	1.03	0.01	0.01	3.578	0.009	0.009	4840.0	200.0	200.0	-0.4	0.2	0.2	NA	NA	NA	NA	3.342	0.004	0.004	0.0	6.32932	1.11291	0.98361	1.0	RGB	NA	38.79657	NA	0.092224648	True	True	Benbakoura21	EB	3
 KIC5193386_A	1.39	0.03	0.03	4.49	0.05	0.05	4780.0	100.0	100.0	-0.36	0.06	0.06	NA	NA	NA	NA	3.274	0.004	0.004	0.0	9.48198	0.81981	0.79708	1.0	RGB	NA	44.373761	NA	0.101185923	True	True	Benbakoura21	EB	3
 KIC6307537_A	1.29	0.07	0.07	4.45	0.06	0.06	4960.0	240.0	240.0	0.0	0.4	0.4	NA	NA	NA	NA	3.25	0.01	0.01	0.0	10.79795	2.24867	1.96448	1.0	RGB	NA	53.657528	NA	0.082933377	True	True	Benbakoura21	EB	3

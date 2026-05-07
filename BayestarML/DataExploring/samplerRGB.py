@@ -79,4 +79,4 @@ plt.savefig("DataExploring/db_new_err_distsRGB.pdf")
 
 #consistency checks...
 df_L_check = df[df["L_from_SB"]==0]
-df_L_check["L_SB"] = 
+#df_L_check["L_SB"] = 
