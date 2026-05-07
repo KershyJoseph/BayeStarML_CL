@@ -146,14 +146,14 @@ def radius_train_GP(M_mean, M_var):
 def mass_train_NN(n_hidden, draw=1000, chains=4):
     """Function to train NN on mass prediction
     """
-    model = hbnn.HBNN_R4(x_train, mass_train, x_train_er, emass_train, n_hidden) #or R4 better?
+
+    model = hbnn.HBNN_M4(x_train, mass_train, x_train_er, emass_train, n_hidden)
 
     model.debug(verbose='True')
 
     trace = train(model,
                   "Outputs/NN_mass_M4_"+str(n_hidden)+"_nrns.nc",
                   draw=draw, chains=chains)
-    # trace = az.from_netcdf("Radius_output/GP_hetero_new_2026_mass_4param_gamma_etav_80_40.nc")
 
     # trace.extend(pm.compute_log_likelihood(trace, model=model, var_names='y'))
 
@@ -168,7 +168,7 @@ def mass_train_NN(n_hidden, draw=1000, chains=4):
     print("loo trace: ", az.loo(trace))
 
     pred, lpd = sample_post_pred_HBNN_para(trace, x_test, x_test_err, n_hidden, 4, "mass")
-    
+
     print("stdvs: ", pred.std(0))
     print("means: ", pred.mean(0))
     print("test set: ", unorm_mass)
@@ -204,7 +204,6 @@ def radius_train_NN(n_hidden, draw=1000, chains=4):
     trace = train(model,
                   "Outputs/NN_radius_M4_"+str(n_hidden)+"_nrns.nc",
                   draw=draw, chains=chains)
-    # trace = az.from_netcdf("Radius_output/GP_hetero_new_2026_mass_4param_gamma_etav_80_40.nc")
 
     # trace.extend(pm.compute_log_likelihood(trace, model=model, var_names='y'))
 
@@ -219,7 +218,7 @@ def radius_train_NN(n_hidden, draw=1000, chains=4):
     print("loo trace: ", az.loo(trace))
 
     pred, lpd = sample_post_pred_HBNN_para(trace, x_test, x_test_err, n_hidden, 4, "radius")
-    
+
     print("stdvs: ", pred.std(0))
     print("means: ", pred.mean(0))
     print("test set: ", unorm_radius)
@@ -254,7 +253,7 @@ if __name__ == '__main__':
     # radius_train_GP(60,60)
     mass_train_NN(15, 200, 2)
     #radius_train_NN(15, 200, 2)
-    
+
     #from Gemini
     snapshot = tracemalloc.take_snapshot()
     top_stats = snapshot.statistics('lineno')

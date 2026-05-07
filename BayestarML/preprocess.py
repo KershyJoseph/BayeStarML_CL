@@ -210,7 +210,6 @@ def return_train_test(df, normalised=True):
     x_test_error = pd.concat([eteff_test, elog_test, emet_test, elum_test],
                              axis=1)
 
-
     if normalised == True:
         return x_train, x_train_er, x_test, x_test_error, mass, emass, mass_test, emass_test, rad, erad, rad_test, erad_test
 
