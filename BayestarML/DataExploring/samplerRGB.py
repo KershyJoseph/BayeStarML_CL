@@ -28,7 +28,7 @@ df_err["percent_eM"] = 100 * df_err["eM1"] / df_all6_RGB["M"]
 df_err["percent_eR"] = 100 * df_err["eR1"] / df_all6_RGB["R"]
 df_err["percent_eTeff"] = 100 * df_err["eTeff1"] / df_all6_RGB["Teff"]
 #make mask
-err_mask = (df_err["percent_eL"]<=10000) #& (df_err["percent_eR"]<=25)# & (df_err["percent_eM"]<=7) & (df_err["eTeff1"]<=100) & (df_err["elogg1"]<=0.05) & (df_err["eFe/H1"]<=0.15)
+err_mask = (df_err["percent_eL"]<=50) #& (df_err["percent_eR"]<=25)# & (df_err["percent_eM"]<=7) & (df_err["eTeff1"]<=100) & (df_err["elogg1"]<=0.05) & (df_err["eFe/H1"]<=0.15)
 
 
 df_good_RGB = df_all6_RGB[err_mask]
@@ -40,7 +40,7 @@ df_good_RGB.to_csv("DataExploring/good_RGB.txt", index=False, na_rep="NA", sep="
 fig, ax = plt.subplots(2,3)
 
 ax[0,0].hist(df_good_errs["percent_eM"], bins='auto')
-ax[0,0].vlines(7,0,4200,linestyle='--',color='r',label="7%")
+ax[0,0].vlines(7,0,3200,linestyle='--',color='r',label="7%")
 ax[0,0].set_title("M")
 ax[0,0].set_ylabel("Number")
 ax[0,0].set_xlabel("% Error")
@@ -53,7 +53,7 @@ ax[0,1].set_xlabel("% Error")
 ax[0,1].legend()
 
 ax[0,2].hist(df_good_errs["percent_eL"], bins='auto')
-ax[0,2].vlines(10,0,3000,linestyle='--',color='r',label="10%")
+ax[0,2].vlines(10,0,1000,linestyle='--',color='r',label="10%")
 ax[0,2].set_title("L")
 ax[0,2].set_xlabel("% Error")
 ax[0,2].legend()
@@ -83,8 +83,23 @@ plt.savefig("DataExploring/db_new_err_distsRGB.pdf")
 #consistency checks...
 df_L_check = df[df["L_from_SB"]==0]
 df_L_check["L_SB"] = df["R"]**2 * (df["Teff"]/5772)**4
+
+R = df_L_check["R"]
+Teff = df_L_check["Teff"]
+
+df_L_check["L_SB_+err"] = np.sqrt(
+    (R**2*((Teff+df_L_check["eTeff1"])/5772)**4 - df_L_check["L_SB"])**2 
+    + ((R+df_L_check["eR1"])**2*(Teff/5772)**4 - df_L_check["L_SB"])**2 
+)
+df_L_check["L_SB_-err"] = np.sqrt(
+    (R**2*((Teff-df_L_check["eTeff2"])/5772)**4 - df_L_check["L_SB"])**2 
+    + ((R-df_L_check["eR2"])**2*(Teff/5772)**4 - df_L_check["L_SB"])**2 
+)
+
 plt.figure()
-plt.scatter(df_L_check["L"], df_L_check["L_SB"])
+yerr = np.array([df_L_check["L_SB_-err"], df_L_check["L_SB_+err"]])
+plt.errorbar(df_L_check["L"], df_L_check["L_SB"], yerr=yerr, fmt='o', ecolor='gray', alpha=0.5)
 plt.xlabel("L")
 plt.ylabel("L from SB")
+plt.plot([0, df_L_check["L"].max()], [0,df_L_check["L"].max()], linestyle='--', color='r')
 plt.show()

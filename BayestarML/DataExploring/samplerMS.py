@@ -28,14 +28,16 @@ df_err["percent_eL"] = 100 * df_err["eL1"] / df_all6_MS["L"]
 df_err["percent_eM"] = 100 * df_err["eM1"] / df_all6_MS["M"]
 df_err["percent_eR"] = 100 * df_err["eR1"] / df_all6_MS["R"]
 df_err["percent_eTeff"] = 100 * df_err["eTeff1"] / df_all6_MS["Teff"]
+df_err["percent_elogg"] = 100 * df_err["elogg1"] / df_all6_MS["logg"]
+df_err["percent_eFe/H"] = 100 * df_err["eFe/H1"] / df_all6_MS["Fe/H"] #some are /0!
 #make mask
-err_mask = (df_err["percent_eL"]<=50) #& (df_err["percent_eR"]<=25)# & (df_err["percent_eM"]<=7) & (df_err["eTeff1"]<=100) & (df_err["elogg1"]<=0.05) & (df_err["eFe/H1"]<=0.15)
+err_mask = (df_err["percent_eL"]<=50) & (df_err["percent_eR"]<=7) & (df_err["elogg1"]<=0.05) & (df_err["percent_eTeff"]<=5) & (df_err["eFe/H1"]<=0.2)
 
 
 df_good_MS = df_all6_MS[err_mask]
 print("All 6 MS, err cleaned: ", len(df_good_MS))
 df_good_errs = df_err[err_mask]
-df_good_MS.to_csv("DataExploring/good_MS.txt", index=False, na_rep="NA", sep="\t")
+df_good_MS.to_csv("DataExploring/strict_MS.txt", index=False, na_rep="NA", sep="\t")
 
 #see err dist
 fig, ax = plt.subplots(2,3)
@@ -59,23 +61,21 @@ ax[0,2].set_title("L")
 ax[0,2].set_xlabel("% Error")
 ax[0,2].legend()
 
-ax[1,0].hist(df_good_errs["eTeff1"], bins='auto')
-ax[1,0].vlines(100,0,220,linestyle='--',color='r',label="100K")
+ax[1,0].hist(df_good_errs["percent_eTeff"], bins='auto')
+#ax[1,0].vlines(100,0,220,linestyle='--',color='r',label="100K")
 ax[1,0].set_title("T$_{eff}$") #how to make not italic...
 ax[1,0].set_ylabel("Number")
-ax[1,0].set_xlabel("Error (K)")
-ax[1,0].set_xlim(0,500)
+ax[1,0].set_xlabel("% Error")
 ax[1,0].legend()
 
 ax[1,1].hist(df_good_errs["elogg1"], bins='auto')
-ax[1,1].vlines(0.05,0,220,linestyle='--',color='r',label="0.05dex")
+#ax[1,1].vlines(0.05,0,220,linestyle='--',color='r',label="0.05dex")
 ax[1,1].set_title("log(g)")
 ax[1,1].set_xlabel("Error (dex)")
-ax[1,1].set_xlim(0,0.2)
 ax[1,1].legend()
 
 ax[1,2].hist(df_good_errs["eFe/H1"], bins='auto')
-ax[1,2].vlines(.15,0,250,linestyle='--',color='r',label="0.15dex")
+#ax[1,2].vlines(.15,0,250,linestyle='--',color='r',label="0.15dex")
 ax[1,2].set_title("Fe/H")
 ax[1,2].set_xlabel("Error (dex)")
 ax[1,2].legend()

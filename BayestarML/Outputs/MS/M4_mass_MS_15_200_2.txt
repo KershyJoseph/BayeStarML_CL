@@ -1,0 +1,116 @@
+No problems found
+target_accept= 0.95
+Initializing NUTS using jitter+adapt_diag...
+Multiprocess sampling (2 chains in 2 jobs)
+NUTS: [Omega, X_latent, w_in_1, w_1_2, w_2_out, bias_1, bias_2, bias_out, er]
+6147.216185958254 4.159799683880455 -0.07536356736242884 4.770491973434535 1.2075066413662239 1.5825891840607211
+704.7574323340231 0.22772090060576824 0.21067821124083594 11.074047997501118 0.2785606684530734 0.523146732255257
+6147.216185958254 4.159799683880455 -0.07536356736242884 4.770491973434535 1.2075066413662239 1.5825891840607211
+704.7574323340231 0.22772090060576824 0.21067821124083594 11.074047997501118 0.2785606684530734 0.523146732255257
+
+  Progress                         Draws   Divergences   Step size   Grad evals   Sampling Speed   Elapsed   Remaining
+ ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━   400     0             0.01        1023         1.98 s/draws     0:13:08   0:00:00
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━   400     0             0.00        1023         1.97 s/draws     0:13:04   0:00:00
+
+Sampling 2 chains for 200 tune and 200 draw iterations (400 + 400 draws total) took 794 seconds.
+Chain 0 reached the maximum tree depth. Increase `max_treedepth`, increase `target_accept` or reparameterize.
+Chain 1 reached the maximum tree depth. Increase `max_treedepth`, increase `target_accept` or reparameterize.
+We recommend running at least 4 chains for robust computation of convergence diagnostics
+The rhat statistic is larger than 1.01 for some parameters. This indicates problems during sampling. See https://arxiv.org/abs/1903.08008 for details
+The effective sample size per chain is smaller than 100 for some parameters.  A higher number is needed for reliable rhat and ess computation. See https://arxiv.org/abs/1903.08008 for details
+Computing ... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/diagnostics.py:596: RuntimeWarning: invalid value encountered in scalar divide
+  (between_chain_variance / within_chain_variance + num_samples - 1) / (num_samples)
+rhats:  [('X_latent', 3.05285873453896), ('w_in_1', 2.153952552744304), ('w_1_2', 2.3020995326228015), ('w_2_out', 2.0412348895021464), ('bias_1', 2.2456135576828666), ('bias_2', 2.4213507376276104), ('bias_out', 1.2419404758740782), ('Omega', 1.754064590252226), ('er', 2.184185787990506), ('Omega_corr', 1.6445848507146352), ('Omega_stds', 1.7639786618138409), ('ann_input', 3.05285873453896), ('act_1', 2.518209167478894), ('act_2', 2.0844886879010827), ('act_out', 2.5254769343408747)]
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape parameter of Pareto distribution is greater than 0.62 for one or more samples. You should consider using a more robust model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are very different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+loo trace:  Computed from 400 posterior samples and 527 observations log-likelihood matrix.
+
+         Estimate       SE
+elpd_loo  -336.55    28.06
+p_loo      122.06        -
+
+There has been a warning during the calculation. Please check the results.
+------
+
+Pareto k diagnostic values:
+                         Count   Pct.
+(-Inf, 0.62]   (good)      523   99.2%
+   (0.62, 1]   (bad)         4    0.8%
+   (1, Inf)   (very bad)    0    0.0%
+
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape parameter of Pareto distribution is greater than 0.62 for one or more samples. You should consider using a more robust model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are very different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+starting parallel prediction on 32 worker(s)…
+6147.216185958254 4.159799683880455 -0.07536356736242884 4.770491973434535 1.2075066413662239 1.5825891840607211
+704.7574323340231 0.22772090060576824 0.21067821124083594 11.074047997501118 0.2785606684530734 0.523146732255257
+6147.216185958254 4.159799683880455 -0.07536356736242884 4.770491973434535 1.2075066413662239 1.5825891840607211
+704.7574323340231 0.22772090060576824 0.21067821124083594 11.074047997501118 0.2785606684530734 0.523146732255257
+finished chain 1/2
+finished chain 2/2
+stdvs:  [0.02864708 0.02881807 0.06630669 0.02579485 0.03008377 0.03008508
+ 0.02979116 0.02986546 0.02623518 0.03313128 0.05640324 0.02791503
+ 0.0343711  0.03932872 0.0316679  0.03384553 0.03171724 0.03425354
+ 0.03739253 0.03620003 0.03442543 0.03660045 0.03185834 0.0357096
+ 0.02963119 0.03575726 0.01676711 0.04199273 0.03234024 0.02922956
+ 0.03437549 0.02481167 0.04822459 0.02927202 0.03374205 0.17187192
+ 0.02530382 0.05065402 0.03007533 0.04374374 0.0765879  0.02908357
+ 0.02693955 0.03015059 0.02800941 0.03234059 0.02588159 0.02467818
+ 0.03886351 0.03721791 0.02830113 0.02752946 0.02607441 0.04931995
+ 0.03290196 0.044382   0.02868692 0.02697627 0.01763296 0.07763156
+ 0.23247701 0.01439917 0.03073468 0.0273915  0.04061154 0.04939498
+ 0.05260407 0.03058046 0.02669149 0.00926172 0.05081807 0.03017053
+ 0.02693489 0.04079962 0.02568461 0.03193582 0.03343996 0.02333039
+ 0.03090173 0.0252281  0.05083627 0.03862873 0.03128489 0.03430403
+ 0.02581378 0.03419602 0.03395138 0.02613912 0.03345726 0.04208646
+ 0.059377   0.02803387 0.02504744 0.02718776 0.02374614 0.02924213
+ 0.02208463 0.03784106 0.02710233 0.0326446  0.03288863 0.0281686
+ 0.02720965 0.03636807 0.04583051 0.02657797 0.03968712 0.03725343
+ 0.03361035 0.03392103 0.02769898 0.02447317 0.03062275 0.03068269
+ 0.04116401 0.03553619 0.03018846 0.03089432 0.02915532 0.09724485
+ 0.0607819  0.022275   0.0321626  0.04666834 0.02789078 0.03180095
+ 0.02963928 0.03077484 0.02806746 0.05594047 0.03545793 0.02960815]
+means:  [1.18691958 1.2922697  1.3327237  1.11896524 1.07355039 1.3087255
+ 1.21910557 1.28851847 1.14466631 1.18645181 0.45108218 1.18682195
+ 1.33231599 1.09492856 1.4271576  1.43523941 1.1821366  1.45432872
+ 1.22414577 1.29364764 1.26271324 1.30560787 1.35651127 1.44672533
+ 1.15236667 1.06388513 1.0758731  1.32410171 1.14761834 1.38719098
+ 1.12324303 1.16490184 0.93953382 1.36037244 1.21050588 1.9252552
+ 1.26311907 1.0516841  1.31970768 1.00893839 1.69082285 1.28314335
+ 1.23244718 1.18001851 1.09713936 1.1433261  1.14248126 1.07473179
+ 1.40172425 0.991992   1.15052381 1.16493443 1.28745034 1.21626273
+ 1.08760931 1.22875916 1.32839521 1.34139152 1.07962815 1.65775699
+ 2.09025302 1.20390948 1.17309181 1.20996127 1.30721544 1.5618398
+ 0.98851227 1.23875789 0.96719034 1.29305317 0.93221066 1.16256067
+ 1.23215119 1.02016185 1.23244136 1.28592305 1.08986037 1.36230945
+ 1.13911109 0.6558246  1.01894352 1.11042117 1.26939108 1.13398604
+ 1.21882004 1.42129167 1.33273276 1.24290079 1.22237331 1.17123306
+ 0.4709734  1.13019873 1.10596277 1.22306281 0.93129492 1.35561425
+ 1.29613801 1.05053824 1.34879458 1.22809876 1.22817435 1.29281728
+ 1.12493925 1.4710071  0.44098173 1.23743241 1.05493155 1.12794292
+ 1.12975379 1.1752272  1.09642482 1.19956367 1.28648299 1.3212633
+ 1.15744971 1.0063383  1.20087739 1.36965969 1.19751986 1.75354445
+ 0.88387457 0.82154154 1.19438408 0.37493055 0.90853633 1.44480349
+ 1.32707236 1.11669843 1.19742945 0.83617684 1.1692901  0.66097123]
+test set:  418    1.1630
+646    1.3900
+287    1.2510
+378    1.1590
+315    1.0750
+        ...
+527    0.4990
+398    1.1780
+153    0.9512
+319    1.1970
+156    0.7070
+Name: M, Length: 132, dtype: float64
+MAE:  0.0788333920963811
+MARD 7.262581373881942
+MRD -1.162109507878448
+[ Top 5 memory consumers ]
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/pytensor/link/c/cmodule.py:871: size=9471 KiB, count=113119, average=86 B
+<frozen importlib._bootstrap_external>:729: size=7816 KiB, count=64207, average=125 B
+<frozen abc>:123: size=5483 KiB, count=54778, average=102 B
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/linecache.py:137: size=5102 KiB, count=52041, average=100 B
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/pytensor/link/c/op.py:378: size=1661 KiB, count=1036, average=1642 B
