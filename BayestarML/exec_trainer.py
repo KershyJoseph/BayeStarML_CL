@@ -143,16 +143,23 @@ def radius_train_GP(M_mean, M_var):
     plt.legend()
     plt.savefig("Outputs/GP_radius_residuals.pdf")
 
-def mass_train_NN(n_hidden, draw=1000, chains=4):
+def mass_train_NN(M4=True, n_hidden, draw=1000, chains=4):
     """Function to train NN on mass prediction
     """
+    #for output info
+    string_specs = str(n_hidden)+"_"+str(draw)+"_"+str(chains)
 
-    model = hbnn.HBNN_M4(x_train, mass_train, x_train_er, emass_train, n_hidden)
-
-    model.debug(verbose='True')
-
-    trace = train(model,
-                  "Outputs/NN_mass_M4_"+str(n_hidden)+"_nrns.nc",
+    if M4:
+        model = hbnn.HBNN_M4(x_train, mass_train, x_train_er, emass_train, n_hidden)
+        model.debug(verbose=True)
+        trace = train(model,
+                  "Outputs/NN_mass_M4_"+string_specs+"_nrns.nc",
+                  draw=draw, chains=chains)
+    else:
+        model = hbnn.HBNN_R4(x_train, mass_train, x_train_er, emass_train, n_hidden)
+        model.debug(verbose=True)
+        trace = train(model,
+                  "Outputs/NN_mass_R4_"+string_specs+"_nrns.nc",
                   draw=draw, chains=chains)
 
     # trace.extend(pm.compute_log_likelihood(trace, model=model, var_names='y'))
@@ -186,7 +193,7 @@ def mass_train_NN(n_hidden, draw=1000, chains=4):
     plt.ylabel('Predicted Mass')
     plt.title('NN Predictions with Uncertainty')
     plt.legend()
-    plt.savefig("Outputs/NN_mass_predictions.pdf")
+    plt.savefig("Outputs/NN_mass_predictions_"+string_specs+".pdf")
 
     plt.figure(figsize=(8, 6))
     plt.errorbar(unorm_mass, pred.mean(0) - unorm_mass, yerr=pred.std(0), fmt='o', label='Predictions with Uncertainty', alpha=0.7)
@@ -194,7 +201,7 @@ def mass_train_NN(n_hidden, draw=1000, chains=4):
     plt.xlabel('True Mass')
     plt.ylabel('Residual Mass')
     plt.legend()
-    plt.savefig("Outputs/NN_mass_residuals.pdf")
+    plt.savefig("Outputs/NN_mass_residuals"+string_specs+".pdf")
 
 def radius_train_NN(n_hidden, draw=1000, chains=4): 
     """Function to train NN on radius prediction
@@ -251,7 +258,7 @@ if __name__ == '__main__':
     #pick which function(s) to run when file is run
     # mass_train_GP(60,60)
     # radius_train_GP(60,60)
-    mass_train_NN(15, 200, 2)
+    mass_train_NN(M4=False, 15, 200, 2)
     #radius_train_NN(15, 200, 2)
 
     #from Gemini
