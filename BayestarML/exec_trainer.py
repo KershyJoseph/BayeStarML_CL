@@ -9,7 +9,7 @@ Created on Tue Aug 12 10:50:13 2025
 from preprocess import return_train_test, prepare_pred4, denormalise_val, prepare_pred3
 from utils import get_dataset, train, mard, mrd
 from models import hbnn, bart, gp
-from pred_sampling import sample_post_pred_HBNN_para, posterior_predictive_GP
+from pred_sampling import sample_post_pred_HBNN_para, posterior_predictive_GP, SIMPLE_sample_post_pred_HBNN_para
 import arviz as az
 import numpy as np
 import pymc as pm
