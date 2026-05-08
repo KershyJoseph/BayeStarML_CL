@@ -435,6 +435,40 @@ def forward_pass(x_latent, w_in_1, b1, w_1_2, b2, w_2_out, b_out):
     # Final output (linear)
     return layer2 @ w_2_out + b_out
 
+def SIMPLE_forward_pass(x_latent, w_in_1, b1, w_1_out, b_out):
+    """
+    ***Edit for 1 layer with 5 nodes***
+
+    Two-layer ReLU network forward pass.
+
+    Applies two affine layers with ReLU activations and a final linear readout.
+
+    Parameters
+    ----------
+    x_latent : ndarray, shape (n_param,)
+        Latent input features.
+    w_in_1 : ndarray, shape (n_hidden, n_param)
+        First-layer weights.
+    b1 : ndarray, shape (n_hidden,)
+        First-layer biases.
+    w_1_out : ndarray, shape (n_hidden,)
+        Output weights.
+    b_out : float
+        Output bias.
+
+    Returns
+    -------
+    float
+        Network output for the given input.
+    """
+    # Layer 1 with ReLU
+    layer1 = x_latent @ w_in_1.T + b1
+    layer1 = np.maximum(layer1, 0)  
+    
+    # Final output (linear)
+    return layer1 @ w_1_out + b_out
+
+
 # def sample_post_pred_HBNN(trace, X, X_er, n_hidden, n_param, target):
 #     """
 #     Sequential posterior predictive sampling for a hierarchical Bayesian neural network (HBNN).
