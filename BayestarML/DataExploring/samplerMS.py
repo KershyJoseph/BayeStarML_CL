@@ -11,7 +11,7 @@ check_params = ["eM1", "eR1", "elogg1", "eL1", "eFe/H1", "eTeff1"]
 df_all6_MS = df[(df["class"]=="MS") & 
                 (df["well_detached"]!=False) &
                 (df[check_params].notna().all(axis=1)) &
-                ((df[check_params]!=0).all(axis=1))]
+                (df[check_params].gt(0).all(axis=1))]
 
 #file for MS stars with all 6 params and all binary systems well-detached
 df_all6_MS.to_csv("DataExploring/all6_MS.txt", index=False, na_rep="NA", sep="\t")

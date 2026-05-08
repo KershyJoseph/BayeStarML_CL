@@ -20,7 +20,7 @@ import tracemalloc
 
 tracemalloc.start() #for memory usage estimate
 
-df_train = get_dataset('DataExploring/good_MS.txt', 'MS')
+df_train = get_dataset('DataExploring/good_RGB.txt', 'MS')
 
 (x_train, x_train_er, x_test, x_test_err, mass_train, emass_train,
  mass_test, emass_test, rad_train, erad_train, rad_test, erad_test
@@ -201,7 +201,7 @@ def mass_train_NN(n_hidden=15, draw=1000, chains=4, M4=True):
     plt.xlabel('True Mass')
     plt.ylabel('Residual Mass')
     plt.legend()
-    plt.savefig("Outputs/NN_mass_residuals"+string_specs+".pdf")
+    plt.savefig("Outputs/NN_mass_residuals_"+string_specs+".pdf")
 
 def radius_train_NN(n_hidden, draw=1000, chains=4): 
     """Function to train NN on radius prediction
@@ -258,7 +258,7 @@ if __name__ == '__main__':
     #pick which function(s) to run when file is run
     # mass_train_GP(60,60)
     # radius_train_GP(60,60)
-    mass_train_NN(15, 200, 2, M4=False)
+    mass_train_NN(15, 200, 2)
     #radius_train_NN(15, 200, 2)
 
     #from Gemini
