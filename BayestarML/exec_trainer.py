@@ -306,13 +306,19 @@ if __name__ == '__main__':
 
     # mass_train_GP(60,60)
     # radius_train_GP(60,60)
-    mass_train_SIMPLE_NN(5, 50, 1)
-    #mass_train_NN(15, 1000, 4)
+    print("Start run - simple NN with 1000 draws and 4 chains")
+    mass_train_SIMPLE_NN(5, 1000, 4)
+    print("Start run - normal NN with higher target_accept")
+    mass_train_NN(15, 1000, 4, 0.99)
+    print("Start run - simple NN with higher target_accept")
+    mass_train_SIMPLE_NN(5, 1000, 4, 0.99)
+    print("Start run - smaller normal NN with 2000 draws")
+    mass_train_NN(3, 2000, 4)
     #radius_train_NN(15, 200, 2)
 
     #from Gemini
     snapshot2 = tracemalloc.take_snapshot()
     top_stats = snapshot2.compare_to(snapshot1, 'lineno')
-    print("[ Top 10 memory changes ]")
-    for stat in top_stats[:10]:
+    print("[ Top 40 memory changes ]")
+    for stat in top_stats[:40]:
         print(stat)
