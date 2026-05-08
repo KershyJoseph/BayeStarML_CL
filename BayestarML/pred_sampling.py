@@ -159,6 +159,72 @@ def _predict_one_chain(chain_idx,
 
     return draws, Y
 
+def _SIMPLE_predict_one_chain(chain_idx,
+                       n_draws,
+                       X, X_err,
+                       chol_draws,
+                       w_in_1_draws, b_1_draws,
+                       w_out_draws, b_out_draws,
+                       n_param):
+    """
+    Generate posterior predictive draws for one chain of the HBNN.
+
+    For each draw in the chain, samples latent inputs given observed
+    features and their errors, then applies the neural network forward pass
+    to obtain predictions for all test points.
+
+    Parameters
+    ----------
+    chain_idx : int
+        Index of the chain to process.
+    n_draws : int
+        Number of posterior draws per chain.
+    X : ndarray, shape (N_test, n_param)
+        Test inputs (observed).
+    X_err : ndarray, shape (N_test, n_param)
+        Measurement uncertainties for test inputs.
+    chol_draws : ndarray, shape (S, L)
+        Draws of flattened Cholesky factors of the prior covariance.
+    w_in_1_draws, b_1_draws, w_1_2_draws, b_2_draws, w_out_draws, b_out_draws : ndarrays
+        Draws of network weights and biases matching model shapes.
+    n_param : int
+        Input dimensionality.
+
+    Returns
+    -------
+    idx_slice : slice
+        Slice into the global draws axis corresponding to this chain.
+    Y_row : ndarray, shape (n_draws, N_test)
+        Posterior predictive samples for the chain.
+    """
+    start = chain_idx * n_draws
+    stop  = start + n_draws
+    draws = slice(start, stop)
+
+    Y = np.empty((n_draws, X.shape[0]), dtype=float)
+
+    s_local = 0
+    for s_idx in range(start, stop):
+
+        # pull parameters for draw s_idx 
+        chol_s   = chol_draws[s_idx]
+        w1, b1   = w_in_1_draws[s_idx],  b_1_draws[s_idx]
+        w_out    = w_out_draws[s_idx]
+        b_out    = b_out_draws[s_idx]
+
+        # latent + forward for every test star
+        for i in range(X.shape[0]):
+            x_lat = sample_latent_given_obs(
+                X[i], X_err[i], chol_s, n_param
+            )
+            Y[s_local, i] = forward_pass(
+                x_lat, w1, b1, w_out, b_out
+            )
+
+        s_local += 1
+
+    return draws, Y
+
 
 def sample_post_pred_HBNN_para(trace, X, X_er, n_hidden, n_param, target,
                           n_jobs=None):
@@ -307,7 +373,7 @@ def SIMPLE_sample_post_pred_HBNN_para(trace, X, X_er, n_hidden, n_param, target,
         n_jobs = os.cpu_count()
 
     worker = partial(
-        _predict_one_chain,
+        _SIMPLE_predict_one_chain,
         n_draws=n_draws,
         X=X_test,
         X_err=X_test_err,
