@@ -37,9 +37,9 @@ def HBNN_M3(X_train, Y, X_error, Y_error, n_hidden):
     pm.Model
         PyMC model representing the hierarchical Bayesian neural network.
     """
-    
+
     with pm.Model() as neural_network:
-        
+
         # Data containers
         # X_data = pm.MutableData('X_data', X_train.values) 
         # sig_X = pm.MutableData('X_data_er', X_error.values)
@@ -52,7 +52,7 @@ def HBNN_M3(X_train, Y, X_error, Y_error, n_hidden):
             sd_dist=pm.HalfNormal.dist(1), 
             compute_corr=True,
         )
-        
+
         # Latent variables
         X_latent = pm.MvNormal(
             'X_latent', 
@@ -60,7 +60,7 @@ def HBNN_M3(X_train, Y, X_error, Y_error, n_hidden):
             chol=chol,
             shape=(X_train.shape[0], 3)
         )
-        
+
         # Observation model
         pm.Normal(
             "X_obs",
@@ -68,34 +68,28 @@ def HBNN_M3(X_train, Y, X_error, Y_error, n_hidden):
             sigma=X_error,
             observed=X_train
         )
-        
-        
+
         ann_input = pm.Deterministic('ann_input', X_latent)
         
         ann_output = pm.Data("ann_output" , Y)
-        
 
         # Weights from input to hidden layer
         weights_in_1 = pm.Normal(
             "w_in_1", 0, sigma=0.1, shape=(n_hidden, X_latent.eval().shape[1])
         )
 
-        
         weights_1_2 = pm.Normal(
             "w_1_2", 0, sigma=0.1, shape=(n_hidden,n_hidden)
         )
 
-
         # Weights from hidden layer to output
         weights_2_out = pm.Normal("w_2_out", 0, sigma=0.1, shape=(n_hidden))
 
-        
         bias_1 = pm.Normal("bias_1", 0, sigma=1, shape=n_hidden)
-        
-        bias_2 = pm.Normal("bias_2", 0, sigma=1, shape=n_hidden)
-        
-        bias_out = pm.Normal("bias_out", 0, sigma=1)
 
+        bias_2 = pm.Normal("bias_2", 0, sigma=1, shape=n_hidden)
+
+        bias_out = pm.Normal("bias_out", 0, sigma=1)
 
         act_1 = pm.Deterministic('act_1', 
             pm.math.switch(pm.math.dot(ann_input, weights_in_1.T) + bias_1 > 0, 
@@ -221,6 +215,105 @@ def HBNN_M4(X_train, Y, X_error, Y_error, n_hidden):
                           0.01*(pm.math.dot(act_1, weights_1_2) + bias_2)))
         
         act_out = pm.Deterministic('act_out' , pm.math.dot(act_2, weights_2_out) + bias_out)
+        
+        er = pm.HalfCauchy('er', beta=1)
+
+        out = pm.StudentT(
+            "y",
+            nu=5,
+            mu=act_out,
+            sigma=er,
+            observed=ann_output,
+            shape=X_train.shape[0], 
+        )
+
+    return neural_network
+
+def HBNN_M4_simpler(X_train, Y, X_error, Y_error, n_hidden=5):
+    """
+    ***Edit to only have one layer of 5 nodes***
+
+    Construct a 4-input hierarchical Bayesian neural network with correlated latent inputs.
+
+    Similar to `HBNN_M3`, but extended to four input variables. Latent inputs are 
+    drawn from a multivariate normal with an LKJCholeskyCov prior, capturing correlations 
+    between features. The neural network uses two hidden layers with LeakyReLU activations and a Student-t output likelihood for robustness to outliers.
+
+    Parameters
+    ----------
+    X_train : pandas.DataFrame
+        Training inputs with 4 features.
+    Y : array-like
+        Observed target values.
+    X_error : array-like
+        Measurement uncertainties for each input feature.
+    Y_error : array-like
+        Measurement uncertainty for the target variable (not directly used).
+    n_hidden : int
+        Number of neurons in each hidden layer.
+
+    Returns
+    -------
+    pm.Model
+        PyMC model defining the 4-input hierarchical Bayesian neural network.
+    """
+    
+    with pm.Model() as neural_network:
+
+        # X_data = pm.MutableData('X_data', X_train.values)  # Ensure numpy array
+        # sig_X = pm.MutableData('X_data_er', X_error.values)
+        
+        # Fixed LKJCholeskyCov specification
+        chol, corr, sigmas = pm.LKJCholeskyCov(
+            'Omega', 
+            n=4, 
+            eta=2,  
+            sd_dist=pm.HalfNormal.dist(1),  # Simpler prior
+            compute_corr=True,
+            #initval=Low_tri
+        )
+        
+        # Latent variables
+        X_latent = pm.MvNormal(
+            'X_latent', 
+            mu=np.zeros(4),
+            chol=chol,
+            shape=(X_train.shape[0], 4)
+        )
+        
+        # Observation model
+        pm.Normal(
+            "X_obs",
+            mu=X_latent,
+            sigma=X_error,
+            observed=X_train
+        )
+
+        ann_input = pm.Deterministic('ann_input', X_latent)
+
+        ann_output = pm.Data("ann_output" , Y) #, dims="obs_id")
+
+        # Weights from input to hidden layer
+        weights_in_1 = pm.Normal(
+            "w_in_1", 0, sigma=0.1, shape=(n_hidden, X_latent.eval().shape[1])
+        )
+
+        # Weights from hidden layer to output
+        weights_1_out = pm.Normal("w_1_out", 0, sigma=0.1, shape=(n_hidden))
+
+        
+        bias_1 = pm.Normal("bias_1", 0, sigma=1, shape=n_hidden)
+
+        bias_out = pm.Normal("bias_out", 0, sigma=1)
+
+
+        act_1 = pm.Deterministic('act_1', 
+            pm.math.switch(pm.math.dot(ann_input, weights_in_1.T) + bias_1 > 0, 
+                           pm.math.dot(ann_input, weights_in_1.T) + bias_1, 
+                           0.01 * (pm.math.dot(ann_input, weights_in_1.T) + bias_1))
+        )
+
+        act_out = pm.Deterministic('act_out' , pm.math.dot(act_1, weights_1_out) + bias_out)
         
         er = pm.HalfCauchy('er', beta=1)
 
