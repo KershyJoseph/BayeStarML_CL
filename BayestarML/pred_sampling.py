@@ -217,7 +217,7 @@ def _SIMPLE_predict_one_chain(chain_idx,
             x_lat = sample_latent_given_obs(
                 X[i], X_err[i], chol_s, n_param
             )
-            Y[s_local, i] = forward_pass(
+            Y[s_local, i] = SIMPLE_forward_pass(
                 x_lat, w1, b1, w_out, b_out
             )
 

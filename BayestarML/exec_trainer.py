@@ -144,8 +144,10 @@ def radius_train_GP(M_mean, M_var):
     plt.legend()
     plt.savefig("Outputs/GP_radius_residuals.pdf")
 
-def mass_train_NN(n_hidden=15, draw=1000, chains=4):
-    """Function to train NN on mass prediction
+def mass_train_SIMPLE_NN(n_hidden=15, draw=1000, chains=4, target_accept=.95):
+    """
+    ***Edit to only have one layer of 5 nodes***
+    Function to train NN on mass prediction
     """
     #for output info
     string_specs = "_goodMS_"+str(n_hidden)+"_"+str(draw)+"_"+str(chains)
@@ -154,7 +156,7 @@ def mass_train_NN(n_hidden=15, draw=1000, chains=4):
     model.debug(verbose=True)
     trace = train(model,
                   "Outputs/MS/NN_mass_M4simpler"+string_specs+"_nrns.nc",
-                  draw=draw, chains=chains, cores=chains)
+                  draw=draw, chains=chains, cores=chains, target_accept=target_accept)
 
     r_hat_values = az.rhat(trace)
     all_rhats = []
@@ -194,6 +196,57 @@ def mass_train_NN(n_hidden=15, draw=1000, chains=4):
     plt.ylabel('Residual Mass')
     plt.legend()
     plt.savefig("Outputs/MS/M4NNsimpler_mass_residuals"+string_specs+".pdf")
+
+def mass_train_NN(n_hidden=15, draw=1000, chains=4, target_accept=.95):
+    """Function to train NN on mass prediction
+    """
+    #for output info
+    string_specs = "_goodMS_"+str(n_hidden)+"_"+str(draw)+"_"+str(chains)
+
+    model = hbnn.HBNN_M4(x_train, mass_train, x_train_er, emass_train, n_hidden)
+    model.debug(verbose=True)
+    trace = train(model,
+                  "Outputs/MS/NN_mass_M4"+string_specs+"_nrns.nc",
+                  draw=draw, chains=chains, cores=chains, target_accept=target_accept)
+
+    r_hat_values = az.rhat(trace)
+    all_rhats = []
+    for var in r_hat_values.data_vars:
+        max_rhat = r_hat_values[var].max().values.item()
+        all_rhats.append((var, max_rhat))
+
+    print("rhats: ", all_rhats)
+
+    print("loo trace: ", az.loo(trace))
+
+    pred, lpd = sample_post_pred_HBNN_para(trace, x_test, x_test_err, n_hidden, 4, "mass")
+
+    print("stdvs: ", pred.std(0))
+    print("means: ", pred.mean(0))
+    print("test set: ", unorm_mass)
+
+    print('MAE: ', mean_absolute_error(unorm_mass, pred.mean(0)))
+
+    print('MARD', mard(unorm_mass, pred.mean(0)))
+
+    print('MRD', mrd(unorm_mass, pred.mean(0)))
+
+    plt.figure(figsize=(8, 6))
+    plt.errorbar(unorm_mass, pred.mean(0), yerr=pred.std(0), fmt='o', label='Predictions with Uncertainty', alpha=0.7)
+    plt.plot([unorm_mass.min(), unorm_mass.max()], [unorm_mass.min(), unorm_mass.max()], 'r--')
+    plt.xlabel('True Mass')
+    plt.ylabel('Predicted Mass')
+    plt.title('NN Predictions with Uncertainty')
+    plt.legend()
+    plt.savefig("Outputs/MS/M4NN_mass_predictions"+string_specs+".pdf")
+
+    plt.figure(figsize=(8, 6))
+    plt.errorbar(unorm_mass, pred.mean(0) - unorm_mass, yerr=pred.std(0), fmt='o', label='Predictions with Uncertainty', alpha=0.7)
+    plt.hlines(0, unorm_mass.min(), unorm_mass.max(), 'r', linestyle='--')
+    plt.xlabel('True Mass')
+    plt.ylabel('Residual Mass')
+    plt.legend()
+    plt.savefig("Outputs/MS/M4NN_mass_residuals"+string_specs+".pdf")
 
 def radius_train_NN(n_hidden, draw=1000, chains=4): 
     """Function to train NN on radius prediction
@@ -253,7 +306,8 @@ if __name__ == '__main__':
 
     # mass_train_GP(60,60)
     # radius_train_GP(60,60)
-    mass_train_NN(5, 100, 2)
+    mass_train_SIMPLE_NN(5, 50, 1)
+    #mass_train_NN(15, 1000, 4)
     #radius_train_NN(15, 200, 2)
 
     #from Gemini
