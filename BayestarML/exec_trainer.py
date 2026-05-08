@@ -20,7 +20,7 @@ import tracemalloc
 
 tracemalloc.start() #for memory usage estimate
 
-df_train = get_dataset('DataExploring/good_RGB.txt', 'MS')
+df_train = get_dataset('DataExploring/good_MS.txt', 'MS')
 
 (x_train, x_train_er, x_test, x_test_err, mass_train, emass_train,
  mass_test, emass_test, rad_train, erad_train, rad_test, erad_test
