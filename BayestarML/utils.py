@@ -66,7 +66,7 @@ def find_pointwise_loo(trace):
     return az.loo(trace, pointwise=True, scale="log").loo_i.values
 
 
-def train(model, filename, draw=1000, chains=2, target_accept=0.95):
+def train(model, filename, draw=1000, chains=2, cores=None, target_accept=0.95):
     """
     Sample from a PyMC model and save the posterior trace.
 
@@ -92,7 +92,7 @@ def train(model, filename, draw=1000, chains=2, target_accept=0.95):
         Posterior samples with computed log-likelihoods.
     """
     print('target_accept=', target_accept)
-    trace = pm.sample(draws=draw, tune=draw, chains=chains, model=model,
+    trace = pm.sample(draws=draw, tune=draw, chains=chains, cores=cores model=model,
                       target_accept=target_accept)
     trace.extend(pm.compute_log_likelihood(trace, model=model, var_names='y'))
     trace.to_netcdf(filename)

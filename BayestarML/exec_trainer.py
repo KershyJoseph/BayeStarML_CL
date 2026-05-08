@@ -154,7 +154,7 @@ def mass_train_NN(n_hidden=15, draw=1000, chains=4):
     model.debug(verbose=True)
     trace = train(model,
                   "Outputs/MS/NN_mass_M4"+string_specs+"_nrns.nc",
-                  draw=draw, chains=chains)
+                  draw=draw, chains=chains, cores=chains)
 
     r_hat_values = az.rhat(trace)
     all_rhats = []
@@ -253,7 +253,7 @@ if __name__ == '__main__':
 
     # mass_train_GP(60,60)
     # radius_train_GP(60,60)
-    mass_train_NN(15, 2000, 5)
+    mass_train_NN(15, 1000, 4)
     #radius_train_NN(15, 200, 2)
 
     #from Gemini
