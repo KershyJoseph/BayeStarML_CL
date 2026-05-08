@@ -246,6 +246,89 @@ def sample_post_pred_HBNN_para(trace, X, X_er, n_hidden, n_param, target,
     return denormalise_val(predictions, target), lpd_HBNN
 
 
+def SIMPLE_sample_post_pred_HBNN_para(trace, X, X_er, n_hidden=5, n_param, target,
+                          n_jobs=None):
+    """
+    ***Edit for 1 layer with 5 nodes***
+
+    Parallel posterior predictive for HBNN with latent-input sampling.
+
+    Extracts weight/bias and covariance draws from an ArviZ trace, samples latent
+    inputs given test observations and their errors, and computes posterior predictive
+    draws in parallel across chains. Returns denormalized mean, std, and HDI bounds,
+    along with pointwise LOO scores.
+
+    Parameters
+    ----------
+    trace : arviz.InferenceData
+        Posterior samples for the HBNN model.
+    X : array-like, shape (N_test, n_param)
+        Test inputs (observed).
+    X_er : array-like, shape (N_test, n_param)
+        Test input measurement uncertainties.
+    n_hidden : int
+        Hidden layer width (for reshaping network draws).
+    n_param : int
+        Input dimensionality (e.g., 3 or 4).
+    target : Any
+        Denormalization context used by `denormalise_val/err`.
+    n_jobs : int, optional
+        Number of worker processes; defaults to available CPUs.
+
+    Returns
+    -------
+    tuple
+        (y_draws, lpd_HBNN)
+        - denormalised y_draws : ndarray, shape (nb of posterior predictive draws, N_test)
+        - lpd_HBNN : ndarray
+            Pointwise LOO log predictive densities for the model.
+    """
+    lpd_HBNN = find_pointwise_loo(trace)
+    n_chol   = 10 if n_param == 4 else 6
+
+    posterior  = trace.posterior
+    n_chains   = posterior.sizes["chain"]
+    n_draws    = posterior.sizes["draw"]
+    S          = n_chains * n_draws
+
+    X_test     = np.asarray(X,     float)
+    X_test_err = np.asarray(X_er,  float)
+    N_test     = X_test.shape[0]
+
+    chol_draws   = np.asarray(posterior["Omega"]).reshape(S, n_chol)
+    w_in_1_draws = np.asarray(posterior["w_in_1"]).reshape(S, n_hidden, n_param)
+    b_1_draws    = np.asarray(posterior["bias_1"]).reshape(S, n_hidden)
+    w_out_draws  = np.asarray(posterior["w_1_out"]).reshape(S, n_hidden)
+    b_out_draws  = np.asarray(posterior["bias_out"]).reshape(S)
+
+    predictions = np.empty((S, N_test), dtype=float)
+
+    if n_jobs is None:
+        n_jobs = os.cpu_count()
+
+    worker = partial(
+        _predict_one_chain,
+        n_draws=n_draws,
+        X=X_test,
+        X_err=X_test_err,
+        chol_draws=chol_draws,
+        w_in_1_draws=w_in_1_draws, b_1_draws=b_1_draws,
+        w_out_draws=w_out_draws, b_out_draws=b_out_draws,
+        n_param=n_param
+    )
+
+    print(f"starting parallel prediction on {n_jobs} worker(s)…")
+    with ProcessPoolExecutor(max_workers=n_jobs) as ex:
+        futures = {ex.submit(worker, c): c for c in range(n_chains)}
+
+        for fut in as_completed(futures):
+            chain_done = futures[fut]                  # chain index
+            idx_slice, Y = fut.result()                # fill results
+            predictions[idx_slice] = Y
+            print(f"finished chain {chain_done+1}/{n_chains}")
+
+    return denormalise_val(predictions, target), lpd_HBNN
+
 
 def forward_pass(x_latent, w_in_1, b1, w_1_2, b2, w_2_out, b_out):
     """
