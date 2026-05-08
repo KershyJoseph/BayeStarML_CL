@@ -166,7 +166,7 @@ def mass_train_NN(n_hidden=15, draw=1000, chains=4):
 
     print("loo trace: ", az.loo(trace))
 
-    pred, lpd = sample_post_pred_HBNN_para(trace, x_test, x_test_err, n_hidden, 4, "mass")
+    pred, lpd = SIMPLE_sample_post_pred_HBNN_para(trace, x_test, x_test_err, n_hidden, 4, "mass")
 
     print("stdvs: ", pred.std(0))
     print("means: ", pred.mean(0))
