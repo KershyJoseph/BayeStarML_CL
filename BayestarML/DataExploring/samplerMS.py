@@ -31,14 +31,14 @@ df_err["percent_eTeff"] = 100 * df_err["eTeff1"] / df_all6_MS["Teff"]
 df_err["percent_elogg"] = 100 * df_err["elogg1"] / df_all6_MS["logg"]
 df_err["percent_eFe/H"] = 100 * df_err["eFe/H1"] / df_all6_MS["Fe/H"] #some are /0!
 #make mask
-err_mask = (df_err["percent_eL"]<=50) & (df_err["percent_eR"]<=7) & (df_err["elogg1"]<=0.05) & (df_err["percent_eTeff"]<=5) & (df_err["eFe/H1"]<=0.2)
-
+err_mask = (df_err["percent_eL"]<=50)# & (df_err["percent_eR"]<=7) & (df_err["elogg1"]<=0.05) & (df_err["percent_eTeff"]<=5) & (df_err["eFe/H1"]<=0.2)
 
 df_good_MS = df_all6_MS[err_mask]
 print("All 6 MS, err cleaned: ", len(df_good_MS))
 df_good_errs = df_err[err_mask]
-df_good_MS.to_csv("DataExploring/strict_MS.txt", index=False, na_rep="NA", sep="\t")
+df_good_MS.to_csv("DataExploring/good_MS.txt", index=False, na_rep="NA", sep="\t")
 
+#------------------------------
 #see err dist
 fig, ax = plt.subplots(2,3)
 
@@ -91,3 +91,14 @@ def make_MS_sample(N):
 
     df_MS_sample.to_csv("DataExploring/MS_sample_"+str(len(df_MS_sample))+".txt",
                         index=False, na_rep="NA", sep="\t")
+
+def diagnostics(df):
+    print("Old stars: ", len(df[(df["database"]==1)]))
+
+    print("New stars: ", len(df[(df["database"]!=1)]), "out of ", len(df))
+
+    print("New range stars: ", len(df[(df["M"]<=0.8) | (df["M"]>=1.4)]), "out of ", len(df))
+
+    print("New stars AND new range stars: ", len(df[((df["M"]<=0.8) | (df["M"]>=1.4)) & (df["database"]!=1)]), "out of ", len(df))
+
+diagnostics(df_good_MS)

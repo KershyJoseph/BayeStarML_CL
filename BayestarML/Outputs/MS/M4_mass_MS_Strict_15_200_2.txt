@@ -1,0 +1,112 @@
+No problems found
+target_accept= 0.95
+Initializing NUTS using jitter+adapt_diag...
+Multiprocess sampling (2 chains in 2 jobs)
+NUTS: [Omega, X_latent, w_in_1, w_1_2, w_2_out, bias_1, bias_2, bias_out, er]
+6192.514082073434 4.135552921773218 -0.055759827213822895 4.991396047516199 1.2305742980561551 1.6306114470842332
+585.4248610221257 0.20573553364565889 0.21008735122897418 11.867265997542255 0.24452366655985802 0.4896062006617316
+6192.514082073434 4.135552921773218 -0.055759827213822895 4.991396047516199 1.2305742980561551 1.6306114470842332
+585.4248610221257 0.20573553364565889 0.21008735122897418 11.867265997542255 0.24452366655985802 0.4896062006617316
+
+  Progress                         Draws   Divergences   Step size   Grad evals   Sampling Speed   Elapsed   Remaining
+ ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━   400     0             0.01        1023         1.99 s/draws     0:13:14   0:00:00
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━   400     0             0.01        1023         1.94 s/draws     0:12:53   0:00:00
+
+Sampling 2 chains for 200 tune and 200 draw iterations (400 + 400 draws total) took 801 seconds.
+Chain 0 reached the maximum tree depth. Increase `max_treedepth`, increase `target_accept` or reparameterize.
+Chain 1 reached the maximum tree depth. Increase `max_treedepth`, increase `target_accept` or reparameterize.
+We recommend running at least 4 chains for robust computation of convergence diagnostics
+The rhat statistic is larger than 1.01 for some parameters. This indicates problems during sampling. See https://arxiv.org/abs/1903.08008 for details
+The effective sample size per chain is smaller than 100 for some parameters.  A higher number is needed for reliable rhat and ess computation. See https://arxiv.org/abs/1903.08008 for details
+Computing ... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/diagnostics.py:596: RuntimeWarning: invalid value encountered in scalar divide
+  (between_chain_variance / within_chain_variance + num_samples - 1) / (num_samples)
+rhats:  [('X_latent', 2.609548170373006), ('w_in_1', 1.87085554644418), ('w_1_2', 2.37362985701041), ('w_2_out', 2.1985456691564873), ('bias_1', 2.3575403060010602), ('bias_2', 2.3565900100128436), ('bias_out', 1.5616696371914487), ('Omega', 1.9668185439182608), ('er', 2.2120602563812786), ('Omega_corr', 1.3135640454761734), ('Omega_stds', 1.9770651274138173), ('ann_input', 2.609548170373006), ('act_1', 2.34350406627991), ('act_2', 2.223543449132321), ('act_out', 2.234845545500249)]
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape parameter of Pareto distribution is greater than 0.62 for one or more samples. You should consider using a more robust model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are very different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+loo trace:  Computed from 400 posterior samples and 463 observations log-likelihood matrix.
+
+         Estimate       SE
+elpd_loo  -230.06    24.44
+p_loo      165.41        -
+
+There has been a warning during the calculation. Please check the results.
+------
+
+Pareto k diagnostic values:
+                         Count   Pct.
+(-Inf, 0.62]   (good)      427   92.2%
+   (0.62, 1]   (bad)        35    7.6%
+   (1, Inf)   (very bad)    1    0.2%
+
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape parameter of Pareto distribution is greater than 0.62 for one or more samples. You should consider using a more robust model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are very different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+starting parallel prediction on 32 worker(s)…
+6192.514082073434 4.135552921773218 -0.055759827213822895 4.991396047516199 1.2305742980561551 1.6306114470842332
+6192.514082073434 4.135552921773218 -0.055759827213822895 4.991396047516199 1.2305742980561551 1.6306114470842332
+585.4248610221257 0.20573553364565889 0.21008735122897418 11.867265997542255 0.24452366655985802 0.4896062006617316
+585.4248610221257 0.20573553364565889 0.21008735122897418 11.867265997542255 0.24452366655985802 0.4896062006617316
+finished chain 1/2
+finished chain 2/2
+stdvs:  [0.04486793 0.02491093 0.036654   0.03611317 0.03999364 0.04587909
+ 0.03662406 0.04074618 0.03725946 0.02644812 0.03527646 0.03685079
+ 0.03364015 0.0341325  0.0341135  0.03872916 0.03705972 0.01460598
+ 0.03784491 0.06453264 0.07486786 0.02404505 0.03759028 0.04616119
+ 0.04068725 0.02644175 0.04403004 0.06014626 0.03577901 0.02971623
+ 0.01747339 0.03208839 0.04770038 0.04462733 0.04309155 0.04233272
+ 0.051436   0.04207856 0.03591309 0.05217081 0.03760697 0.03737166
+ 0.01426232 0.0203722  0.02916477 0.03029725 0.03542621 0.03852172
+ 0.04513357 0.04760111 0.03922415 0.01975526 0.04128271 0.05334288
+ 0.03584011 0.0252666  0.03256181 0.03422859 0.03468313 0.04410499
+ 0.04017628 0.03261339 0.0424111  0.02246283 0.03999064 0.03518082
+ 0.03995965 0.03046437 0.06823204 0.03071876 0.03770604 0.04311877
+ 0.04193702 0.03405197 0.0460506  0.04289275 0.04628945 0.04556457
+ 0.02237398 0.044838   0.04560753 0.03542376 0.04934687 0.03244743
+ 0.02992489 0.03979131 0.03111637 0.03559809 0.03697073 0.04535515
+ 0.07727453 0.0450135  0.04795012 0.04103562 0.05207849 0.21368115
+ 0.04019086 0.036024   0.03685045 0.03541919 0.03655514 0.03000481
+ 0.05028551 0.02966774 0.0479544  0.04620882 0.04276388 0.02865212
+ 0.04418984 0.04405535 0.03865543 0.03692181 0.04134139 0.02447606
+ 0.01791328 0.0411495 ]
+means:  [1.67220586 1.09533822 1.19930303 1.17595747 1.37097385 1.21990301
+ 0.93026761 1.26772853 1.3114732  0.93678704 1.09030114 1.18919153
+ 1.02873901 1.02450619 1.12834655 1.21155649 1.12875228 1.18592339
+ 1.17110817 0.55101272 1.7219991  1.3391499  1.41245995 1.34275449
+ 1.27485453 1.14001978 0.84822835 0.56330215 1.25060487 0.85741382
+ 1.34251132 1.1426267  1.10350366 1.20544481 1.22534186 1.31916359
+ 1.42117249 1.03877363 1.45058445 1.00695584 1.21226455 1.23173491
+ 1.04960396 1.06040952 1.23668849 1.14298834 1.29437869 1.352125
+ 1.18021749 1.23863079 1.10607993 0.95813435 1.23930293 1.24944758
+ 1.22368767 0.90932185 1.10739198 1.24721255 1.63754629 1.35155205
+ 1.07065535 1.32998766 1.40901328 1.23837492 1.4032473  1.18088754
+ 1.4622595  1.1365091  0.54075472 0.7425651  1.25799132 1.14116319
+ 1.44259764 1.30758028 1.04533442 1.19431552 1.28758636 1.31109243
+ 0.91213864 1.37195662 1.38319167 1.22285395 1.41694559 1.13189891
+ 0.85025671 1.10423995 1.1851879  1.06512023 1.21607433 1.31604967
+ 1.32077658 1.25152794 1.26466238 1.43419415 0.94861287 2.32354887
+ 1.16308866 1.22444766 1.40121821 1.12752365 1.10747815 0.79617154
+ 1.44882593 0.70980439 1.48471725 1.33408961 1.18098933 0.99472045
+ 1.40778909 1.36247767 1.266624   1.1965434  1.33650178 0.93910284
+ 1.01956631 1.04483561]
+test set:  515    1.741
+503    1.090
+317    1.135
+309    1.132
+325    1.418
+       ...
+419    1.186
+13     1.370
+504    0.960
+465    1.057
+14     0.920
+Name: M, Length: 116, dtype: float64
+MAE:  0.06688568591061096
+MARD 7.829024993796276
+MRD -3.21129744225227
+[ Top 5 memory consumers ]
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/pytensor/link/c/cmodule.py:871: size=9698 KiB, count=116840, average=85 B
+<frozen importlib._bootstrap_external>:729: size=7816 KiB, count=64206, average=125 B
+<frozen abc>:123: size=5483 KiB, count=54778, average=102 B
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/linecache.py:137: size=5101 KiB, count=52034, average=100 B
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/pytensor/link/c/op.py:378: size=1626 KiB, count=1014, average=1642 B

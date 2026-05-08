@@ -1,3 +1,12 @@
+#Strict error filter version of good_MS.txt
+#------------------------------------------------------------------
+#err_mask = (df_err["percent_eL"]<=50) & (df_err["percent_eR"]<=7) & (df_err["elogg1"]<=0.05) & (df_err["percent_eTeff"]<=5) & (df_err["eFe/H1"]<=0.2)
+#------------------------------------------------------------------
+#Old stars:  423
+#New stars:  156 out of  579
+#New range stars:  129 out of  579
+#New stars AND new range stars:  40 out of  579
+#------------------------------------------------------------------
 ID	M	eM1	eM2	R	eR1	eR2	Teff	eTeff1	eTeff2	Fe/H	eFe/H1	eFe/H2	Ref	M/H	eM/H1	eM/H2	logg	elogg1	elogg2	logg_from_M,R	L	eL1	eL2	L_from_SB	class	type	orbit_a(Rsol)	eOrbit_a	R/a	detached	well_detached	source	mode	database
 mu._Cas_A	0.744	0.0122	0.0122	0.789	0.008	0.008	5306.0	31.0	31.0	-0.81	0.03	0.03	NA	NA	NA	NA	4.515	0.011	0.011	0.0	0.445	0.005	0.005	0.0	MS	G5	1618.56	NA	0.00048747	True	True	Bond20	EB	3
 KIC7037405_B	1.11	0.011	0.011	1.746	0.014	0.014	6094.0	138.0	148.0	-0.27	0.1	0.1	NA	NA	NA	NA	3.999	0.0071	0.0071	0.0	3.78785	0.80815	0.3599	1.0	MS	NA	193.8	0.89	0.009009288	True	True	Brogaard18	EB	3
