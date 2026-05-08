@@ -143,7 +143,7 @@ def radius_train_GP(M_mean, M_var):
     plt.legend()
     plt.savefig("Outputs/GP_radius_residuals.pdf")
 
-def mass_train_NN(M4=True, n_hidden, draw=1000, chains=4):
+def mass_train_NN(n_hidden=15, draw=1000, chains=4, M4=True):
     """Function to train NN on mass prediction
     """
     #for output info
@@ -258,7 +258,7 @@ if __name__ == '__main__':
     #pick which function(s) to run when file is run
     # mass_train_GP(60,60)
     # radius_train_GP(60,60)
-    mass_train_NN(M4=False, 15, 200, 2)
+    mass_train_NN(15, 200, 2, M4=False)
     #radius_train_NN(15, 200, 2)
 
     #from Gemini
