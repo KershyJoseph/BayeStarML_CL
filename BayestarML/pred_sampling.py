@@ -246,7 +246,7 @@ def sample_post_pred_HBNN_para(trace, X, X_er, n_hidden, n_param, target,
     return denormalise_val(predictions, target), lpd_HBNN
 
 
-def SIMPLE_sample_post_pred_HBNN_para(trace, X, X_er, n_hidden=5, n_param, target,
+def SIMPLE_sample_post_pred_HBNN_para(trace, X, X_er, n_hidden, n_param, target,
                           n_jobs=None):
     """
     ***Edit for 1 layer with 5 nodes***
