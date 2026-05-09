@@ -21,7 +21,7 @@ import tracemalloc
 tracemalloc.start() #for memory usage estimate
 snapshot1 = tracemalloc.take_snapshot()
 
-df_train = get_dataset('DataExploring/good_MS.txt')
+df_train = get_dataset('Datasets/datos_tot_v20180517.txt')
 
 (x_train, x_train_er, x_test, x_test_err, mass_train, emass_train,
  mass_test, emass_test, rad_train, erad_train, rad_test, erad_test
@@ -306,14 +306,7 @@ if __name__ == '__main__':
 
     # mass_train_GP(60,60)
     # radius_train_GP(60,60)
-    print("Start run - simple NN with 1000 draws and 4 chains")
-    mass_train_SIMPLE_NN(5, 1000, 4)
-    print("Start run - normal NN with higher target_accept")
-    mass_train_NN(15, 1000, 4, 0.99)
-    print("Start run - simple NN with higher target_accept")
-    mass_train_SIMPLE_NN(5, 1000, 4, 0.99)
-    print("Start run - smaller normal NN with 2000 draws")
-    mass_train_NN(3, 2000, 4)
+    mass_train(15,200,2)
     #radius_train_NN(15, 200, 2)
 
     #from Gemini

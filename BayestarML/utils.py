@@ -11,7 +11,7 @@ import pandas as pd
 import numpy as np
 import pymc as pm
 
-def get_dataset(data_file):
+def get_dataset(data_file, star_class='MS'):
     """
     Load and clean a stellar dataset for a given star class.
 
@@ -33,6 +33,8 @@ def get_dataset(data_file):
     """
     data = pd.read_table(data_file, sep="\t", comment='#')
     # read data with errors
+    data_MS = data[data['class'] == star_class]
+    # select Main Sequence Stars
 
     df = data[
         ['R', 'eR1', 'eR2',
