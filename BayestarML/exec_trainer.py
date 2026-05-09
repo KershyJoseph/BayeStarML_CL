@@ -21,7 +21,7 @@ import tracemalloc
 tracemalloc.start() #for memory usage estimate
 snapshot1 = tracemalloc.take_snapshot()
 
-df_train = get_dataset('Datasets/datos_tot_v20180517_adapted.txt')
+df_train = get_dataset('DataExploring/good_MS_no_fills.txt')
 
 (x_train, x_train_er, x_test, x_test_err, mass_train, emass_train,
  mass_test, emass_test, rad_train, erad_train, rad_test, erad_test
@@ -312,6 +312,6 @@ if __name__ == '__main__':
     #from Gemini
     snapshot2 = tracemalloc.take_snapshot()
     top_stats = snapshot2.compare_to(snapshot1, 'lineno')
-    print("[ Top 40 memory changes ]")
-    for stat in top_stats[:40]:
+    print("[ Top 10 memory changes ]")
+    for stat in top_stats[:10]:
         print(stat)

@@ -38,6 +38,12 @@ print("All 6 MS, err cleaned: ", len(df_good_MS))
 df_good_errs = df_err[err_mask]
 df_good_MS.to_csv("DataExploring/good_MS.txt", index=False, na_rep="NA", sep="\t")
 
+df_no_fills = df_good_MS[(df_good_MS["L_from_SB"]!=1) &
+                         (df_good_MS["logg_from_M,R"]!=1)]
+df_no_fills.to_csv("DataExploring/good_MS_no_fills.txt", 
+                   index=False, na_rep="NA", sep="\t")
+print("All 6 MS, err cleaned, no fills: ", len(df_no_fills))
+
 #------------------------------
 #see err dist
 fig, ax = plt.subplots(2,3)
@@ -92,7 +98,9 @@ def make_MS_sample(N):
     df_MS_sample.to_csv("DataExploring/MS_sample_"+str(len(df_MS_sample))+".txt",
                         index=False, na_rep="NA", sep="\t")
 
-def diagnostics(df):
+def diagnostics(df, name):
+    print("Diagnostics on ", name)
+
     print("Old stars: ", len(df[(df["database"]==1)]))
 
     print("New stars: ", len(df[(df["database"]!=1)]), "out of ", len(df))
@@ -101,4 +109,4 @@ def diagnostics(df):
 
     print("New stars AND new range stars: ", len(df[((df["M"]<=0.8) | (df["M"]>=1.4)) & (df["database"]!=1)]), "out of ", len(df))
 
-diagnostics(df_good_MS)
+diagnostics(df_no_fills, "df_no_fills")
