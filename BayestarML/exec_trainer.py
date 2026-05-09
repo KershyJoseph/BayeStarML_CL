@@ -21,7 +21,7 @@ import tracemalloc
 tracemalloc.start() #for memory usage estimate
 snapshot1 = tracemalloc.take_snapshot()
 
-df_train = get_dataset('Datasets/datos_tot_v20180517.txt')
+df_train = get_dataset('Datasets/datos_tot_v20180517_adapted.txt')
 
 (x_train, x_train_er, x_test, x_test_err, mass_train, emass_train,
  mass_test, emass_test, rad_train, erad_train, rad_test, erad_test
@@ -306,7 +306,7 @@ if __name__ == '__main__':
 
     # mass_train_GP(60,60)
     # radius_train_GP(60,60)
-    mass_train(15,200,2)
+    mass_train_NN(15,200,2)
     #radius_train_NN(15, 200, 2)
 
     #from Gemini
