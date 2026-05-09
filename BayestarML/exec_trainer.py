@@ -306,7 +306,7 @@ if __name__ == '__main__':
 
     # mass_train_GP(60,60)
     # radius_train_GP(60,60)
-    mass_train_NN(15,200,2)
+    mass_train_NN(3,1000,4)
     #radius_train_NN(15, 200, 2)
 
     #from Gemini
