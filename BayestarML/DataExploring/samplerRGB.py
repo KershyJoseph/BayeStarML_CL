@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 df = pd.read_csv("DataExploring/datos_todos_v20260505.txt", sep="\t", comment="#")
 
 check_params = ["eM1", "eR1", "elogg1", "eL1", "eFe/H1", "eTeff1"]
+check_params = ["eM2", "eR2", "elogg2", "eL2", "eFe/H2", "eTeff2"]
 df_all6_RGB = df[(df["class"]=="RGB") & 
                 (df["well_detached"]!=False) &
                 (df[check_params].notna().all(axis=1))]
@@ -98,8 +99,12 @@ df_L_check["L_SB_-err"] = np.sqrt(
 
 plt.figure()
 yerr = np.array([df_L_check["L_SB_-err"], df_L_check["L_SB_+err"]])
-plt.errorbar(df_L_check["L"], df_L_check["L_SB"], yerr=yerr, fmt='o', ecolor='gray', alpha=0.5)
+xerr = np.array([df_L_check["eL2"], df_L_check["eL1"]])
+plt.errorbar(df_L_check["L"], df_L_check["L_SB"], 
+             yerr=yerr, xerr=xerr, fmt='bo', ecolor='gray', alpha=0.5)
 plt.xlabel("L")
 plt.ylabel("L from SB")
 plt.plot([0, df_L_check["L"].max()], [0,df_L_check["L"].max()], linestyle='--', color='r')
-plt.show()
+plt.xscale("log")
+plt.yscale("log")
+plt.savefig("DataExploring/RGB_L_check.pdf")
