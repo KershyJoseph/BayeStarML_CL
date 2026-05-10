@@ -21,7 +21,7 @@ import tracemalloc
 tracemalloc.start() #for memory usage estimate
 snapshot1 = tracemalloc.take_snapshot()
 
-df_train = get_dataset('DataExploring/goodMS.txt')
+df_train = get_dataset('DataExploring/good_MS.txt')
 
 (x_train, x_train_er, x_test, x_test_err, mass_train, emass_train,
  mass_test, emass_test, rad_train, erad_train, rad_test, erad_test
