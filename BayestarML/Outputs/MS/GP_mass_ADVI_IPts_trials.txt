@@ -1,4 +1,6 @@
-GP Mass train goodMS - ADVI - 30
+
+
+ GP Mass train goodMS - ADVI - 30
 Fitting: ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00 Average Loss = 533.43
 Finished [100%]: Average Loss = 532.31
 ELBO:
@@ -101,7 +103,9 @@ Fast-forward
 (base) user1@seldon BayestarML % /Users/user1/miniforge3/envs/bhs_env/bin/python /Users/user1/BayeStarML_CL/BayestarML/exec_trainer.py
 6147.216185958254 4.159799683880455 -0.07536356736242884 4.770491973434535 1.2075066413662239 1.5825891840607211
 704.7574323340231 0.22772090060576824 0.21067821124083594 11.074047997501118 0.2785606684530734 0.523146732255257
-GP Mass train goodMS - ADVI - 40
+
+
+ GP Mass train goodMS - ADVI - 40
 Fitting: ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00 Average Loss = 502.46
 Finished [100%]: Average Loss = 502.32
 ELBO:
@@ -217,7 +221,9 @@ Fast-forward
 (base) user1@seldon BayestarML % /Users/user1/miniforge3/envs/bhs_env/bin/python /Users/user1/BayeStarML_CL/BayestarML/exec_trainer.py
 6147.216185958254 4.159799683880455 -0.07536356736242884 4.770491973434535 1.2075066413662239 1.5825891840607211
 704.7574323340231 0.22772090060576824 0.21067821124083594 11.074047997501118 0.2785606684530734 0.523146732255257
-GP Mass train goodMS - ADVI - 40
+
+
+ GP Mass train goodMS - ADVI - 40
 Fitting: ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00 Average Loss = 220.51
 Finished [100%]: Average Loss = 220.39
 ELBO:
@@ -333,7 +339,9 @@ Fast-forward
 (base) user1@seldon BayestarML % /Users/user1/miniforge3/envs/bhs_env/bin/python /Users/user1/BayeStarML_CL/BayestarML/exec_trainer.py
 6147.216185958254 4.159799683880455 -0.07536356736242884 4.770491973434535 1.2075066413662239 1.5825891840607211
 704.7574323340231 0.22772090060576824 0.21067821124083594 11.074047997501118 0.2785606684530734 0.523146732255257
-GP Mass train goodMS - ADVI - 50
+
+
+ GP Mass train goodMS - ADVI - 50
 Fitting: ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00 Average Loss = 227.09
 Finished [100%]: Average Loss = 227
 ELBO:
@@ -449,7 +457,9 @@ Fast-forward
 (base) user1@seldon BayestarML % /Users/user1/miniforge3/envs/bhs_env/bin/python /Users/user1/BayeStarML_CL/BayestarML/exec_trainer.py
 6147.216185958254 4.159799683880455 -0.07536356736242884 4.770491973434535 1.2075066413662239 1.5825891840607211
 704.7574323340231 0.22772090060576824 0.21067821124083594 11.074047997501118 0.2785606684530734 0.523146732255257
-GP Mass train goodMS - ADVI - 45
+
+
+ GP Mass train goodMS - ADVI - 45
 Fitting: ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00 Average Loss = 240.2
 Finished [100%]: Average Loss = 240.17
 ELBO:
@@ -568,7 +578,9 @@ Fast-forward
 (base) user1@seldon BayestarML % /Users/user1/miniforge3/envs/bhs_env/bin/python /Users/user1/BayeStarML_CL/BayestarML/exec_trainer.py
 6147.216185958254 4.159799683880455 -0.07536356736242884 4.770491973434535 1.2075066413662239 1.5825891840607211
 704.7574323340231 0.22772090060576824 0.21067821124083594 11.074047997501118 0.2785606684530734 0.523146732255257
-GP Mass train goodMS - ADVI - 55
+
+
+ GP Mass train goodMS - ADVI - 55
 Fitting: ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00 Average Loss = 264.84
 Finished [100%]: Average Loss = 264.99
 ELBO:
@@ -684,7 +696,9 @@ Fast-forward
 (base) user1@seldon BayestarML % /Users/user1/miniforge3/envs/bhs_env/bin/python /Users/user1/BayeStarML_CL/BayestarML/exec_trainer.py
 6147.216185958254 4.159799683880455 -0.07536356736242884 4.770491973434535 1.2075066413662239 1.5825891840607211
 704.7574323340231 0.22772090060576824 0.21067821124083594 11.074047997501118 0.2785606684530734 0.523146732255257
-GP Mass train goodMS - ADVI - 60
+
+
+ GP Mass train goodMS - ADVI - 60
 Fitting: ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00 Average Loss = 271.42
 Finished [100%]: Average Loss = 271.03
 ELBO:
@@ -802,7 +816,9 @@ Fast-forward
 (base) user1@seldon BayestarML % /Users/user1/miniforge3/envs/bhs_env/bin/python /Users/user1/BayeStarML_CL/BayestarML/exec_trainer.py
 6147.216185958254 4.159799683880455 -0.07536356736242884 4.770491973434535 1.2075066413662239 1.5825891840607211
 704.7574323340231 0.22772090060576824 0.21067821124083594 11.074047997501118 0.2785606684530734 0.523146732255257
-GP Mass train goodMS - ADVI - 65
+
+
+ GP Mass train goodMS - ADVI - 65
 Fitting: ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00 Average Loss = 230.86
 Finished [100%]: Average Loss = 230.61
 ELBO:
@@ -902,7 +918,9 @@ MRD -3.219164004192648
 /Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/pytensor/graph/basic.py:458: size=2077 KiB (+2077 KiB), count=39554 (+39554), average=54 B
 /Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/pytensor/graph/utils.py:70: size=1898 KiB (+1898 KiB), count=27362 (+27362), average=71 B
 /Users/user1/miniforge3/envs/bhs_env/lib/python3.11/copyreg.py:105: size=1767 KiB (+1767 KiB), count=38466 (+38466), average=47 B
-GP Mass train goodMS - ADVI - 70
+
+
+ GP Mass train goodMS - ADVI - 70
 Fitting: ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00 Average Loss = 241.28
 Finished [100%]: Average Loss = 241.24
 ELBO:

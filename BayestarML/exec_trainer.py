@@ -312,10 +312,10 @@ if __name__ == '__main__':
 
     #HAVE YOU UPDATED CONSTANTS.PY
 
-    print("Mass train NN Simple try 6 nodes - 1.5 draw and C2Norm")
+    print("Mass train NN Simple try 3 nodes - 1.5 draw and C2Norm")
     #mass_train_GP(70,70,advi=True)
     #radius_train_GP(60,60)
-    mass_train_SIMPLE_NN(6,1000,4)
+    mass_train_SIMPLE_NN(3,1000,4)
     #radius_train_NN(5, 1000, 4)
 
     #from Gemini
