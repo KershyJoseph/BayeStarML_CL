@@ -66,7 +66,8 @@ def mass_train_GP(M_mean, M_var, advi=False):
             max_rhat = r_hat_values[var].max().values.item()
             all_rhats.append((var, max_rhat))
         print(all_rhats)
-        print(az.loo(trace))
+
+    print(az.loo(trace))
 
     pred, lpd = posterior_predictive_GP(model, μ_gp, lg_σ_gp, trace,
                                         x_test, x_test_err, Xu, Xu_er, 4, 'mass')
@@ -312,8 +313,8 @@ if __name__ == '__main__':
     #HAVE YOU UPDATED CONSTANTS.PY
 
     #print("TRY 4 nodes on PREV RESULTS - simple 5_1000_4 with HalfNormal and 1.5*draw")
-    print("GP Mass train goodMS - ADVI - 30")
-    mass_train_GP(30,30,advi=True)
+    print("GP Mass train goodMS - ADVI - 40")
+    mass_train_GP(40,40,advi=True)
     #radius_train_GP(60,60)
     #mass_train_SIMPLE_NN(4,1000,4)
     #radius_train_NN(5, 1000, 4)

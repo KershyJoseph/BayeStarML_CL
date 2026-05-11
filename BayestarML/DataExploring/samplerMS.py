@@ -153,13 +153,20 @@ df_L_check["L_SB_-err"] = np.sqrt(
 )
 
 #compute distance from recorded Ls
-#total_err = np.sqrt(df)
+df_L_check["L_SB_avg_err"] = (df_L_check["L_SB_+err"] + df_L_check["L_SB_-err"])/2
+df_L_check["total_L_err"] = np.sqrt(df_L_check["L_SB_avg_err"]**2 + df_L_check["eL1"]**2)
+df_L_check["L_distance"] = np.abs((df_L_check["L_SB"]-df_L_check["L"])/df_L_check["total_L_err"])
+df_bad_Ls = df_L_check[df_L_check["L_distance"]>3]
 
 plt.figure()
 yerr = np.array([df_L_check["L_SB_-err"], df_L_check["L_SB_+err"]])
 xerr = np.array([df_L_check["eL2"], df_L_check["eL1"]])
 plt.errorbar(df_L_check["L"], df_L_check["L_SB"], #x,y,yerr,xerr
              yerr=yerr, xerr=xerr, fmt='bo', ecolor='gray', alpha=0.5)
+yerr2 = np.array([df_bad_Ls["L_SB_-err"], df_bad_Ls["L_SB_+err"]])
+xerr2 = np.array([df_bad_Ls["eL2"], df_bad_Ls["eL1"]])
+plt.errorbar(df_bad_Ls["L"], df_bad_Ls["L_SB"],
+             yerr=yerr2, xerr=xerr2, fmt='ro', ecolor='orange', alpha=0.5)
 plt.xlabel("L")
 plt.ylabel("L from SB")
 plt.plot([0, df_L_check["L"].max()], [0,df_L_check["L"].max()], linestyle='--', color='r')
@@ -167,7 +174,7 @@ plt.xscale("log")
 plt.yscale("log")
 plt.savefig("DataExploring/MS_L_check.pdf")
 
-
+print("Non-physical Ls, assuming R and Teff are stellar:\n", df_bad_Ls)
 
 def make_MS_sample(N):
     """Cheeky tiny MS sample to practice on. N is roughly how many stars.
