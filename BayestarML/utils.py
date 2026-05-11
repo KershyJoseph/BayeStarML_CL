@@ -94,11 +94,11 @@ def train(model, filename, draw=1000, chains=2, cores=None, target_accept=0.95):
         Posterior samples with computed log-likelihoods.
     """
     print('target_accept=', target_accept)
-    trace = pm.sample(draws=draw, tune=draw, chains=chains, cores=cores, model=model,
-                      target_accept=target_accept)
+    trace = pm.sample(draws=draw, tune=draw, chains=chains, cores=cores, 
+                      model=model,target_accept=target_accept)
     with pd.set_option("display.max_rows", None):
         df = az.summary(trace)
-    print("AZ Stats Summary: ", df)
+    print("AZ Stats Summary:\n", df)
     trace.extend(pm.compute_log_likelihood(trace, model=model, var_names='y'))
     trace.to_netcdf(filename)
 
