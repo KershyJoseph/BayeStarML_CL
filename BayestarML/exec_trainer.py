@@ -39,17 +39,16 @@ x_test_err = x_test_err[['eTeff', 'elogg', 'eFe/H', 'eL']]
 def mass_train_GP(M_mean, M_var):
     """Function to train GP on mass prediction
     """
-    # model = hbnn.HBNN_R3(x_train3, rad_train, x_train3_er, erad_train, 15)
+
     model, μ_gp, lg_σ_gp, Xu, Xu_er = gp.sparse_fully_heteroscedastic_gp(x_train,
                                                                         x_train_er,
-                                                                        mass_train, M_mean, M_var)
+                                                                        mass_train,
+                                                                        M_mean,
+                                                                        M_var)
 
     trace = train(model,
                   "Outputs/GP_mass_full_w_int_lognorm_"+str(M_mean)+"_"+str(M_var)+".nc",
                   draw=1000, chains=4)
-    # trace = az.from_netcdf("Radius_Outputs/GP_hetero_new_2026_mass_4param_gamma_etav_80_40.nc")
-
-    # trace.extend(pm.compute_log_likelihood(trace, model=model, var_names='y'))
 
     r_hat_values = az.rhat(trace)
     all_rhats = []
@@ -304,9 +303,11 @@ if __name__ == '__main__':
 
     #HAVE YOU UPDATED CONSTANTS.PY
 
-    print("TRY 1.5*DRAW ON PREV RESULTS - simple 5_1000_4 with HalfNormal")
-    # radius_train_GP(60,60)
-    mass_train_SIMPLE_NN(5,1000,4)
+    print("TRY 4 nodes on PREV RESULTS - simple 5_1000_4 with HalfNormal and 1.5*draw")
+    #print("GP Mass train")
+    #mass_train_GP(30,30,advi=True)
+    #radius_train_GP(60,60)
+    mass_train_SIMPLE_NN(4,1000,4)
     #radius_train_NN(5, 1000, 4)
 
     #from Gemini
