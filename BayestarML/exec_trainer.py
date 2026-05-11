@@ -48,7 +48,7 @@ def mass_train_GP(M_mean, M_var, advi=False):
                                                                         M_var)
 
     if advi:
-        approx = pm.fit(n=10000, method='advi', model=model, progressbar=True)
+        approx = pm.fit(n=20000, method='advi', model=model, progressbar=True)
         trace = approx.sample(1000)
         print("ELBO:\n", approx.hist)
 
