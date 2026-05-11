@@ -304,7 +304,7 @@ if __name__ == '__main__':
 
     #HAVE YOU UPDATED CONSTANTS.PY
 
-    print("decent NN run with 5_1000_4 on good MS radius to get ESS stats")
+    print("Mass NN run with Half Normal instead of Half Cauchy for NN error term")
     # mass_train_GP(60,60)
     # radius_train_GP(60,60)
     mass_train_SIMPLE_NN(5,1000,4)
