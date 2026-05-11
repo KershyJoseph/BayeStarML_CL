@@ -100,7 +100,7 @@ def train(model, filename, draw=1000, chains=2, cores=None, target_accept=0.95):
     with pd.option_context("display.max_rows", None):
         df = az.summary(trace)
         df.sort_values(by="ess_bulk", inplace=True)
-    print("AZ Stats Summary:\n", df)
+        print("AZ Stats Summary:\n", df[df["ess_bulk"]<400])
 
     trace.extend(pm.compute_log_likelihood(trace, model=model, var_names='y'))
     trace.to_netcdf(filename)
