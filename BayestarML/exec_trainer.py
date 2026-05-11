@@ -304,11 +304,11 @@ if __name__ == '__main__':
 
     #HAVE YOU UPDATED CONSTANTS.PY
 
-    print("quick NN run with 3_100_2 on good MS to get ESS stats")
+    print("decent NN run with 5_1000_4 on good MS radius to get ESS stats")
     # mass_train_GP(60,60)
     # radius_train_GP(60,60)
-    #mass_train_SIMPLE_NN(5,5000,4)
-    radius_train_NN(3, 100, 2)
+    mass_train_SIMPLE_NN(5,1000,4)
+    #radius_train_NN(5, 1000, 4)
 
     #from Gemini
     snapshot2 = tracemalloc.take_snapshot()

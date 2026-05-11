@@ -96,9 +96,9 @@ def train(model, filename, draw=1000, chains=2, cores=None, target_accept=0.95):
     print('target_accept=', target_accept)
     trace = pm.sample(draws=draw, tune=draw, chains=chains, cores=cores, model=model,
                       target_accept=target_accept)
-    print("AZ Stats Summary: ", az.summary(trace))
+    df = az.summary(trace).set_option("display.max_rows", None)
+    print("AZ Stats Summary: ", df)
     trace.extend(pm.compute_log_likelihood(trace, model=model, var_names='y'))
-    print("AZ Stats Summary afer log likelihood: ", az.summary(trace))
     trace.to_netcdf(filename)
 
     return trace
