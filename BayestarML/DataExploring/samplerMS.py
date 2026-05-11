@@ -22,8 +22,12 @@ print("All 6 MS: ", len(df_all6_MS))
 
 #adapted from Max
 #get mean errors for non-symmetric ones
-df1 = df_all6_MS[['eTeff1', 'elogg1', 'eFe/H1', 'eL1', 'eM1', 'eR1']].copy()
-df2 = df_all6_MS[['eTeff2', 'elogg2', 'eFe/H2', 'eL2', 'eM2', 'eR2']].copy()
+df1 = df_all6_MS[
+    ['eTeff1', 'elogg1', 'eFe/H1', 'eL1', 'eM1', 'eR1']
+    ].copy()
+df2 = df_all6_MS[
+    ['eTeff2', 'elogg2', 'eFe/H2', 'eL2', 'eM2', 'eR2']
+    ].copy()
 df2.columns = ['eTeff1', 'elogg1', 'eFe/H1', 'eL1', 'eM1', 'eR1']
 df_err = (df1 + df2) / 2
 #get percentage errors for M, R, L
@@ -33,6 +37,7 @@ df_err["percent_eR"] = 100 * df_err["eR1"] / df_all6_MS["R"]
 df_err["percent_eTeff"] = 100 * df_err["eTeff1"] / df_all6_MS["Teff"]
 df_err["percent_elogg"] = 100 * df_err["elogg1"] / df_all6_MS["logg"]
 df_err["percent_eFe/H"] = 100 * df_err["eFe/H1"] / df_all6_MS["Fe/H"] #some are /0!
+
 #make mask
 err_mask = (df_err["percent_eL"]<=50)# & (df_err["percent_eR"]<=7) & (df_err["elogg1"]<=0.05) & (df_err["percent_eTeff"]<=5) & (df_err["eFe/H1"]<=0.2)
 
@@ -41,15 +46,39 @@ print("All 6 MS, err cleaned: ", len(df_good_MS))
 df_good_errs = df_err[err_mask]
 df_good_MS.to_csv("DataExploring/good_MS.txt", index=False, na_rep="NA", sep="\t")
 
+#make file with only stars with data that I did not fill via SB or M,R
 df_no_fills = df_good_MS[(df_good_MS["L_from_SB"]!=1) &
                          (df_good_MS["logg_from_M,R"]!=1)]
 df_no_fills.to_csv("DataExploring/good_MS_no_fills.txt", 
                    index=False, na_rep="NA", sep="\t")
 print("All 6 MS, err cleaned, no fills: ", len(df_no_fills))
 
+#Try logL and logTeff columns - added with bounds method
+df_good_MS["logTeff"] = np.log10(df_good_MS["Teff"])
+df_good_MS["elogTeff1"] = np.log10(df_good_MS["logTeff"] + df_good_MS["eTeff1"]) - df_good_MS["logTeff"]
+df_good_MS["elogTeff2"] = df_good_MS["logTeff"] - np.log10(df_good_MS["logTeff"] - df_good_MS["eTeff2"])
+
+df_good_MS["logL"] = np.log10(df_good_MS["L"])
+df_good_MS["elogL1"] = np.log10(df_good_MS["logL"] + df_good_MS["eL1"]) - df_good_MS["logL"]
+df_good_MS["elogL2"] = df_good_MS["logL"] - np.log10(df_good_MS["logL"] - df_good_MS["eL2"])
+
+#see how logTeff and logL errors look
+fig2, ax2 = plt.subplots(1,2)
+
+ax2[0].plot(df_good_MS["elogTeff1"], df_good_MS["elogTeff2"], 'o')
+ax2[0].set_xlabel("logTeff +err")
+ax2[0].set_ylabel("logTeff -err")
+
+ax2[1].plot(df_good_MS["elogL1"], df_good_MS["elogL2"], 'o')
+ax2[1].set_xlabel("logL +err")
+ax2[1].set_ylabel("logL -err")
+
+plt.tight_layout()
+plt.savefig("DataExploring/logTeff_logL_errs.pdf")
+
 #------------------------------
 #see err dist
-fig, ax = plt.subplots(2,3)
+fig, ax = plt.subplots(2,4)
 
 ax[0,0].hist(df_good_errs["percent_eM"], bins='auto')
 ax[0,0].vlines(7,0,150,linestyle='--',color='r',label="7%")
@@ -88,6 +117,18 @@ ax[1,2].hist(df_good_errs["eFe/H1"], bins='auto')
 ax[1,2].set_title("Fe/H")
 ax[1,2].set_xlabel("Error (dex)")
 #ax[1,2].legend()
+
+# ax[0,3].hist(df_good_errs["elogL1"], bins='auto')
+# #ax[0,3].vlines(10,0,250,linestyle='--',color='r',label="10%")
+# ax[0,3].set_title("logL")
+# ax[0,3].set_xlabel("Error (logLsol)")
+# #ax[0,3].legend()
+
+# ax[1,3].hist(df_good_errs["elogTeff1"], bins='auto')
+# #ax[1,3].vlines(100,0,220,linestyle='--',color='r',label="100K")
+# ax[1,3].set_title("logT$_{eff}$") #how to make not italic...
+# ax[1,3].set_xlabel("Error (logK)")
+# #ax[1,3].legend()
 
 plt.tight_layout()
 plt.savefig("DataExploring/db_new_err_dists.pdf")
