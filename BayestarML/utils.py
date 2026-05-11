@@ -94,7 +94,7 @@ def train(model, filename, draw=1000, chains=2, cores=None, target_accept=0.95):
         Posterior samples with computed log-likelihoods.
     """
     print('target_accept=', target_accept)
-    trace = pm.sample(draws=draw, tune=1.5*draw, chains=chains, cores=cores, 
+    trace = pm.sample(draws=draw, tune=int(1.5*draw), chains=chains, cores=cores, 
                       model=model,target_accept=target_accept)
 
     with pd.option_context("display.max_rows", None):
