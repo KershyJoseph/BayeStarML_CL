@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-df = pd.read_csv("DataExploring/datos_todos_v20260505.txt", sep="\t", comment="#")
+df = pd.read_csv("DataExploring/datos_todos_v20261105.txt", sep="\t", comment="#")
 
 check_params1 = ["eM1", "eR1", "elogg1", "eL1", "eFe/H1", "eTeff1"]
 check_params2 = ["eM2", "eR2", "elogg2", "eL2", "eFe/H2", "eTeff2"]
@@ -83,7 +83,10 @@ ax[1,2].legend()
 plt.tight_layout()
 plt.savefig("DataExploring/db_new_err_distsRGB.pdf")
 
+
 #consistency checks...
+#---------------------
+#get SB Ls and errs
 df_L_check = df_good_RGB[df_good_RGB["L_from_SB"]==0]
 df_L_check["L_SB"] = df_L_check["R"]**2 * (df_L_check["Teff"]/5772)**4
 
@@ -99,14 +102,26 @@ df_L_check["L_SB_-err"] = np.sqrt(
     + ((R-df_L_check["eR2"])**2*(Teff/5772)**4 - df_L_check["L_SB"])**2 
 )
 
+#compute distance from recorded Ls
+df_L_check["L_SB_avg_err"] = (df_L_check["L_SB_+err"] + df_L_check["L_SB_-err"])/2
+df_L_check["total_L_err"] = np.sqrt(df_L_check["L_SB_avg_err"]**2 + df_L_check["eL1"]**2)
+df_L_check["L_distance"] = np.abs((df_L_check["L_SB"]-df_L_check["L"])/df_L_check["total_L_err"])
+df_bad_Ls = df_L_check[df_L_check["L_distance"]>3]
+
 plt.figure()
 yerr = np.array([df_L_check["L_SB_-err"], df_L_check["L_SB_+err"]])
 xerr = np.array([df_L_check["eL2"], df_L_check["eL1"]])
 plt.errorbar(df_L_check["L"], df_L_check["L_SB"], #x,y,yerr,xerr
              yerr=yerr, xerr=xerr, fmt='bo', ecolor='gray', alpha=0.5)
+yerr2 = np.array([df_bad_Ls["L_SB_-err"], df_bad_Ls["L_SB_+err"]])
+xerr2 = np.array([df_bad_Ls["eL2"], df_bad_Ls["eL1"]])
+plt.errorbar(df_bad_Ls["L"], df_bad_Ls["L_SB"],
+             yerr=yerr2, xerr=xerr2, fmt='ro', ecolor='orange', alpha=0.5)
 plt.xlabel("L")
 plt.ylabel("L from SB")
 plt.plot([0, df_L_check["L"].max()], [0,df_L_check["L"].max()], linestyle='--', color='r')
 #plt.xscale("log")
 #plt.yscale("log")
 plt.savefig("DataExploring/RGB_L_check.pdf")
+
+print("Non-physical Ls, assuming R and Teff are stellar:\n", df_bad_Ls)

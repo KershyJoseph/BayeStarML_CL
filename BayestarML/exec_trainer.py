@@ -313,8 +313,8 @@ if __name__ == '__main__':
     #HAVE YOU UPDATED CONSTANTS.PY
 
     #print("TRY 4 nodes on PREV RESULTS - simple 5_1000_4 with HalfNormal and 1.5*draw")
-    print("GP Mass train goodMS - ADVI - 45")
-    mass_train_GP(45,45,advi=True)
+    print("GP Mass train goodMS - ADVI - 55")
+    mass_train_GP(55,55,advi=True)
     #radius_train_GP(60,60)
     #mass_train_SIMPLE_NN(4,1000,4)
     #radius_train_NN(5, 1000, 4)
