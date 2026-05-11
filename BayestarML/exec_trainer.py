@@ -306,8 +306,8 @@ if __name__ == '__main__':
 
     # mass_train_GP(60,60)
     # radius_train_GP(60,60)
-    print("3 node 1 LAYER SIMPLE NN on goodMS mass with 3000 samples per chain on 4 chains")
-    mass_train_SIMPLE_NN(5,3000,4)
+    print("5 node 1 LAYER SIMPLE NN on goodMS mass with 5000 samples per chain on 4 chains")
+    mass_train_SIMPLE_NN(5,5000,4)
     #radius_train_NN(15, 200, 2)
 
     #from Gemini
