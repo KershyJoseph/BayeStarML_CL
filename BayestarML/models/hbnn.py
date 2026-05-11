@@ -160,7 +160,7 @@ def HBNN_M4(X_train, Y, X_error, Y_error, n_hidden):
             compute_corr=True,
             #initval=Low_tri
         )
-        
+
         # Latent variables
         X_latent = pm.MvNormal(
             'X_latent', 
@@ -168,7 +168,7 @@ def HBNN_M4(X_train, Y, X_error, Y_error, n_hidden):
             chol=chol,
             shape=(X_train.shape[0], 4)
         )
-        
+
         # Observation model
         pm.Normal(
             "X_obs",
@@ -176,12 +176,10 @@ def HBNN_M4(X_train, Y, X_error, Y_error, n_hidden):
             sigma=X_error,
             observed=X_train
         )
-        
-        
+
         ann_input = pm.Deterministic('ann_input', X_latent)
         
         ann_output = pm.Data("ann_output" , Y) #, dims="obs_id")
-        
 
         # Weights from input to hidden layer
         weights_in_1 = pm.Normal(

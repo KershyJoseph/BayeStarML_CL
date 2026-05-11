@@ -7,15 +7,18 @@ import matplotlib.pyplot as plt
 
 df = pd.read_csv("DataExploring/datos_todos_v20260505.txt", sep="\t", comment="#")
 
-check_params = ["eM1", "eR1", "elogg1", "eL1", "eFe/H1", "eTeff1"]
-check_params = ["eM2", "eR2", "elogg2", "eL2", "eFe/H2", "eTeff2"]
+check_params1 = ["eM1", "eR1", "elogg1", "eL1", "eFe/H1", "eTeff1"]
+check_params2 = ["eM2", "eR2", "elogg2", "eL2", "eFe/H2", "eTeff2"]
+
 df_all6_RGB = df[(df["class"]=="RGB") & 
                 (df["well_detached"]!=False) &
-                (df[check_params].notna().all(axis=1))]
+                (df[check_params1].notna().all(axis=1)) &
+                (df[check_params2].notna().all(axis=1)) &
+                (df[check_params1].gt(0).any(axis=1)) &
+                (df[check_params2].gt(0).any(axis=1))]
 
 df_all6_RGB.to_csv("DataExploring/all6_RGB.txt", index=False, na_rep="NA", sep="\t")
 print("All 6 RGB:", len(df_all6_RGB))
-print("Rows with zero or -ve errors:", df_all6_RGB[(df_all6_RGB[check_params].le(0).any(axis=1))])
 
 #adapted from Max
 #get mean errors for non-symmetric ones
@@ -30,7 +33,6 @@ df_err["percent_eR"] = 100 * df_err["eR1"] / df_all6_RGB["R"]
 df_err["percent_eTeff"] = 100 * df_err["eTeff1"] / df_all6_RGB["Teff"]
 #make mask
 err_mask = (df_err["percent_eL"]<=50) #& (df_err["percent_eR"]<=25)# & (df_err["percent_eM"]<=7) & (df_err["eTeff1"]<=100) & (df_err["elogg1"]<=0.05) & (df_err["eFe/H1"]<=0.15)
-
 
 df_good_RGB = df_all6_RGB[err_mask]
 print("Error filtered RGB stars:", len(df_good_RGB))
@@ -82,8 +84,8 @@ plt.tight_layout()
 plt.savefig("DataExploring/db_new_err_distsRGB.pdf")
 
 #consistency checks...
-df_L_check = df[df["L_from_SB"]==0]
-df_L_check["L_SB"] = df["R"]**2 * (df["Teff"]/5772)**4
+df_L_check = df_good_RGB[df_good_RGB["L_from_SB"]==0]
+df_L_check["L_SB"] = df_L_check["R"]**2 * (df_L_check["Teff"]/5772)**4
 
 R = df_L_check["R"]
 Teff = df_L_check["Teff"]
@@ -100,11 +102,11 @@ df_L_check["L_SB_-err"] = np.sqrt(
 plt.figure()
 yerr = np.array([df_L_check["L_SB_-err"], df_L_check["L_SB_+err"]])
 xerr = np.array([df_L_check["eL2"], df_L_check["eL1"]])
-plt.errorbar(df_L_check["L"], df_L_check["L_SB"], 
+plt.errorbar(df_L_check["L"], df_L_check["L_SB"], #x,y,yerr,xerr
              yerr=yerr, xerr=xerr, fmt='bo', ecolor='gray', alpha=0.5)
 plt.xlabel("L")
 plt.ylabel("L from SB")
 plt.plot([0, df_L_check["L"].max()], [0,df_L_check["L"].max()], linestyle='--', color='r')
-plt.xscale("log")
-plt.yscale("log")
+#plt.xscale("log")
+#plt.yscale("log")
 plt.savefig("DataExploring/RGB_L_check.pdf")
