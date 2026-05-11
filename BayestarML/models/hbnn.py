@@ -313,8 +313,8 @@ def HBNN_M4_simpler(X_train, Y, X_error, Y_error, n_hidden=5):
 
         act_out = pm.Deterministic('act_out' , pm.math.dot(act_1, weights_1_out) + bias_out)
 
-        #er = pm.HalfNormal('er', sigma=1)
-        er = pm.HalfCauchy('er', beta=1)
+        er = pm.HalfNormal('er', sigma=1)
+        #er = pm.HalfCauchy('er', beta=1)
 
         out = pm.StudentT(
             "y",
