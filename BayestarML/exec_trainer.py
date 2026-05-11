@@ -36,9 +36,10 @@ x_train_er = x_train_er[['eTeff', 'elogg', 'eFe/H', 'eL']]
 x_test = x_test[['Teff', 'logg', 'Fe/H', 'L']]
 x_test_err = x_test_err[['eTeff', 'elogg', 'eFe/H', 'eL']]
 
-def mass_train_GP(M_mean, M_var):
+def mass_train_GP(M_mean, M_var, advi=False):
     """Function to train GP on mass prediction
     """
+    hyperp_str = str(M_mean)+"_"+str(M_var)
 
     model, μ_gp, lg_σ_gp, Xu, Xu_er = gp.sparse_fully_heteroscedastic_gp(x_train,
                                                                         x_train_er,
@@ -46,19 +47,26 @@ def mass_train_GP(M_mean, M_var):
                                                                         M_mean,
                                                                         M_var)
 
-    trace = train(model,
-                  "Outputs/GP_mass_full_w_int_lognorm_"+str(M_mean)+"_"+str(M_var)+".nc",
+    if advi:
+        approx = pm.fit(n=10000, method='advi', model=model, progressbar=True)
+        trace = approx.sample(1000)
+        print("ELBO:\n", approx.hist)
+
+        trace.extend(pm.compute_log_likelihood(trace, model=model, var_names='y'))
+        trace.to_netcdf("Outputs/GP_ADVI_mass_full_w_int_lognorm_"+hyperp_str+".nc")
+
+    else:
+        trace = train(model,
+                  "Outputs/GP_mass_full_w_int_lognorm_"+hyperp_str+".nc",
                   draw=1000, chains=4)
 
-    r_hat_values = az.rhat(trace)
-    all_rhats = []
-    for var in r_hat_values.data_vars:
-        max_rhat = r_hat_values[var].max().values.item()
-        all_rhats.append((var, max_rhat))
-
-    print(all_rhats)
-
-    print(az.loo(trace))
+        r_hat_values = az.rhat(trace)
+        all_rhats = []
+        for var in r_hat_values.data_vars:
+            max_rhat = r_hat_values[var].max().values.item()
+            all_rhats.append((var, max_rhat))
+        print(all_rhats)
+        print(az.loo(trace))
 
     pred, lpd = posterior_predictive_GP(model, μ_gp, lg_σ_gp, trace,
                                         x_test, x_test_err, Xu, Xu_er, 4, 'mass')
@@ -303,11 +311,11 @@ if __name__ == '__main__':
 
     #HAVE YOU UPDATED CONSTANTS.PY
 
-    print("TRY 4 nodes on PREV RESULTS - simple 5_1000_4 with HalfNormal and 1.5*draw")
-    #print("GP Mass train")
-    #mass_train_GP(30,30,advi=True)
+    #print("TRY 4 nodes on PREV RESULTS - simple 5_1000_4 with HalfNormal and 1.5*draw")
+    print("GP Mass train goodMS - ADVI - 30")
+    mass_train_GP(30,30,advi=True)
     #radius_train_GP(60,60)
-    mass_train_SIMPLE_NN(4,1000,4)
+    #mass_train_SIMPLE_NN(4,1000,4)
     #radius_train_NN(5, 1000, 4)
 
     #from Gemini
