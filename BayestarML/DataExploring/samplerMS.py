@@ -5,13 +5,16 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-df = pd.read_csv("DataExploring/datos_todos_v20260505.txt", sep="\t", comment="#")
+df = pd.read_csv("DataExploring/datos_todos_v20261105.txt", sep="\t", comment="#")
 
-check_params = ["eM1", "eR1", "elogg1", "eL1", "eFe/H1", "eTeff1"]
+check_params1 = ["eM1", "eR1", "elogg1", "eL1", "eFe/H1", "eTeff1"]
+check_params2 = ["eM2", "eR2", "elogg2", "eL2", "eFe/H2", "eTeff2"]
 df_all6_MS = df[(df["class"]=="MS") & 
                 (df["well_detached"]!=False) &
-                (df[check_params].notna().all(axis=1)) &
-                (df[check_params].gt(0).all(axis=1))]
+                (df[check_params1].notna().all(axis=1)) &
+                (df[check_params1].gt(0).all(axis=1)) &
+                (df[check_params2].notna().all(axis=1)) &
+                (df[check_params2].gt(0).all(axis=1))]
 
 #file for MS stars with all 6 params and all binary systems well-detached
 df_all6_MS.to_csv("DataExploring/all6_MS.txt", index=False, na_rep="NA", sep="\t")
@@ -53,41 +56,72 @@ ax[0,0].vlines(7,0,150,linestyle='--',color='r',label="7%")
 ax[0,0].set_title("M")
 ax[0,0].set_ylabel("Number")
 ax[0,0].set_xlabel("% Error")
-ax[0,0].legend()
+#ax[0,0].legend()
 
 ax[0,1].hist(df_good_errs["percent_eR"], bins='auto')
 ax[0,1].vlines(7,0,100,linestyle='--',color='r',label="7%")
 ax[0,1].set_title("R")
 ax[0,1].set_xlabel("% Error")
-ax[0,1].legend()
+#ax[0,1].legend()
 
 ax[0,2].hist(df_good_errs["percent_eL"], bins='auto')
 ax[0,2].vlines(10,0,250,linestyle='--',color='r',label="10%")
 ax[0,2].set_title("L")
 ax[0,2].set_xlabel("% Error")
-ax[0,2].legend()
+#ax[0,2].legend()
 
 ax[1,0].hist(df_good_errs["percent_eTeff"], bins='auto')
 #ax[1,0].vlines(100,0,220,linestyle='--',color='r',label="100K")
 ax[1,0].set_title("T$_{eff}$") #how to make not italic...
 ax[1,0].set_ylabel("Number")
 ax[1,0].set_xlabel("% Error")
-ax[1,0].legend()
+#ax[1,0].legend()
 
 ax[1,1].hist(df_good_errs["elogg1"], bins='auto')
 #ax[1,1].vlines(0.05,0,220,linestyle='--',color='r',label="0.05dex")
 ax[1,1].set_title("log(g)")
 ax[1,1].set_xlabel("Error (dex)")
-ax[1,1].legend()
+#ax[1,1].legend()
 
 ax[1,2].hist(df_good_errs["eFe/H1"], bins='auto')
 #ax[1,2].vlines(.15,0,250,linestyle='--',color='r',label="0.15dex")
 ax[1,2].set_title("Fe/H")
 ax[1,2].set_xlabel("Error (dex)")
-ax[1,2].legend()
+#ax[1,2].legend()
 
 plt.tight_layout()
 plt.savefig("DataExploring/db_new_err_dists.pdf")
+
+
+#consistency checks...
+df_L_check = df_good_MS[df_good_MS["L_from_SB"]==0]
+df_L_check["L_SB"] = df_L_check["R"]**2 * (df_L_check["Teff"]/5772)**4
+
+R = df_L_check["R"]
+Teff = df_L_check["Teff"]
+
+df_L_check["L_SB_+err"] = np.sqrt(
+    (R**2*((Teff+df_L_check["eTeff1"])/5772)**4 - df_L_check["L_SB"])**2 
+    + ((R+df_L_check["eR1"])**2*(Teff/5772)**4 - df_L_check["L_SB"])**2 
+)
+df_L_check["L_SB_-err"] = np.sqrt(
+    (R**2*((Teff-df_L_check["eTeff2"])/5772)**4 - df_L_check["L_SB"])**2 
+    + ((R-df_L_check["eR2"])**2*(Teff/5772)**4 - df_L_check["L_SB"])**2 
+)
+
+plt.figure()
+yerr = np.array([df_L_check["L_SB_-err"], df_L_check["L_SB_+err"]])
+xerr = np.array([df_L_check["eL2"], df_L_check["eL1"]])
+plt.errorbar(df_L_check["L"], df_L_check["L_SB"], #x,y,yerr,xerr
+             yerr=yerr, xerr=xerr, fmt='bo', ecolor='gray', alpha=0.5)
+plt.xlabel("L")
+plt.ylabel("L from SB")
+plt.plot([0, df_L_check["L"].max()], [0,df_L_check["L"].max()], linestyle='--', color='r')
+plt.xscale("log")
+plt.yscale("log")
+plt.savefig("DataExploring/MS_L_check.pdf")
+
+
 
 def make_MS_sample(N):
     """Cheeky tiny MS sample to practice on. N is roughly how many stars.
@@ -109,4 +143,4 @@ def diagnostics(df, name):
 
     print("New stars AND new range stars: ", len(df[((df["M"]<=0.8) | (df["M"]>=1.4)) & (df["database"]!=1)]), "out of ", len(df))
 
-diagnostics(df_no_fills, "df_no_fills")
+

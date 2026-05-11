@@ -304,10 +304,10 @@ if __name__ == '__main__':
 
     #HAVE YOU UPDATED CONSTANTS.PY
 
-    print("Mass NN run with Half Normal instead of Half Cauchy for NN error term")
+    print("SUPER QUICK TEST")
     # mass_train_GP(60,60)
     # radius_train_GP(60,60)
-    mass_train_SIMPLE_NN(5,1000,4)
+    mass_train_SIMPLE_NN(3,10,1)
     #radius_train_NN(5, 1000, 4)
 
     #from Gemini
