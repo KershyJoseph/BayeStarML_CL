@@ -94,6 +94,8 @@ plt.savefig("DataExploring/db_new_err_dists.pdf")
 
 
 #consistency checks...
+#---------------------
+#get SB Ls and errs
 df_L_check = df_good_MS[df_good_MS["L_from_SB"]==0]
 df_L_check["L_SB"] = df_L_check["R"]**2 * (df_L_check["Teff"]/5772)**4
 
@@ -108,6 +110,9 @@ df_L_check["L_SB_-err"] = np.sqrt(
     (R**2*((Teff-df_L_check["eTeff2"])/5772)**4 - df_L_check["L_SB"])**2 
     + ((R-df_L_check["eR2"])**2*(Teff/5772)**4 - df_L_check["L_SB"])**2 
 )
+
+#compute distance from recorded Ls
+#total_err = np.sqrt(df)
 
 plt.figure()
 yerr = np.array([df_L_check["L_SB_-err"], df_L_check["L_SB_+err"]])
