@@ -183,7 +183,7 @@ def HBNN_M4(X_train, Y, X_error, Y_error, n_hidden):
 
         # Weights from input to hidden layer
         weights_in_1 = pm.Normal(
-            "w_in_1", 0, sigma=0.1, shape=(n_hidden, X_latent.eval().shape[1])
+            "w_in_1", 0, sigma=0.1, shape=(n_hidden, 4) #replaced X_latent.eval().shape[1]
         )
 
         
@@ -193,7 +193,7 @@ def HBNN_M4(X_train, Y, X_error, Y_error, n_hidden):
 
 
         # Weights from hidden layer to output
-        weights_2_out = pm.Normal("w_2_out", 0, sigma=0.1, shape=(n_hidden))
+        weights_2_out = pm.Normal("w_2_out", 0, sigma=0.1, shape=n_hidden)
 
         
         bias_1 = pm.Normal("bias_1", 0, sigma=1, shape=n_hidden)
