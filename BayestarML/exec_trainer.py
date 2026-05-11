@@ -304,10 +304,10 @@ if __name__ == '__main__':
 
     #HAVE YOU UPDATED CONSTANTS.PY
 
-    print("SUPER QUICK TEST")
+    print("Simple NN 5_1000_4 run again but with ESS stats")
     # mass_train_GP(60,60)
     # radius_train_GP(60,60)
-    mass_train_SIMPLE_NN(3,10,1)
+    mass_train_SIMPLE_NN(5,1000,4)
     #radius_train_NN(5, 1000, 4)
 
     #from Gemini
