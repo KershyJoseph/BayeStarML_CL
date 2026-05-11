@@ -304,9 +304,9 @@ if __name__ == '__main__':
 
     #HAVE YOU UPDATED CONSTANTS.PY
 
-    print("SUPER QUICK CHECK ESS PRINTS")
+    print("GET ESS ON PREV RESULTS - simple 5_1000_4")
     # radius_train_GP(60,60)
-    mass_train_SIMPLE_NN(3,50,2)
+    mass_train_SIMPLE_NN(5,1000,4)
     #radius_train_NN(5, 1000, 4)
 
     #from Gemini
