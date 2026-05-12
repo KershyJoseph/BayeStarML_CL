@@ -1,6 +1,4 @@
-
-
- GP Mass train goodMS - ADVI - 30
+GP Mass train goodMS - ADVI - 30
 Fitting: ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00 Average Loss = 533.43
 Finished [100%]: Average Loss = 532.31
 ELBO:

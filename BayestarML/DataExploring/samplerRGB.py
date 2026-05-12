@@ -105,8 +105,9 @@ df_L_check["L_SB_-err"] = np.sqrt(
 #compute distance from recorded Ls
 df_L_check["L_SB_avg_err"] = (df_L_check["L_SB_+err"] + df_L_check["L_SB_-err"])/2
 df_L_check["total_L_err"] = np.sqrt(df_L_check["L_SB_avg_err"]**2 + df_L_check["eL1"]**2)
-df_L_check["L_distance"] = np.abs((df_L_check["L_SB"]-df_L_check["L"])/df_L_check["total_L_err"])
-df_bad_Ls = df_L_check[df_L_check["L_distance"]>3]
+df_L_check["L_dist"] = df_L_check["L_SB"]-df_L_check["L"]
+df_L_check["L_sig_distance"] = np.abs(df_L_check["L_dist"])/df_L_check["total_L_err"]
+df_bad_Ls = df_L_check[df_L_check["L_sig_distance"]>3]
 
 plt.figure()
 yerr = np.array([df_L_check["L_SB_-err"], df_L_check["L_SB_+err"]])
