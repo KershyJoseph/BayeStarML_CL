@@ -317,10 +317,10 @@ if __name__ == '__main__':
     snapshot1 = tracemalloc.take_snapshot()
     start_time = time.process_time()
 
-    print("GP goodMS mass 2nd look at final model - 60 IPs, 2000draws, tuning still 1.5draws.")
-    mass_train_GP(60,60,2000)
+    print("2nd final NN go - 2 layers and 15 nodes")
+    #mass_train_GP(60,60,2000)
     #radius_train_GP(60,60)
-    #mass_train_SIMPLE_NN(5,2000,4)
+    mass_train_NN(15,2000,4)
     #radius_train_NN(5, 1000, 4)
 
     end_time = time.process_time()
