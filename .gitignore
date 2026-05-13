@@ -1,5 +1,5 @@
 *.nc
 *.zshrc
-models/__pycache__/
+models/__pycache__/*
 .vscode
-__pycache__/
+__pycache__/*
