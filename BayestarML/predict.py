@@ -31,16 +31,14 @@ def predict4(X, X_er, target, test=False):
         X_er = x_test_err
 
     if target == 'mass':
-        
+
         unorm_mass = denormalise_val(mass_test, 'mass')
 
-        
         bart4_model = bart.BART_M(x_train, x_train_er, mass_train, emass_train)
         bart4_pred, lpd_BART4 = sample_pred_BART(bart4_model,
                                       X,
                                       X_er, 'mass',
                                       1000, 2)
-
 
         gp4_model, μ_gp4, lg_σ_gp4, Xu4, Xu_er4 = gp.sparse_fully_heteroscedastic_gp(x_train, x_train_er, mass_train, 80, 40)
 

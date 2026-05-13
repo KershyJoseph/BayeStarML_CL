@@ -16,11 +16,5 @@ def main():
     _, bhs_pred, w4 = predict4(X, X_er, 'mass', test=True) # disregards X, X_er for test=True / uses test values
     _, pred, w4 = predict4(X, X_er, 'mass') # make predictions on new data (X, X_er)
 
-    pred_val = pred.mean(0)
-    pred_err = pred.std(0)
-    # same but for models trained with 3 input parameters
-    X3, X3_er = prepare_pred3("Datasets/dataset_B_trimmed_6cols_NASAFLAG.csv")
-    _, pred3, w3 = predict3(X3, X3_er, 'radius')
-
 if __name__ == '__main__':
     main()

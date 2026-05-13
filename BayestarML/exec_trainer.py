@@ -20,6 +20,7 @@ from sklearn.metrics import mean_absolute_error
 import tracemalloc
 import psutil
 import time
+import sys
 
 df_train = get_dataset('DataExploring/good_MS.txt')
 
@@ -50,7 +51,7 @@ def mass_train_GP(M_mean, M_var, draws, advi=False):
     if advi:
         approx = pm.fit(n=20000, method='advi', model=model, progressbar=True)
         trace = approx.sample(1000)
-        print("ELBO:\n", approx.hist)
+        f.write("ELBO:\n", approx.hist)
 
         trace.extend(pm.compute_log_likelihood(trace, model=model, var_names='y'))
         trace.to_netcdf("Outputs/GP_ADVI_mass_full_w_int_lognorm_"+hyperp_str+".nc")
@@ -65,21 +66,21 @@ def mass_train_GP(M_mean, M_var, draws, advi=False):
         for var in r_hat_values.data_vars:
             max_rhat = r_hat_values[var].max().values.item()
             all_rhats.append((var, max_rhat))
-        print(all_rhats)
+        f.write(all_rhats)
 
-    print(az.loo(trace))
+    f.write(az.loo(trace))
 
     pred, lpd = posterior_predictive_GP(model, μ_gp, lg_σ_gp, trace,
                                         x_test, x_test_err, Xu, Xu_er, 4, 'mass')
-    print(pred.std(0))
-    print(pred.mean(0))
-    print("Unorm mass: ", unorm_mass)
+    f.write(pred.std(0))
+    f.write(pred.mean(0))
+    f.write("Unorm mass: ", unorm_mass)
 
-    print('MAE: ', mean_absolute_error(unorm_mass, pred.mean(0)))
+    f.write('MAE: ', mean_absolute_error(unorm_mass, pred.mean(0)))
 
-    print('MARD', mard(unorm_mass, pred.mean(0)))
+    f.write('MARD', mard(unorm_mass, pred.mean(0)))
 
-    print('MRD', mrd(unorm_mass, pred.mean(0)))
+    f.write('MRD', mrd(unorm_mass, pred.mean(0)))
 
     plt.figure(figsize=(8, 6))
     plt.errorbar(unorm_mass, pred.mean(0), yerr=pred.std(0), fmt='o', label='Predictions with Uncertainty', alpha=0.7)
@@ -119,21 +120,21 @@ def radius_train_GP(M_mean, M_var):
         max_rhat = r_hat_values[var].max().values.item()
         all_rhats.append((var, max_rhat))
 
-    print(all_rhats)
+    f.write(all_rhats)
 
-    print(az.loo(trace))
+    f.write(az.loo(trace))
 
     pred, lpd = posterior_predictive_GP(model, μ_gp, lg_σ_gp, trace,
                                         x_test, x_test_err, Xu, Xu_er, 4, 'radius')
-    print(pred.std(0))
-    print(pred.mean(0))
-    print(unorm_radius)
+    f.write(pred.std(0))
+    f.write(pred.mean(0))
+    f.write(unorm_radius)
 
-    print('MAE: ', mean_absolute_error(unorm_radius, pred.mean(0)))
+    f.write('MAE: ', mean_absolute_error(unorm_radius, pred.mean(0)))
 
-    print('MARD', mard(unorm_radius, pred.mean(0)))
+    f.write('MARD', mard(unorm_radius, pred.mean(0)))
 
-    print('MRD', mrd(unorm_radius, pred.mean(0)))
+    f.write('MRD', mrd(unorm_radius, pred.mean(0)))
 
     plt.figure(figsize=(8, 6))
     plt.errorbar(unorm_radius, pred.mean(0), yerr=pred.std(0), fmt='o', label='Predictions with Uncertainty', alpha=0.7)
@@ -172,21 +173,21 @@ def mass_train_SIMPLE_NN(n_hidden=15, draw=1000, chains=4, target_accept=.95):
         max_rhat = r_hat_values[var].max().values.item()
         all_rhats.append((var, max_rhat))
 
-    print("rhats: ", all_rhats)
+    f.write("rhats: ", all_rhats)
 
-    print("loo trace: ", az.loo(trace))
+    f.write("loo trace: ", az.loo(trace))
 
     pred, lpd = SIMPLE_sample_post_pred_HBNN_para(trace, x_test, x_test_err, n_hidden, 4, "mass")
 
-    print("stdvs: ", pred.std(0))
-    print("means: ", pred.mean(0))
-    print("test set: ", unorm_mass)
+    f.write("stdvs: ", pred.std(0))
+    f.write("means: ", pred.mean(0))
+    f.write("test set: ", unorm_mass)
 
-    print('MAE: ', mean_absolute_error(unorm_mass, pred.mean(0)))
+    f.write('MAE: ', mean_absolute_error(unorm_mass, pred.mean(0)))
 
-    print('MARD', mard(unorm_mass, pred.mean(0)))
+    f.write('MARD', mard(unorm_mass, pred.mean(0)))
 
-    print('MRD', mrd(unorm_mass, pred.mean(0)))
+    f.write('MRD', mrd(unorm_mass, pred.mean(0)))
 
     plt.figure(figsize=(8, 6))
     plt.errorbar(unorm_mass, pred.mean(0), yerr=pred.std(0), fmt='o', label='Predictions with Uncertainty', alpha=0.7)
@@ -224,21 +225,21 @@ def mass_train_NN(n_hidden=15, draw=1000, chains=4, target_accept=.95):
         max_rhat = r_hat_values[var].max().values.item()
         all_rhats.append((var, max_rhat))
 
-    print("rhats: ", all_rhats)
+    f.write("rhats: ", all_rhats)
 
-    print("loo trace: ", az.loo(trace))
+    f.write("loo trace: ", az.loo(trace))
 
     pred, lpd = sample_post_pred_HBNN_para(trace, x_test, x_test_err, n_hidden, 4, "mass")
 
-    print("stdvs: ", pred.std(0))
-    print("means: ", pred.mean(0))
-    print("test set: ", unorm_mass)
+    f.write("stdvs: ", pred.std(0))
+    f.write("means: ", pred.mean(0))
+    f.write("test set: ", unorm_mass)
 
-    print('MAE: ', mean_absolute_error(unorm_mass, pred.mean(0)))
+    f.write('MAE: ', mean_absolute_error(unorm_mass, pred.mean(0)))
 
-    print('MARD', mard(unorm_mass, pred.mean(0)))
+    f.write('MARD', mard(unorm_mass, pred.mean(0)))
 
-    print('MRD', mrd(unorm_mass, pred.mean(0)))
+    f.write('MRD', mrd(unorm_mass, pred.mean(0)))
 
     plt.figure(figsize=(8, 6))
     plt.errorbar(unorm_mass, pred.mean(0), yerr=pred.std(0), fmt='o', label='Predictions with Uncertainty', alpha=0.7)
@@ -274,21 +275,21 @@ def radius_train_NN(n_hidden, draw=1000, chains=4):
         max_rhat = r_hat_values[var].max().values.item()
         all_rhats.append((var, max_rhat))
 
-    print("rhats: ", all_rhats)
+    f.write("rhats: ", all_rhats)
 
-    print("loo trace: ", az.loo(trace))
+    f.write("loo trace: ", az.loo(trace))
 
     pred, lpd = sample_post_pred_HBNN_para(trace, x_test, x_test_err, n_hidden, 4, "radius")
 
-    print("stdvs: ", pred.std(0))
-    print("means: ", pred.mean(0))
-    print("test set: ", unorm_radius)
+    f.write("stdvs: ", pred.std(0))
+    f.write("means: ", pred.mean(0))
+    f.write("test set: ", unorm_radius)
 
-    print('MAE: ', mean_absolute_error(unorm_radius, pred.mean(0)))
+    f.write('MAE: ', mean_absolute_error(unorm_radius, pred.mean(0)))
 
-    print('MARD', mard(unorm_radius, pred.mean(0)))
+    f.write('MARD', mard(unorm_radius, pred.mean(0)))
 
-    print('MRD', mrd(unorm_radius, pred.mean(0)))
+    f.write('MRD', mrd(unorm_radius, pred.mean(0)))
 
     plt.figure(figsize=(8, 6))
     plt.errorbar(unorm_radius, pred.mean(0), yerr=pred.std(0), fmt='o', label='Predictions with Uncertainty', alpha=0.7)
@@ -318,19 +319,20 @@ if __name__ == '__main__':
     snapshot1 = tracemalloc.take_snapshot()
     start_time = time.process_time()
 
-    print("2nd final NN go - 2 layers and 15 nodes")
-    #mass_train_GP(60,60,2000)
-    #radius_train_GP(60,60)
-    mass_train_NN(15,2000,4)
-    #radius_train_NN(5, 1000, 4)
+    with open("Outputs/testboi.txt", "w") as f:
+        f.write("2nd final NN go - 2 layers and 15 nodes")
+        #mass_train_GP(60,60,2000)
+        #radius_train_GP(60,60)
+        mass_train_NN(2,100,1)
+        #radius_train_NN(5, 1000, 4)
 
-    end_time = time.process_time()
-    #from Gemini
-    snapshot2 = tracemalloc.take_snapshot()
-    top_stats = snapshot2.compare_to(snapshot1, 'lineno')
-    print("[ Top 5 memory changes ]")
-    for stat in top_stats[:5]:
-        print(stat)
-    
-    print(f"Peak Memory: {process.memory_info().rss / 1024**2:.2f} MB")
-    print(f"Training time: {(end_time-start_time):.5f} s")
+        end_time = time.process_time()
+        #from Gemini
+        snapshot2 = tracemalloc.take_snapshot()
+        top_stats = snapshot2.compare_to(snapshot1, 'lineno')
+        f.write("[ Top 5 memory changes ]")
+        for stat in top_stats[:5]:
+            f.write(stat)
+        
+        f.write(f"Peak Memory: {process.memory_info().rss / 1024**2:.2f} MB")
+        f.write(f"Training time: {(end_time-start_time):.5f} s")
