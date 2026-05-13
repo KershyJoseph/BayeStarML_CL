@@ -1,1 +1,0 @@
-2nd final NN go - 2 layers and 15 nodes
