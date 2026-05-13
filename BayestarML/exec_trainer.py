@@ -16,10 +16,10 @@ import pymc as pm
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_absolute_error
-import tracemalloc
 
-tracemalloc.start() #for memory usage estimate
-snapshot1 = tracemalloc.take_snapshot()
+import tracemalloc
+import psutil
+import time
 
 df_train = get_dataset('DataExploring/good_MS.txt')
 
@@ -312,15 +312,24 @@ if __name__ == '__main__':
 
     #HAVE YOU UPDATED CONSTANTS.PY
 
+    process = psutil.Process()
+    tracemalloc.start() #for memory usage estimate
+    snapshot1 = tracemalloc.take_snapshot()
+    start_time = time.process_time()
+
     print("GP goodMS mass 2nd look at final model - 60 IPs, 2000draws, tuning still 1.5draws.")
     mass_train_GP(60,60,2000)
     #radius_train_GP(60,60)
     #mass_train_SIMPLE_NN(5,2000,4)
     #radius_train_NN(5, 1000, 4)
 
+    end_time = time.process_time()
     #from Gemini
     snapshot2 = tracemalloc.take_snapshot()
     top_stats = snapshot2.compare_to(snapshot1, 'lineno')
-    print("[ Top 10 memory changes ]")
-    for stat in top_stats[:10]:
+    print("[ Top 5 memory changes ]")
+    for stat in top_stats[:5]:
         print(stat)
+    
+    print(f"Peak Memory: {process.memory_info().rss / 1024**2:.2f} MB")
+    print(f"Training time: {(end_time-start_time):.5f} s")

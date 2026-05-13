@@ -1,4 +1,5 @@
 GP goodMS mass 1st go at final model - 50 IPs, 2000draws, tuning still 1.5draws.
+
 target_accept= 0.95
 Initializing NUTS using jitter+adapt_diag...
 Multiprocess sampling (4 chains in 4 jobs)
