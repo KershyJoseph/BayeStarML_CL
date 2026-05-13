@@ -36,10 +36,10 @@ x_train_er = x_train_er[['eTeff', 'elogg', 'eFe/H', 'eL']]
 x_test = x_test[['Teff', 'logg', 'Fe/H', 'L']]
 x_test_err = x_test_err[['eTeff', 'elogg', 'eFe/H', 'eL']]
 
-def mass_train_GP(M_mean, M_var, advi=False):
+def mass_train_GP(M_mean, M_var, draws, advi=False):
     """Function to train GP on mass prediction
     """
-    hyperp_str = str(M_mean)+"_"+str(M_var)
+    hyperp_str = str(M_mean)+"_"+str(M_var)+"_"+str(draws)
 
     model, μ_gp, lg_σ_gp, Xu, Xu_er = gp.sparse_fully_heteroscedastic_gp(x_train,
                                                                         x_train_er,
@@ -58,7 +58,7 @@ def mass_train_GP(M_mean, M_var, advi=False):
     else:
         trace = train(model,
                   "Outputs/GP_mass_full_w_int_lognorm_"+hyperp_str+".nc",
-                  draw=1000, chains=4)
+                  draw=draws, chains=4)
 
         r_hat_values = az.rhat(trace)
         all_rhats = []
@@ -88,7 +88,7 @@ def mass_train_GP(M_mean, M_var, advi=False):
     plt.ylabel('Predicted Mass')
     plt.title('GP Predictions with Uncertainty')
     plt.legend()
-    plt.savefig("Outputs/GP_mass_predictions.pdf")
+    plt.savefig("Outputs/GP_"+hyperp_str+"_mass_predictions.pdf")
 
     plt.figure(figsize=(8, 6))
     plt.errorbar(unorm_mass, pred.mean(0) - unorm_mass, yerr=pred.std(0), fmt='o', label='Predictions with Uncertainty', alpha=0.7)
@@ -96,7 +96,7 @@ def mass_train_GP(M_mean, M_var, advi=False):
     plt.xlabel('True Mass')
     plt.ylabel('Residual Mass')
     plt.legend()
-    plt.savefig("Outputs/GP_mass_residuals.pdf")
+    plt.savefig("Outputs/GP_"+hyperp_str+"_mass_residuals.pdf")
 
 def radius_train_GP(M_mean, M_var):
     """Function to train GP on radius prediction
@@ -312,10 +312,10 @@ if __name__ == '__main__':
 
     #HAVE YOU UPDATED CONSTANTS.PY
 
-    print("Mass train NN Simple try 3 nodes - 1.5 draw and C2Norm")
-    #mass_train_GP(70,70,advi=True)
+    print("GP goodMS mass 2nd look at final model - 60 IPs, 2000draws, tuning still 1.5draws.")
+    mass_train_GP(60,60,2000)
     #radius_train_GP(60,60)
-    mass_train_SIMPLE_NN(3,1000,4)
+    #mass_train_SIMPLE_NN(5,2000,4)
     #radius_train_NN(5, 1000, 4)
 
     #from Gemini
