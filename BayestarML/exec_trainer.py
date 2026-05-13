@@ -214,8 +214,9 @@ def mass_train_NN(n_hidden=15, draw=1000, chains=4, target_accept=.95):
     model = hbnn.HBNN_M4(x_train, mass_train, x_train_er, emass_train, n_hidden)
     model.debug(verbose=True)
     trace = train(model,
-                  "Outputs/MS/NN_mass_M4"+string_specs+"_nrns.nc",
-                  draw=draw, chains=chains, cores=chains, target_accept=target_accept)
+                  "Outputs/NN_final_mass_M4"+string_specs+"_nrns.nc",
+                  draw=draw, chains=chains, cores=chains, target_accept=target_accept,
+                  max_treedepth=20)
 
     r_hat_values = az.rhat(trace)
     all_rhats = []
@@ -246,7 +247,7 @@ def mass_train_NN(n_hidden=15, draw=1000, chains=4, target_accept=.95):
     plt.ylabel('Predicted Mass')
     plt.title('NN Predictions with Uncertainty')
     plt.legend()
-    plt.savefig("Outputs/MS/M4NN_mass_predictions"+string_specs+".pdf")
+    plt.savefig("Outputs/NN_mass_final_preds"+string_specs+".pdf")
 
     plt.figure(figsize=(8, 6))
     plt.errorbar(unorm_mass, pred.mean(0) - unorm_mass, yerr=pred.std(0), fmt='o', label='Predictions with Uncertainty', alpha=0.7)
@@ -254,7 +255,7 @@ def mass_train_NN(n_hidden=15, draw=1000, chains=4, target_accept=.95):
     plt.xlabel('True Mass')
     plt.ylabel('Residual Mass')
     plt.legend()
-    plt.savefig("Outputs/MS/M4NN_mass_residuals"+string_specs+".pdf")
+    plt.savefig("Outputs/NN_mass_final_ress"+string_specs+".pdf")
 
 def radius_train_NN(n_hidden, draw=1000, chains=4): 
     """Function to train NN on radius prediction
