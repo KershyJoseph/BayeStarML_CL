@@ -190,10 +190,16 @@ def diagnostics(df, name):
 
     print("Old stars: ", len(df[(df["database"]==1)]))
 
-    print("New stars: ", len(df[(df["database"]!=1)]), "out of ", len(df))
+    print("New (and revised) stars: ", len(df[(df["database"]!=1)]), "out of ", len(df))
+
+    print("New, new stars: ", len(df[(df["database"]==3)]), "out of ", len(df))
 
     print("New range stars: ", len(df[(df["M"]<=0.8) | (df["M"]>=1.4)]), "out of ", len(df))
 
     print("New stars AND new range stars: ", len(df[((df["M"]<=0.8) | (df["M"]>=1.4)) & (df["database"]!=1)]), "out of ", len(df))
 
+    print("New low mass stars: ", len(df[(df["M"]<=0.8)]), "out of ", len(df))
 
+    print("New stars AND low mass stars: ", len(df[(df["M"]<=0.8) & (df["database"]!=1)]), "out of ", len(df))
+
+diagnostics(df_good_MS, "Good MS")
