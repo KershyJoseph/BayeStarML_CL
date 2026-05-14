@@ -68,8 +68,8 @@ def find_pointwise_loo(trace):
     return az.loo(trace, pointwise=True, scale="log").loo_i.values
 
 
-def train(model, filename, draw=1000, chains=2, 
-          cores=None, target_accept=0.95, max_treedepth=10):
+def train(model, filename, draw=1000, chains=2,
+          target_accept=0.95, max_treedepth=10):
     """
     Sample from a PyMC model and save the posterior trace.
 
@@ -96,13 +96,13 @@ def train(model, filename, draw=1000, chains=2,
     """
     print('target_accept=', target_accept)
     trace = pm.sample(draws=draw, tune=int(1.5*draw), chains=chains,
-                      cores=cores, model=model, target_accept=target_accept,
+                      cores=chains, model=model, target_accept=target_accept,
                       max_treedepth=max_treedepth)
 
     with pd.option_context("display.max_rows", None):
         df = az.summary(trace)
         df.sort_values(by="ess_bulk", inplace=True)
-        print("AZ Stats Summary:\n", df[df["ess_bulk"]<400])
+        print("AZ Stats for ESS Bulk < 400:\n", df[df["ess_bulk"]<400])
 
     trace.extend(pm.compute_log_likelihood(trace, model=model, var_names='y'))
     trace.to_netcdf(filename)

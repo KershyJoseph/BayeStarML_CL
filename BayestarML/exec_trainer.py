@@ -37,7 +37,7 @@ x_train_er = x_train_er[['eTeff', 'elogg', 'eFe/H', 'eL']]
 x_test = x_test[['Teff', 'logg', 'Fe/H', 'L']]
 x_test_err = x_test_err[['eTeff', 'elogg', 'eFe/H', 'eL']]
 
-def mass_train_GP(M_mean, M_var, draws, advi=False):
+def mass_train_GP(M_mean, M_var, draws, advi=False, target_accept=.95):
     """Function to train GP on mass prediction
     """
     hyperp_str = str(M_mean)+"_"+str(M_var)+"_"+str(draws)
@@ -49,7 +49,7 @@ def mass_train_GP(M_mean, M_var, draws, advi=False):
                                                                         M_var)
 
     if advi:
-        approx = pm.fit(n=20000, method='advi', model=model, progressbar=True)
+        approx = pm.fit(n=30000, method='advi', model=model, progressbar=True)
         trace = approx.sample(1000)
         print("ELBO:\n", approx.hist)
 
@@ -59,7 +59,7 @@ def mass_train_GP(M_mean, M_var, draws, advi=False):
     else:
         trace = train(model,
                   "Outputs/GP_mass_full_w_int_lognorm_"+hyperp_str+".nc",
-                  draw=draws, chains=4)
+                  draw=draws, chains=4, target_accept=target_accept)
 
         r_hat_values = az.rhat(trace)
         all_rhats = []
@@ -216,7 +216,7 @@ def mass_train_NN(n_hidden=15, draw=1000, chains=4, target_accept=.95):
     model.debug(verbose=True)
     trace = train(model,
                   "Outputs/NN_final_mass_M4"+string_specs+"_nrns.nc",
-                  draw=draw, chains=chains, cores=chains, target_accept=target_accept,
+                  draw=draw, chains=chains, target_accept=target_accept,
                   max_treedepth=20)
 
     r_hat_values = az.rhat(trace)
@@ -319,10 +319,10 @@ if __name__ == '__main__':
     snapshot1 = tracemalloc.take_snapshot()
     start_time = time.process_time()
 
-    print("2nd final NN go - 2 layers and 15 nodes - 20 max_treedepth")
-    #mass_train_GP(60,60,2000)
+    print("mass train GP with 1000 draws and .99 target accept - 20 max_treedepth, tuning 1.5draws")
+    mass_train_GP(50,50,1000,target_accept=0.99)
     #radius_train_GP(60,60)
-    mass_train_NN(15,2000,4)
+    #mass_train_NN(15,2000,4)
     #radius_train_NN(5, 1000, 4)
 
     end_time = time.process_time()
