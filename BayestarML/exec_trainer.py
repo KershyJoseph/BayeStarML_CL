@@ -22,7 +22,7 @@ import psutil
 import time
 import sys
 
-df_train = get_dataset('DataExploring/strict_MS.txt')
+df_train = get_dataset('DataExploring/good_MS.txt')
 
 (x_train, x_train_er, x_test, x_test_err, mass_train, emass_train,
  mass_test, emass_test, rad_train, erad_train, rad_test, erad_test
@@ -49,7 +49,7 @@ def mass_train_GP(M_mean, M_var, draws, advi=False, target_accept=.95):
                                                                         M_var)
 
     if advi:
-        approx = pm.fit(n=30000, method='advi', model=model, progressbar=True)
+        approx = pm.fit(n=40000, method='advi', model=model, progressbar=True)
         trace = approx.sample(1000)
         print("ELBO:\n", approx.hist)
 
@@ -105,20 +105,28 @@ def mass_train_GP(M_mean, M_var, draws, advi=False, target_accept=.95):
     plt.legend()
     plt.savefig("Outputs/GP_"+hyperp_str+"_mass_residuals.pdf")
 
-def radius_train_GP(M_mean, M_var):
+def radius_train_GP(M_mean, M_var, draws, advi=False, target_accept=.95):
     """Function to train GP on radius prediction
     """
+    hyperp_str = str(M_mean)+"_"+str(M_var)+"_"#+str(draws)
+
     # model = hbnn.HBNN_R3(x_train3, rad_train, x_train3_er, erad_train, 15)
     model, μ_gp, lg_σ_gp, Xu, Xu_er = gp.sparse_fully_heteroscedastic_gp(x_train,
                                                                         x_train_er,
                                                                         rad_train, M_mean, M_var)
 
-    trace = train(model,
-                  "Outputs/GP_radius_full_w_int_lognorm_"+str(M_mean)+"_"+str(M_var)+".nc",
-                  draw=1000, chains=4)
-    # trace = az.from_netcdf("Radius_output/GP_hetero_new_2026_mass_4param_gamma_etav_80_40.nc")
+    if advi:
+        approx = pm.fit(n=40000, method='advi', model=model, progressbar=True)
+        trace = approx.sample(1000)
+        print("ELBO:\n", approx.hist)
 
-    # trace.extend(pm.compute_log_likelihood(trace, model=model, var_names='y'))
+        trace.extend(pm.compute_log_likelihood(trace, model=model, var_names='y'))
+        trace.to_netcdf("Outputs/Testing/GP_rad_testing/GP_ADVI_rad_"+hyperp_str+".nc")
+
+    else:
+        trace = train(model,
+                  "Outputs/GP_radius_full_w_int_lognorm_"+hyperp_str+".nc",
+                  draw=draws, chains=4, target_accept=target_accept)
 
     r_hat_values = az.rhat(trace)
     all_rhats = []
@@ -149,7 +157,7 @@ def radius_train_GP(M_mean, M_var):
     plt.ylabel('Predicted Radius')
     plt.title('GP Predictions with Uncertainty')
     plt.legend()
-    plt.savefig("Outputs/GP_radius_predictions.pdf")
+    plt.savefig("Outputs/Testing/GP_rad_testing/GP_ADVI_rad_preds"+hyperp_str+".pdf")
 
     plt.figure(figsize=(8, 6))
     plt.errorbar(unorm_radius, pred.mean(0) - unorm_radius, yerr=pred.std(0), fmt='o', label='Predictions with Uncertainty', alpha=0.7)
@@ -157,7 +165,7 @@ def radius_train_GP(M_mean, M_var):
     plt.xlabel('True Mass')
     plt.ylabel('Residual Mass')
     plt.legend()
-    plt.savefig("Outputs/GP_radius_residuals.pdf")
+    plt.savefig("Outputs/Testing/GP_rad_testing/GP_ADVI_rad_residuals"+hyperp_str+".pdf")
 
 def mass_train_SIMPLE_NN(n_hidden=15, draw=1000, chains=4, target_accept=.95):
     """
@@ -319,24 +327,31 @@ if __name__ == '__main__':
 
     #HAVE YOU UPDATED CONSTANTS.PY
 
-    process = psutil.Process()
-    tracemalloc.start() #for memory usage estimate
-    snapshot1 = tracemalloc.take_snapshot()
-    start_time = time.process_time()
+    # process = psutil.Process()
+    # tracemalloc.start() #for memory usage estimate
+    # snapshot1 = tracemalloc.take_snapshot()
+    # start_time = time.process_time()
 
-    print("Have a look at IPs - with less err IPs. Also look at bad err points.")
-    mass_train_GP(50,20,1000,target_accept=0.99)
+    print("GP rad testing")
+    trials = [[40,10]]#,[45,11],[50,13],[60,15],[60,30],[60,45],[60,60],[65,16],[70,18]]
+    for t in trials:
+        print("-------------")
+        print(f"Trial with {t[0]} mean and {t[1]} err IPs.")
+        print("-------------")
+        radius_train_GP(t[0], t[1], advi=True)
+
+    #mass_train_GP(50,20,1000,target_accept=0.99)
     #radius_train_GP(60,60)
     #mass_train_NN(15,2000,4)
     #radius_train_NN(5, 1000, 4)
 
-    end_time = time.process_time()
-    #from Gemini
-    snapshot2 = tracemalloc.take_snapshot()
-    top_stats = snapshot2.compare_to(snapshot1, 'lineno')
-    print("[ Top 5 memory changes ]")
-    for stat in top_stats[:5]:
-        print(stat)
-    
-    print(f"Peak Memory: {process.memory_info().rss / 1024**2:.2f} MB")
-    print(f"Training time: {(end_time-start_time):.5f} s")
+    # end_time = time.process_time()
+    # #from Gemini
+    # snapshot2 = tracemalloc.take_snapshot()
+    # top_stats = snapshot2.compare_to(snapshot1, 'lineno')
+    # print("[ Top 5 memory changes ]")
+    # for stat in top_stats[:5]:
+    #     print(stat)
+
+    # print(f"Peak Memory: {process.memory_info().rss / 1024**2:.2f} MB")
+    # print(f"Training time: {(end_time-start_time):.5f} s")
