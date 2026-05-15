@@ -76,6 +76,12 @@ def mass_train_GP(M_mean, M_var, draws, advi=False, target_accept=.95):
     print(pred.mean(0))
     print("Unorm mass: ", unorm_mass)
 
+    for i, std in enumerate(pred.std(0)):
+        if std > 1:
+            print(f"Mass err bigger than 1Msol for star with mass {unorm_mass.iloc[i]}")
+            print(f"(Predicted {pred.mean(0)[i]} +/- {std} Msol)")
+            print("------------------------")
+
     print('MAE: ', mean_absolute_error(unorm_mass, pred.mean(0)))
 
     print('MARD', mard(unorm_mass, pred.mean(0)))
@@ -308,7 +314,7 @@ def radius_train_NN(n_hidden, draw=1000, chains=4):
     plt.legend()
     plt.savefig("Outputs/NN_radius_residuals.pdf")
 
-
+__name__ = False
 if __name__ == '__main__':
     #pick which function(s) to run when file is run
 
@@ -319,10 +325,10 @@ if __name__ == '__main__':
     snapshot1 = tracemalloc.take_snapshot()
     start_time = time.process_time()
 
-    print("Best NN so far with strict MS data. ")
-    #mass_train_GP(50,50,1000,target_accept=0.99)
+    print("Have a look at IPs - with less err IPs. Also look at bad err points.")
+    mass_train_GP(50,20,1000,target_accept=0.99)
     #radius_train_GP(60,60)
-    mass_train_NN(15,2000,4)
+    #mass_train_NN(15,2000,4)
     #radius_train_NN(5, 1000, 4)
 
     end_time = time.process_time()

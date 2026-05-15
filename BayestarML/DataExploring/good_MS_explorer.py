@@ -27,10 +27,19 @@ plt.ylabel("Frequency")
 plt.savefig("DataExploring/types_hist_MS.pdf")
 
 #spread of data in mass range on goodMS
-plt.figure()
-labels = {1: "Old", 2: "Revised", 3: "New"}
-df["database"] = df["database"]
-sns.histplot(data=df, x="M", hue="database", multiple="layer") 
-plt.xlabel("Mass (Msol)")
-plt.ylabel("Number of stars")
-plt.savefig("DataExploring/mass_spread.pdf")
+def plot_mass_spread(df, name, multiple="layer"):
+    """Function to get histogram of mass spread with different databases shown
+    'name' should be a string for file name
+    """
+    plt.figure()
+    labels = {1: "Old", 2: "Revised", 3: "New"}
+    df["database"] = df["database"].map(labels)
+    sns.histplot(data=df, x="M", hue="database", multiple=multiple) 
+    plt.xlabel("Mass (Msol)")
+    plt.ylabel("Number of stars")
+    plt.savefig("DataExploring/mass_spread_"+name+".pdf")
+
+df_strict = pd.read_csv("DataExploring/strict_MS.txt", sep="\t", comment="#")
+plot_mass_spread(df_strict, "strictMS")
+
+plot_mass_spread(df, "goodMS", multiple="stack")

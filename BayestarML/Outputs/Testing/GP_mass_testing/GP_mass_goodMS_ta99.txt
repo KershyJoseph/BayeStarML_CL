@@ -1,5 +1,5 @@
 mass train GP with 1000 draws and .99 target accept - 20 max_treedepth, tuning 1.5draws
-target_accept= 0.99
+target_accept= 0.99. 50IPs.
 
 Initializing NUTS using jitter+adapt_diag...                                                      
 ^[[B^[[B^[[A^[[A^[[A^[[AMultiprocess sampling (4 chains in 4 jobs)

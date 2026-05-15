@@ -250,7 +250,10 @@ def sparse_fully_heteroscedastic_gp(
                                   add_bounds=True,
                                   weight_by_error=False,  # maybe off here
                                   seed=seed)
-    
+
+    print("mean IPs: \n", Xu)
+    print("var IPs: \n", Xu_var)
+
     with pm.Model() as model:
         X_mu  = pm.Data("X_mu",  X)
         # X_er  = pm.ConstantData("X_er",  X_err)
