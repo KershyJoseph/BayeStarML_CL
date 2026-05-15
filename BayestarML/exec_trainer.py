@@ -22,7 +22,7 @@ import psutil
 import time
 import sys
 
-df_train = get_dataset('DataExploring/good_MS.txt')
+df_train = get_dataset('DataExploring/strict_MS.txt')
 
 (x_train, x_train_er, x_test, x_test_err, mass_train, emass_train,
  mass_test, emass_test, rad_train, erad_train, rad_test, erad_test
@@ -210,7 +210,7 @@ def mass_train_NN(n_hidden=15, draw=1000, chains=4, target_accept=.95):
     """Function to train NN on mass prediction
     """
     #for output info
-    string_specs = "_goodMS_"+str(n_hidden)+"_"+str(draw)+"_"+str(chains)
+    string_specs = "_strictMS_"+str(n_hidden)+"_"+str(draw)+"_"+str(chains)
 
     model = hbnn.HBNN_M4(x_train, mass_train, x_train_er, emass_train, n_hidden)
     model.debug(verbose=True)
@@ -319,10 +319,10 @@ if __name__ == '__main__':
     snapshot1 = tracemalloc.take_snapshot()
     start_time = time.process_time()
 
-    print("mass train GP with 1000 draws and .99 target accept - 20 max_treedepth, tuning 1.5draws")
-    mass_train_GP(50,50,1000,target_accept=0.99)
+    print("Best NN so far with strict MS data. ")
+    #mass_train_GP(50,50,1000,target_accept=0.99)
     #radius_train_GP(60,60)
-    #mass_train_NN(15,2000,4)
+    mass_train_NN(15,2000,4)
     #radius_train_NN(5, 1000, 4)
 
     end_time = time.process_time()
