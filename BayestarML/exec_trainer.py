@@ -37,7 +37,7 @@ x_train_er = x_train_er[['eTeff', 'elogg', 'eFe/H', 'eL']]
 x_test = x_test[['Teff', 'logg', 'Fe/H', 'L']]
 x_test_err = x_test_err[['eTeff', 'elogg', 'eFe/H', 'eL']]
 
-def mass_train_GP(M_mean, M_var, draws, advi=False, target_accept=.95):
+def mass_train_GP(M_mean, M_var, draws=1000, advi=False, target_accept=.95):
     """Function to train GP on mass prediction
     """
     hyperp_str = str(M_mean)+"_"+str(M_var)+"_"+str(draws)
@@ -105,7 +105,7 @@ def mass_train_GP(M_mean, M_var, draws, advi=False, target_accept=.95):
     plt.legend()
     plt.savefig("Outputs/GP_"+hyperp_str+"_mass_residuals.pdf")
 
-def radius_train_GP(M_mean, M_var, draws, advi=False, target_accept=.95):
+def radius_train_GP(M_mean, M_var, draws=1000, advi=False, target_accept=.95):
     """Function to train GP on radius prediction
     """
     hyperp_str = str(M_mean)+"_"+str(M_var)+"_"#+str(draws)
