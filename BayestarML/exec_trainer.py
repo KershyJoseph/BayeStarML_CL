@@ -314,7 +314,6 @@ def radius_train_NN(n_hidden, draw=1000, chains=4):
     plt.legend()
     plt.savefig("Outputs/NN_radius_residuals.pdf")
 
-__name__ = False
 if __name__ == '__main__':
     #pick which function(s) to run when file is run
 
