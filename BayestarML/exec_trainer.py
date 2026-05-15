@@ -108,9 +108,8 @@ def mass_train_GP(M_mean, M_var, draws=1000, advi=False, target_accept=.95):
 def radius_train_GP(M_mean, M_var, draws=1000, advi=False, target_accept=.95):
     """Function to train GP on radius prediction
     """
-    hyperp_str = str(M_mean)+"_"+str(M_var)+"_"#+str(draws)
+    hyperp_str = str(M_mean)+"_"+str(M_var)#+"_"+str(draws)
 
-    # model = hbnn.HBNN_R3(x_train3, rad_train, x_train3_er, erad_train, 15)
     model, μ_gp, lg_σ_gp, Xu, Xu_er = gp.sparse_fully_heteroscedastic_gp(x_train,
                                                                         x_train_er,
                                                                         rad_train, M_mean, M_var)
@@ -333,7 +332,7 @@ if __name__ == '__main__':
     # start_time = time.process_time()
 
     print("GP rad testing")
-    trials = [[40,10]]#,[45,11],[50,13],[60,15],[60,30],[60,45],[60,60],[65,16],[70,18]]
+    trials = [[40,10],[45,11],[50,13],[60,15],[60,30],[60,45],[60,60],[65,16],[70,18]]
     for t in trials:
         print("-------------")
         print(f"Trial with {t[0]} mean and {t[1]} err IPs.")
