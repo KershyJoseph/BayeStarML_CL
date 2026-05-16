@@ -13,7 +13,7 @@ from sklearn.model_selection import GridSearchCV
 from numpy import absolute
 
 #load data
-df = read_csv("DataExploring/good_MS.txt", sep="\t", comment="#")
+df = read_csv("Datasets/datos_tot_v20180517_adapted.txt", sep="\t", comment="#")
 training_fs = ["Teff", "Fe/H", "L", "logg"]
 X, y = df[training_fs], df["M"]
 
@@ -53,14 +53,23 @@ print(f"MARD result across all cross-validations: {best_score:.2f} +/- {best_sco
 
 #RESULTS/////////////////////////////////////////////////////
 
-#MASS - GoodMS
-# ---- Best params ----
+#MASS
+
+# ---- Best params GoodMS ----
 # {'colsample_bytree': 0.8, 'eta': 0.1, 'max_depth': 4, 'n_estimators': 100, 'reg_lambda': 1, 'subsample': 0.8}
 # -+-+-+-+-+-+-+-+-+-+-
 # MARD result across all cross-validations: 5.46 +/- 0.01 %
 
-#RADIUS - GoodMS
-# ---- Best params ----
+# ---- Best params 2018Data ---- Needs redoing
+# {'colsample_bytree': 1, 'eta': 0.1, 'max_depth': 3, 'n_estimators': 400, 'reg_lambda': 10, 'subsample': 1}
+# -+-+-+-+-+-+-+-+-+-+-
+# MARD result across all cross-validations: 5.30 +/- 0.01 %
+
+#RADIUS 
+
+# ---- Best params GoodMS ---- 
 # {'colsample_bytree': 0.8, 'eta': 0.1, 'max_depth': 4, 'n_estimators': 200, 'reg_lambda': 1, 'subsample': 0.8}
 # -+-+-+-+-+-+-+-+-+-+-
 # MARD result across all cross-validations: 3.68 +/- 0.01 %
+
+
