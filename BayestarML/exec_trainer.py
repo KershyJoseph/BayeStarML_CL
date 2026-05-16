@@ -125,7 +125,8 @@ def radius_train_GP(M_mean, M_var, draws=1000, advi=False, target_accept=.95):
     else:
         trace = train(model,
                   "Outputs/GP_radius_full_w_int_lognorm_"+hyperp_str+".nc",
-                  draw=draws, chains=4, target_accept=target_accept)
+                  draw=draws, chains=4, target_accept=target_accept,
+                  max_treedepth=20)
 
     r_hat_values = az.rhat(trace)
     all_rhats = []
@@ -339,7 +340,7 @@ if __name__ == '__main__':
     #     print("-------------")
     #     radius_train_GP(t[0], t[1], advi=True)
 
-    print("GP radius run 50 50. 1000 draws. TA 0.99. 1.5Tuning.")
+    print("GP radius run 50 50. 1000 draws. TA 0.99. 1.5Tuning. 20 Max TD.")
     print("(On good MS)")
     # mass_train_GP(50,20,1000,target_accept=0.99)
     radius_train_GP(50,50,1000,target_accept=.99)
