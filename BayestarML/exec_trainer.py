@@ -223,7 +223,7 @@ def mass_train_NN(n_hidden=15, draw=1000, chains=4, target_accept=.95):
     """Function to train NN on mass prediction
     """
     #for output info
-    string_specs = "_strictMS_"+str(n_hidden)+"_"+str(draw)+"_"+str(chains)
+    string_specs = "_goodMS_"+str(n_hidden)+"_"+str(draw)+"_"+str(chains)
 
     model = hbnn.HBNN_M4(x_train, mass_train, x_train_er, emass_train, n_hidden)
     model.debug(verbose=True)
@@ -339,11 +339,11 @@ if __name__ == '__main__':
     #     print("-------------")
     #     radius_train_GP(t[0], t[1], advi=True)
 
-    print("NN test with 30 nodes per layer in 2 layers. TA 0.99. 1.5Tuning.")
+    print("NN test with 64 nodes per layer in 2 layers. TA 0.99. 1.5Tuning.")
     print("(On good MS)")
     #mass_train_GP(50,20,1000,target_accept=0.99)
     #radius_train_GP(60,60)
-    mass_train_NN(30,2000,4,target_accept=.99)
+    mass_train_NN(64,2000,4,target_accept=.99)
     #radius_train_NN(5, 1000, 4)
 
     end_time = time.process_time()
