@@ -365,5 +365,3 @@ def main():
     #print(pred)
     #w4.to_csv('weights_results_4_param_mass_w_hdi.csv')
 
-if __name__ == '__main__':
-    main()
