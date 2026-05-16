@@ -54,7 +54,7 @@ def mass_train_GP(M_mean, M_var, draws=1000, advi=False, target_accept=.95):
         print("ELBO:\n", approx.hist)
 
         trace.extend(pm.compute_log_likelihood(trace, model=model, var_names='y'))
-        trace.to_netcdf("Outputs/GP_ADVI_mass_full_w_int_lognorm_"+hyperp_str+".nc")
+        trace.to_netcdf("Outputs/Testing/GP_mass_testing/GPmass_ADVI_test"+hyperp_str+".nc")
 
     else:
         trace = train(model,
@@ -95,7 +95,7 @@ def mass_train_GP(M_mean, M_var, draws=1000, advi=False, target_accept=.95):
     plt.ylabel('Predicted Mass')
     plt.title('GP Predictions with Uncertainty')
     plt.legend()
-    plt.savefig("Outputs/GP_"+hyperp_str+"_mass_predictions.pdf")
+    plt.savefig("Outputs/Testing/GP_mass_testing/GPadvi_"+hyperp_str+"_mass_preds.pdf")
 
     plt.figure(figsize=(8, 6))
     plt.errorbar(unorm_mass, pred.mean(0) - unorm_mass, yerr=pred.std(0), fmt='o', label='Predictions with Uncertainty', alpha=0.7)
@@ -103,7 +103,7 @@ def mass_train_GP(M_mean, M_var, draws=1000, advi=False, target_accept=.95):
     plt.xlabel('True Mass')
     plt.ylabel('Residual Mass')
     plt.legend()
-    plt.savefig("Outputs/GP_"+hyperp_str+"_mass_residuals.pdf")
+    plt.savefig("Outputs/Testing/GP_mass_testing/GPadvi_"+hyperp_str+"_mass_res.pdf")
 
 def radius_train_GP(M_mean, M_var, draws=1000, advi=False, target_accept=.95):
     """Function to train GP on radius prediction
@@ -325,35 +325,36 @@ def radius_train_NN(n_hidden, draw=1000, chains=4):
 if __name__ == '__main__':
     #pick which function(s) to run when file is run
 
-    #HAVE YOU UPDATED CONSTANTS.PY
+    #HAVE YOU UPDATED CONSTANTS.PY AND CHECKED OUTPUT FILE PATHS
 
-    process = psutil.Process()
-    tracemalloc.start() #for memory usage estimate
-    snapshot1 = tracemalloc.take_snapshot()
-    start_time = time.process_time()
+    # process = psutil.Process()
+    # tracemalloc.start() #for memory usage estimate
+    # snapshot1 = tracemalloc.take_snapshot()
+    # start_time = time.process_time()
 
-    # print("GP rad testing")
-    # trials = [[50,10], [50,15], [50,20], [50,30], [50,40], [50,50]]
-    # for t in trials:
-    #     print("-------------")
-    #     print(f"Trial with {t[0]} mean and {t[1]} err IPs.")
-    #     print("-------------")
-    #     radius_train_GP(t[0], t[1], advi=True)
+    print("GP mass testing")
+    trials = [[40,10], [50,13], [60,15], [70,18], [80,20], [90,23],
+              [50,50], [80,40], [80,60]]
+    for t in trials:
+        print("-------------")
+        print(f"Trial with {t[0]} mean and {t[1]} err IPs.")
+        print("-------------")
+        radius_train_GP(t[0], t[1], advi=True)
 
-    print("GP radius run 50 50. 1000 draws. TA 0.99. 1.5Tuning. 20 Max TD.")
-    print("(On good MS)")
-    # mass_train_GP(50,20,1000,target_accept=0.99)
-    radius_train_GP(50,50,1000,target_accept=.99)
-    # mass_train_NN(64,2000,4,target_accept=.99)
-    # radius_train_NN(5, 1000, 4)
+    # print("GP radius run 50 50. 1000 draws. TA 0.99. 1.5Tuning. 20 Max TD.")
+    # print("(On good MS)")
+    # # mass_train_GP(50,20,1000,target_accept=0.99)
+    # radius_train_GP(50,50,1000,target_accept=.99)
+    # # mass_train_NN(64,2000,4,target_accept=.99)
+    # # radius_train_NN(5, 1000, 4)
 
-    end_time = time.process_time()
-    #from Gemini
-    snapshot2 = tracemalloc.take_snapshot()
-    top_stats = snapshot2.compare_to(snapshot1, 'lineno')
-    print("[ Top 5 memory changes ]")
-    for stat in top_stats[:5]:
-        print(stat)
+    # end_time = time.process_time()
+    # #from Gemini
+    # snapshot2 = tracemalloc.take_snapshot()
+    # top_stats = snapshot2.compare_to(snapshot1, 'lineno')
+    # print("[ Top 5 memory changes ]")
+    # for stat in top_stats[:5]:
+    #     print(stat)
 
-    print(f"Peak Memory: {process.memory_info().rss / 1024**2:.2f} MB")
-    print(f"Training time: {(end_time-start_time):.5f} s")
+    # print(f"Peak Memory: {process.memory_info().rss / 1024**2:.2f} MB")
+    # print(f"Training time: {(end_time-start_time):.5f} s")
