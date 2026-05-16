@@ -326,33 +326,33 @@ if __name__ == '__main__':
 
     #HAVE YOU UPDATED CONSTANTS.PY
 
-    process = psutil.Process()
-    tracemalloc.start() #for memory usage estimate
-    snapshot1 = tracemalloc.take_snapshot()
-    start_time = time.process_time()
+    # process = psutil.Process()
+    # tracemalloc.start() #for memory usage estimate
+    # snapshot1 = tracemalloc.take_snapshot()
+    # start_time = time.process_time()
 
-    # print("GP rad testing")
-    # trials = [[40,10],[45,11],[50,13],[60,15],[60,30],[60,45],[60,60],[65,16],[70,18]]
-    # for t in trials:
-    #     print("-------------")
-    #     print(f"Trial with {t[0]} mean and {t[1]} err IPs.")
-    #     print("-------------")
-    #     radius_train_GP(t[0], t[1], advi=True)
+    print("GP rad testing")
+    trials = [[50,10], [50,15], [50,20], [50,30], [50,40], [50,50]]
+    for t in trials:
+        print("-------------")
+        print(f"Trial with {t[0]} mean and {t[1]} err IPs.")
+        print("-------------")
+        radius_train_GP(t[0], t[1], advi=True)
 
-    print("NN test with 64 nodes per layer in 2 layers. TA 0.99. 1.5Tuning.")
-    print("(On good MS)")
+    #print("NN test with 64 nodes per layer in 2 layers. TA 0.99. 1.5Tuning.")
+    #print("(On good MS)")
     #mass_train_GP(50,20,1000,target_accept=0.99)
     #radius_train_GP(60,60)
-    mass_train_NN(64,2000,4,target_accept=.99)
+    #mass_train_NN(64,2000,4,target_accept=.99)
     #radius_train_NN(5, 1000, 4)
 
-    end_time = time.process_time()
-    #from Gemini
-    snapshot2 = tracemalloc.take_snapshot()
-    top_stats = snapshot2.compare_to(snapshot1, 'lineno')
-    print("[ Top 5 memory changes ]")
-    for stat in top_stats[:5]:
-        print(stat)
+    # end_time = time.process_time()
+    # #from Gemini
+    # snapshot2 = tracemalloc.take_snapshot()
+    # top_stats = snapshot2.compare_to(snapshot1, 'lineno')
+    # print("[ Top 5 memory changes ]")
+    # for stat in top_stats[:5]:
+    #     print(stat)
 
-    print(f"Peak Memory: {process.memory_info().rss / 1024**2:.2f} MB")
-    print(f"Training time: {(end_time-start_time):.5f} s")
+    # print(f"Peak Memory: {process.memory_info().rss / 1024**2:.2f} MB")
+    # print(f"Training time: {(end_time-start_time):.5f} s")

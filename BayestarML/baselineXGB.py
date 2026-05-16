@@ -15,7 +15,7 @@ from numpy import absolute
 #load data
 df = read_csv("DataExploring/good_MS.txt", sep="\t", comment="#")
 training_fs = ["Teff", "Fe/H", "L", "logg"]
-X, y = df[training_fs], df["R"]
+X, y = df[training_fs], df["M"]
 
 #make model
 model = XGBRegressor(random_state=42)
@@ -26,7 +26,7 @@ cv = RepeatedKFold(n_splits=10, n_repeats=3, random_state=1)
 #search for the best model params
 param_grid = {
     'eta': [0.3, 0.2, 0.1, 0.01],
-    'n_estimators': [20, 50, 100, 200],
+    'n_estimators': [20, 50, 100, 200, 400],
     'max_depth': [2, 3, 4],
     'reg_lambda': [1, 10], #to stop overfitting. Default is 1.
     'subsample': [0.8, 1],
@@ -51,7 +51,7 @@ print(f"---- Best params ----\n{best_params}")
 print("-+-+-+-+-+-+-+-+-+-+-")
 print(f"MARD result across all cross-validations: {best_score:.2f} +/- {best_score_std:.2f} %")
 
-#RESULTS
+#RESULTS/////////////////////////////////////////////////////
 
 #MASS - GoodMS
 # ---- Best params ----
@@ -60,4 +60,7 @@ print(f"MARD result across all cross-validations: {best_score:.2f} +/- {best_sco
 # MARD result across all cross-validations: 5.46 +/- 0.01 %
 
 #RADIUS - GoodMS
-
+# ---- Best params ----
+# {'colsample_bytree': 0.8, 'eta': 0.1, 'max_depth': 4, 'n_estimators': 200, 'reg_lambda': 1, 'subsample': 0.8}
+# -+-+-+-+-+-+-+-+-+-+-
+# MARD result across all cross-validations: 3.68 +/- 0.01 %
