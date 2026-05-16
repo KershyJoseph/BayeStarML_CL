@@ -19,9 +19,9 @@ import pandas as pd
 # from utils import find_pointwise_loo
 
 
-def predict4(X, X_er, target, test=False):
+def predict4(X, X_er, target, dataset_path, test=False):
 
-    df_train = get_dataset('Datasets/data_sample_mass_radius.txt', 'MS')
+    df_train = get_dataset(dataset_path, 'MS')
     (x_train, x_train_er, x_test, x_test_err, mass_train, emass_train,
       mass_test, emass_test, rad_train, erad_train, rad_test, erad_test
     ) = return_train_test(df_train)
@@ -40,20 +40,20 @@ def predict4(X, X_er, target, test=False):
                                       X_er, 'mass',
                                       1000, 2)
 
-        gp4_model, μ_gp4, lg_σ_gp4, Xu4, Xu_er4 = gp.sparse_fully_heteroscedastic_gp(x_train, x_train_er, mass_train, 80, 40)
+        gp4_model, μ_gp4, lg_σ_gp4, Xu4, Xu_er4 = gp.sparse_fully_heteroscedastic_gp(x_train, x_train_er, mass_train, 50, 50)#80, 40
 
-        gp4_trace = az.from_netcdf('models/model_artifacts/gp_mass_80_40.nc')
+        gp4_trace = az.from_netcdf('Outputs/GP_mass_full_w_int_lognorm_50_50_1000.nc')
         gp4_pred, lpd_GP4 = posterior_predictive_GP(gp4_model, μ_gp4, lg_σ_gp4, 
                                             gp4_trace, X,
                                             X_er,
                                             Xu4, Xu_er4, 4, 'mass')
 
 
-        hbnn4_trace = az.from_netcdf('models/model_artifacts/HBNN_mass.nc')
+        hbnn4_trace = az.from_netcdf('Outputs/NN_final_mass_M4_strictMS_30_2000_4_nrns.nc')
         hbnn4_pred, lpd_HBNN4 = sample_post_pred_HBNN_para(hbnn4_trace,  
                                                       X,
                                                       X_er,
-                                                      15, 4, 'mass')
+                                                      30, 4, 'mass')
 
 
         (bhs_trace, bhs_pred, bhs_w) = run_stack(bart4_pred, hbnn4_pred, gp4_pred,
