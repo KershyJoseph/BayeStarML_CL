@@ -339,7 +339,7 @@ if __name__ == '__main__':
         print("-------------")
         print(f"Trial with {t[0]} mean and {t[1]} err IPs.")
         print("-------------")
-        radius_train_GP(t[0], t[1], advi=True)
+        mass_train_GP(t[0], t[1], advi=True)
 
     # print("GP radius run 50 50. 1000 draws. TA 0.99. 1.5Tuning. 20 Max TD.")
     # print("(On good MS)")
