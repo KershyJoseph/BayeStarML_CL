@@ -327,34 +327,34 @@ if __name__ == '__main__':
 
     #HAVE YOU UPDATED CONSTANTS.PY AND CHECKED OUTPUT FILE PATHS
 
-    # process = psutil.Process()
-    # tracemalloc.start() #for memory usage estimate
-    # snapshot1 = tracemalloc.take_snapshot()
-    # start_time = time.process_time()
+    process = psutil.Process()
+    tracemalloc.start() #for memory usage estimate
+    snapshot1 = tracemalloc.take_snapshot()
+    start_time = time.process_time()
 
-    print("GP mass testing")
-    trials = [[40,10], [50,13], [60,15], [70,18], [80,20], [90,23],
-              [50,50], [80,40], [80,60]]
-    for t in trials:
-        print("-------------")
-        print(f"Trial with {t[0]} mean and {t[1]} err IPs.")
-        print("-------------")
-        mass_train_GP(t[0], t[1], advi=True)
+    # print("GP mass testing")
+    # trials = [[40,10], [50,13], [60,15], [70,18], [80,20], [90,23],
+    #           [50,50], [80,40], [80,60]]
+    # for t in trials:
+    #     print("-------------")
+    #     print(f"Trial with {t[0]} mean and {t[1]} err IPs.")
+    #     print("-------------")
+    #     mass_train_GP(t[0], t[1], advi=True)
 
-    # print("GP radius run 50 50. 1000 draws. TA 0.99. 1.5Tuning. 20 Max TD.")
-    # print("(On good MS)")
-    # # mass_train_GP(50,20,1000,target_accept=0.99)
-    # radius_train_GP(50,50,1000,target_accept=.99)
-    # # mass_train_NN(64,2000,4,target_accept=.99)
-    # # radius_train_NN(5, 1000, 4)
+    print("GP radius run 80 40. 1000 draws. TA 0.99. 1.5Tuning. 20 Max TD.")
+    print("(On good MS)")
+    # mass_train_GP(50,20,1000,target_accept=0.99)
+    radius_train_GP(80,40,1000,target_accept=.99)
+    # mass_train_NN(64,2000,4,target_accept=.99)
+    # radius_train_NN(5, 1000, 4)
 
-    # end_time = time.process_time()
-    # #from Gemini
-    # snapshot2 = tracemalloc.take_snapshot()
-    # top_stats = snapshot2.compare_to(snapshot1, 'lineno')
-    # print("[ Top 5 memory changes ]")
-    # for stat in top_stats[:5]:
-    #     print(stat)
+    end_time = time.process_time()
+    #from Gemini
+    snapshot2 = tracemalloc.take_snapshot()
+    top_stats = snapshot2.compare_to(snapshot1, 'lineno')
+    print("[ Top 5 memory changes ]")
+    for stat in top_stats[:5]:
+        print(stat)
 
-    # print(f"Peak Memory: {process.memory_info().rss / 1024**2:.2f} MB")
-    # print(f"Training time: {(end_time-start_time):.5f} s")
+    print(f"Peak Memory: {process.memory_info().rss / 1024**2:.2f} MB")
+    print(f"Training time: {(end_time-start_time):.5f} s")
