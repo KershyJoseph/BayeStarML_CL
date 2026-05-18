@@ -336,33 +336,33 @@ if __name__ == '__main__':
 
     #HAVE YOU UPDATED CONSTANTS.PY AND CHECKED OUTPUT FILE PATHS
 
-    # process = psutil.Process()
-    # tracemalloc.start() #for memory usage estimate
-    # snapshot1 = tracemalloc.take_snapshot()
-    # start_time = time.process_time()
+    process = psutil.Process()
+    tracemalloc.start() #for memory usage estimate
+    snapshot1 = tracemalloc.take_snapshot()
+    start_time = time.process_time()
 
-    print("NN advi radius testing - all 2 layer")
-    trials = [4, 8, 16, 32, 64]
-    for t in trials:
-        print("-------------")
-        print(f"Trial with {t} nodes.")
-        print("-------------")
-        radius_train_NN(t, advi=True)
+    # print("NN advi radius testing - all 2 layer")
+    # trials = [4, 8, 16, 32, 64]
+    # for t in trials:
+    #     print("-------------")
+    #     print(f"Trial with {t} nodes.")
+    #     print("-------------")
+    #     radius_train_NN(t, advi=True)
 
-    # print("NN radius first run 80 40. 1000 draws. TA 0.99. 1.5Tuning. 20 Max TD.")
-    # print("(On good MS)")
-    # # mass_train_GP(50,20,1000,target_accept=0.99)
-    # # radius_train_GP(80,40,1000,target_accept=.99)
-    # # mass_train_NN(64,2000,4,target_accept=.99)
-    # radius_train_NN(5, 1000, 4)
+    print("NN radius first run 4 hidden nodes. 1000 draws. 1.5Tuning.")
+    print("(On good MS)")
+    # mass_train_GP(50,20,1000,target_accept=0.99)
+    # radius_train_GP(80,40,1000,target_accept=.99)
+    # mass_train_NN(64,2000,4,target_accept=.99)
+    radius_train_NN(4, 1000, 4)
 
-    # end_time = time.process_time()
-    # #from Gemini
-    # snapshot2 = tracemalloc.take_snapshot()
-    # top_stats = snapshot2.compare_to(snapshot1, 'lineno')
-    # print("[ Top 5 memory changes ]")
-    # for stat in top_stats[:5]:
-    #     print(stat)
+    end_time = time.process_time()
+    #from Gemini
+    snapshot2 = tracemalloc.take_snapshot()
+    top_stats = snapshot2.compare_to(snapshot1, 'lineno')
+    print("[ Top 5 memory changes ]")
+    for stat in top_stats[:5]:
+        print(stat)
 
-    # print(f"Peak Memory: {process.memory_info().rss / 1024**2:.2f} MB")
-    # print(f"Training time: {(end_time-start_time):.5f} s")
+    print(f"Peak Memory: {process.memory_info().rss / 1024**2:.2f} MB")
+    print(f"Training time: {(end_time-start_time):.5f} s")
