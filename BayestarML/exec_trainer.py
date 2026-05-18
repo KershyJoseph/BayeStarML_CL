@@ -286,7 +286,7 @@ def radius_train_NN(n_hidden, draw=1000, chains=4, advi=False):
             print("ELBO:\n", approx.hist)
 
             trace.extend(pm.compute_log_likelihood(trace, model=model, var_names='y'))
-            trace.to_netcdf("Outputs/Testing/NN_rad_testing/NN_ADVI_rad_"+hyperp_str+".nc")
+            trace.to_netcdf("Outputs/NN_rad_testing/NN_ADVI_rad_"+hyperp_str+".nc")
     else:
             trace = train(model,
                   "Outputs/NN_radius_M4_"+str(n_hidden)+"_nrns.nc",
@@ -321,7 +321,7 @@ def radius_train_NN(n_hidden, draw=1000, chains=4, advi=False):
     plt.ylabel('Predicted Radius')
     plt.title('NN Predictions with Uncertainty')
     plt.legend()
-    plt.savefig("Outputs/bigNNruns/NN_rad_preds"+hyperp_str+".pdf")
+    plt.savefig("Outputs/NN_rad_testing/NN_rad_preds"+hyperp_str+".pdf")
 
     plt.figure(figsize=(8, 6))
     plt.errorbar(unorm_radius, pred.mean(0) - unorm_radius, yerr=pred.std(0), fmt='o', label='Predictions with Uncertainty', alpha=0.7)
@@ -329,7 +329,7 @@ def radius_train_NN(n_hidden, draw=1000, chains=4, advi=False):
     plt.xlabel('True Radius')
     plt.ylabel('Residual Radius')
     plt.legend()
-    plt.savefig("Outputs/bigNNruns/NN_rad_res"+hyperp_str+".pdf")
+    plt.savefig("Outputs/NN_rad_testing/NN_rad_res"+hyperp_str+".pdf")
 
 if __name__ == '__main__':
     #pick which function(s) to run when file is run
