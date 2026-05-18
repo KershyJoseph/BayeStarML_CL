@@ -6,7 +6,9 @@ Created on Tue Aug 12 10:50:13 2025
 @author: LamirelFamily
 """
 import os
-os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
+os.environ["OMP_NUM_THREADS"] = "1"
+os.environ["MKL_NUM_THREADS"] = "1"
+os.environ["OPENBLAS_NUM_THREADS"] = "1"
 
 from preprocess import return_train_test, prepare_pred4, denormalise_val, prepare_pred3
 from utils import get_dataset, train, mard, mrd
