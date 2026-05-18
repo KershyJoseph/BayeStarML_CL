@@ -1,0 +1,35 @@
+Initializing NUTS using jitter+adapt_diag...
+Multiprocess sampling (4 chains in 4 jobs)
+NUTS: [Omega, X_latent, w_in_1, w_1_2, w_2_out, bias_1, bias_2, bias_out, er]
+6147.216185958254 4.159799683880455 -0.07536356736242884 4.770491973434535 1.2075066413662239 1.5825891840607211
+704.7574323340231 0.22772090060576824 0.21067821124083594 11.074047997501118 0.2785606684530734 0.523146732255257
+NN radius first run 4 hidden nodes. 1000 draws. 1.5Tuning.
+(On good MS)
+target_accept= 0.95
+6147.216185958254 4.159799683880455 -0.07536356736242884 4.770491973434535 1.2075066413662239 1.5825891840607211
+704.7574323340231 0.22772090060576824 0.21067821124083594 11.074047997501118 0.2785606684530734 0.523146732255257
+6147.216185958254 4.159799683880455 -0.07536356736242884 4.770491973434535 1.2075066413662239 1.5825891840607211
+704.7574323340231 0.22772090060576824 0.21067821124083594 11.074047997501118 0.2785606684530734 0.523146732255257
+6147.216185958254 4.159799683880455 -0.07536356736242884 4.770491973434535 1.2075066413662239 1.5825891840607211
+704.7574323340231 0.22772090060576824 0.21067821124083594 11.074047997501118 0.2785606684530734 0.523146732255257
+6147.216185958254 4.159799683880455 -0.07536356736242884 4.770491973434535 1.2075066413662239 1.5825891840607211
+704.7574323340231 0.22772090060576824 0.21067821124083594 11.074047997501118 0.2785606684530734 0.523146732255257
+                                                                                                                        
+  Progress                         Draws   Divergences   Step size   Grad evals   Sampling Speed   Elapsed   Remaining  
+ ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── 
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━   2500    0             0.00        1023         1.40 draws/s     0:29:44   0:00:00    
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━   2500    0             0.00        1023         1.40 draws/s     0:29:41   0:00:00    
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━   2500    0             0.00        1023         1.40 draws/s     0:29:50   0:00:00    
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━   2500    0             0.00        1023         1.40 draws/s     0:29:47   0:00:00    
+                                                                                                                        
+Sampling 4 chains for 1_500 tune and 1_000 draw iterations (6_000 + 4_000 draws total) took 1802 seconds.
+Chain 0 reached the maximum tree depth. Increase `max_treedepth`, increase `target_accept` or reparameterize.
+Chain 1 reached the maximum tree depth. Increase `max_treedepth`, increase `target_accept` or reparameterize.
+Chain 2 reached the maximum tree depth. Increase `max_treedepth`, increase `target_accept` or reparameterize.
+Chain 3 reached the maximum tree depth. Increase `max_treedepth`, increase `target_accept` or reparameterize.
+The rhat statistic is larger than 1.01 for some parameters. This indicates problems during sampling. See https://arxiv.org/abs/1903.08008 for details
+The effective sample size per chain is smaller than 100 for some parameters.  A higher number is needed for reliable rhat and ess computation. See https://arxiv.org/abs/1903.08008 for details
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/diagnostics.py:596: RuntimeWarning: invalid value encountered in scalar divide
+  (between_chain_variance / within_chain_variance + num_samples - 1) / (num_samples)
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/diagnostics.py:991: RuntimeWarning: invalid value encountered in scalar divide
+  varsd = varvar / evar / 4
