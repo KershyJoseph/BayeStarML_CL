@@ -5,6 +5,8 @@ Created on Tue Aug 12 10:50:13 2025
 
 @author: LamirelFamily
 """
+import os
+os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
 from preprocess import return_train_test, prepare_pred4, denormalise_val, prepare_pred3
 from utils import get_dataset, train, mard, mrd
@@ -21,12 +23,12 @@ import multiprocessing as mp
 import tracemalloc
 import psutil
 import time
-import sys
 
+#load data
 df_train = get_dataset('DataExploring/good_MS.txt')
 
 (x_train, x_train_er, x_test, x_test_err, mass_train, emass_train,
- mass_test, emass_test, rad_train, erad_train, rad_test, erad_test
+mass_test, emass_test, rad_train, erad_train, rad_test, erad_test
 ) = return_train_test(df_train)
 
 unorm_mass = denormalise_val(mass_test, 'mass')
@@ -334,7 +336,6 @@ def radius_train_NN(n_hidden, draw=1000, chains=4, advi=False):
 
 if __name__ == '__main__':
     #pick which function(s) to run when file is run
-    mp.set_start_method("spawn", force=True)
 
     # print("NN advi radius testing - all 2 layer with n=100,000")
     # trials = [4, 8, 16, 32, 64]
