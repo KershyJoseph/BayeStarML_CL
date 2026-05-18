@@ -272,16 +272,25 @@ def mass_train_NN(n_hidden=15, draw=1000, chains=4, target_accept=.95):
     plt.legend()
     plt.savefig("Outputs/NN_mass_final_ress"+string_specs+".pdf")
 
-def radius_train_NN(n_hidden, draw=1000, chains=4): 
+def radius_train_NN(n_hidden, draw=1000, chains=4, advi=False): 
     """Function to train NN on radius prediction
     """
-    model = hbnn.HBNN_M4(x_train, rad_train, x_train_er, erad_train, n_hidden) #R4 better?
+    #for output info
+    hyperp_str = "_goodMS_"+str(n_hidden)+"_"+str(draw)+"_"+str(chains)
 
-    trace = train(model,
+    model = hbnn.HBNN_M4(x_train, rad_train, x_train_er, erad_train, n_hidden)
+
+    if advi:
+            approx = pm.fit(n=40000, method='advi', model=model, progressbar=True)
+            trace = approx.sample(1000)
+            print("ELBO:\n", approx.hist)
+
+            trace.extend(pm.compute_log_likelihood(trace, model=model, var_names='y'))
+            trace.to_netcdf("Outputs/Testing/NN_rad_testing/NN_ADVI_rad_"+hyperp_str+".nc")
+    else:
+            trace = train(model,
                   "Outputs/NN_radius_M4_"+str(n_hidden)+"_nrns.nc",
                   draw=draw, chains=chains)
-
-    # trace.extend(pm.compute_log_likelihood(trace, model=model, var_names='y'))
 
     r_hat_values = az.rhat(trace)
     all_rhats = []
@@ -312,7 +321,7 @@ def radius_train_NN(n_hidden, draw=1000, chains=4):
     plt.ylabel('Predicted Radius')
     plt.title('NN Predictions with Uncertainty')
     plt.legend()
-    plt.savefig("Outputs/NN_radius_predictions.pdf")
+    plt.savefig("Outputs/bigNNruns/NN_rad_preds"+hyperp_str+".pdf")
 
     plt.figure(figsize=(8, 6))
     plt.errorbar(unorm_radius, pred.mean(0) - unorm_radius, yerr=pred.std(0), fmt='o', label='Predictions with Uncertainty', alpha=0.7)
@@ -320,41 +329,40 @@ def radius_train_NN(n_hidden, draw=1000, chains=4):
     plt.xlabel('True Radius')
     plt.ylabel('Residual Radius')
     plt.legend()
-    plt.savefig("Outputs/NN_radius_residuals.pdf")
+    plt.savefig("Outputs/bigNNruns/NN_rad_res"+hyperp_str+".pdf")
 
 if __name__ == '__main__':
     #pick which function(s) to run when file is run
 
     #HAVE YOU UPDATED CONSTANTS.PY AND CHECKED OUTPUT FILE PATHS
 
-    process = psutil.Process()
-    tracemalloc.start() #for memory usage estimate
-    snapshot1 = tracemalloc.take_snapshot()
-    start_time = time.process_time()
+    # process = psutil.Process()
+    # tracemalloc.start() #for memory usage estimate
+    # snapshot1 = tracemalloc.take_snapshot()
+    # start_time = time.process_time()
 
-    # print("GP mass testing")
-    # trials = [[40,10], [50,13], [60,15], [70,18], [80,20], [90,23],
-    #           [50,50], [80,40], [80,60]]
-    # for t in trials:
-    #     print("-------------")
-    #     print(f"Trial with {t[0]} mean and {t[1]} err IPs.")
-    #     print("-------------")
-    #     mass_train_GP(t[0], t[1], advi=True)
+    print("NN advi radius testing - all 2 layer")
+    trials = [4, 8, 16, 32, 64]
+    for t in trials:
+        print("-------------")
+        print(f"Trial with {t} nodes.")
+        print("-------------")
+        radius_train_NN(t, advi=True)
 
-    print("GP radius run 80 40. 1000 draws. TA 0.99. 1.5Tuning. 20 Max TD.")
-    print("(On good MS)")
-    # mass_train_GP(50,20,1000,target_accept=0.99)
-    radius_train_GP(80,40,1000,target_accept=.99)
-    # mass_train_NN(64,2000,4,target_accept=.99)
+    # print("NN radius first run 80 40. 1000 draws. TA 0.99. 1.5Tuning. 20 Max TD.")
+    # print("(On good MS)")
+    # # mass_train_GP(50,20,1000,target_accept=0.99)
+    # # radius_train_GP(80,40,1000,target_accept=.99)
+    # # mass_train_NN(64,2000,4,target_accept=.99)
     # radius_train_NN(5, 1000, 4)
 
-    end_time = time.process_time()
-    #from Gemini
-    snapshot2 = tracemalloc.take_snapshot()
-    top_stats = snapshot2.compare_to(snapshot1, 'lineno')
-    print("[ Top 5 memory changes ]")
-    for stat in top_stats[:5]:
-        print(stat)
+    # end_time = time.process_time()
+    # #from Gemini
+    # snapshot2 = tracemalloc.take_snapshot()
+    # top_stats = snapshot2.compare_to(snapshot1, 'lineno')
+    # print("[ Top 5 memory changes ]")
+    # for stat in top_stats[:5]:
+    #     print(stat)
 
-    print(f"Peak Memory: {process.memory_info().rss / 1024**2:.2f} MB")
-    print(f"Training time: {(end_time-start_time):.5f} s")
+    # print(f"Peak Memory: {process.memory_info().rss / 1024**2:.2f} MB")
+    # print(f"Training time: {(end_time-start_time):.5f} s")
