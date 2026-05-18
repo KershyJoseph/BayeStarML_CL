@@ -178,7 +178,7 @@ def HBNN_M4(X_train, Y, X_error, Y_error, n_hidden):
         pm.Normal(
             "X_obs",
             mu=X_latent,
-            sigma=X_error_clean,
+            sigma=X_err_clean,
             observed=X_clean
         )
 
