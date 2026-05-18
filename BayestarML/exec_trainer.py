@@ -26,22 +26,6 @@ import tracemalloc
 import psutil
 import time
 
-#load data
-df_train = get_dataset('DataExploring/good_MS.txt')
-
-(x_train, x_train_er, x_test, x_test_err, mass_train, emass_train,
-mass_test, emass_test, rad_train, erad_train, rad_test, erad_test
-) = return_train_test(df_train)
-
-unorm_mass = denormalise_val(mass_test, 'mass')
-unorm_radius = denormalise_val(rad_test, 'radius')
-
-x_train = x_train[['Teff', 'logg', 'Fe/H', 'L']]
-x_train_er = x_train_er[['eTeff', 'elogg', 'eFe/H', 'eL']]
-
-x_test = x_test[['Teff', 'logg', 'Fe/H', 'L']]
-x_test_err = x_test_err[['eTeff', 'elogg', 'eFe/H', 'eL']]
-
 def mass_train_GP(M_mean, M_var, draws=1000, advi=False, target_accept=.95):
     """Function to train GP on mass prediction
     """
@@ -338,6 +322,7 @@ def radius_train_NN(n_hidden, draw=1000, chains=4, advi=False):
 
 if __name__ == '__main__':
     #pick which function(s) to run when file is run
+    mp.set_start_method('spawn', force=True)
 
     # print("NN advi radius testing - all 2 layer with n=100,000")
     # trials = [4, 8, 16, 32, 64]
