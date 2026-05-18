@@ -150,7 +150,12 @@ def HBNN_M4(X_train, Y, X_error, Y_error, n_hidden):
 
         # X_data = pm.MutableData('X_data', X_train.values)  # Ensure numpy array
         # sig_X = pm.MutableData('X_data_er', X_error.values)
-        
+
+        #Joseph edit: ensure np.arrays
+        X_clean = np.asarray(X_train)
+        Y_clean = np.asarray(Y).flatten()
+        X_err_clean = np.asarray(X_error)
+
         # Fixed LKJCholeskyCov specification
         chol, corr, sigmas = pm.LKJCholeskyCov(
             'Omega', 
@@ -166,52 +171,47 @@ def HBNN_M4(X_train, Y, X_error, Y_error, n_hidden):
             'X_latent', 
             mu=np.zeros(4),
             chol=chol,
-            shape=(X_train.shape[0], 4)
+            shape=(X_clean.shape[0], 4)
         )
 
         # Observation model
         pm.Normal(
             "X_obs",
             mu=X_latent,
-            sigma=X_error,
-            observed=X_train
+            sigma=X_error_clean,
+            observed=X_clean
         )
 
         ann_input = pm.Deterministic('ann_input', X_latent)
         
-        ann_output = pm.Data("ann_output" , Y) #, dims="obs_id")
+        ann_output = pm.Data("ann_output" , Y_clean) #, dims="obs_id")
 
         # Weights from input to hidden layer
         weights_in_1 = pm.Normal(
             "w_in_1", 0, sigma=0.1, shape=(n_hidden, 4) #replaced X_latent.eval().shape[1]
         )
 
-        
         weights_1_2 = pm.Normal(
             "w_1_2", 0, sigma=0.1, shape=(n_hidden,n_hidden)
         )
 
-
         # Weights from hidden layer to output
         weights_2_out = pm.Normal("w_2_out", 0, sigma=0.1, shape=n_hidden)
 
-        
         bias_1 = pm.Normal("bias_1", 0, sigma=1, shape=n_hidden)
         
         bias_2 = pm.Normal("bias_2", 0, sigma=1, shape=n_hidden)
         
         bias_out = pm.Normal("bias_out", 0, sigma=1)
 
-
-        act_1 = pm.Deterministic('act_1', 
-            pm.math.switch(pm.math.dot(ann_input, weights_in_1.T) + bias_1 > 0, 
-                           pm.math.dot(ann_input, weights_in_1.T) + bias_1, 
-                           0.01 * (pm.math.dot(ann_input, weights_in_1.T) + bias_1))
+        pre_act_1 = pm.math.dot(ann_input, weights_in_1.T) + bias_1
+        act_1 = pm.Deterministic('act_1',
+                                 pm.math.maximum(pre_act_1, 0) + 0.01 * pm.math.minimum(pre_act_1, 0)
         )
-        act_2 = pm.Deterministic('act_2', pm.math.switch(pm.math.dot(act_1, weights_1_2) + bias_2 > 0,
-                          pm.math.dot(act_1, weights_1_2) + bias_2,
-                          0.01*(pm.math.dot(act_1, weights_1_2) + bias_2)))
-        
+        pre_act_2 = pm.math.dot(act_1, weights_1_2) + bias_2
+        act_2 = pm.Deterministic('act_2',
+                                 pm.math.maximum(pre_act_2, 0) + 0.01 * pm.math.minimum(pre_act_2, 0)
+        )
         act_out = pm.Deterministic('act_out' , pm.math.dot(act_2, weights_2_out) + bias_out)
         
         er = pm.HalfCauchy('er', beta=1)
@@ -222,7 +222,7 @@ def HBNN_M4(X_train, Y, X_error, Y_error, n_hidden):
             mu=act_out,
             sigma=er,
             observed=ann_output,
-            shape=X_train.shape[0], 
+            shape=X_clean.shape[0], 
         )
 
     return neural_network

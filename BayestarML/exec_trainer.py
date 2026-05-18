@@ -17,6 +17,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_absolute_error
 
+import multiprocessing as mp
 import tracemalloc
 import psutil
 import time
@@ -281,16 +282,16 @@ def radius_train_NN(n_hidden, draw=1000, chains=4, advi=False):
     model = hbnn.HBNN_M4(x_train, rad_train, x_train_er, erad_train, n_hidden)
 
     if advi:
-            approx = pm.fit(n=100000, method='advi', model=model, progressbar=True)
-            trace = approx.sample(1000)
-            print("ELBO:\n", approx.hist)
+        approx = pm.fit(n=100000, method='advi', model=model, progressbar=True)
+        trace = approx.sample(1000)
+        print("ELBO:\n", approx.hist)
 
-            trace.extend(pm.compute_log_likelihood(trace, model=model, var_names='y'))
-            trace.to_netcdf("Outputs/NN_rad_testing/NN_ADVI_rad_"+hyperp_str+".nc")
+        trace.extend(pm.compute_log_likelihood(trace, model=model, var_names='y'))
+        trace.to_netcdf("Outputs/NN_rad_testing/NN_ADVI_rad_"+hyperp_str+".nc")
     else:
-            trace = train(model,
-                  "Outputs/bigNNruns/NNrad"+str(n_hidden)+"nrns.nc",
-                  draw=draw, chains=chains, max_treedepth=20)
+        trace = train(model,
+                "Outputs/bigNNruns/NNrad"+hyperp_str+"nrns.nc",
+                draw=draw, chains=chains, max_treedepth=20)
 
     r_hat_values = az.rhat(trace)
     all_rhats = []
@@ -333,6 +334,7 @@ def radius_train_NN(n_hidden, draw=1000, chains=4, advi=False):
 
 if __name__ == '__main__':
     #pick which function(s) to run when file is run
+    mp.set_start_method("spawn", force=True)
 
     # print("NN advi radius testing - all 2 layer with n=100,000")
     # trials = [4, 8, 16, 32, 64]
