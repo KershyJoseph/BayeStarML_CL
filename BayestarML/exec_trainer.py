@@ -276,7 +276,7 @@ def radius_train_NN(n_hidden, draw=1000, chains=4, advi=False):
     """Function to train NN on radius prediction
     """
     #for output info
-    hyperp_str = "_goodMS_"+str(n_hidden)#+"_"+str(draw)+"_"+str(chains)
+    hyperp_str = "_goodMS_"+str(n_hidden)+"_"+str(draw)#+"_"+str(chains)
 
     model = hbnn.HBNN_M4(x_train, rad_train, x_train_er, erad_train, n_hidden)
 
@@ -290,7 +290,7 @@ def radius_train_NN(n_hidden, draw=1000, chains=4, advi=False):
     else:
             trace = train(model,
                   "Outputs/bigNNruns/NNrad"+str(n_hidden)+"nrns.nc",
-                  draw=draw, chains=chains)
+                  draw=draw, chains=chains, max_treedepth=20)
 
     r_hat_values = az.rhat(trace)
     all_rhats = []
@@ -321,7 +321,7 @@ def radius_train_NN(n_hidden, draw=1000, chains=4, advi=False):
     plt.ylabel('Predicted Radius')
     plt.title('NN Predictions with Uncertainty')
     plt.legend()
-    plt.savefig("Outputs/NN_rad_testing/NN_rad_preds"+hyperp_str+".pdf")
+    plt.savefig("Outputs/bigNNruns/NN_rad_preds"+hyperp_str+".pdf")
 
     plt.figure(figsize=(8, 6))
     plt.errorbar(unorm_radius, pred.mean(0) - unorm_radius, yerr=pred.std(0), fmt='o', label='Predictions with Uncertainty', alpha=0.7)
@@ -329,41 +329,41 @@ def radius_train_NN(n_hidden, draw=1000, chains=4, advi=False):
     plt.xlabel('True Radius')
     plt.ylabel('Residual Radius')
     plt.legend()
-    plt.savefig("Outputs/NN_rad_testing/NN_rad_res"+hyperp_str+".pdf")
+    plt.savefig("Outputs/bigNNruns/NN_rad_res"+hyperp_str+".pdf")
 
 if __name__ == '__main__':
     #pick which function(s) to run when file is run
 
-    print("NN advi radius testing - all 2 layer with n=100,000")
-    trials = [4, 8, 16, 32, 64]
-    for t in trials:
-        print("-------------")
-        print(f"Trial with {t} nodes.")
-        print("-------------")
-        radius_train_NN(t, advi=True)
+    # print("NN advi radius testing - all 2 layer with n=100,000")
+    # trials = [4, 8, 16, 32, 64]
+    # for t in trials:
+    #     print("-------------")
+    #     print(f"Trial with {t} nodes.")
+    #     print("-------------")
+    #     radius_train_NN(t, advi=True)
 
     #HAVE YOU UPDATED CONSTANTS.PY AND CHECKED OUTPUT FILE PATHS
 
-    # process = psutil.Process()
-    # tracemalloc.start() #for memory usage estimate
-    # snapshot1 = tracemalloc.take_snapshot()
-    # start_time = time.process_time()
+    process = psutil.Process()
+    tracemalloc.start() #for memory usage estimate
+    snapshot1 = tracemalloc.take_snapshot()
+    start_time = time.process_time()
 
-    # print("NN radius first run 4 hidden nodes. 1000 draws. 1.5Tuning.")
-    # print("(On good MS)")
-    # # mass_train_GP(50,20,1000,target_accept=0.99)
-    # # radius_train_GP(80,40,1000,target_accept=.99)
-    # # mass_train_NN(64,2000,4,target_accept=.99)
-    # radius_train_NN(4, 1000, 4)
+    print("NN radius 4_1000. 1000 draws. 20TD. 1.5Tuning.")
+    print("(On good MS)")
+    # mass_train_GP(50,20,1000,target_accept=0.99)
+    # radius_train_GP(80,40,1000,target_accept=.99)
+    # mass_train_NN(64,2000,4,target_accept=.99)
+    radius_train_NN(4, 1000, 4)
 
-    # end_time = time.process_time()
-    # #from Gemini
-    # snapshot2 = tracemalloc.take_snapshot()
-    # top_stats = snapshot2.compare_to(snapshot1, 'lineno')
-    # print("[ Top 5 memory changes ]")
-    # for stat in top_stats[:5]:
-    #     print(stat)
+    end_time = time.process_time()
+    #from Gemini
+    snapshot2 = tracemalloc.take_snapshot()
+    top_stats = snapshot2.compare_to(snapshot1, 'lineno')
+    print("[ Top 5 memory changes ]")
+    for stat in top_stats[:5]:
+        print(stat)
 
-    # print(f"Peak Memory: {process.memory_info().rss / 1024**2:.2f} MB")
-    # print(f"Training time: {(end_time-start_time):.5f} s")
+    print(f"Peak Memory: {process.memory_info().rss / 1024**2:.2f} MB")
+    print(f"Training time: {(end_time-start_time):.5f} s")
 
