@@ -353,7 +353,8 @@ if __name__ == '__main__':
     process = psutil.Process()
     tracemalloc.start() #for memory usage estimate
     snapshot1 = tracemalloc.take_snapshot()
-    start_time = time.process_time()
+    start_time_CPU = time.process_time()
+    start_time = time.time()
 
     print("GP radius 80_1000_40. TA.99. 20TD. 1.5Tuning.")
     print("(On good MS)")
@@ -362,7 +363,7 @@ if __name__ == '__main__':
     # mass_train_NN(64,2000,4,target_accept=.99)
     # radius_train_NN(16, 1000, 4)
 
-    end_time = time.process_time()
+    end_time_CPU = time.process_time()
     #from Gemini
     snapshot2 = tracemalloc.take_snapshot()
     top_stats = snapshot2.compare_to(snapshot1, 'lineno')
@@ -371,4 +372,5 @@ if __name__ == '__main__':
         print(stat)
 
     print(f"Peak Memory: {process.memory_info().rss / 1024**2:.2f} MB")
-    print(f"Training time: {(end_time-start_time):.5f} s")
+    print(f"CPU time used: {(end_time_CPU-start_time_CPU):.5f} s")
+    print(f"Total run time: {time.time()-start_time:.5f} s")
