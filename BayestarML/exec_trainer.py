@@ -356,9 +356,9 @@ if __name__ == '__main__':
     print("GP rad debugging - 1 core")
     print("(On good MS)")
     # mass_train_GP(50,20,1000,target_accept=0.99)
-    radius_train_GP(30,5,1000,target_accept=.9)
+    # radius_train_GP(30,5,1000,target_accept=.9)
     # mass_train_NN(64,2000,4,target_accept=.99)
-    # radius_train_NN(16, 1000, 4)
+    radius_train_NN(16, 1000, 4)
 
     end_time_CPU = time.process_time()
     #from Gemini
