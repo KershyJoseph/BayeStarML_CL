@@ -156,31 +156,32 @@ def HBNN_M4(X_train, Y, X_error, Y_error, n_hidden):
         Y_clean = np.asarray(Y).flatten()
         X_err_clean = np.asarray(X_error)
 
-        # Fixed LKJCholeskyCov specification
-        chol, corr, sigmas = pm.LKJCholeskyCov(
-            'Omega', 
-            n=4, 
-            eta=2,  
-            sd_dist=pm.HalfNormal.dist(1),  # Simpler prior
-            compute_corr=True,
-            #initval=Low_tri
-        )
+        # # Fixed LKJCholeskyCov specification
+        # chol, corr, sigmas = pm.LKJCholeskyCov(
+        #     'Omega', 
+        #     n=4, 
+        #     eta=2,  
+        #     sd_dist=pm.HalfNormal.dist(1),  # Simpler prior
+        #     compute_corr=True,
+        #     #initval=Low_tri
+        # )
 
-        # Latent variables
-        X_latent = pm.MvNormal(
-            'X_latent', 
-            mu=np.zeros(4),
-            chol=chol,
-            shape=(X_clean.shape[0], 4)
-        )
+        # # Latent variables
+        # X_latent = pm.MvNormal(
+        #     'X_latent', 
+        #     mu=np.zeros(4),
+        #     chol=chol,
+        #     shape=(X_clean.shape[0], 4)
+        # )
 
-        # Observation model
-        pm.Normal(
-            "X_obs",
-            mu=X_latent,
-            sigma=X_err_clean,
-            observed=X_clean
-        )
+        # # Observation model
+        # pm.Normal(
+        #     "X_obs",
+        #     mu=X_latent,
+        #     sigma=X_err_clean,
+        #     observed=X_clean
+        # )
+        X_latent = X_clean
 
         ann_input = pm.Deterministic('ann_input', X_latent)
         
@@ -199,9 +200,9 @@ def HBNN_M4(X_train, Y, X_error, Y_error, n_hidden):
         weights_2_out = pm.Normal("w_2_out", 0, sigma=0.1, shape=n_hidden)
 
         bias_1 = pm.Normal("bias_1", 0, sigma=1, shape=n_hidden)
-        
+
         bias_2 = pm.Normal("bias_2", 0, sigma=1, shape=n_hidden)
-        
+
         bias_out = pm.Normal("bias_out", 0, sigma=1)
 
         pre_act_1 = pm.math.dot(ann_input, weights_in_1.T) + bias_1
@@ -213,7 +214,8 @@ def HBNN_M4(X_train, Y, X_error, Y_error, n_hidden):
                                  pm.math.maximum(pre_act_2, 0) + 0.01 * pm.math.minimum(pre_act_2, 0)
         )
         act_out = pm.Deterministic('act_out' , pm.math.dot(act_2, weights_2_out) + bias_out)
-        
+
+        #er = pm.HalfNormal('er', sigma=1)
         er = pm.HalfCauchy('er', beta=1)
 
         out = pm.StudentT(
