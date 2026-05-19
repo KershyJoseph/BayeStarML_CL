@@ -353,7 +353,7 @@ if __name__ == '__main__':
     start_time = time.time()
 
     #print("GP radius 80_1000_40. TA.99. 20TD. 1.5Tuning.")
-    print("GP rad debugging - 1 core")
+    print("NN rad debugging - X_latent removed")
     print("(On good MS)")
     # mass_train_GP(50,20,1000,target_accept=0.99)
     # radius_train_GP(30,5,1000,target_accept=.9)
