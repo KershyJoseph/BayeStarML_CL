@@ -97,7 +97,7 @@ def mass_train_GP(M_mean, M_var, draws=1000, advi=False, target_accept=.95):
 def radius_train_GP(M_mean, M_var, draws=1000, advi=False, target_accept=.95):
     """Function to train GP on radius prediction
     """
-    hyperp_str = str(M_mean)+"_"+str(M_var)+"_"+str(draws)
+    hyperp_str = str(M_mean)+"_"+str(M_var)+"_"+str(draws)+"_"+str(target_accept)
 
     model, μ_gp, lg_σ_gp, Xu, Xu_er = gp.sparse_fully_heteroscedastic_gp(x_train,
                                                                         x_train_er,
@@ -113,7 +113,7 @@ def radius_train_GP(M_mean, M_var, draws=1000, advi=False, target_accept=.95):
 
     else:
         trace = train(model,
-                  "Outputs/GP_radius_full_w_int_lognorm_"+hyperp_str+".nc",
+                  "Outputs/bigGPruns/GP_rad_"+hyperp_str+".nc",
                   draw=draws, chains=4, target_accept=target_accept,
                   max_treedepth=20)
 
@@ -146,7 +146,7 @@ def radius_train_GP(M_mean, M_var, draws=1000, advi=False, target_accept=.95):
     plt.ylabel('Predicted Radius')
     plt.title('GP Predictions with Uncertainty')
     plt.legend()
-    plt.savefig("Outputs/GPrad_preds"+hyperp_str+".pdf")
+    plt.savefig("Outputs/bigGPruns/GPrad_preds"+hyperp_str+".pdf")
 
     plt.figure(figsize=(8, 6))
     plt.errorbar(unorm_radius, pred.mean(0) - unorm_radius, yerr=pred.std(0), fmt='o', label='Predictions with Uncertainty', alpha=0.7)
@@ -154,7 +154,7 @@ def radius_train_GP(M_mean, M_var, draws=1000, advi=False, target_accept=.95):
     plt.xlabel('True Mass')
     plt.ylabel('Residual Mass')
     plt.legend()
-    plt.savefig("Outputs/GPrad_residuals"+hyperp_str+".pdf")
+    plt.savefig("Outputs/bigGPruns/GPrad_res"+hyperp_str+".pdf")
 
 def mass_train_SIMPLE_NN(n_hidden=15, draw=1000, chains=4, target_accept=.95):
     """
