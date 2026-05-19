@@ -114,8 +114,8 @@ def radius_train_GP(M_mean, M_var, draws=1000, advi=False, target_accept=.95):
     else:
         trace = train(model,
                   "Outputs/bigGPruns/GP_rad_"+hyperp_str+".nc",
-                  draw=draws, chains=4, target_accept=target_accept,
-                  max_treedepth=20)
+                  draw=draws, chains=1, target_accept=target_accept,
+                  max_treedepth=10)
 
     r_hat_values = az.rhat(trace)
     all_rhats = []
@@ -356,10 +356,11 @@ if __name__ == '__main__':
     start_time_CPU = time.process_time()
     start_time = time.time()
 
-    print("GP radius 80_1000_40. TA.99. 20TD. 1.5Tuning.")
+    #print("GP radius 80_1000_40. TA.99. 20TD. 1.5Tuning.")
+    print("GP rad debugging - 1 core")
     print("(On good MS)")
     # mass_train_GP(50,20,1000,target_accept=0.99)
-    radius_train_GP(80,40,1000,target_accept=.99)
+    radius_train_GP(30,5,1000,target_accept=.9)
     # mass_train_NN(64,2000,4,target_accept=.99)
     # radius_train_NN(16, 1000, 4)
 
