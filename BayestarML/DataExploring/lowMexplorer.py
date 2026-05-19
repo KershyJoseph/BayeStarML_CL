@@ -19,7 +19,8 @@ df_low_d_3 = df_low_d[df_low_d[MRL].notna().all(axis=1)]
 print(f"Of which {len(df_low_d_3)} have mass, radius and L with errors.")
 
 df_low_d_4 = df_low_d_3[df_low_d_3["Fe/H"].notna()]
-print(f"Of which {len(df_low_d_4)} have Fe/H.")
+df_low_d_MH = df_low_d_3[(df_low_d_3["Fe/H"].isna()) & (df_low_d_3["M/H"].notna())]
+print(f"Of which {len(df_low_d_4)} have Fe/H and {len(df_low_d_MH)} don't have Fe/H but have M/H.")
 
 df_low_d_5 = df_low_d_4[df_low_d_4["Teff"].notna()]
 print(f"Of which {len(df_low_d_5)} have Teff.")
@@ -31,9 +32,13 @@ df_low_d_6["percent_eL"] = 100 * df_low_d_6["eL1"] + df_low_d_6["eL2"] / (2 * df
 df_low_d_6_Lerr = df_low_d_6[df_low_d_6["percent_eL"]<=50]
 print(f"Of which {len(df_low_d_6_Lerr)} have avg L err less than or equal to 50%.")
 
-all6 = MRL.extend(["eTeff1", "eTeff2", "elogg1", "elogg2", "eFe/H1", "eFe/H2"])
-print(all6)
-#df_0s = df_low_d_6_Lerr[df_low_d_6_Lerr[]]
+TLF = ["eTeff1", "eTeff2", "elogg1", "elogg2", "eFe/H1", "eFe/H2"]
+all6 = [*MRL, *TLF]
+df_no_nas = df_low_d_6_Lerr[df_low_d_6_Lerr[all6].notna().all(axis=1)]
+print(f"Of which {len(df_no_nas)} don't have NA err values.")
 
-#with pd.option_context("display.max_rows", None, "display.max_columns", None):
-#    print(df_low_d_6_Lerr)
+df_new_good = df_no_nas[df_no_nas["database"]!=1]
+print(f"Of which {len(df_new_good)} are new/revised.")
+
+with pd.option_context("display.max_rows", None, "display.max_columns", None):
+    print(df_new_good)
