@@ -54,27 +54,27 @@ df_no_fills.to_csv("DataExploring/good_MS_no_fills.txt",
 print("All 6 MS, err cleaned, no fills: ", len(df_no_fills))
 
 #Try logL and logTeff columns - added with bounds method
-# df_good_MS["logTeff"] = np.log10(df_good_MS["Teff"])
-# df_good_MS["elogTeff1"] = np.log10(df_good_MS["logTeff"] + df_good_MS["eTeff1"]) - df_good_MS["logTeff"]
-# df_good_MS["elogTeff2"] = df_good_MS["logTeff"] - np.log10(df_good_MS["logTeff"] - df_good_MS["eTeff2"])
+df_good_MS["logTeff"] = np.log10(df_good_MS["Teff"])
+df_good_MS["elogTeff1"] = np.log10(df_good_MS["Teff"] + df_good_MS["eTeff1"]) - df_good_MS["logTeff"]
+df_good_MS["elogTeff2"] = df_good_MS["logTeff"] - np.log10(df_good_MS["Teff"] - df_good_MS["eTeff2"])
 
-# df_good_MS["logL"] = np.log10(df_good_MS["L"])
-# df_good_MS["elogL1"] = np.log10(df_good_MS["logL"] + df_good_MS["eL1"]) - df_good_MS["logL"]
-# df_good_MS["elogL2"] = df_good_MS["logL"] - np.log10(df_good_MS["logL"] - df_good_MS["eL2"])
+df_good_MS["logL"] = np.log10(df_good_MS["L"])
+df_good_MS["elogL1"] = np.log10(df_good_MS["L"] + df_good_MS["eL1"]) - df_good_MS["logL"]
+df_good_MS["elogL2"] = df_good_MS["logL"] - np.log10(df_good_MS["L"] - df_good_MS["eL2"])
 
-# #see how logTeff and logL errors look
-# fig2, ax2 = plt.subplots(1,2)
+#see how logTeff and logL errors look
+fig2, ax2 = plt.subplots(1,2)
 
-# ax2[0].plot(df_good_MS["elogTeff1"], df_good_MS["elogTeff2"], 'o')
-# ax2[0].set_xlabel("logTeff +err")
-# ax2[0].set_ylabel("logTeff -err")
+ax2[0].plot(df_good_MS["elogTeff1"], df_good_MS["elogTeff2"], 'o')
+ax2[0].set_xlabel("logTeff +err")
+ax2[0].set_ylabel("logTeff -err")
 
-# ax2[1].plot(df_good_MS["elogL1"], df_good_MS["elogL2"], 'o')
-# ax2[1].set_xlabel("logL +err")
-# ax2[1].set_ylabel("logL -err")
+ax2[1].plot(df_good_MS["elogL1"], df_good_MS["elogL2"], 'o')
+ax2[1].set_xlabel("logL +err")
+ax2[1].set_ylabel("logL -err")
 
-# plt.tight_layout()
-# plt.savefig("DataExploring/logTeff_logL_errs.pdf")
+plt.tight_layout()
+plt.savefig("DataExploring/logTeff_logL_errs.pdf")
 
 #------------------------------
 #see err dist

@@ -198,7 +198,7 @@ def HBNN_M4(X_train, Y, X_error, Y_error, n_hidden):
         # Weights from hidden layer to output
         weights_2_out = pm.Normal("w_2_out", 0, sigma=0.1, shape=n_hidden)
 
-        bias_1 = pm.Normal("bias_1", 0, sigma=0.1, shape=n_hidden)
+        bias_1 = pm.Normal("bias_1", 0, sigma=0.1, shape=n_hidden) #all bias used to be sigma=1 for mass
 
         bias_2 = pm.Normal("bias_2", 0, sigma=0.1, shape=n_hidden)
 
@@ -214,8 +214,8 @@ def HBNN_M4(X_train, Y, X_error, Y_error, n_hidden):
         )
         act_out = pm.Deterministic('act_out' , pm.math.dot(act_2, weights_2_out) + bias_out)
 
-        #er = pm.HalfNormal('er', sigma=1)
-        er = pm.HalfCauchy('er', beta=1)
+        er = pm.HalfNormal('er', sigma=0.1)
+        #er = pm.HalfCauchy('er', beta=1)
 
         out = pm.StudentT(
             "y",

@@ -353,12 +353,19 @@ if __name__ == '__main__':
     start_time = time.time()
 
     #print("GP radius 80_1000_40. TA.99. 20TD. 1.5Tuning.")
-    print("NN rad debugging - X_latent removed")
+    print("NN rad big run. 16_2000_4 with changed y_err prior to HalfNormal and sigma=0.1. Also bias sigmas all 0.1. Still 20TD and 1.5 tuning. Also dataset updated!")
     print("(On good MS)")
+    radius_train_NN(16, 2000, 4)
+
+    print("/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/")
+
+    print("GP rad big run. 80_40_1000. Still 20TD and 1.5 tuning. 0.99TA. Probably needs some prior adjusting to combat bad geometry. Also dataset updated!")
+    print("(On good MS)")
+    radius_train_GP(80,40,1000,target_accept=.99)
     # mass_train_GP(50,20,1000,target_accept=0.99)
     # radius_train_GP(30,5,1000,target_accept=.9)
     # mass_train_NN(64,2000,4,target_accept=.99)
-    radius_train_NN(16, 1000, 4)
+    # radius_train_NN(16, 1000, 4)
 
     end_time_CPU = time.process_time()
     #from Gemini
