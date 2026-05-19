@@ -355,12 +355,12 @@ if __name__ == '__main__':
     snapshot1 = tracemalloc.take_snapshot()
     start_time = time.process_time()
 
-    print("NN radius 16_1000. 20TD. 1.5Tuning.")
+    print("GP radius 80_1000_40. TA.99. 20TD. 1.5Tuning.")
     print("(On good MS)")
     # mass_train_GP(50,20,1000,target_accept=0.99)
-    # radius_train_GP(80,40,1000,target_accept=.99)
+    radius_train_GP(80,40,1000,target_accept=.99)
     # mass_train_NN(64,2000,4,target_accept=.99)
-    radius_train_NN(16, 1000, 4)
+    # radius_train_NN(16, 1000, 4)
 
     end_time = time.process_time()
     #from Gemini
