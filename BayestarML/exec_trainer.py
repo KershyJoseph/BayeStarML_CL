@@ -247,7 +247,7 @@ def mass_train_NN(n_hidden=15, draw=1000, chains=4, target_accept=.95):
     plt.ylabel('Predicted Mass')
     plt.title('NN Predictions with Uncertainty')
     plt.legend()
-    plt.savefig("Outputs/NNmass_preds"+string_specs+".pdf")
+    plt.savefig("Outputs/bigNNruns/NNmass_preds"+string_specs+".pdf")
 
     plt.figure(figsize=(8, 6))
     plt.errorbar(unorm_mass, pred.mean(0) - unorm_mass, yerr=pred.std(0), fmt='o', label='Predictions with Uncertainty', alpha=0.7)
@@ -255,7 +255,7 @@ def mass_train_NN(n_hidden=15, draw=1000, chains=4, target_accept=.95):
     plt.xlabel('True Mass')
     plt.ylabel('Residual Mass')
     plt.legend()
-    plt.savefig("Outputs/NNmass_ress"+string_specs+".pdf")
+    plt.savefig("Outputs/bigNNruns/NNmass_ress"+string_specs+".pdf")
 
 def radius_train_NN(n_hidden, draw=1000, chains=4, advi=False): 
     """Function to train NN on radius prediction
