@@ -1,0 +1,8 @@
+Initializing NUTS using jitter+adapt_diag...
+Multiprocess sampling (4 chains in 4 jobs)
+NUTS: [Omega, X_latent, w_in_1, w_1_2, w_2_out, bias_1, bias_2, bias_out, er]
+6105.920875232774 4.182636561275605 -0.07525567970204843 16.82392502793296 1.1880000372439479 1.5399766480446926
+1199.9914638522343 0.2507002603761237 0.2090739109336794 282.41354921559235 0.3805720412057153 0.5536880436868088
+NN rad debugging - X_latent removed
+(On good MS)
+target_accept= 0.95

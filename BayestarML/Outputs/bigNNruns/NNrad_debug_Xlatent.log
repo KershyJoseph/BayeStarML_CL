@@ -1,0 +1,17 @@
+6105.920875232774 4.182636561275605 -0.07525567970204843 16.82392502793296 1.1880000372439479 1.5399766480446926
+1199.9914638522343 0.2507002603761237 0.2090739109336794 282.41354921559235 0.3805720412057153 0.5536880436868088
+NN rad debugging - X_latent removed
+(On good MS)
+Traceback (most recent call last):
+  File "/Users/user1/BayeStarML_CL/BayestarML/exec_trainer.py", line 361, in <module>
+    radius_train_NN(16, 1000, 4)
+  File "/Users/user1/BayeStarML_CL/BayestarML/exec_trainer.py", line 266, in radius_train_NN
+    model = hbnn.HBNN_M4(x_train, rad_train, x_train_er, erad_train, n_hidden)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/user1/BayestarML_CL/BayestarML/models/hbnn.py", line 186, in HBNN_M4
+    ann_input = pm.Deterministic('ann_input', X_latent)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/pymc/model/core.py", line 2273, in Deterministic
+    var = var.copy(model.name_for(name))
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: order must be one of 'C', 'F', 'A', or 'K' (got 'ann_input')
