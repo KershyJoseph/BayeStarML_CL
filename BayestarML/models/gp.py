@@ -260,16 +260,18 @@ def sparse_fully_heteroscedastic_gp(
 
         # -------- mean GP: ARD kernel over X --------
         # Build per-dimension ℓ priors, then pack into a vector
-        ls_mu_list = []
-        ls_sd_list = []
-        for d in range(D):
-            μ_d, σ_d = get_ℓ_prior(X[:, d])
-            ls_mu_list.append(μ_d)
-            ls_sd_list.append(σ_d)
+        # ls_mu_list = []
+        # ls_sd_list = []
+        # for d in range(D):
+        #     μ_d, σ_d = get_ℓ_prior(X[:, d])
+        #     ls_mu_list.append(μ_d)
+        #     ls_sd_list.append(σ_d)
         
-        ls_mu_vec = np.array(ls_mu_list)
-        ls_sd_vec = np.array(ls_sd_list)
-        ls = pm.LogNormal("ls", mu=np.log(ls_mu_vec), sigma=ls_sd_vec, shape=D)
+        # ls_mu_vec = np.array(ls_mu_list)
+        # ls_sd_vec = np.array(ls_sd_list)
+        # ls = pm.InverseGamma("ls", mu=np.log(ls_mu_vec), sigma=ls_sd_vec, shape=D)
+
+        #Try not having data-driven priors on lengthscale. Also LogNormal instead of InverseGamma. 
         eta = pm.Gamma("eta", alpha=2, beta=1)
 
         cov_mean = eta**2 * pm.gp.cov.ExpQuad(input_dim=D, ls=ls) \

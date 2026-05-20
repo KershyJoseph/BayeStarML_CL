@@ -164,7 +164,7 @@ def mass_train_SIMPLE_NN(n_hidden=5, draw=1000, chains=4, target_accept=.95):
     model.debug(verbose=True)
     trace = train(model,
                   "Outputs/Testing/debug_NN_mass_M4simpler"+string_specs+"_nrns.nc",
-                  draw=draw, chains=chains, cores=chains, target_accept=target_accept)
+                  draw=draw, chains=chains, target_accept=target_accept)
 
     r_hat_values = az.rhat(trace)
     all_rhats = []
