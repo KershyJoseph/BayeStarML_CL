@@ -129,9 +129,9 @@ def radius_train_GP(data: Dataset, M_mean, M_var, draws=1000, advi=False, target
 
     else:
         trace = train(model,
-                  "Outputs/bigGPruns/GP_rad_"+hyperp_str+".nc",
-                  draw=draws, chains=1, target_accept=target_accept,
-                  max_treedepth=10)
+                  "Outputs/bigGPruns/GPrad_"+hyperp_str+".nc",
+                  draw=draws, chains=4, target_accept=target_accept,
+                  max_treedepth=20)
 
     r_hat_values = az.rhat(trace)
     all_rhats = []
@@ -383,15 +383,66 @@ if __name__ == '__main__':
 
     #HAVE YOU UPDATED CONSTANTS.PY AND CHECKED OUTPUT FILE PATHS
 
+    print("GP runs over night - two radius and one mass on goodMS")
+    print("::::::::::::::::::::::::::::::::::::::")
+
     process = psutil.Process()
-    tracemalloc.start() #for memory usage estimate
-    snapshot1 = tracemalloc.take_snapshot()
+    #tracemalloc.start() #for memory usage estimate
+    #snapshot1 = tracemalloc.take_snapshot()
     start_time_CPU = time.process_time()
     start_time = time.time()
 
-    print("bigGPrun - mass - 50_20_1000_4 with 20TD, 0.99TA and hopefully improved priors.")
+    print("bigGPrun - radius - 50_20_1000_4 with 20TD, 0.99TA and hopefully improved priors.")
     print("(On good MS)")
-    mass_train_GP(dataset, 50, 20, 1000, target_accept=0.99)
+    radius_train_GP(dataset, 50, 20, 1000, target_accept=0.99)
+
+    end_time_CPU = time.process_time()
+    #from Gemini
+    # snapshot2 = tracemalloc.take_snapshot()
+    # top_stats = snapshot2.compare_to(snapshot1, 'lineno')
+    # print("[ Top 5 memory changes ]")
+    # for stat in top_stats[:5]:
+    #     print(stat)
+
+    mem1 = process.memory_info().rss / 1024**2
+    print(f"Peak Memory: {mem1:.2f} MB")
+    print(f"CPU time used: {(end_time_CPU-start_time_CPU):.5f} s")
+    print(f"Total run time: {time.time()-start_time:.5f} s")
+
+    print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
+
+    start_time_CPU2 = time.process_time()
+    start_time2 = time.time()
+
+    print("bigGPrun - radius - 80_40_1000_4 with 20TD, 0.99TA and hopefully improved priors.")
+    print("(On good MS)")
+    radius_train_GP(dataset, 80, 40, 1000, target_accept=0.99)
+
+    end_time_CPU2 = time.process_time()
+
+    mem2 = process.memory_info().rss / 1024**2
+    print(f"Peak Memory: {(mem2-mem1):.2f} MB")
+    print(f"CPU time used: {(end_time_CPU2-start_time_CPU2):.5f} s")
+    print(f"Total run time: {time.time()-start_time2:.5f} s")
+
+    print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
+
+    start_time_CPU3 = time.process_time()
+    start_time3 = time.time()
+
+    print("bigGPrun - mass - 80_40_1000_4 with 20TD, 0.99TA and hopefully improved priors.")
+    print("(On good MS)")
+    mass_train_GP(dataset, 80, 40, 1000, target_accept=0.99)
+
+    end_time_CPU3 = time.process_time()
+
+    mem3 = process.memory_info().rss / 1024**2
+    print(f"Peak Memory: {(mem3-mem2):.2f} MB")
+    print(f"CPU time used: {(end_time_CPU3-start_time_CPU3):.5f} s")
+    print(f"Total run time: {time.time()-start_time3:.5f} s")
+
+    print("><><><><><><><><><><><><>><><><><>")
+    print("You made it")
 
     # print("GP rad big run. 80_40_1000. Still 20TD and 1.5 tuning. 0.99TA. Probably needs some prior adjusting to combat bad geometry. Also dataset updated!")
     # print("(On good MS)")
@@ -401,14 +452,4 @@ if __name__ == '__main__':
     # mass_train_NN(64,2000,4,target_accept=.99)
     # radius_train_NN(16, 1000, 4)
 
-    end_time_CPU = time.process_time()
-    #from Gemini
-    snapshot2 = tracemalloc.take_snapshot()
-    top_stats = snapshot2.compare_to(snapshot1, 'lineno')
-    print("[ Top 5 memory changes ]")
-    for stat in top_stats[:5]:
-        print(stat)
-
-    print(f"Peak Memory: {process.memory_info().rss / 1024**2:.2f} MB")
-    print(f"CPU time used: {(end_time_CPU-start_time_CPU):.5f} s")
-    print(f"Total run time: {time.time()-start_time:.5f} s")
+    
