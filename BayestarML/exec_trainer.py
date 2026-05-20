@@ -31,10 +31,14 @@ class Dataset:
     x_test_err: pd.DataFrame
 
     mass_train: np.ndarray
+    emass_train: np.ndarray
     mass_test: np.ndarray
+    emass_test: np.ndarray
 
     rad_train: np.ndarray
+    erad_train: np.ndarray
     rad_test: np.ndarray
+    erad_test: np.ndarray
 
     unorm_mass: np.ndarray
     unorm_radius: np.ndarray
