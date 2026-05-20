@@ -21,15 +21,32 @@ import multiprocessing as mp
 import tracemalloc
 import psutil
 import time
+from dataclasses import dataclass
 
-def mass_train_GP(M_mean, M_var, draws=1000, advi=False, target_accept=.95):
+@dataclass
+class Dataset:
+    x_train: pd.DataFrame
+    x_train_er: pd.DataFrame
+    x_test: pd.DataFrame
+    x_test_err: pd.DataFrame
+
+    mass_train: np.ndarray
+    mass_test: np.ndarray
+
+    rad_train: np.ndarray
+    rad_test: np.ndarray
+
+    unorm_mass: np.ndarray
+    unorm_radius: np.ndarray
+
+def mass_train_GP(data: Dataset, M_mean, M_var, draws=1000, advi=False, target_accept=.95):
     """Function to train GP on mass prediction
     """
     hyperp_str = str(M_mean)+"_"+str(M_var)+"_"+str(draws)
 
-    model, μ_gp, lg_σ_gp, Xu, Xu_er = gp.sparse_fully_heteroscedastic_gp(x_train,
-                                                                        x_train_er,
-                                                                        mass_train,
+    model, μ_gp, lg_σ_gp, Xu, Xu_er = gp.sparse_fully_heteroscedastic_gp(data.x_train,
+                                                                        data.x_train_er,
+                                                                        data.mass_train,
                                                                         M_mean,
                                                                         M_var)
 
@@ -44,7 +61,7 @@ def mass_train_GP(M_mean, M_var, draws=1000, advi=False, target_accept=.95):
     else:
         trace = train(model,
                   "Outputs/GP_mass_full_w_int_lognorm_"+hyperp_str+".nc",
-                  draw=draws, chains=4, target_accept=target_accept)
+                  draw=draws, chains=4, target_accept=target_accept, max_treedepth=20)
 
         r_hat_values = az.rhat(trace)
         all_rhats = []
@@ -56,26 +73,29 @@ def mass_train_GP(M_mean, M_var, draws=1000, advi=False, target_accept=.95):
     print(az.loo(trace))
 
     pred, lpd = posterior_predictive_GP(model, μ_gp, lg_σ_gp, trace,
-                                        x_test, x_test_err, Xu, Xu_er, 4, 'mass')
-    print(pred.std(0))
-    print(pred.mean(0))
-    print("Unorm mass: ", unorm_mass)
+                                        data.x_test, data.x_test_err, Xu, Xu_er, 4, 'mass')
 
-    for i, std in enumerate(pred.std(0)):
+    stds = pred.std(0)
+    means = pred.mean(0)
+    print(means)
+    print(stds)
+    print("Unorm mass: ", data.unorm_mass)
+
+    for i, std in enumerate(stds):
         if std > 1:
-            print(f"Mass err bigger than 1Msol for star with mass {unorm_mass.iloc[i]}")
-            print(f"(Predicted {pred.mean(0)[i]} +/- {std} Msol)")
+            print(f"Mass err bigger than 1Msol for star with mass {data.unorm_mass.iloc[i]}")
+            print(f"(Predicted {means[i]} +/- {std} Msol)")
             print("------------------------")
 
-    print('MAE: ', mean_absolute_error(unorm_mass, pred.mean(0)))
+    print('MAE: ', mean_absolute_error(data.unorm_mass, means))
 
-    print('MARD', mard(unorm_mass, pred.mean(0)))
+    print('MARD', mard(data.unorm_mass, means))
 
-    print('MRD', mrd(unorm_mass, pred.mean(0)))
+    print('MRD', mrd(data.unorm_mass, means))
 
     plt.figure(figsize=(8, 6))
-    plt.errorbar(unorm_mass, pred.mean(0), yerr=pred.std(0), fmt='o', label='Predictions with Uncertainty', alpha=0.7)
-    plt.plot([unorm_mass.min(), unorm_mass.max()], [unorm_mass.min(), unorm_mass.max()], 'r--')
+    plt.errorbar(data.unorm_mass, means, yerr=stds, fmt='o', label='Predictions with Uncertainty', alpha=0.7)
+    plt.plot([data.unorm_mass.min(), data.unorm_mass.max()], [data.unorm_mass.min(), data.unorm_mass.max()], 'r--')
     plt.xlabel('True Mass')
     plt.ylabel('Predicted Mass')
     plt.title('GP Predictions with Uncertainty')
@@ -83,21 +103,21 @@ def mass_train_GP(M_mean, M_var, draws=1000, advi=False, target_accept=.95):
     plt.savefig("Outputs/Testing/GP_mass_testing/GPadvi_"+hyperp_str+"_mass_preds.pdf")
 
     plt.figure(figsize=(8, 6))
-    plt.errorbar(unorm_mass, pred.mean(0) - unorm_mass, yerr=pred.std(0), fmt='o', label='Predictions with Uncertainty', alpha=0.7)
-    plt.hlines(0, unorm_mass.min(), unorm_mass.max(), 'r', linestyle='--')
+    plt.errorbar(data.unorm_mass, means - data.unorm_mass, yerr=stds, fmt='o', label='Predictions with Uncertainty', alpha=0.7)
+    plt.hlines(0, data.unorm_mass.min(), data.unorm_mass.max(), 'r', linestyle='--')
     plt.xlabel('True Mass')
     plt.ylabel('Residual Mass')
     plt.legend()
     plt.savefig("Outputs/Testing/GP_mass_testing/GPadvi_"+hyperp_str+"_mass_res.pdf")
 
-def radius_train_GP(M_mean, M_var, draws=1000, advi=False, target_accept=.95):
+def radius_train_GP(data: Dataset, M_mean, M_var, draws=1000, advi=False, target_accept=.95):
     """Function to train GP on radius prediction
     """
     hyperp_str = str(M_mean)+"_"+str(M_var)+"_"+str(draws)+"_"+str(target_accept)
 
-    model, μ_gp, lg_σ_gp, Xu, Xu_er = gp.sparse_fully_heteroscedastic_gp(x_train,
-                                                                        x_train_er,
-                                                                        rad_train, M_mean, M_var)
+    model, μ_gp, lg_σ_gp, Xu, Xu_er = gp.sparse_fully_heteroscedastic_gp(data.x_train,
+                                                                        data.x_train_er,
+                                                                        data.rad_train, M_mean, M_var)
 
     if advi:
         approx = pm.fit(n=40000, method='advi', model=model, progressbar=True)
@@ -124,20 +144,23 @@ def radius_train_GP(M_mean, M_var, draws=1000, advi=False, target_accept=.95):
     print(az.loo(trace))
 
     pred, lpd = posterior_predictive_GP(model, μ_gp, lg_σ_gp, trace,
-                                        x_test, x_test_err, Xu, Xu_er, 4, 'radius')
-    print(pred.std(0))
-    print(pred.mean(0))
-    print(unorm_radius)
+                                        data.x_test, data.x_test_err, Xu, Xu_er, 4, 'radius')
 
-    print('MAE: ', mean_absolute_error(unorm_radius, pred.mean(0)))
+    stds = pred.std(0)
+    means = pred.mean(0)
+    print(stds)
+    print(means)
+    print(data.unorm_radius)
 
-    print('MARD', mard(unorm_radius, pred.mean(0)))
+    print('MAE: ', mean_absolute_error(data.unorm_radius, means))
 
-    print('MRD', mrd(unorm_radius, pred.mean(0)))
+    print('MARD', mard(data.unorm_radius, means))
+
+    print('MRD', mrd(data.unorm_radius, means))
 
     plt.figure(figsize=(8, 6))
-    plt.errorbar(unorm_radius, pred.mean(0), yerr=pred.std(0), fmt='o', label='Predictions with Uncertainty', alpha=0.7)
-    plt.plot([unorm_radius.min(), unorm_radius.max()], [unorm_radius.min(), unorm_radius.max()], 'r--')
+    plt.errorbar(data.unorm_radius, means, yerr=stds, fmt='o', label='Predictions with Uncertainty', alpha=0.7)
+    plt.plot([data.unorm_radius.min(), data.unorm_radius.max()], [data.unorm_radius.min(), data.unorm_radius.max()], 'r--')
     plt.xlabel('True Radius')
     plt.ylabel('Predicted Radius')
     plt.title('GP Predictions with Uncertainty')
@@ -145,14 +168,14 @@ def radius_train_GP(M_mean, M_var, draws=1000, advi=False, target_accept=.95):
     plt.savefig("Outputs/bigGPruns/GPrad_preds"+hyperp_str+".pdf")
 
     plt.figure(figsize=(8, 6))
-    plt.errorbar(unorm_radius, pred.mean(0) - unorm_radius, yerr=pred.std(0), fmt='o', label='Predictions with Uncertainty', alpha=0.7)
-    plt.hlines(0, unorm_radius.min(), unorm_radius.max(), 'r', linestyle='--')
+    plt.errorbar(data.unorm_radius, means - data.unorm_radius, yerr=stds, fmt='o', label='Predictions with Uncertainty', alpha=0.7)
+    plt.hlines(0, data.unorm_radius.min(), data.unorm_radius.max(), 'r', linestyle='--')
     plt.xlabel('True Mass')
     plt.ylabel('Residual Mass')
     plt.legend()
     plt.savefig("Outputs/bigGPruns/GPrad_res"+hyperp_str+".pdf")
 
-def mass_train_SIMPLE_NN(n_hidden=5, draw=1000, chains=4, target_accept=.95):
+def mass_train_SIMPLE_NN(data: Dataset, n_hidden=5, draw=1000, chains=4, target_accept=.95):
     """
     ***Edit to only have one layer of 5 nodes***
     Function to train NN on mass prediction
@@ -160,7 +183,7 @@ def mass_train_SIMPLE_NN(n_hidden=5, draw=1000, chains=4, target_accept=.95):
     #for output info
     string_specs = "_goodMS_"+str(n_hidden)+"_"+str(draw)+"_"+str(chains)
 
-    model = hbnn.HBNN_M4_simpler(x_train, mass_train, x_train_er, emass_train, n_hidden)
+    model = hbnn.HBNN_M4_simpler(data.x_train, mass_train, data.x_train_er, data.emass_train, n_hidden)
     model.debug(verbose=True)
     trace = train(model,
                   "Outputs/Testing/debug_NN_mass_M4simpler"+string_specs+"_nrns.nc",
@@ -176,21 +199,23 @@ def mass_train_SIMPLE_NN(n_hidden=5, draw=1000, chains=4, target_accept=.95):
 
     print("loo trace: ", az.loo(trace))
 
-    pred, lpd = SIMPLE_sample_post_pred_HBNN_para(trace, x_test, x_test_err, n_hidden, 4, "mass")
+    pred, lpd = SIMPLE_sample_post_pred_HBNN_para(trace, data.x_test, data.x_test_err, n_hidden, 4, "mass")
 
-    print("stdvs: ", pred.std(0))
-    print("means: ", pred.mean(0))
-    print("test set: ", unorm_mass)
+    stds = pred.std(0)
+    means = pred.mean(0)
+    print("stdvs: ", stds)
+    print("means: ", means)
+    print("test set: ", data.unorm_mass)
 
-    print('MAE: ', mean_absolute_error(unorm_mass, pred.mean(0)))
+    print('MAE: ', mean_absolute_error(data.unorm_mass, means))
 
-    print('MARD', mard(unorm_mass, pred.mean(0)))
+    print('MARD', mard(data.unorm_mass, means))
 
-    print('MRD', mrd(unorm_mass, pred.mean(0)))
+    print('MRD', mrd(data.unorm_mass, means))
 
     plt.figure(figsize=(8, 6))
-    plt.errorbar(unorm_mass, pred.mean(0), yerr=pred.std(0), fmt='o', label='Predictions with Uncertainty', alpha=0.7)
-    plt.plot([unorm_mass.min(), unorm_mass.max()], [unorm_mass.min(), unorm_mass.max()], 'r--')
+    plt.errorbar(data.unorm_mass, means, yerr=stds, fmt='o', label='Predictions with Uncertainty', alpha=0.7)
+    plt.plot([data.unorm_mass.min(), data.unorm_mass.max()], [data.unorm_mass.min(), data.unorm_mass.max()], 'r--')
     plt.xlabel('True Mass')
     plt.ylabel('Predicted Mass')
     plt.title('NN Predictions with Uncertainty')
@@ -198,20 +223,20 @@ def mass_train_SIMPLE_NN(n_hidden=5, draw=1000, chains=4, target_accept=.95):
     plt.savefig("Outputs/Testing/debug_M4NNsimpler_mass_predictions"+string_specs+".pdf")
 
     plt.figure(figsize=(8, 6))
-    plt.errorbar(unorm_mass, pred.mean(0) - unorm_mass, yerr=pred.std(0), fmt='o', label='Predictions with Uncertainty', alpha=0.7)
-    plt.hlines(0, unorm_mass.min(), unorm_mass.max(), 'r', linestyle='--')
+    plt.errorbar(data.unorm_mass, means - data.unorm_mass, yerr=stds, fmt='o', label='Predictions with Uncertainty', alpha=0.7)
+    plt.hlines(0, data.unorm_mass.min(), data.unorm_mass.max(), 'r', linestyle='--')
     plt.xlabel('True Mass')
     plt.ylabel('Residual Mass')
     plt.legend()
     plt.savefig("Outputs/Testing/debug_M4NNsimpler_mass_residuals"+string_specs+".pdf")
 
-def mass_train_NN(n_hidden=15, draw=1000, chains=4, target_accept=.95):
+def mass_train_NN(data: Dataset, n_hidden=15, draw=1000, chains=4, target_accept=.95):
     """Function to train NN on mass prediction
     """
     #for output info
     string_specs = "goodMS_"+str(n_hidden)+"_"+str(draw)+"_"+str(target_accept)+"_20TD"
 
-    model = hbnn.HBNN_M4(x_train, mass_train, x_train_er, emass_train, n_hidden)
+    model = hbnn.HBNN_M4(data.x_train, mass_train, data.x_train_er, data.emass_train, n_hidden)
     model.debug(verbose=True)
     trace = train(model,
                   "Outputs/NNmass_"+string_specs+"nrns.nc",
@@ -228,21 +253,23 @@ def mass_train_NN(n_hidden=15, draw=1000, chains=4, target_accept=.95):
 
     print("loo trace: ", az.loo(trace))
 
-    pred, lpd = sample_post_pred_HBNN_para(trace, x_test, x_test_err, n_hidden, 4, "mass")
+    pred, lpd = sample_post_pred_HBNN_para(trace, data.x_test, data.x_test_err, n_hidden, 4, "mass")
 
-    print("stdvs: ", pred.std(0))
-    print("means: ", pred.mean(0))
-    print("test set: ", unorm_mass)
+    stds = pred.std(0)
+    means = pred.mean(0)
+    print("stdvs: ", stds)
+    print("means: ", means)
+    print("test set: ", data.unorm_mass)
 
-    print('MAE: ', mean_absolute_error(unorm_mass, pred.mean(0)))
+    print('MAE: ', mean_absolute_error(data.unorm_mass, means))
 
-    print('MARD', mard(unorm_mass, pred.mean(0)))
+    print('MARD', mard(data.unorm_mass, means))
 
-    print('MRD', mrd(unorm_mass, pred.mean(0)))
+    print('MRD', mrd(data.unorm_mass, means))
 
     plt.figure(figsize=(8, 6))
-    plt.errorbar(unorm_mass, pred.mean(0), yerr=pred.std(0), fmt='o', label='Predictions with Uncertainty', alpha=0.7)
-    plt.plot([unorm_mass.min(), unorm_mass.max()], [unorm_mass.min(), unorm_mass.max()], 'r--')
+    plt.errorbar(data.unorm_mass, means, yerr=stds, fmt='o', label='Predictions with Uncertainty', alpha=0.7)
+    plt.plot([data.unorm_mass.min(), data.unorm_mass.max()], [data.unorm_mass.min(), data.unorm_mass.max()], 'r--')
     plt.xlabel('True Mass')
     plt.ylabel('Predicted Mass')
     plt.title('NN Predictions with Uncertainty')
@@ -250,20 +277,20 @@ def mass_train_NN(n_hidden=15, draw=1000, chains=4, target_accept=.95):
     plt.savefig("Outputs/bigNNruns/NNmass_preds"+string_specs+".pdf")
 
     plt.figure(figsize=(8, 6))
-    plt.errorbar(unorm_mass, pred.mean(0) - unorm_mass, yerr=pred.std(0), fmt='o', label='Predictions with Uncertainty', alpha=0.7)
-    plt.hlines(0, unorm_mass.min(), unorm_mass.max(), 'r', linestyle='--')
+    plt.errorbar(data.unorm_mass, means - data.unorm_mass, yerr=stds, fmt='o', label='Predictions with Uncertainty', alpha=0.7)
+    plt.hlines(0, data.unorm_mass.min(), data.unorm_mass.max(), 'r', linestyle='--')
     plt.xlabel('True Mass')
     plt.ylabel('Residual Mass')
     plt.legend()
     plt.savefig("Outputs/bigNNruns/NNmass_ress"+string_specs+".pdf")
 
-def radius_train_NN(n_hidden, draw=1000, chains=4, target_accept=.95, advi=False): 
+def radius_train_NN(data: Dataset, n_hidden, draw=1000, chains=4, target_accept=.95, advi=False): 
     """Function to train NN on radius prediction
     """
     #for output info
     hyperp_str = "_goodMS_"+str(n_hidden)+"_"+str(draw)#+"_"+str(chains)
 
-    model = hbnn.HBNN_M4(x_train, rad_train, x_train_er, erad_train, n_hidden)
+    model = hbnn.HBNN_M4(data.x_train, data.rad_train, data.x_train_er, data.erad_train, n_hidden)
 
     if advi:
         approx = pm.fit(n=100000, method='advi', model=model, progressbar=True)
@@ -287,21 +314,23 @@ def radius_train_NN(n_hidden, draw=1000, chains=4, target_accept=.95, advi=False
 
     print("loo trace: ", az.loo(trace))
 
-    pred, lpd = sample_post_pred_HBNN_para(trace, x_test, x_test_err, n_hidden, 4, "radius")
+    pred, lpd = sample_post_pred_HBNN_para(trace, data.x_test, data.x_test_err, n_hidden, 4, "radius")
 
-    print("stdvs: ", pred.std(0))
-    print("means: ", pred.mean(0))
-    print("test set: ", unorm_radius)
+    stds = pred.std(0)
+    means = pred.mean(0)
+    print("stdvs: ", stds)
+    print("means: ", means)
+    print("test set: ", data.unorm_radius)
 
-    print('MAE: ', mean_absolute_error(unorm_radius, pred.mean(0)))
+    print('MAE: ', mean_absolute_error(data.unorm_radius, means))
 
-    print('MARD', mard(unorm_radius, pred.mean(0)))
+    print('MARD', mard(data.unorm_radius, means))
 
-    print('MRD', mrd(unorm_radius, pred.mean(0)))
+    print('MRD', mrd(data.unorm_radius, means))
 
     plt.figure(figsize=(8, 6))
-    plt.errorbar(unorm_radius, pred.mean(0), yerr=pred.std(0), fmt='o', label='Predictions with Uncertainty', alpha=0.7)
-    plt.plot([unorm_radius.min(), unorm_radius.max()], [unorm_radius.min(), unorm_radius.max()], 'r--')
+    plt.errorbar(data.unorm_radius, means, yerr=stds, fmt='o', label='Predictions with Uncertainty', alpha=0.7)
+    plt.plot([data.unorm_radius.min(), data.unorm_radius.max()], [data.unorm_radius.min(), data.unorm_radius.max()], 'r--')
     plt.xlabel('True Radius')
     plt.ylabel('Predicted Radius')
     plt.title('NN Predictions with Uncertainty')
@@ -309,8 +338,8 @@ def radius_train_NN(n_hidden, draw=1000, chains=4, target_accept=.95, advi=False
     plt.savefig("Outputs/bigNNruns/NN_rad_preds"+hyperp_str+".pdf")
 
     plt.figure(figsize=(8, 6))
-    plt.errorbar(unorm_radius, pred.mean(0) - unorm_radius, yerr=pred.std(0), fmt='o', label='Predictions with Uncertainty', alpha=0.7)
-    plt.hlines(0, unorm_radius.min(), unorm_radius.max(), 'r', linestyle='--')
+    plt.errorbar(data.unorm_radius, means - data.unorm_radius, yerr=stds, fmt='o', label='Predictions with Uncertainty', alpha=0.7)
+    plt.hlines(0, data.unorm_radius.min(), data.unorm_radius.max(), 'r', linestyle='--')
     plt.xlabel('True Radius')
     plt.ylabel('Residual Radius')
     plt.legend()
@@ -323,19 +352,27 @@ if __name__ == '__main__':
     #load data
     df_train = get_dataset('DataExploring/good_MS.txt')
 
-    (x_train, x_train_er, x_test, x_test_err, mass_train, emass_train,
+    (x_train, x_train_er, x_test, x_test_err, mass_train, _train,
     mass_test, emass_test, rad_train, erad_train, rad_test, erad_test
     ) = return_train_test(df_train)
 
-    unorm_mass = denormalise_val(mass_test, 'mass')
-    unorm_radius = denormalise_val(rad_test, 'radius')
+    dataset = Dataset(
+        x_train = x_train[['Teff', 'logg', 'Fe/H', 'L']],
+        x_train_er = x_train_er[['eTeff', 'elogg', 'eFe/H', 'eL']],
 
-    x_train = x_train[['Teff', 'logg', 'Fe/H', 'L']]
-    x_train_er = x_train_er[['eTeff', 'elogg', 'eFe/H', 'eL']]
+        x_test = x_test[['Teff', 'logg', 'Fe/H', 'L']],
+        x_test_err = x_test_err[['eTeff', 'elogg', 'eFe/H', 'eL']],
 
-    x_test = x_test[['Teff', 'logg', 'Fe/H', 'L']]
-    x_test_err = x_test_err[['eTeff', 'elogg', 'eFe/H', 'eL']]
+        rad_train=rad_train,
+        rad_test=rad_test,
 
+        mass_train=mass_train,
+        mass_test=mass_test,
+
+        unorm_mass = denormalise_val(mass_test, 'mass'),
+        unorm_radius = denormalise_val(rad_test, 'radius')
+        )
+    
     # print("NN advi radius testing - all 2 layer with n=100,000")
     # trials = [4, 8, 16, 32, 64]
     # for t in trials:
@@ -352,9 +389,9 @@ if __name__ == '__main__':
     start_time_CPU = time.process_time()
     start_time = time.time()
 
-    print("NNrad big run. 8_2000_4 with 20TD and 0.99TA.")
+    print("bigGPrun - mass - 50_20_1000_4 with 20TD, 0.99TA and hopefully improved priors.")
     print("(On good MS)")
-    radius_train_NN(8, 2000, 4, 0.99)
+    mass_train_GP(dataset, 50, 20, 1000, target_accept=0.99)
 
     # print("GP rad big run. 80_40_1000. Still 20TD and 1.5 tuning. 0.99TA. Probably needs some prior adjusting to combat bad geometry. Also dataset updated!")
     # print("(On good MS)")

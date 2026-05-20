@@ -319,7 +319,8 @@ def sparse_fully_heteroscedastic_gp(
         log_ls_v = pm.Normal("log_ls_v", mu=1.0, sigma=0.5, shape=D)
         ls_v = pm.Deterministic("ls_v", pm.math.exp(log_ls_v))
         # eta_v = pm.LogNormal("eta_var", mu=np.log(0.2), sigma=0.35)
-        eta_v = pm.Gamma("eta_var", alpha=2, beta=1)
+        #eta_v = pm.Gamma("eta_var", alpha=2, beta=1)
+        eta_v = pm.HalfNormal("eta_var", sigma=0.5) #try regulating noise fluctuation a bit more
 
         cov_var = eta_v**2 * pm.gp.cov.ExpQuad(input_dim=D_var, ls=ls_v) \
                   + pm.gp.cov.WhiteNoise(sigma=1e-5)
