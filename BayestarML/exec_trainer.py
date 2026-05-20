@@ -352,9 +352,9 @@ if __name__ == '__main__':
     start_time_CPU = time.process_time()
     start_time = time.time()
 
-    print("NN mass test - simple 5_100_1 - this should be so quick.")
+    print("NNrad big run. 8_2000_4 with 20TD and 0.99TA.")
     print("(On good MS)")
-    mass_train_SIMPLE_NN(5, 100, 1)
+    radius_train_NN(8, 2000, 4, 0.99)
 
     # print("GP rad big run. 80_40_1000. Still 20TD and 1.5 tuning. 0.99TA. Probably needs some prior adjusting to combat bad geometry. Also dataset updated!")
     # print("(On good MS)")

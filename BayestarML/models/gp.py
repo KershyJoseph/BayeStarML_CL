@@ -164,12 +164,24 @@ def _farthest_point_sampling(X, M, seed=0):
         idx.append(int(np.argmax(d2)))
     return X[idx]
 
+def deduplicate(Xu, tol=1e-6):
+    """For removing inducing points that are too close together and could make Kuu explode.
+    Credit to ChatGPT for the idea.
+    """
+    keep = []
+    for x in Xu:
+        if not any(np.allclose(x, y, atol=tol) for y in keep):
+            keep.append(x)
+    return np.array(keep)
+
 def make_inducing_points(
-    X, X_er=None, M=None, method="kmeans",
-    add_bounds=True, weight_by_error=True, seed=0
+    X, X_er=None, M=None, method="blend",
+    add_bounds=True, weight_by_error=True, seed=0,
+
 ):
     """
     Assumes X is already standardised (per-feature).
+    Joseph edit: added method='blend' for 80/20 split of inducing points from kmeans/furthest point
     """
     X = np.asarray(X, dtype=float)
     N, D = X.shape
@@ -187,6 +199,14 @@ def make_inducing_points(
         km = KMeans(n_clusters=M, n_init=10, random_state=seed)
         km.fit(X, sample_weight=sample_weight)
         Xu = km.cluster_centers_
+    elif method == "blend":
+        M_km = int(0.8*M)
+        M_fp = M - M_km
+        km = KMeans(n_clusters=M_km, n_init=10, random_state=seed)
+        km.fit(X, sample_weight=sample_weight)
+        Xu_km = km.cluster_centers_
+        Xu_fp = _farthest_point_sampling(X, M_fp, seed=seed)
+        Xu = deduplicate(np.vstack(Xu_km, Xu_fp)) #in case the two methods pick the same IP
     else:  # 'fps'
         Xu = _farthest_point_sampling(X, M, seed=seed)
 
@@ -297,7 +317,7 @@ def sparse_fully_heteroscedastic_gp(
 
         #ls_v  = pm.InverseGamma("ls_var", mu=ls_v_mu_vec, sigma=ls_v_sd_vec, shape=D_var)
         log_ls_v = pm.Normal("log_ls_v", mu=1.0, sigma=0.5, shape=D)
-        ls_v = pm.Deterministic("ls_v", pm.math.exp(log_ls))
+        ls_v = pm.Deterministic("ls_v", pm.math.exp(log_ls_v))
         # eta_v = pm.LogNormal("eta_var", mu=np.log(0.2), sigma=0.35)
         eta_v = pm.Gamma("eta_var", alpha=2, beta=1)
 
