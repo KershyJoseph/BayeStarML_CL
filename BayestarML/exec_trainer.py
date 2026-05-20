@@ -209,12 +209,12 @@ def mass_train_NN(n_hidden=15, draw=1000, chains=4, target_accept=.95):
     """Function to train NN on mass prediction
     """
     #for output info
-    string_specs = "_goodMS_"+str(n_hidden)+"_"+str(draw)+"_"+str(chains)
+    string_specs = "goodMS_"+str(n_hidden)+"_"+str(draw)+"_"+str(target_accept)+"_20TD"
 
     model = hbnn.HBNN_M4(x_train, mass_train, x_train_er, emass_train, n_hidden)
     model.debug(verbose=True)
     trace = train(model,
-                  "Outputs/NN_final_mass_M4"+string_specs+"_nrns.nc",
+                  "Outputs/NNmass_"+string_specs+"nrns.nc",
                   draw=draw, chains=chains, target_accept=target_accept,
                   max_treedepth=20)
 
@@ -247,7 +247,7 @@ def mass_train_NN(n_hidden=15, draw=1000, chains=4, target_accept=.95):
     plt.ylabel('Predicted Mass')
     plt.title('NN Predictions with Uncertainty')
     plt.legend()
-    plt.savefig("Outputs/NN_mass_final_preds"+string_specs+".pdf")
+    plt.savefig("Outputs/NNmass_preds"+string_specs+".pdf")
 
     plt.figure(figsize=(8, 6))
     plt.errorbar(unorm_mass, pred.mean(0) - unorm_mass, yerr=pred.std(0), fmt='o', label='Predictions with Uncertainty', alpha=0.7)
@@ -255,7 +255,7 @@ def mass_train_NN(n_hidden=15, draw=1000, chains=4, target_accept=.95):
     plt.xlabel('True Mass')
     plt.ylabel('Residual Mass')
     plt.legend()
-    plt.savefig("Outputs/NN_mass_final_ress"+string_specs+".pdf")
+    plt.savefig("Outputs/NNmass_ress"+string_specs+".pdf")
 
 def radius_train_NN(n_hidden, draw=1000, chains=4, advi=False): 
     """Function to train NN on radius prediction
@@ -352,16 +352,13 @@ if __name__ == '__main__':
     start_time_CPU = time.process_time()
     start_time = time.time()
 
-    #print("GP radius 80_1000_40. TA.99. 20TD. 1.5Tuning.")
-    print("NN rad big run. 16_2000_4 with changed y_err prior to HalfNormal and sigma=0.1. Also bias sigmas all 0.1. Still 20TD and 1.5 tuning. Also dataset updated!")
+    print("NN mass big run. 32_2000_4 with changed y_err prior to HalfNormal and sigma=0.1. Also bias sigmas all 0.1. Still 20TD and 1.5 tuning, 0.99TA. Also dataset updated!")
     print("(On good MS)")
-    radius_train_NN(16, 2000, 4)
+    mass_train_NN(32, 2000, 4, 0.99)
 
-    print("/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/")
-
-    print("GP rad big run. 80_40_1000. Still 20TD and 1.5 tuning. 0.99TA. Probably needs some prior adjusting to combat bad geometry. Also dataset updated!")
-    print("(On good MS)")
-    radius_train_GP(80,40,1000,target_accept=.99)
+    # print("GP rad big run. 80_40_1000. Still 20TD and 1.5 tuning. 0.99TA. Probably needs some prior adjusting to combat bad geometry. Also dataset updated!")
+    # print("(On good MS)")
+    # radius_train_GP(80,40,1000,target_accept=.99)
     # mass_train_GP(50,20,1000,target_accept=0.99)
     # radius_train_GP(30,5,1000,target_accept=.9)
     # mass_train_NN(64,2000,4,target_accept=.99)
