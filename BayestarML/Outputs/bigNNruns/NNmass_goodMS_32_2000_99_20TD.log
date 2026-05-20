@@ -1,0 +1,172 @@
+Initializing NUTS using jitter+adapt_diag...
+Multiprocess sampling (4 chains in 4 jobs)
+NUTS: [Omega, X_latent, w_in_1, w_1_2, w_2_out, bias_1, bias_2, bias_out, er]
+6049.532828467154 4.194815571906934 -0.07372627737226277 4.570844713503649 1.1729082481751822 1.5180168065693431
+883.6479172901575 0.26062665391530143 0.206572663121033 11.125493190961159 0.32731139416942934 0.5535885051225802
+NN mass big run. 32_2000_4 with changed y_err prior to HalfNormal and sigma=0.1. Also bias sigmas all 0.1. Still 20TD and 1.5 tuning, 0.99TA. Also dataset updated!
+(On good MS)
+point={'Omega_cholesky-cov-packed__': array([0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]), 'X_latent': array([[0., 0., 0., 0.],
+       [0., 0., 0., 0.],
+       [0., 0., 0., 0.],
+       ...,
+       [0., 0., 0., 0.],
+       [0., 0., 0., 0.],
+       [0., 0., 0., 0.]]), 'w_in_1': array([[0., 0., 0., 0.],
+       [0., 0., 0., 0.],
+       [0., 0., 0., 0.],
+       [0., 0., 0., 0.],
+       [0., 0., 0., 0.],
+       [0., 0., 0., 0.],
+       [0., 0., 0., 0.],
+       [0., 0., 0., 0.],
+       [0., 0., 0., 0.],
+       [0., 0., 0., 0.],
+       [0., 0., 0., 0.],
+       [0., 0., 0., 0.],
+       [0., 0., 0., 0.],
+       [0., 0., 0., 0.],
+       [0., 0., 0., 0.],
+       [0., 0., 0., 0.],
+       [0., 0., 0., 0.],
+       [0., 0., 0., 0.],
+       [0., 0., 0., 0.],
+       [0., 0., 0., 0.],
+       [0., 0., 0., 0.],
+       [0., 0., 0., 0.],
+       [0., 0., 0., 0.],
+       [0., 0., 0., 0.],
+       [0., 0., 0., 0.],
+       [0., 0., 0., 0.],
+       [0., 0., 0., 0.],
+       [0., 0., 0., 0.],
+       [0., 0., 0., 0.],
+       [0., 0., 0., 0.],
+       [0., 0., 0., 0.],
+       [0., 0., 0., 0.]]), 'w_1_2': array([[0., 0., 0., ..., 0., 0., 0.],
+       [0., 0., 0., ..., 0., 0., 0.],
+       [0., 0., 0., ..., 0., 0., 0.],
+       ...,
+       [0., 0., 0., ..., 0., 0., 0.],
+       [0., 0., 0., ..., 0., 0., 0.],
+       [0., 0., 0., ..., 0., 0., 0.]]), 'w_2_out': array([0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+       0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]), 'bias_1': array([0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+       0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]), 'bias_2': array([0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+       0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]), 'bias_out': array(0.), 'er_log__': array(-2.30258509)}
+
+No problems found
+target_accept= 0.99
+                                                                                                                        
+  Progress                         Draws   Divergences   Step size   Grad evals   Sampling Speed   Elapsed   Remaining  
+ ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── 
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━   5000    0             0.00        2047         3.36 s/draws     4:39:52   0:00:00    
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━   5000    0             0.00        2047         3.56 s/draws     4:56:25   0:00:00    
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━   5000    0             0.00        2047         3.44 s/draws     4:46:26   0:00:00    
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━   5000    0             0.00        2047         3.24 s/draws     4:30:09   0:00:00    
+                                                                                                                        
+Sampling 4 chains for 3_000 tune and 2_000 draw iterations (12_000 + 8_000 draws total) took 17797 seconds.
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/diagnostics.py:596: RuntimeWarning: invalid value encountered in scalar divide
+  (between_chain_variance / within_chain_variance + num_samples - 1) / (num_samples)
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/diagnostics.py:991: RuntimeWarning: invalid value encountered in scalar divide
+  varsd = varvar / evar / 4
+AZ Stats for ESS Bulk < 400:
+ Empty DataFrame
+Columns: [mean, sd, hdi_3%, hdi_97%, mcse_mean, mcse_sd, ess_bulk, ess_tail, r_hat]
+Index: []
+Computing ... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/diagnostics.py:596: RuntimeWarning: invalid value encountered in scalar divide
+  (between_chain_variance / within_chain_variance + num_samples - 1) / (num_samples)
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are very different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are very different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+rhats:  [('X_latent', 1.004483387904947), ('w_in_1', 1.005835831572216), ('w_1_2', 1.0033542231669328), ('w_2_out', 1.0042030596307718), ('bias_1', 1.0015498730325754), ('bias_2', 1.0015650293211713), ('bias_out', 0.9999863149222951), ('Omega', 1.0012335812156443), ('er', 1.0002683627579063), ('Omega_corr', 1.0009295482169325), ('Omega_stds', 1.0004398894669593), ('ann_input', 1.004483387904947), ('act_1', 1.0069833604374308), ('act_2', 1.0048016688299015), ('act_out', 1.0029935763834472)]
+loo trace:  Computed from 8000 posterior samples and 548 observations log-likelihood matrix.
+
+         Estimate       SE
+elpd_loo   -20.73    30.27
+p_loo      176.68        -
+
+There has been a warning during the calculation. Please check the results.
+------
+
+Pareto k diagnostic values:
+                         Count   Pct.
+(-Inf, 0.70]   (good)      544   99.3%
+   (0.70, 1]   (bad)         3    0.5%
+   (1, Inf)   (very bad)    1    0.2%
+
+starting parallel prediction on 32 worker(s)…
+finished chain 1/4
+finished chain 3/4
+finished chain 2/4
+finished chain 4/4
+stdvs:  [0.04566809 0.04892293 0.02529246 0.03993828 0.04401985 0.03510763
+ 0.05087031 0.04770304 0.05128214 0.03235228 0.03284363 0.05552687
+ 0.04088079 0.03979545 0.05018612 0.04869398 0.0610247  0.06734482
+ 0.04794919 0.0281666  0.03095818 0.03599218 0.05905574 0.03863353
+ 0.03997007 0.06703455 0.0493981  0.02602725 0.02300948 0.04596889
+ 0.05141148 0.04089087 0.02417964 0.05903824 0.03399592 0.03833534
+ 0.04402469 0.03823381 0.04939449 0.04843508 0.05458676 0.0369914
+ 0.04763454 0.06395487 0.01656734 0.05432706 0.19789979 0.02368061
+ 0.04829278 0.05261965 0.04591883 0.03974746 0.04243236 0.01760677
+ 0.03078771 0.03951705 0.0568635  0.04601249 0.0285965  0.0466802
+ 0.04695223 0.0283391  0.04201391 0.03539585 0.02765837 0.04138242
+ 0.03338232 0.04554563 0.04137683 0.04915209 0.04996754 0.04994782
+ 0.04907015 0.04924618 0.04413044 0.03361851 0.05320995 0.03407729
+ 0.03877866 0.05187656 0.03940645 0.04553292 0.03477657 0.03762814
+ 0.0248193  0.04825299 0.05352559 0.05501665 0.04130648 0.0840608
+ 0.04335007 0.05480994 0.04816599 0.05015996 0.03838985 0.05552511
+ 0.03791885 0.04352334 0.05342309 0.03406285 0.04835864 0.02907923
+ 0.0484171  0.03839884 0.03337197 0.0400835  0.03299635 0.05198832
+ 0.04704627 0.03454967 0.05791071 0.0310557  0.04686856 0.04062574
+ 0.02361904 0.04089481 0.03473358 0.03765735 0.04650712 0.05450212
+ 0.04129606 0.04890839 0.01317211 0.03403942 0.02216605 0.04411252
+ 0.03667938 0.03600522 0.03323715 0.03972119 0.0538878  0.05005553
+ 0.04018493 0.05321945 0.03397552 0.0236835  0.04092342]
+means:  [1.19695635 1.2098046  0.70015867 1.39207429 1.21264957 1.05131723
+ 1.27005408 1.29476517 1.32222112 1.15485291 1.0791238  1.1459597
+ 1.3032395  1.23105963 1.26408706 1.49735806 1.38160633 1.23916759
+ 1.31848159 1.05299609 1.03963049 1.06776956 1.43952922 1.02856408
+ 1.15607401 1.23296831 0.80726079 0.89290112 0.78790236 1.35906955
+ 1.74454795 1.3218533  0.35465802 1.23574743 1.01186363 1.15430678
+ 1.06800119 0.98851732 1.4305541  1.05119324 1.2991879  1.1006766
+ 1.01327781 1.46965194 1.21660173 1.32444623 3.1922802  1.59976004
+ 1.41304101 1.07511162 1.27225446 1.45294791 1.42463713 1.1055192
+ 1.14447859 1.20058086 1.37202651 1.15873194 0.91239487 1.19159307
+ 1.40033552 0.75649291 1.23695461 0.73315666 0.3408752  0.03046743
+ 1.13041301 1.46094142 0.40064674 1.41109985 1.32747366 1.48382974
+ 1.3610334  1.41282633 1.3296188  1.10504211 1.4151423  1.19035171
+ 1.7748962  1.35657398 1.36920187 1.21578616 0.29942611 1.39834466
+ 1.40000038 1.25389348 1.62217308 1.14736212 0.9156476  2.10485927
+ 1.2738695  1.05910676 1.23358752 1.27710459 1.30209271 1.49566559
+ 1.11568389 0.94930983 1.21321737 1.116807   1.30455088 0.9177556
+ 1.2781593  1.22266003 0.97143574 1.15244745 0.32960127 1.27329154
+ 1.11277448 1.09501928 1.28926869 1.25067972 1.13934852 1.11720457
+ 1.47333374 1.17929062 1.06627906 1.16352973 1.3177504  1.17235814
+ 1.67383772 1.36572852 1.05080962 0.42181202 1.05906858 1.45315478
+ 1.0749039  0.3955172  1.09503959 0.99595362 1.40309533 1.24148288
+ 1.27978088 1.49799963 1.12365426 0.6475212  1.38386209]
+test set:  408    1.178
+324    1.275
+498    0.739
+363    1.508
+497    1.209
+       ...  
+357    1.263
+41     1.550
+382    1.146
+160    0.707
+362    1.429
+Name: M, Length: 137, dtype: float64
+MAE:  0.07881346426073244
+MARD 6.152971603412635
+MRD 0.5134702187816589
+[ Top 5 memory changes ]
+<frozen importlib._bootstrap_external>:729: size=7833 KiB (+7833 KiB), count=64349 (+64349), average=125 B
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/pytensor/link/c/cmodule.py:871: size=6985 KiB (+6985 KiB), count=89457 (+89457), average=80 B
+<frozen abc>:123: size=5500 KiB (+5500 KiB), count=54877 (+54877), average=103 B
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/linecache.py:137: size=5119 KiB (+5119 KiB), count=52192 (+52192), average=100 B
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/pytensor/link/c/op.py:378: size=1693 KiB (+1693 KiB), count=1056 (+1056), average=1642 B
+Peak Memory: 2133.93 MB
+CPU time used: 1467.50960 s
+Total run time: 19019.49405 s
