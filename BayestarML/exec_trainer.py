@@ -42,7 +42,7 @@ class Dataset:
 def mass_train_GP(data: Dataset, M_mean, M_var, draws=1000, advi=False, target_accept=.95):
     """Function to train GP on mass prediction
     """
-    hyperp_str = str(M_mean)+"_"+str(M_var)+"_"+str(draws)+"_"+str(target_accept)
+    hyperp_str = "RGB"+str(M_mean)+"_"+str(M_var)+"_"+str(draws)+"_"+str(target_accept)
 
     model, μ_gp, lg_σ_gp, Xu, Xu_er = gp.sparse_fully_heteroscedastic_gp(data.x_train,
                                                                         data.x_train_er,
@@ -60,7 +60,7 @@ def mass_train_GP(data: Dataset, M_mean, M_var, draws=1000, advi=False, target_a
 
     else:
         trace = train(model,
-                  "Outputs/bigGPruns/GPmass"+hyperp_str+".nc",
+                  "Outputs/RGB/GPmass"+hyperp_str+".nc",
                   draw=draws, chains=4, target_accept=target_accept, max_treedepth=20)
 
         r_hat_values = az.rhat(trace)
@@ -100,7 +100,7 @@ def mass_train_GP(data: Dataset, M_mean, M_var, draws=1000, advi=False, target_a
     plt.ylabel('Predicted Mass')
     plt.title('GP Predictions with Uncertainty')
     plt.legend()
-    plt.savefig("Outputs/bigGPruns/GPmass_preds"+hyperp_str+".pdf")
+    plt.savefig("Outputs/RGB/GPmass_preds"+hyperp_str+".pdf")
 
     plt.figure(figsize=(8, 6))
     plt.errorbar(data.unorm_mass, means - data.unorm_mass, yerr=stds, fmt='o', label='Predictions with Uncertainty', alpha=0.7)
@@ -108,12 +108,12 @@ def mass_train_GP(data: Dataset, M_mean, M_var, draws=1000, advi=False, target_a
     plt.xlabel('True Mass')
     plt.ylabel('Residual Mass')
     plt.legend()
-    plt.savefig("Outputs/bigGPruns/GPmass_res"+hyperp_str+".pdf")
+    plt.savefig("Outputs/RGB/GPmass_res"+hyperp_str+".pdf")
 
 def radius_train_GP(data: Dataset, M_mean, M_var, draws=1000, advi=False, target_accept=.95):
     """Function to train GP on radius prediction
     """
-    hyperp_str = str(M_mean)+"_"+str(M_var)+"_"+str(draws)+"_"+str(target_accept)
+    hyperp_str = "RGB"+str(M_mean)+"_"+str(M_var)+"_"+str(draws)+"_"+str(target_accept)
 
     model, μ_gp, lg_σ_gp, Xu, Xu_er = gp.sparse_fully_heteroscedastic_gp(data.x_train,
                                                                         data.x_train_er,
@@ -234,12 +234,12 @@ def mass_train_NN(data: Dataset, n_hidden=15, draw=1000, chains=4, target_accept
     """Function to train NN on mass prediction
     """
     #for output info
-    string_specs = "goodMS_"+str(n_hidden)+"_"+str(draw)+"_"+str(target_accept)+"_20TD"
+    string_specs = "RGB"+str(n_hidden)+"_"+str(draw)+"_"+str(target_accept)+"_20TD"
 
     model = hbnn.HBNN_M4(data.x_train, mass_train, data.x_train_er, data.emass_train, n_hidden)
     model.debug(verbose=True)
     trace = train(model,
-                  "Outputs/NNmass_"+string_specs+"nrns.nc",
+                  "Outputs/RGB/NNmass_"+string_specs+"nrns.nc",
                   draw=draw, chains=chains, target_accept=target_accept,
                   max_treedepth=20)
 
@@ -274,7 +274,7 @@ def mass_train_NN(data: Dataset, n_hidden=15, draw=1000, chains=4, target_accept
     plt.ylabel('Predicted Mass')
     plt.title('NN Predictions with Uncertainty')
     plt.legend()
-    plt.savefig("Outputs/bigNNruns/NNmass_preds"+string_specs+".pdf")
+    plt.savefig("Outputs/RGB/NNmass_preds"+string_specs+".pdf")
 
     plt.figure(figsize=(8, 6))
     plt.errorbar(data.unorm_mass, means - data.unorm_mass, yerr=stds, fmt='o', label='Predictions with Uncertainty', alpha=0.7)
@@ -282,13 +282,13 @@ def mass_train_NN(data: Dataset, n_hidden=15, draw=1000, chains=4, target_accept
     plt.xlabel('True Mass')
     plt.ylabel('Residual Mass')
     plt.legend()
-    plt.savefig("Outputs/bigNNruns/NNmass_ress"+string_specs+".pdf")
+    plt.savefig("Outputs/RGB/NNmass_ress"+string_specs+".pdf")
 
 def radius_train_NN(data: Dataset, n_hidden, draw=1000, chains=4, target_accept=.95, advi=False): 
     """Function to train NN on radius prediction
     """
     #for output info
-    hyperp_str = "_goodMS_"+str(n_hidden)+"_"+str(draw)#+"_"+str(chains)
+    hyperp_str = "RGB"+str(n_hidden)+"_"+str(draw)#+"_"+str(chains)
 
     model = hbnn.HBNN_M4(data.x_train, data.rad_train, data.x_train_er, data.erad_train, n_hidden)
 
@@ -302,7 +302,7 @@ def radius_train_NN(data: Dataset, n_hidden, draw=1000, chains=4, target_accept=
     else:
         trace = train(model,
                 "Outputs/bigNNruns/NNrad"+hyperp_str+"nrns.nc",
-                draw=draw, chains=chains, max_treedepth=20)
+                draw=draw, chains=chains, max_treedepth=20, target_accept=target_accept)
 
     r_hat_values = az.rhat(trace)
     all_rhats = []
@@ -350,9 +350,9 @@ if __name__ == '__main__':
     mp.set_start_method('spawn', force=True)
 
     #load data
-    df_train = get_dataset('DataExploring/good_MS.txt')
+    df_train = get_dataset('DataExploring/good_RGB.txt')
 
-    (x_train, x_train_er, x_test, x_test_err, mass_train, _train,
+    (x_train, x_train_er, x_test, x_test_err, mass_train, emass_train,
     mass_test, emass_test, rad_train, erad_train, rad_test, erad_test
     ) = return_train_test(df_train)
 
@@ -364,10 +364,14 @@ if __name__ == '__main__':
         x_test_err = x_test_err[['eTeff', 'elogg', 'eFe/H', 'eL']],
 
         rad_train=rad_train,
+        erad_train=erad_train,
         rad_test=rad_test,
+        erad_test=erad_test,
 
         mass_train=mass_train,
+        emass_train=emass_train,
         mass_test=mass_test,
+        emass_test=emass_test,
 
         unorm_mass = denormalise_val(mass_test, 'mass'),
         unorm_radius = denormalise_val(rad_test, 'radius')
@@ -383,8 +387,11 @@ if __name__ == '__main__':
 
     #HAVE YOU UPDATED CONSTANTS.PY AND CHECKED OUTPUT FILE PATHS
 
-    print("GP runs over night - two radius and one mass on goodMS")
+    print("First go at some RGB stuff")
     print("::::::::::::::::::::::::::::::::::::::")
+
+    # print("GP runs over night - two radius and one mass on goodMS")
+    # print("::::::::::::::::::::::::::::::::::::::")
 
     process = psutil.Process()
     #tracemalloc.start() #for memory usage estimate
@@ -392,9 +399,11 @@ if __name__ == '__main__':
     start_time_CPU = time.process_time()
     start_time = time.time()
 
-    print("bigGPrun - radius - 50_20_1000_4 with 20TD, 0.99TA and hopefully improved priors.")
-    print("(On good MS)")
-    radius_train_GP(dataset, 50, 20, 1000, target_accept=0.99)
+    print("bigNNrun - mass - RGB stars. 16, 2000, 4, target_accept=0.99. TD 20 still.")
+    mass_train_NN(dataset, 16, 2000, 4, target_accept=0.99)
+    # print("bigGPrun - radius - 50_20_1000_4 with 20TD, 0.99TA and hopefully improved priors.")
+    # print("(On good MS)")
+    # radius_train_GP(dataset, 50, 20, 1000, target_accept=0.99)
 
     end_time_CPU = time.process_time()
     #from Gemini
@@ -414,9 +423,10 @@ if __name__ == '__main__':
     start_time_CPU2 = time.process_time()
     start_time2 = time.time()
 
-    print("bigGPrun - radius - 80_40_1000_4 with 20TD, 0.99TA and hopefully improved priors.")
-    print("(On good MS)")
-    radius_train_GP(dataset, 80, 40, 1000, target_accept=0.99)
+    print("bigGPrun - mass - RGB stars. 80, 40, 1000, target_accept=0.99. 20TD still.")
+    # print("bigGPrun - radius - 80_40_1000_4 with 20TD, 0.99TA and hopefully improved priors.")
+    # print("(On good MS)")
+    mass_train_GP(dataset, 80, 40, 1000, target_accept=0.99)
 
     end_time_CPU2 = time.process_time()
 
@@ -427,29 +437,19 @@ if __name__ == '__main__':
 
     print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
 
-    start_time_CPU3 = time.process_time()
-    start_time3 = time.time()
+    # start_time_CPU3 = time.process_time()
+    # start_time3 = time.time()
 
-    print("bigGPrun - mass - 80_40_1000_4 with 20TD, 0.99TA and hopefully improved priors.")
-    print("(On good MS)")
-    mass_train_GP(dataset, 80, 40, 1000, target_accept=0.99)
-
-    end_time_CPU3 = time.process_time()
-
-    mem3 = process.memory_info().rss / 1024**2
-    print(f"Peak Memory: {(mem3-mem2):.2f} MB")
-    print(f"CPU time used: {(end_time_CPU3-start_time_CPU3):.5f} s")
-    print(f"Total run time: {time.time()-start_time3:.5f} s")
-
-    print("><><><><><><><><><><><><>><><><><>")
-    print("You made it")
-
-    # print("GP rad big run. 80_40_1000. Still 20TD and 1.5 tuning. 0.99TA. Probably needs some prior adjusting to combat bad geometry. Also dataset updated!")
+    # print("bigGPrun - mass - 80_40_1000_4 with 20TD, 0.99TA and hopefully improved priors.")
     # print("(On good MS)")
-    # radius_train_GP(80,40,1000,target_accept=.99)
-    # mass_train_GP(50,20,1000,target_accept=0.99)
-    # radius_train_GP(30,5,1000,target_accept=.9)
-    # mass_train_NN(64,2000,4,target_accept=.99)
-    # radius_train_NN(16, 1000, 4)
+    # mass_train_GP(dataset, 80, 40, 1000, target_accept=0.99)
 
-    
+    # end_time_CPU3 = time.process_time()
+
+    # mem3 = process.memory_info().rss / 1024**2
+    # print(f"Peak Memory: {(mem3-mem2):.2f} MB")
+    # print(f"CPU time used: {(end_time_CPU3-start_time_CPU3):.5f} s")
+    # print(f"Total run time: {time.time()-start_time3:.5f} s")
+
+    # print("><><><><><><><><><><><><>><><><><>")
+    print("You made it buckaroo")

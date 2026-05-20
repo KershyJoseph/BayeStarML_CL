@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-df = pd.read_csv("DataExploring/datos_todos_v20261105.txt", sep="\t", comment="#")
+df = pd.read_csv("DataExploring/datos_todos_v20261905.txt", sep="\t", comment="#")
 
 check_params1 = ["eM1", "eR1", "elogg1", "eL1", "eFe/H1", "eTeff1"]
 check_params2 = ["eM2", "eR2", "elogg2", "eL2", "eFe/H2", "eTeff2"]
@@ -32,12 +32,11 @@ df_err["percent_eM"] = 100 * df_err["eM1"] / df_all6_RGB["M"]
 df_err["percent_eR"] = 100 * df_err["eR1"] / df_all6_RGB["R"]
 df_err["percent_eTeff"] = 100 * df_err["eTeff1"] / df_all6_RGB["Teff"]
 #make mask
-err_mask = (df_err["percent_eL"]<=50) #& (df_err["percent_eR"]<=25)# & (df_err["percent_eM"]<=7) & (df_err["eTeff1"]<=100) & (df_err["elogg1"]<=0.05) & (df_err["eFe/H1"]<=0.15)
+err_mask = (df_err["percent_eL"]<=50) & (df_err["eTeff1"]>30) #& (df_err["percent_eR"]<=25)# & (df_err["percent_eM"]<=7) & (df_err["elogg1"]<=0.05) & (df_err["eFe/H1"]<=0.15)
 
 df_good_RGB = df_all6_RGB[err_mask]
 print("Error filtered RGB stars:", len(df_good_RGB))
 df_good_errs = df_err[err_mask]
-df_good_RGB.to_csv("DataExploring/good_RGB.txt", index=False, na_rep="NA", sep="\t")
 
 #see err dist
 fig, ax = plt.subplots(2,3)
@@ -125,4 +124,9 @@ plt.plot([0, df_L_check["L"].max()], [0,df_L_check["L"].max()], linestyle='--', 
 #plt.yscale("log")
 plt.savefig("DataExploring/RGB_L_check.pdf")
 
-print("Non-physical Ls, assuming R and Teff are stellar:\n", df_bad_Ls)
+print("Non-physical Ls, assuming R and Teff are stellar:\n")#, df_bad_Ls)
+print(len(df_bad_Ls))
+
+df_good_RGB.drop(df_bad_Ls.index, inplace=True)
+print("Error filtered and physical sense L filtered RGB stars: ", len(df_good_RGB))
+df_good_RGB.to_csv("DataExploring/good_RGB.txt", index=False, na_rep="NA", sep="\t")
