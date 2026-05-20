@@ -152,7 +152,7 @@ def radius_train_GP(M_mean, M_var, draws=1000, advi=False, target_accept=.95):
     plt.legend()
     plt.savefig("Outputs/bigGPruns/GPrad_res"+hyperp_str+".pdf")
 
-def mass_train_SIMPLE_NN(n_hidden=15, draw=1000, chains=4, target_accept=.95):
+def mass_train_SIMPLE_NN(n_hidden=5, draw=1000, chains=4, target_accept=.95):
     """
     ***Edit to only have one layer of 5 nodes***
     Function to train NN on mass prediction
@@ -163,7 +163,7 @@ def mass_train_SIMPLE_NN(n_hidden=15, draw=1000, chains=4, target_accept=.95):
     model = hbnn.HBNN_M4_simpler(x_train, mass_train, x_train_er, emass_train, n_hidden)
     model.debug(verbose=True)
     trace = train(model,
-                  "Outputs/MS/NN_mass_M4simpler"+string_specs+"_nrns.nc",
+                  "Outputs/Testing/debug_NN_mass_M4simpler"+string_specs+"_nrns.nc",
                   draw=draw, chains=chains, cores=chains, target_accept=target_accept)
 
     r_hat_values = az.rhat(trace)
@@ -195,7 +195,7 @@ def mass_train_SIMPLE_NN(n_hidden=15, draw=1000, chains=4, target_accept=.95):
     plt.ylabel('Predicted Mass')
     plt.title('NN Predictions with Uncertainty')
     plt.legend()
-    plt.savefig("Outputs/MS/M4NNsimpler_mass_predictions"+string_specs+".pdf")
+    plt.savefig("Outputs/Testing/debug_M4NNsimpler_mass_predictions"+string_specs+".pdf")
 
     plt.figure(figsize=(8, 6))
     plt.errorbar(unorm_mass, pred.mean(0) - unorm_mass, yerr=pred.std(0), fmt='o', label='Predictions with Uncertainty', alpha=0.7)
@@ -203,7 +203,7 @@ def mass_train_SIMPLE_NN(n_hidden=15, draw=1000, chains=4, target_accept=.95):
     plt.xlabel('True Mass')
     plt.ylabel('Residual Mass')
     plt.legend()
-    plt.savefig("Outputs/MS/M4NNsimpler_mass_residuals"+string_specs+".pdf")
+    plt.savefig("Outputs/Testing/debug_M4NNsimpler_mass_residuals"+string_specs+".pdf")
 
 def mass_train_NN(n_hidden=15, draw=1000, chains=4, target_accept=.95):
     """Function to train NN on mass prediction
@@ -352,9 +352,9 @@ if __name__ == '__main__':
     start_time_CPU = time.process_time()
     start_time = time.time()
 
-    print("NN mass big run. 32_2000_4 with changed y_err prior to HalfNormal and sigma=0.1. Also bias sigmas all 0.1. Still 20TD and 1.5 tuning, 0.99TA. Also dataset updated!")
+    print("NN mass test - simple 5_1000_4 - this should take ~4722 seconds")
     print("(On good MS)")
-    mass_train_NN(32, 2000, 4, 0.99)
+    mass_train_SIMPLE_NN(5, 1000, 4)
 
     # print("GP rad big run. 80_40_1000. Still 20TD and 1.5 tuning. 0.99TA. Probably needs some prior adjusting to combat bad geometry. Also dataset updated!")
     # print("(On good MS)")
