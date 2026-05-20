@@ -133,7 +133,7 @@ def radius_train_GP(data: Dataset, M_mean, M_var, draws=1000, advi=False, target
 
     else:
         trace = train(model,
-                  "Outputs/bigGPruns/GPrad_"+hyperp_str+".nc",
+                  "Outputs/RGB/GPrad_"+hyperp_str+".nc",
                   draw=draws, chains=4, target_accept=target_accept,
                   max_treedepth=20)
 
@@ -169,7 +169,7 @@ def radius_train_GP(data: Dataset, M_mean, M_var, draws=1000, advi=False, target
     plt.ylabel('Predicted Radius')
     plt.title('GP Predictions with Uncertainty')
     plt.legend()
-    plt.savefig("Outputs/bigGPruns/GPrad_preds"+hyperp_str+".pdf")
+    plt.savefig("Outputs/RGB/GPrad_preds"+hyperp_str+".pdf")
 
     plt.figure(figsize=(8, 6))
     plt.errorbar(data.unorm_radius, means - data.unorm_radius, yerr=stds, fmt='o', label='Predictions with Uncertainty', alpha=0.7)
@@ -177,7 +177,7 @@ def radius_train_GP(data: Dataset, M_mean, M_var, draws=1000, advi=False, target
     plt.xlabel('True Mass')
     plt.ylabel('Residual Mass')
     plt.legend()
-    plt.savefig("Outputs/bigGPruns/GPrad_res"+hyperp_str+".pdf")
+    plt.savefig("Outputs/RGB/GPrad_res"+hyperp_str+".pdf")
 
 def mass_train_SIMPLE_NN(data: Dataset, n_hidden=5, draw=1000, chains=4, target_accept=.95):
     """
@@ -305,7 +305,7 @@ def radius_train_NN(data: Dataset, n_hidden, draw=1000, chains=4, target_accept=
         trace.to_netcdf("Outputs/NN_rad_testing/NN_ADVI_rad_"+hyperp_str+".nc")
     else:
         trace = train(model,
-                "Outputs/bigNNruns/NNrad"+hyperp_str+"nrns.nc",
+                "Outputs/RGB/NNrad"+hyperp_str+"nrns.nc",
                 draw=draw, chains=chains, max_treedepth=20, target_accept=target_accept)
 
     r_hat_values = az.rhat(trace)
@@ -339,7 +339,7 @@ def radius_train_NN(data: Dataset, n_hidden, draw=1000, chains=4, target_accept=
     plt.ylabel('Predicted Radius')
     plt.title('NN Predictions with Uncertainty')
     plt.legend()
-    plt.savefig("Outputs/bigNNruns/NN_rad_preds"+hyperp_str+".pdf")
+    plt.savefig("Outputs/RGB/NNrad_preds"+hyperp_str+".pdf")
 
     plt.figure(figsize=(8, 6))
     plt.errorbar(data.unorm_radius, means - data.unorm_radius, yerr=stds, fmt='o', label='Predictions with Uncertainty', alpha=0.7)
@@ -347,7 +347,7 @@ def radius_train_NN(data: Dataset, n_hidden, draw=1000, chains=4, target_accept=
     plt.xlabel('True Radius')
     plt.ylabel('Residual Radius')
     plt.legend()
-    plt.savefig("Outputs/bigNNruns/NN_rad_res"+hyperp_str+".pdf")
+    plt.savefig("Outputs/RGB/NNrad_res"+hyperp_str+".pdf")
 
 if __name__ == '__main__':
     #pick which function(s) to run when file is run
@@ -391,7 +391,7 @@ if __name__ == '__main__':
 
     #HAVE YOU UPDATED CONSTANTS.PY AND CHECKED OUTPUT FILE PATHS
 
-    print("First go at some RGB stuff")
+    print("First go at some RGB stuff - radius")
     print("::::::::::::::::::::::::::::::::::::::")
 
     # print("GP runs over night - two radius and one mass on goodMS")
@@ -403,8 +403,8 @@ if __name__ == '__main__':
     start_time_CPU = time.process_time()
     start_time = time.time()
 
-    print("bigNNrun - mass - RGB stars. 16, 2000, 4, target_accept=0.99. TD 20 still.")
-    mass_train_NN(dataset, 16, 2000, 4, target_accept=0.99)
+    print("bigNNrun - radius - RGB stars. 16, 2000, 4, target_accept=0.99. TD 20 still.")
+    radius_train_NN(dataset, 16, 2000, 4, target_accept=0.99)
     # print("bigGPrun - radius - 50_20_1000_4 with 20TD, 0.99TA and hopefully improved priors.")
     # print("(On good MS)")
     # radius_train_GP(dataset, 50, 20, 1000, target_accept=0.99)
@@ -427,10 +427,10 @@ if __name__ == '__main__':
     start_time_CPU2 = time.process_time()
     start_time2 = time.time()
 
-    print("bigGPrun - mass - RGB stars. 80, 40, 1000, target_accept=0.99. 20TD still.")
+    print("bigGPrun - radius - RGB stars. 80, 40, 1000, target_accept=0.99. 20TD still.")
     # print("bigGPrun - radius - 80_40_1000_4 with 20TD, 0.99TA and hopefully improved priors.")
     # print("(On good MS)")
-    mass_train_GP(dataset, 80, 40, 1000, target_accept=0.99)
+    radius_train_GP(dataset, 80, 40, 1000, target_accept=0.99)
 
     end_time_CPU2 = time.process_time()
 
@@ -456,4 +456,4 @@ if __name__ == '__main__':
     # print(f"Total run time: {time.time()-start_time3:.5f} s")
 
     # print("><><><><><><><><><><><><>><><><><>")
-    print("You made it buckaroo")
+    print("You made it buckaroo Xx")
