@@ -257,7 +257,7 @@ def mass_train_NN(n_hidden=15, draw=1000, chains=4, target_accept=.95):
     plt.legend()
     plt.savefig("Outputs/bigNNruns/NNmass_ress"+string_specs+".pdf")
 
-def radius_train_NN(n_hidden, draw=1000, chains=4, advi=False): 
+def radius_train_NN(n_hidden, draw=1000, chains=4, target_accept=.95, advi=False): 
     """Function to train NN on radius prediction
     """
     #for output info
