@@ -400,46 +400,46 @@ if __name__ == '__main__':
     process = psutil.Process()
     #tracemalloc.start() #for memory usage estimate
     #snapshot1 = tracemalloc.take_snapshot()
-    start_time_CPU = time.process_time()
-    start_time = time.time()
+    # start_time_CPU = time.process_time()
+    # start_time = time.time()
 
-    print("bigNNrun - mass - RGB stars. 16, 2000, 4, target_accept=0.99. TD 20 still.")
-    mass_train_NN(dataset, 16, 2000, 4, target_accept=0.99)
-    # print("bigGPrun - radius - 50_20_1000_4 with 20TD, 0.99TA and hopefully improved priors.")
-    # print("(On good MS)")
-    # radius_train_GP(dataset, 50, 20, 1000, target_accept=0.99)
+    # print("bigNNrun - mass - RGB stars. 16, 2000, 4, target_accept=0.99. TD 20 still.")
+    # mass_train_NN(dataset, 16, 2000, 4, target_accept=0.99)
+    # # print("bigGPrun - radius - 50_20_1000_4 with 20TD, 0.99TA and hopefully improved priors.")
+    # # print("(On good MS)")
+    # # radius_train_GP(dataset, 50, 20, 1000, target_accept=0.99)
 
-    end_time_CPU = time.process_time()
-    #from Gemini
-    # snapshot2 = tracemalloc.take_snapshot()
-    # top_stats = snapshot2.compare_to(snapshot1, 'lineno')
-    # print("[ Top 5 memory changes ]")
-    # for stat in top_stats[:5]:
-    #     print(stat)
+    # end_time_CPU = time.process_time()
+    # #from Gemini
+    # # snapshot2 = tracemalloc.take_snapshot()
+    # # top_stats = snapshot2.compare_to(snapshot1, 'lineno')
+    # # print("[ Top 5 memory changes ]")
+    # # for stat in top_stats[:5]:
+    # #     print(stat)
 
     mem1 = process.memory_info().rss / 1024**2
-    print(f"Peak Memory: {mem1:.2f} MB")
-    print(f"CPU time used: {(end_time_CPU-start_time_CPU):.5f} s")
-    print(f"Total run time: {time.time()-start_time:.5f} s")
+    # print(f"Peak Memory: {mem1:.2f} MB")
+    # print(f"CPU time used: {(end_time_CPU-start_time_CPU):.5f} s")
+    # print(f"Total run time: {time.time()-start_time:.5f} s")
 
     print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
 
-    # start_time_CPU2 = time.process_time()
-    # start_time2 = time.time()
+    start_time_CPU2 = time.process_time()
+    start_time2 = time.time()
 
-    # print("bigGPrun - mass - RGB stars. 50, 20, 1000, target_accept=0.99. 20TD still.")
-    # # print("bigGPrun - radius - 80_40_1000_4 with 20TD, 0.99TA and hopefully improved priors.")
-    # # print("(On good MS)")
-    # mass_train_GP(dataset, 50, 20, 1000, target_accept=0.99)
+    print("bigGPrun - mass - RGB stars. 50, 20, 1000, target_accept=0.99. 20TD still.")
+    # print("bigGPrun - radius - 80_40_1000_4 with 20TD, 0.99TA and hopefully improved priors.")
+    # print("(On good MS)")
+    mass_train_GP(dataset, 50, 20, 1000, target_accept=0.99)
 
-    # end_time_CPU2 = time.process_time()
+    end_time_CPU2 = time.process_time()
 
-    # mem2 = process.memory_info().rss / 1024**2
-    # print(f"Peak Memory: {(mem2-mem1):.2f} MB")
-    # print(f"CPU time used: {(end_time_CPU2-start_time_CPU2):.5f} s")
-    # print(f"Total run time: {time.time()-start_time2:.5f} s")
+    mem2 = process.memory_info().rss / 1024**2
+    print(f"Peak Memory: {(mem2-mem1):.2f} MB")
+    print(f"CPU time used: {(end_time_CPU2-start_time_CPU2):.5f} s")
+    print(f"Total run time: {time.time()-start_time2:.5f} s")
 
-    # print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
+    print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
 
     # start_time_CPU3 = time.process_time()
     # start_time3 = time.time()
