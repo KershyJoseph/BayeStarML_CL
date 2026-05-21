@@ -14,7 +14,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 def bart_bhs():
-    X, X_er = prepare_pred4("Datsets/plato_data.txt")
+    X, X_er = prepare_pred4("Datasets/plato_data.txt")
 
     _, bhs_pred, bhs_w = predict4(X=None, X_er=None,
                                   target='mass',
