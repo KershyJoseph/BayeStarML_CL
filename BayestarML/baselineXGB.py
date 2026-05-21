@@ -13,7 +13,7 @@ from sklearn.model_selection import GridSearchCV
 from numpy import absolute
 
 #load data
-df = read_csv("Datasets/datos_tot_v20180517_adapted.txt", sep="\t", comment="#")
+df = read_csv("DataExploring/datos_todos_v20261905.txt", sep="\t", comment="#")
 training_fs = ["Teff", "Fe/H", "L", "logg"]
 X, y = df[training_fs], df["M"]
 
