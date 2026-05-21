@@ -230,8 +230,8 @@ def prepare_pred4(filename):
     - x_test_error: DataFrame with normalized errors (columns: 'eTeff', 'elogg', 'eFe/H', 'eL')
     """
 
-    X = pd.read_csv(filename)
-    df = get_dataset('Datasets/data_sample_mass_radius.txt', 'MS')
+    X = pd.read_csv(filename, sep='\t')
+    df = get_dataset('DataExploring/datos_todos_v20261905.txt', 'MS')
     mteff, mlogg, mmet, mlum, mtmass, steff, slogg, smet, slum, smass = return_norm(df)
 
     # Helper function to normalize and handle missing values
