@@ -858,6 +858,7 @@ def sample_pred_BART(model, X, X_er, target, draws=1000, chains=2):
         - lpd_BART : ndarray
             Pointwise LOO log predictive densities for the BART model.
     """
+    print("-----------Start BART Sampling------------")
     with model:
         trace = pm.sample(draws=draws, tune=draws, chains=chains)
         trace.extend(pm.compute_log_likelihood(trace))

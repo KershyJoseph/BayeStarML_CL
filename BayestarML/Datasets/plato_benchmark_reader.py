@@ -44,20 +44,27 @@ df_plato_goodMS = df_plato_all6_MS[["ID", "component", "M", "eM", "R", "eR", "Te
 
 #check for duplicates in my database
 df_us = pd.read_csv("DataExploring/datos_todos_v20261905.txt", sep="\t", comment="#")
+df_p = df_plato_goodMS.copy()
+
+#bunch of edits to make strings match
 df_us["ID"] = df_us["ID"].str.replace('_', ' ')
 df_us["ID"] = df_us["ID"].str.replace(' A', '')
 df_us["ID"] = df_us["ID"].str.replace(' B', '')
-df_plato_goodMS["ID"] = df_plato_goodMS["ID"].str.replace(' A', '')
-df_plato_goodMS["ID"] = df_plato_goodMS["ID"].str.replace(' B', '')
-df_plato_goodMS["ID"] = df_plato_goodMS["ID"].str.replace('V* ', '')
-df_plato_goodMS["ID"] = df_plato_goodMS["ID"].str.replace('*  ', '')
-df_plato_goodMS["ID"] = df_plato_goodMS["ID"].str.replace('* ', '')
+df_p["ID"] = df_p["ID"].str.replace(' A', '')
+df_p["ID"] = df_p["ID"].str.replace(' B', '')
+df_p["ID"] = df_p["ID"].str.replace('V* ', '')
+df_p["ID"] = df_p["ID"].str.replace('*  ', '')
+df_p["ID"] = df_p["ID"].str.replace('* ', '')
+df_p["ID"] = df_p["ID"].str.replace('HD   ', 'HD')
+df_p["ID"] = df_p["ID"].str.replace('HD  ', 'HD')
+df_p["ID"] = df_p["ID"].str.replace('HD ', 'HD')
+df_p["ID"] = df_p["ID"].str.replace('TYC  ', 'TYC ')
 df_us["ID"] = df_us["ID"].str.replace('* ', '')
 
-dup_mask = df_plato_goodMS["ID"].isin(df_us["ID"]) #True for matches
+dup_mask = df_p["ID"].isin(df_us["ID"]) #True for matches
 df_plato_goodMS_new = df_plato_goodMS[~dup_mask]
 print("New plato stars: ", len(df_plato_goodMS_new))
 print(df_plato_goodMS_new["ID"].unique())
 #print(df_us["ID"])
 
-df_plato_goodMS_new.to_csv("Datasets/plato_data.txt", sep='\t')
+df_plato_goodMS_new.to_csv("Datasets/plato_data.txt", sep='\t', index=False)

@@ -34,12 +34,14 @@ def predict4(X, X_er, target, training_dataset_path, GP_trace_path, NN_trace_pat
 
         unorm_mass = denormalise_val(mass_test, 'mass')
 
+        print("-------Start BART buisness----------")
         bart4_model = bart.BART_M(x_train, x_train_er, mass_train, emass_train)
         bart4_pred, lpd_BART4 = sample_pred_BART(bart4_model,
                                       X,
                                       X_er, 'mass',
                                       2000, 4)
 
+        print("-------Start GP buisness----------")
         gp4_model, μ_gp4, lg_σ_gp4, Xu4, Xu_er4 = gp.sparse_fully_heteroscedastic_gp(x_train, x_train_er, mass_train, 50, 50)#80, 40
 
         gp4_trace = az.from_netcdf(GP_trace_path)
@@ -48,14 +50,14 @@ def predict4(X, X_er, target, training_dataset_path, GP_trace_path, NN_trace_pat
                                             X_er,
                                             Xu4, Xu_er4, 4, 'mass')
 
-
+        print("-------Start HBNN buisness----------")
         hbnn4_trace = az.from_netcdf(NN_trace_path)
         hbnn4_pred, lpd_HBNN4 = sample_post_pred_HBNN_para(hbnn4_trace,  
                                                       X,
                                                       X_er,
                                                       30, 4, 'mass')
 
-
+        print("-------Start BHS buisness----------")
         (bhs_trace, bhs_pred, bhs_w) = run_stack(bart4_pred, hbnn4_pred, gp4_pred,
                                             x_train, X, lpd_BART4, lpd_HBNN4,
                                             lpd_GP4)
