@@ -19,7 +19,10 @@ import pandas as pd
 # from utils import find_pointwise_loo
 
 
-def predict4(X, X_er, target, training_dataset_path, GP_trace_path, NN_trace_path, test=False):
+def predict4(X, X_er, target,
+             training_dataset_path, GP_trace_path, NN_trace_path,
+             Mmean, Mvar, NNnodes,
+             test=False):
 
     df_train = get_dataset(training_dataset_path, 'MS')
     (x_train, x_train_er, x_test, x_test_err, mass_train, emass_train,
@@ -42,8 +45,7 @@ def predict4(X, X_er, target, training_dataset_path, GP_trace_path, NN_trace_pat
                                       2000, 4)
 
         print("-------Start GP buisness----------")
-        gp4_model, μ_gp4, lg_σ_gp4, Xu4, Xu_er4 = gp.sparse_fully_heteroscedastic_gp(x_train, x_train_er, mass_train, 50, 50)#80, 40
-
+        gp4_model, μ_gp4, lg_σ_gp4, Xu4, Xu_er4 = gp.sparse_fully_heteroscedastic_gp(x_train, x_train_er, mass_train, Mmean, Mvar)#80, 40
         gp4_trace = az.from_netcdf(GP_trace_path)
         gp4_pred, lpd_GP4 = posterior_predictive_GP(gp4_model, μ_gp4, lg_σ_gp4, 
                                             gp4_trace, X,
@@ -55,7 +57,7 @@ def predict4(X, X_er, target, training_dataset_path, GP_trace_path, NN_trace_pat
         hbnn4_pred, lpd_HBNN4 = sample_post_pred_HBNN_para(hbnn4_trace,  
                                                       X,
                                                       X_er,
-                                                      30, 4, 'mass')
+                                                      NNnodes, 4, 'mass')
 
         print("-------Start BHS buisness----------")
         (bhs_trace, bhs_pred, bhs_w) = run_stack(bart4_pred, hbnn4_pred, gp4_pred,
