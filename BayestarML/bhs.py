@@ -272,9 +272,6 @@ def run_stack(
         all_rhats.append((var, max_rhat))
     print("Rhats\n", all_rhats)
 
-    trace.extend(pm.compute_log_likelihood(trace))
-    print("LOO\n", az.loo(trace))
-
     # Extract posterior draws of weights 
     # trace.posterior["w_test"] has dims (chain, draw, N_test, K)
     w = trace.posterior["w_test"].values
