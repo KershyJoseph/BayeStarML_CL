@@ -13,9 +13,9 @@ from sklearn.model_selection import GridSearchCV
 from numpy import absolute
 
 #load data
-df = read_csv("DataExploring/datos_todos_v20261905.txt", sep="\t", comment="#")
+df = read_csv("DataExploring/good_MS.txt", sep="\t", comment="#")
 training_fs = ["Teff", "Fe/H", "L", "logg"]
-X, y = df[training_fs], df["M"]
+X, y = df[training_fs], df["R"] #swap for M/R
 
 #make model
 model = XGBRegressor(random_state=42)
@@ -56,9 +56,9 @@ print(f"MARD result across all cross-validations: {best_score:.2f} +/- {best_sco
 #MASS
 
 # ---- Best params GoodMS ----
-# {'colsample_bytree': 0.8, 'eta': 0.1, 'max_depth': 4, 'n_estimators': 100, 'reg_lambda': 1, 'subsample': 0.8}
+# {'colsample_bytree': 1, 'eta': 0.1, 'max_depth': 4, 'n_estimators': 200, 'reg_lambda': 1, 'subsample': 1}
 # -+-+-+-+-+-+-+-+-+-+-
-# MARD result across all cross-validations: 5.46 +/- 0.01 %
+# MARD result across all cross-validations: 5.51 +/- 0.01 %
 
 # ---- Best params 2018Data ---- Needs redoing
 # {'colsample_bytree': 1, 'eta': 0.1, 'max_depth': 3, 'n_estimators': 400, 'reg_lambda': 10, 'subsample': 1}

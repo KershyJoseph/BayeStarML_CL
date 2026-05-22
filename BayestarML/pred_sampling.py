@@ -865,8 +865,10 @@ def sample_pred_BART(model, X, X_er, target, draws=1000, chains=2):
         # pp = pm.sample_posterior_predictive(trace)
 
     lpd_BART = find_pointwise_loo(trace)
-    # print(az.rhat(trace))
-        
+    print("Rhats\n", az.rhat(trace))
+
+    print("LOO\n", az.loo(trace))
+
     with model:
         pm.set_data({'X': X,
                      'X_er': X_er
@@ -874,7 +876,7 @@ def sample_pred_BART(model, X, X_er, target, draws=1000, chains=2):
         pred = pm.sample_posterior_predictive(trace, predictions=True)
 
         y_draws = pred.predictions["y"].stack(sample=("chain", "draw")).values
-    
+
     return denormalise_val(y_draws, target).T, lpd_BART
 
 

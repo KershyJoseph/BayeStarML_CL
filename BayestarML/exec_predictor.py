@@ -16,17 +16,19 @@ import matplotlib.pyplot as plt
 def bart_bhs_pred():
     """Train BART and BHS and then make some predictions
     """
-    _, bhs_pred, bhs_w = predict4(X=None, X_er=None,
-                                  target='mass',
+    _, bhs_pred, bhs_w = predict4(X=None, X_er=None, target='mass',
                                   training_dataset_path="DataExploring/good_MS.txt",
                                   GP_trace_path="Outputs/bigGPruns/GPmass50_20_1000_0.99.nc",
                                   NN_trace_path="Outputs/NNmass_goodMS_32_2000_0.99_20TDnrns.nc",
+                                  Mmean=50, Mvar=20, NNnodes=32,
                                   test=True) # disregards X, X_er for test=True / uses test values
 
     X, X_er = prepare_pred4("Datasets/plato_data.txt")
-    _, pred, w4 = predict4(X, X_er, 'mass',
+    _, pred, w4 = predict4(X=X, X_er=X_er, target='mass',
+                           training_dataset_path="DataExploring/good_MS.txt",
                            GP_trace_path="Outputs/bigGPruns/GPmass50_20_1000_0.99.nc",
-                           NN_trace_path="Outputs/NNmass_goodMS_32_2000_0.99_20TDnrns.nc")
+                           NN_trace_path="Outputs/NNmass_goodMS_32_2000_0.99_20TDnrns.nc",
+                           Mmean=50, Mvar=20, NNnodes=32)
 
     df_p = pd.read_csv("Datsets/plato_data.txt", sep='\t')
     unorm_mass = df_p["M"]

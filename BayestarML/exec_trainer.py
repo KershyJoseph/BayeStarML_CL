@@ -67,13 +67,14 @@ def mass_train_GP(data: Dataset, M_mean, M_var, draws=1000, advi=False, target_a
                   "Outputs/RGB/GPmass"+hyperp_str+".nc",
                   draw=draws, chains=4, target_accept=target_accept, max_treedepth=20)
 
-        r_hat_values = az.rhat(trace)
-        all_rhats = []
-        for var in r_hat_values.data_vars:
-            max_rhat = r_hat_values[var].max().values.item()
-            all_rhats.append((var, max_rhat))
-        print(all_rhats)
+    r_hat_values = az.rhat(trace)
+    all_rhats = []
+    for var in r_hat_values.data_vars:
+        max_rhat = r_hat_values[var].max().values.item()
+        all_rhats.append((var, max_rhat))
+    print(all_rhats)
 
+    print("LOO")
     print(az.loo(trace))
 
     pred, lpd = posterior_predictive_GP(model, μ_gp, lg_σ_gp, trace,
@@ -85,16 +86,14 @@ def mass_train_GP(data: Dataset, M_mean, M_var, draws=1000, advi=False, target_a
     print(stds)
     print("Unorm mass: ", data.unorm_mass)
 
-    for i, std in enumerate(stds):
-        if std > 1:
-            print(f"Mass err bigger than 1Msol for star with mass {data.unorm_mass.iloc[i]}")
-            print(f"(Predicted {means[i]} +/- {std} Msol)")
-            print("------------------------")
+    # for i, std in enumerate(stds):
+    #     if std > 1:
+    #         print(f"Mass err bigger than 1Msol for star with mass {data.unorm_mass.iloc[i]}")
+    #         print(f"(Predicted {means[i]} +/- {std} Msol)")
+    #         print("------------------------")
 
     print('MAE: ', mean_absolute_error(data.unorm_mass, means))
-
     print('MARD', mard(data.unorm_mass, means))
-
     print('MRD', mrd(data.unorm_mass, means))
 
     plt.figure(figsize=(8, 6))
