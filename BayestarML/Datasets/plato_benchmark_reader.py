@@ -57,7 +57,7 @@ df_us["ID"] = df_us["ID"].str.replace('* ', '')
 dup_mask = df_plato_goodMS["ID"].isin(df_us["ID"]) #True for matches
 df_plato_goodMS_new = df_plato_goodMS[~dup_mask]
 print("New plato stars: ", len(df_plato_goodMS_new))
-print(df_plato_goodMS_new["ID"])
+print(df_plato_goodMS_new["ID"].unique())
 #print(df_us["ID"])
 
 df_plato_goodMS_new.to_csv("Datasets/plato_data.txt", sep='\t')

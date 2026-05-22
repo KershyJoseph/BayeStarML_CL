@@ -16,7 +16,6 @@ from sklearn.model_selection import train_test_split
 
 RANDOM_SEED = 5732 
 
-
 def normalise_val(x: float | None, key: str) -> float:
     return np.nan if x is None else (x - MU[key]) / SIGMA[key]
 
@@ -31,9 +30,10 @@ def denormalise_val(y: np.ndarray, key: str) -> np.ndarray:
 def denormalise_err(y: np.ndarray, key: str) -> np.ndarray:
     return y * SIGMA[key]
 
-
-def return_norm(df):
+def return_norm(df, logL=False):
     """
+    ***Added a logL option***
+
     Compute normalization statistics for stellar parameters and their errors.
 
     Extracts stellar feature columns and their associated asymmetric measurement
@@ -54,18 +54,28 @@ def return_norm(df):
         Mean and standard deviation for each variable, in the order:
         effective temperature, surface gravity, metallicity, luminosity, and mass.
     """
-    df1 = df[['eTeff1', 'elogg1', 'eFe/H1', 'eL1', 'eM1']].copy()
-    df2 = df[['eTeff2', 'elogg2', 'eFe/H2', 'eL2', 'eM2']].copy()
-    df2.columns = ['eTeff1', 'elogg1', 'eFe/H1', 'eL1', 'eM1']
+    if logL == True:
+        eL1 = "elogL1"
+        eL2 = "elogL2"
+        L = "logL"
+        eL = "elogL" 
+    else:
+        eL1 = "eL1"
+        eL2 = "eL2"
+        L = "L"
+        eL = "eL"
+
+    df1 = df[['eTeff1', 'elogg1', 'eFe/H1', eL1, 'eM1']].copy()
+    df2 = df[['eTeff2', 'elogg2', 'eFe/H2', eL2, 'eM2']].copy()
+    df2.columns = ['eTeff1', 'elogg1', 'eFe/H1', eL1, 'eM1']
 
     # Mean error if non-symmetric
     X_error = (df1 + df2) / 2 
 
+    X_error.columns = ['eTeff', 'elogg', 'eFe/H', eL, 'eM']
 
-    X_error.columns = ['eTeff', 'elogg', 'eFe/H', 'eL', 'eM']
-
-    X = pd.concat([df[['Teff', 'L', 'Fe/H', 'logg']],
-                   X_error[['eTeff', 'elogg', 'eFe/H', 'eL']]],
+    X = pd.concat([df[['Teff', L, 'Fe/H', 'logg']],
+                   X_error[['eTeff', 'elogg', 'eFe/H', eL]]],
                   axis=1)
     Y = pd.concat([df['M'], X_error['eM']], axis=1)
     
@@ -78,7 +88,7 @@ def return_norm(df):
     teff = X_train['Teff']
     logg = X_train['logg']
     met = X_train['Fe/H']
-    lum = X_train['L']  
+    lum = X_train[L]  
     mass = Y_train["M"]       
 
     # Compute means and standard deviations for standardization
@@ -96,8 +106,9 @@ def return_norm(df):
     
     return mteff, mlogg, mmet, mlum, mtmass, steff, slogg, smet, slum, smass
 
-def return_train_test(df, normalised=True):
+def return_train_test(df, normalised=True, logL=False):
     """
+    ***Added a logL option***
 
     Parameters
     ----------
@@ -118,17 +129,28 @@ def return_train_test(df, normalised=True):
     if you want both just call twice
 
     """
-    df1 = df[['eTeff1', 'elogg1', 'eFe/H1', 'eL1', 'eM1', 'eR1']].copy()
-    df2 = df[['eTeff2', 'elogg2', 'eFe/H2', 'eL2', 'eM2', 'eR2']].copy()
-    df2.columns = ['eTeff1', 'elogg1', 'eFe/H1', 'eL1', 'eM1', 'eR1']
+    if logL == True:
+        eL1 = "elogL1"
+        eL2 = "elogL2"
+        L = "logL"
+        eL = "elogL" 
+    else:
+        eL1 = "eL1"
+        eL2 = "eL2"
+        L = "L"
+        eL = "eL"
+
+    df1 = df[['eTeff1', 'elogg1', 'eFe/H1', eL1, 'eM1', 'eR1']].copy()
+    df2 = df[['eTeff2', 'elogg2', 'eFe/H2', eL2, 'eM2', 'eR2']].copy()
+    df2.columns = ['eTeff1', 'elogg1', 'eFe/H1', eL1, 'eM1', 'eR1']
 
     # Mean error if non-symmetric
     X_error = (df1 + df2) / 2 
 
-    X_error.columns = ['eTeff', 'elogg', 'eFe/H', 'eL', 'eM', 'eR']
+    X_error.columns = ['eTeff', 'elogg', 'eFe/H', eL, 'eM', 'eR']
 
-    X = pd.concat([df[['Teff', 'L', 'Fe/H', 'logg']],
-                   X_error[['eTeff', 'elogg', 'eFe/H', 'eL']]],
+    X = pd.concat([df[['Teff', L, 'Fe/H', 'logg']],
+                   X_error[['eTeff', 'elogg', 'eFe/H', eL]]],
                   axis=1)
     Y = pd.concat([df['M'], X_error['eM'], df['R'], X_error['eR']], axis=1)
 
@@ -141,7 +163,7 @@ def return_train_test(df, normalised=True):
     teff = X_train['Teff']
     logg = X_train['logg']
     met = X_train['Fe/H']
-    lum = X_train['L']
+    lum = X_train[L]
     #print(lum)
     mass = Y_train["M"]
     rad = Y_train['R']
@@ -177,7 +199,7 @@ def return_train_test(df, normalised=True):
     eteff = X_train['eTeff'] / steff
     elog = X_train['elogg'] / slogg
     emet = abs(X_train['eFe/H']) / smet
-    elum = X_train['eL'] / slum  
+    elum = X_train[eL] / slum  
     emass = Y_train['eM'] / smass
     erad = Y_train['eR'] / srad
 
@@ -187,7 +209,7 @@ def return_train_test(df, normalised=True):
     teff_test = X_test['Teff']
     logg_test = X_test['logg']
     met_test = X_test['Fe/H']
-    lum_test = X_test['L'] 
+    lum_test = X_test[L] 
     mass_test = Y_test['M']
     rad_test = Y_test['R']
      
@@ -203,7 +225,7 @@ def return_train_test(df, normalised=True):
     eteff_test = X_test['eTeff'] / steff
     elog_test = X_test['elogg'] / slogg
     emet_test = abs(X_test['eFe/H']) / smet
-    elum_test = X_test['eL'] / slum 
+    elum_test = X_test[eL] / slum 
     emass_test = Y_test['eM'] / smass
     erad_test = Y_test['eR'] / srad
 
@@ -216,8 +238,9 @@ def return_train_test(df, normalised=True):
     if normalised == False:
         return X_train, X_test, Y_train, Y_test
 
-def prepare_pred4(filename):
+def prepare_pred4(filename, logL=False):
     """
+    ***Added logL option***
     Normalize input data and return DataFrames for normalized values and errors.
 
     Parameters:
@@ -229,6 +252,12 @@ def prepare_pred4(filename):
     - x_test: DataFrame with normalized values (columns: 'Teff', 'logg', 'Fe/H', 'L')
     - x_test_error: DataFrame with normalized errors (columns: 'eTeff', 'elogg', 'eFe/H', 'eL')
     """
+    if logL == True:
+        L = "logL"
+        eL = "elogL" 
+    else:
+        L = "L"
+        eL = "eL"
 
     X = pd.read_csv(filename, sep='\t')
     df = get_dataset('DataExploring/datos_todos_v20261905.txt', 'MS')
@@ -251,14 +280,14 @@ def prepare_pred4(filename):
         'Teff': normalize(X['Teff'], mteff, steff),
         'logg': normalize(X['logg'], mlogg, slogg),
         'Fe/H': normalize(X['Fe/H'], mmet, smet),
-        'L': normalize(X['L'], mlum, slum)
+        L: normalize(X[L], mlum, slum)
     }
 
     error_data = {
         'eTeff': normalize_error(X['eTeff'], steff),
         'elogg': normalize_error(X['elogg'], slogg),
         'eFe/H': normalize_error(X['eFe/H'], smet),
-        'eL': normalize_error(X['eL'], slum)
+        eL: normalize_error(X[eL], slum)
     }
 
     # For scalar inputs, we need to create a single-row DataFrame

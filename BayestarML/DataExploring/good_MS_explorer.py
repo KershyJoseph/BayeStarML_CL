@@ -38,6 +38,7 @@ def plot_mass_spread(df, name, multiple="layer"):
     plt.xlabel("Mass (Msol)")
     plt.ylabel("Number of stars")
     plt.savefig("DataExploring/mass_spread_"+name+".pdf")
+    plt.close()
 
 df_strict = pd.read_csv("DataExploring/strict_MS.txt", sep="\t", comment="#")
 plot_mass_spread(df_strict, "strictMS")

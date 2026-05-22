@@ -11,8 +11,9 @@ import pandas as pd
 import numpy as np
 import pymc as pm
 
-def get_dataset(data_file, star_class='MS'):
+def get_dataset(data_file, star_class='MS', logL=False):
     """
+    ***Added logL option***
     Load and clean a stellar dataset for a given star class.
 
     Reads a tab-separated file of stellar parameters and their uncertainties,
@@ -31,6 +32,15 @@ def get_dataset(data_file, star_class='MS'):
     pandas.DataFrame
         Cleaned DataFrame containing stars of the given class.
     """
+    if logL == True:
+        L = "logL"
+        eL1 = "elogL1" 
+        eL2 = "elogL2" 
+    else:
+        L = "L"
+        eL1 = "eL1"
+        eL2 = "eL2"
+
     data = pd.read_table(data_file, sep="\t", comment='#')
     # read data with errors
     data_MS = data[data['class'] == star_class]
@@ -42,7 +52,7 @@ def get_dataset(data_file, star_class='MS'):
          'Teff', 'eTeff1', 'eTeff2',
          'logg', 'elogg1', 'elogg2',    
          'Fe/H', 'eFe/H1', 'eFe/H2',
-         'L', 'eL1', 'eL2']
+         L, eL1, eL2]
          ].copy()
 
     # clean NA values (simply remove the corresponding rows)

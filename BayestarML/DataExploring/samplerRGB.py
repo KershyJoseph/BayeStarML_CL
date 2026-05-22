@@ -4,6 +4,7 @@ JK 22/04/26
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 df = pd.read_csv("DataExploring/datos_todos_v20261905.txt", sep="\t", comment="#")
 
@@ -124,9 +125,35 @@ plt.plot([0, df_L_check["L"].max()], [0,df_L_check["L"].max()], linestyle='--', 
 #plt.yscale("log")
 plt.savefig("DataExploring/RGB_L_check.pdf")
 
-print("Non-physical Ls, assuming R and Teff are stellar:\n")#, df_bad_Ls)
-print(len(df_bad_Ls))
+print("Non-physical Ls, assuming R and Teff are stellar: ", len(df_bad_Ls))
 
 df_good_RGB.drop(df_bad_Ls.index, inplace=True)
 print("Error filtered and physical sense L filtered RGB stars: ", len(df_good_RGB))
+
+#add logL col
+df_good_RGB["logL"] = np.log10(df_good_RGB["L"])
+df_good_RGB["elogL1"] = np.log10(df_good_RGB["L"] + df_good_RGB["eL1"]) - df_good_RGB["logL"]
+df_good_RGB["elogL2"] = df_good_RGB["logL"] - np.log10(df_good_RGB["L"] - df_good_RGB["eL2"])
+
+#add logR col
+df_good_RGB["logR"] = np.log10(df_good_RGB["R"])
+df_good_RGB["elogR1"] = np.log10(df_good_RGB["R"] + df_good_RGB["eR1"]) - df_good_RGB["logR"]
+df_good_RGB["elogR2"] = df_good_RGB["logR"] - np.log10(df_good_RGB["R"] - df_good_RGB["eR2"])
+
+#see what spread is like in variables
+for col in ["M", "R", "logR", "logg", "logL", "L", "Fe/H", "Teff"]:
+    print("--------",col,"---------")
+    print("Min. - ", df_good_RGB[col].min())
+    print("Max. - ", df_good_RGB[col].max())
+    print("Mean - ", df_good_RGB[col].mean())
+    print("Std - ", df_good_RGB[col].std())
+
+    if (col == "Fe/H") or (col == "R") or (col=="logR"):
+        plt.figure()
+        sns.histplot(data=df_good_RGB, x=col)
+        plt.xlabel(col)
+        plt.ylabel("Number of stars")
+        plt.savefig("DataExploring/"+col[0]+"_RGB_spread.pdf")
+        plt.close()
+
 df_good_RGB.to_csv("DataExploring/good_RGB.txt", index=False, na_rep="NA", sep="\t")

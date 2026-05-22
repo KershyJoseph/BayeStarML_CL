@@ -185,13 +185,14 @@ def mass_train_SIMPLE_NN(data: Dataset, n_hidden=5, draw=1000, chains=4, target_
     Function to train NN on mass prediction
     """
     #for output info
-    string_specs = "_goodMS_"+str(n_hidden)+"_"+str(draw)+"_"+str(chains)
+    string_specs = "goodRGB_"+str(n_hidden)+"_"+str(draw)+"_"+str(chains)
 
     model = hbnn.HBNN_M4_simpler(data.x_train, mass_train, data.x_train_er, data.emass_train, n_hidden)
     model.debug(verbose=True)
     trace = train(model,
-                  "Outputs/Testing/debug_NN_mass_M4simpler"+string_specs+"_nrns.nc",
-                  draw=draw, chains=chains, target_accept=target_accept)
+                  "Outputs/RGB/NNsimple_mass_"+string_specs+".nc",
+                  draw=draw, chains=chains,
+                  target_accept=target_accept, max_treedepth=20)
 
     r_hat_values = az.rhat(trace)
     all_rhats = []
@@ -224,7 +225,7 @@ def mass_train_SIMPLE_NN(data: Dataset, n_hidden=5, draw=1000, chains=4, target_
     plt.ylabel('Predicted Mass')
     plt.title('NN Predictions with Uncertainty')
     plt.legend()
-    plt.savefig("Outputs/Testing/debug_M4NNsimpler_mass_predictions"+string_specs+".pdf")
+    plt.savefig("Outputs/RGB/NNsimple_mass_preds_"+string_specs+".pdf")
 
     plt.figure(figsize=(8, 6))
     plt.errorbar(data.unorm_mass, means - data.unorm_mass, yerr=stds, fmt='o', label='Predictions with Uncertainty', alpha=0.7)
@@ -232,7 +233,7 @@ def mass_train_SIMPLE_NN(data: Dataset, n_hidden=5, draw=1000, chains=4, target_
     plt.xlabel('True Mass')
     plt.ylabel('Residual Mass')
     plt.legend()
-    plt.savefig("Outputs/Testing/debug_M4NNsimpler_mass_residuals"+string_specs+".pdf")
+    plt.savefig("Outputs/RGB/NNsimple_mass_preds_"+string_specs+".pdf")
 
 def mass_train_NN(data: Dataset, n_hidden=15, draw=1000, chains=4, target_accept=.95):
     """Function to train NN on mass prediction
@@ -354,18 +355,18 @@ if __name__ == '__main__':
     mp.set_start_method('spawn', force=True)
 
     #load data
-    df_train = get_dataset('DataExploring/good_RGB.txt')
+    df_train = get_dataset('DataExploring/good_RGB.txt', logL=True)
 
     (x_train, x_train_er, x_test, x_test_err, mass_train, emass_train,
     mass_test, emass_test, rad_train, erad_train, rad_test, erad_test
-    ) = return_train_test(df_train)
+    ) = return_train_test(df_train, logL=True)
 
     dataset = Dataset(
-        x_train = x_train[['Teff', 'logg', 'Fe/H', 'L']],
-        x_train_er = x_train_er[['eTeff', 'elogg', 'eFe/H', 'eL']],
+        x_train = x_train[['Teff', 'logg', 'Fe/H', 'logL']],
+        x_train_er = x_train_er[['eTeff', 'elogg', 'eFe/H', 'elogL']],
 
-        x_test = x_test[['Teff', 'logg', 'Fe/H', 'L']],
-        x_test_err = x_test_err[['eTeff', 'elogg', 'eFe/H', 'eL']],
+        x_test = x_test[['Teff', 'logg', 'Fe/H', 'logL']],
+        x_test_err = x_test_err[['eTeff', 'elogg', 'eFe/H', 'elogL']],
 
         rad_train=rad_train,
         erad_train=erad_train,
@@ -389,9 +390,9 @@ if __name__ == '__main__':
     #     print("-------------")
     #     radius_train_NN(t, advi=True)
 
-    #HAVE YOU UPDATED CONSTANTS.PY AND CHECKED OUTPUT FILE PATHS
+    #HAVE YOU UPDATED CONSTANTS.PY AND CHECKED OUTPUT FILE PATHS AND LOGL
 
-    print("First go at some RGB stuff - mass")
+    print("First go at some RGB stuff - mass NN")
     print("::::::::::::::::::::::::::::::::::::::")
 
     # print("GP runs over night - two radius and one mass on goodMS")
@@ -427,10 +428,10 @@ if __name__ == '__main__':
     start_time_CPU2 = time.process_time()
     start_time2 = time.time()
 
-    print("bigGPrun - mass - RGB stars. 50, 20, 1000, target_accept=0.99. 20TD still.")
+    print("bigNNrun - mass - RGB stars. With L in log space. On SimpleNN to start with. 8, 1000, 4, target_accept=0.95. 20TD still.")
     # print("bigGPrun - radius - 80_40_1000_4 with 20TD, 0.99TA and hopefully improved priors.")
     # print("(On good MS)")
-    mass_train_GP(dataset, 50, 20, 1000, target_accept=0.99)
+    mass_train_SIMPLE_NN(dataset, 8, 1000, target_accept=0.95)
 
     end_time_CPU2 = time.process_time()
 
