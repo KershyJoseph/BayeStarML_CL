@@ -13,7 +13,7 @@ from sklearn.model_selection import GridSearchCV
 from numpy import absolute
 
 #load data
-df = read_csv("DataExploring/good_MS.txt", sep="\t", comment="#")
+df = read_csv("Datasets/datos_tot_v20180517_adapted.txt", sep="\t", comment="#")
 training_fs = ["Teff", "Fe/H", "L", "logg"]
 X, y = df[training_fs], df["R"] #swap for M/R
 
@@ -25,8 +25,8 @@ cv = RepeatedKFold(n_splits=10, n_repeats=3, random_state=1)
 
 #search for the best model params
 param_grid = {
-    'eta': [0.3, 0.2, 0.1, 0.01],
-    'n_estimators': [20, 50, 100, 200, 400],
+    'eta': [0.2, 0.1, 0.01],
+    'n_estimators': [50, 100, 200, 400, 800],
     'max_depth': [2, 3, 4],
     'reg_lambda': [1, 10], #to stop overfitting. Default is 1.
     'subsample': [0.8, 1],
@@ -60,16 +60,24 @@ print(f"MARD result across all cross-validations: {best_score:.2f} +/- {best_sco
 # -+-+-+-+-+-+-+-+-+-+-
 # MARD result across all cross-validations: 5.51 +/- 0.01 %
 
-# ---- Best params 2018Data ---- Needs redoing
+# ---- Best params 2018Data ---- 
+# Attempt 1
 # {'colsample_bytree': 1, 'eta': 0.1, 'max_depth': 3, 'n_estimators': 400, 'reg_lambda': 10, 'subsample': 1}
 # -+-+-+-+-+-+-+-+-+-+-
 # MARD result across all cross-validations: 5.30 +/- 0.01 %
+# Attempt 2
+# {'colsample_bytree': 1, 'eta': 0.01, 'max_depth': 4, 'n_estimators': 800, 'reg_lambda': 1, 'subsample': 0.8}
+# -+-+-+-+-+-+-+-+-+-+-
+# MARD result across all cross-validations: 5.27 +/- 0.01 %
 
 #RADIUS 
 
 # ---- Best params GoodMS ---- 
-# {'colsample_bytree': 0.8, 'eta': 0.1, 'max_depth': 4, 'n_estimators': 200, 'reg_lambda': 1, 'subsample': 0.8}
+# {'colsample_bytree': 1, 'eta': 0.1, 'max_depth': 4, 'n_estimators': 400, 'reg_lambda': 1, 'subsample': 0.8}
 # -+-+-+-+-+-+-+-+-+-+-
-# MARD result across all cross-validations: 3.68 +/- 0.01 %
+# MARD result across all cross-validations: 3.73 +/- 0.01 %
 
-
+# ---- Best params 2018data ----
+# {'colsample_bytree': 1, 'eta': 0.01, 'max_depth': 4, 'n_estimators': 800, 'reg_lambda': 1, 'subsample': 0.8}
+# -+-+-+-+-+-+-+-+-+-+-
+# MARD result across all cross-validations: 5.27 +/- 0.01 %

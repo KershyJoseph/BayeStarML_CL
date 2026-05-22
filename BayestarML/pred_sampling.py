@@ -865,7 +865,13 @@ def sample_pred_BART(model, X, X_er, target, draws=1000, chains=2):
         # pp = pm.sample_posterior_predictive(trace)
 
     lpd_BART = find_pointwise_loo(trace)
-    print("Rhats\n", az.rhat(trace))
+
+    r_hat_values = az.rhat(trace)
+    all_rhats = []
+    for var in r_hat_values.data_vars:
+        max_rhat = r_hat_values[var].max().values.item()
+        all_rhats.append((var, max_rhat))
+    print("Rhats\n", all_rhats)
 
     print("LOO\n", az.loo(trace))
 

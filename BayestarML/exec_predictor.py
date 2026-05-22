@@ -30,7 +30,7 @@ def bart_bhs_pred():
                            NN_trace_path="Outputs/NNmass_goodMS_32_2000_0.99_20TDnrns.nc",
                            Mmean=50, Mvar=20, NNnodes=32)
 
-    df_p = pd.read_csv("Datsets/plato_data.txt", sep='\t')
+    df_p = pd.read_csv("Datasets/plato_data.txt", sep='\t')
     unorm_mass = df_p["M"]
 
     means = pred.mean(0)
