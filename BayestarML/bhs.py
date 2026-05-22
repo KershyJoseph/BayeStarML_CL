@@ -258,11 +258,21 @@ def run_stack(
     with model:
         trace = pm.sample(
             draws=draws,
+            tune=int(1.5*draws)
             chains=chains,
             random_seed=random_seed,
             target_accept=0.9,
             progressbar=True,
         )
+    #Some cheeky diagnostics
+    r_hat_values = az.rhat(trace)
+    all_rhats = []
+    for var in r_hat_values.data_vars:
+        max_rhat = r_hat_values[var].max().values.item()
+        all_rhats.append((var, max_rhat))
+    print("Rhats\n", all_rhats)
+
+    print("LOO\n", az.loo(trace))
 
     # Extract posterior draws of weights 
     # trace.posterior["w_test"] has dims (chain, draw, N_test, K)
