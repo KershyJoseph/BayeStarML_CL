@@ -258,7 +258,7 @@ def run_stack(
     with model:
         trace = pm.sample(
             draws=draws,
-            tune=int(1.5*draws)
+            tune=int(1.5*draws),
             chains=chains,
             random_seed=random_seed,
             target_accept=0.9,
