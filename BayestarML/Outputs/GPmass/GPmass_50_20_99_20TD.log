@@ -1,0 +1,117 @@
+Initializing NUTS using jitter+adapt_diag...
+Multiprocess sampling (4 chains in 4 jobs)
+NUTS: [log_ls, eta, u_rotated_μ, log_ls_v, eta_var, alpha_log_var, u_rotated_log_var_f]
+6013.79056880734 4.194425565880734 -0.0722354128440367 0.3474829129461819 1.1630000366972477 1.5145330458715596
+828.5709209400139 0.26409162887226345 0.20715231760925246 0.6662589985155178 0.3049096296859578 0.5442063616548278
+Latest goodMS with high mass filter. Also logL
+::::::::::::::::::::::::::::::::::::::
+bigGPrun - mass - MS stars. LogL! 50_20_1000, target_accept=0.99, TD 20.
+target_accept= 0.99
+                                                                                                                        
+  Progress                         Draws   Divergences   Step size   Grad evals   Sampling Speed   Elapsed   Remaining  
+ ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── 
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━   2500    0             0.00        1023         5.06 s/draws     3:30:35   0:00:00    
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━   2500    0             0.00        2047         5.24 s/draws     3:38:08   0:00:00    
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━   2500    1             0.00        2047         5.01 s/draws     3:28:49   0:00:00    
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━   2500    1             0.00        2047         5.08 s/draws     3:31:36   0:00:00    
+                                                                                                                        
+Sampling 4 chains for 1_500 tune and 1_000 draw iterations (6_000 + 4_000 draws total) took 13099 seconds.
+There were 2 divergences after tuning. Increase `target_accept` or reparameterize.
+The effective sample size per chain is smaller than 100 for some parameters.  A higher number is needed for reliable rhat and ess computation. See https://arxiv.org/abs/1903.08008 for details
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/pymc/model/fgraph.py:163: UserWarning: Detected variables likely created by GP objects. Further use of these old GP objects should be avoided as it may reintroduce variables from the old model. See issue: https://github.com/pymc-devs/pymc/issues/6883
+  warnings.warn(
+AZ Stats for ESS Bulk < 400:
+               mean     sd  hdi_3%  hdi_97%  ...  mcse_sd  ess_bulk  ess_tail  r_hat
+log_ls_v[0]  0.624  0.464  -0.161    1.629  ...    0.014     327.0     564.0   1.01
+ls_v[0]      2.105  1.241   0.714    4.589  ...    0.068     327.0     564.0   1.01
+
+[2 rows x 9 columns]
+Computing ... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are very different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are very different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+Sampling: [X_new_latent, X_var_new_latent, f_mu_pred, log_var_pred_latent, y_pred]
+[('log_ls', 1.0044655228026758), ('u_rotated_μ', 1.0074716712324756), ('log_ls_v', 1.0071106795239957), ('alpha_log_var', 1.0010567996270743), ('u_rotated_log_var_f', 1.0055844198796278), ('eta', 1.007919669797493), ('eta_var', 1.0003716541471765), ('ls', 1.0041424675975), ('u_μ', 1.002976261264885), ('mu_μ', 1.0028826859861875), ('ls_v', 1.0071106795239957), ('u_log_var_f', 1.0017780313672513), ('mu_log_var_f', 1.00314005957648), ('log_var', 1.0082732558329763), ('σ_f', 1.0082732558329763)]
+LOO
+Computed from 4000 posterior samples and 545 observations log-likelihood matrix.
+
+         Estimate       SE
+elpd_loo    67.80    29.76
+p_loo       78.71        -
+
+There has been a warning during the calculation. Please check the results.
+------
+
+Pareto k diagnostic values:
+                         Count   Pct.
+(-Inf, 0.70]   (good)      529   97.1%
+   (0.70, 1]   (bad)        12    2.2%
+   (1, Inf)   (very bad)    4    0.7%
+
+Sampling ... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00 / 0:00:03
+[0.18806697 1.4486592  1.41480048 0.9404638  1.03849736 1.06734186
+ 0.3916834  1.16047629 1.07011111 1.32957308 1.18061874 1.02667055
+ 1.10140547 1.48197004 1.04199943 1.83146895 1.23842892 0.45232807
+ 1.35290362 1.2210071  1.3508234  1.34026248 1.16430578 1.0215081
+ 1.10188889 1.46920006 1.17431757 1.13116378 1.12314225 1.0865845
+ 1.40531858 0.98728685 1.19350669 1.12894402 1.24428581 1.32785337
+ 1.12237542 1.45959189 1.12479494 1.68942418 0.69414167 1.47010425
+ 0.05381043 1.18260355 1.21832178 1.03453315 0.82747602 1.20578505
+ 1.3146456  1.30100201 1.43177065 1.26036454 1.11917813 1.1645192
+ 1.50005242 1.44721657 1.095176   1.2412627  1.13043678 1.50413547
+ 1.3524393  1.36597232 1.27976478 1.28851007 0.84696659 1.16111538
+ 1.1727227  2.25585188 1.37202153 1.27771963 1.53779704 1.55240061
+ 1.41016448 2.04162282 0.8257842  1.43862028 1.19308133 1.50008575
+ 1.37471027 1.33230898 0.9828417  1.40823055 1.38503564 1.13166693
+ 1.04671212 1.6979157  1.13256319 0.86845621 1.30352577 1.29725601
+ 1.11210295 1.25772331 1.38156974 1.33701087 1.55599876 1.29701325
+ 2.23222007 0.89333392 1.06715977 1.30950168 0.22111376 1.23915957
+ 1.43194206 1.23487539 1.15927425 0.13663065 1.47117717 1.12535356
+ 1.23459417 1.29136584 0.95277212 1.1575819  1.04275317 1.32624552
+ 1.02570854 1.02031976 0.1483556  1.16014475 1.178864   1.37813513
+ 1.12180969 1.23908751 1.1707421  0.46313471 1.09888468 1.02460856
+ 1.25216789 1.25882383 0.97334739 1.12458892 1.17885152 1.49642292
+ 1.52510236 1.29778481 1.15725993 1.10794976 1.28162196]
+[0.0797956  0.06876256 0.05968884 0.06109865 0.06878555 0.07480788
+ 0.03943456 0.06634662 0.05891976 0.05544493 0.06621463 0.04849643
+ 0.07319383 0.09188886 0.06101443 0.17629808 0.06139388 0.04445067
+ 0.0631578  0.05840654 0.06413267 0.06762899 0.06530247 0.06372386
+ 0.04595401 0.07247016 0.04935224 0.04650737 0.06316377 0.05123353
+ 0.06560251 0.07350993 0.07171105 0.3136318  0.058477   0.06532797
+ 0.05493952 0.07980273 0.08661476 0.09409598 0.04523315 0.07302983
+ 0.13479876 0.07336419 0.05065099 0.05210376 0.04044833 0.05836042
+ 0.06868768 0.05414262 0.0687802  0.06213493 0.06621122 0.06421891
+ 0.07876335 0.09300427 0.06768702 0.05506915 0.05707836 0.07828675
+ 0.26311316 0.06939611 0.06581782 0.07739309 0.03994151 0.09405722
+ 0.06293932 0.36468125 0.0706025  0.06720436 0.07529462 0.08061126
+ 0.06902704 0.17243266 0.05446251 0.07438036 0.0507027  0.08636185
+ 0.07042139 0.06133604 0.06038249 0.05996426 0.14800218 0.05936018
+ 0.08563421 0.09526257 0.06167401 0.05078868 0.06156551 0.08570143
+ 0.0564354  0.05779568 0.0822206  0.06758666 0.08076072 0.06380037
+ 0.60753861 0.0466941  0.05673839 0.06318335 0.07218397 0.09384744
+ 0.08364287 0.05940346 0.07453447 0.11548286 0.08455382 0.07301362
+ 0.05217904 0.08983588 0.04718931 0.06328002 0.06441933 0.06961558
+ 0.06424946 0.07332959 0.06874833 0.07481585 0.07954863 0.06858137
+ 0.06071414 0.07603902 0.06242664 0.22817159 0.05699546 0.06281141
+ 0.06979529 0.07635639 0.05172888 0.0573426  0.05737155 0.08481145
+ 0.08146642 0.07200516 0.06023574 0.04919674 0.07418815]
+Unorm mass:  597    0.188
+395    1.389
+81     1.414
+576    0.960
+205    1.015
+       ...  
+41     1.550
+381    1.271
+663    1.140
+538    1.255
+296    1.247
+Name: M, Length: 137, dtype: float64
+MAE:  0.05558340945547034
+MARD 5.0352352369864635
+MRD 0.24557403595767657
+Peak Memory: 755.07 MB
+CPU time used: 185.43771 s
+Total run time: 13138.77155 s
+><><><><><><><><><><><><><><><><><><><><><><><><><><

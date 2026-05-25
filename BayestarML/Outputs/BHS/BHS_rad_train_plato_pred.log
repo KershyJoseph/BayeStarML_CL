@@ -1,0 +1,74 @@
+6049.532828467154 4.194815571906934 -0.07372627737226277 4.570844713503649 1.1729082481751822 1.5180168065693431
+883.6479172901575 0.26062665391530143 0.206572663121033 11.125493190961159 0.32731139416942934 0.5535885051225802
+-------Start BART buisness----------
+Multiprocess sampling (4 chains in 4 jobs)
+CompoundStep
+>NUTS: [X_dist]
+>PGBART: [mu]
+-----------Start BART Sampling------------
+                                                                                                                        
+  Progress                         Draws   Divergences   Step size   Grad evals   Sampling Speed   Elapsed   Remaining  
+ ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── 
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━   4000    0             0.31        15           7.09 draws/s     0:09:23   0:00:00    
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━   4000    0             0.30        15           7.17 draws/s     0:09:17   0:00:00    
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━   4000    0             0.28        15           7.12 draws/s     0:09:21   0:00:00    
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━   4000    0             0.21        15           7.15 draws/s     0:09:19   0:00:00    
+                                                                                                                        
+Sampling 4 chains for 2_000 tune and 2_000 draw iterations (8_000 + 8_000 draws total) took 574 seconds.
+The rhat statistic is larger than 1.01 for some parameters. This indicates problems during sampling. See https://arxiv.org/abs/1903.08008 for details
+The effective sample size per chain is smaller than 100 for some parameters.  A higher number is needed for reliable rhat and ess computation. See https://arxiv.org/abs/1903.08008 for details
+Computing ... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are very different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are very different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+Sampling: [X_dist, mu, y]
+Rhats
+ [('X_dist', 1.0047968661999809), ('mu', 1.4394100460937598)]
+LOO
+ Computed from 8000 posterior samples and 548 observations log-likelihood matrix.
+
+         Estimate       SE
+elpd_loo    12.76    29.02
+p_loo       46.34        -
+
+There has been a warning during the calculation. Please check the results.
+------
+
+Pareto k diagnostic values:
+                         Count   Pct.
+(-Inf, 0.70]   (good)      547   99.8%
+   (0.70, 1]   (bad)         0    0.0%
+   (1, Inf)   (very bad)    1    0.2%
+
+Sampling ... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00 / 0:09:23
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are very different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+Sampling: [X_new_latent, X_var_new_latent, f_mu_pred, log_var_pred_latent, y_pred]
+-------Start GP buisness----------
+Sampling ... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00 / 0:00:02
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are very different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+-------Start HBNN buisness----------
+starting parallel prediction on 32 worker(s)…
+finished chain 4/4
+finished chain 1/4
+finished chain 2/4
+finished chain 3/4
+-------Start BHS buisness----------
+Traceback (most recent call last):
+  File "/Users/user1/BayeStarML_CL/BayestarML/exec_predictor.py", line 67, in <module>
+    bart_bhs_pred('radius')
+  File "/Users/user1/BayeStarML_CL/BayestarML/exec_predictor.py", line 19, in bart_bhs_pred
+    _, bhs_pred, bhs_w = predict4(X=None, X_er=None, target=target,
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/user1/BayestarML_CL/BayestarML/predict.py", line 121, in predict4
+    (bhs_trace, bhs_pred, bhs_w) = run_stack(bart4_pred, hbnn4_pred, gp4_pred,
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/user1/BayestarML_CL/BayestarML/bhs.py", line 252, in run_stack
+    lpd_point = np.vstack((lpd_BART, lpd_HBNN, lpd_GP)).T  # (N_train, K=3)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/numpy/core/shape_base.py", line 289, in vstack
+    return _nx.concatenate(arrs, 0, dtype=dtype, casting=casting)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: all the input array dimensions except for the concatenation axis must match exactly, but along dimension 1, the array at index 0 has size 548 and the array at index 1 has size 527
