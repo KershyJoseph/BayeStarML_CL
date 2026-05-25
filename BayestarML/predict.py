@@ -38,11 +38,11 @@ def predict4(X, X_er, target,
         unorm_mass = denormalise_val(mass_test, 'mass')
 
         print("-------Start BART buisness----------")
-        bart4_model = bart.BART_M(x_train, x_train_er, mass_train, emass_train)
+        bart4_model = bart.BART_M(x_train, x_train_er, mass_train, emass_train, m=BART_m)
         bart4_pred, lpd_BART4 = sample_pred_BART(bart4_model,
                                       X,
                                       X_er, 'mass',
-                                      2000, 4, m=BART_m)
+                                      2000, 4)
 
         print("-------Start GP buisness----------")
         gp4_model, μ_gp4, lg_σ_gp4, Xu4, Xu_er4 = gp.sparse_fully_heteroscedastic_gp(x_train, x_train_er, mass_train, Mmean, Mvar)#80, 40
@@ -96,11 +96,11 @@ def predict4(X, X_er, target,
         unorm_rad = denormalise_val(rad_train, 'radius')
 
         print("-------Start BART buisness----------")
-        bart4_model = bart.BART_R(x_train, x_train_er, rad_train, erad_train)
+        bart4_model = bart.BART_R(x_train, x_train_er, rad_train, erad_train, m=BART_m)
         bart4_pred, lpd_BART4 = sample_pred_BART(bart4_model,
                                       X,
                                       X_er, 'radius',
-                                      2000,4,m=BART_m)
+                                      2000, 4)
 
         print("-------Start GP buisness----------")
         gp4_model, μ_gp4, lg_σ_gp4, Xu4, Xu_er4 = gp.sparse_fully_heteroscedastic_gp(x_train, x_train_er, rad_train, Mmean, Mvar)
