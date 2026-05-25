@@ -64,4 +64,4 @@ def bart_bhs_pred(target):
     plt.savefig("Outputs/predictions/BHS_plato_rad_res.pdf")
 
 if __name__ == '__main__':
-    bart_bhs_pred()
+    bart_bhs_pred('radius')
