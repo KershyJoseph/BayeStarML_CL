@@ -140,6 +140,9 @@ df_good_RGB["logR"] = np.log10(df_good_RGB["R"])
 df_good_RGB["elogR1"] = np.log10(df_good_RGB["R"] + df_good_RGB["eR1"]) - df_good_RGB["logR"]
 df_good_RGB["elogR2"] = df_good_RGB["logR"] - np.log10(df_good_RGB["R"] - df_good_RGB["eR2"])
 
+#remove areas of sparse training data?
+df_good_RGB = df_good_RGB[df_good_RGB["M"]<=2.5]
+
 #see what spread is like in variables
 for col in ["M", "R", "logR", "logg", "logL", "L", "Fe/H", "Teff"]:
     print("--------",col,"---------")
@@ -148,7 +151,7 @@ for col in ["M", "R", "logR", "logg", "logL", "L", "Fe/H", "Teff"]:
     print("Mean - ", df_good_RGB[col].mean())
     print("Std - ", df_good_RGB[col].std())
 
-    if (col == "Fe/H") or (col == "R") or (col=="logR"):
+    if (col == "M") or (col == "R") or (col=="logR"):
         plt.figure()
         sns.histplot(data=df_good_RGB, x=col)
         plt.xlabel(col)
