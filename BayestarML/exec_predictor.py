@@ -19,7 +19,7 @@ def bart_bhs_pred(target):
     X, X_er = prepare_pred4("Datasets/plato_data.txt")
     _, pred, w4 = predict4(X=X, X_er=X_er, target=target,
                            training_dataset_path="DataExploring/good_MS.txt",
-                           GP_trace_path="Outputs/bigGPruns/GPrad_50_20_1000_0.99.nc",
+                           GP_trace_path="Outputs/bigGPruns/GPmass50_20_1000_0.99.nc",
                            NN_trace_path="Outputs/bigNNruns/NNrad_goodMS_16_1000nrns.nc",
                            BART_m = 300, Mmean=50, Mvar=20, NNnodes=16)
 
@@ -48,8 +48,8 @@ def bart_bhs_train(target):
     """
     _, bhs_pred, bhs_w, X, Xer, y = predict4(X=None, X_er=None, target=target,
                                         training_dataset_path="DataExploring/good_MS.txt",
-                                        GP_trace_path="Outputs/bigGPruns/GPrad_50_20_1000_0.99.nc",
-                                        NN_trace_path="Outputs/bigNNruns/NNrad_goodMS_16_1000nrns.nc",
+                                        GP_trace_path="Outputs/bigGPruns/GPmass50_20_1000_0.99.nc",
+                                        NN_trace_path="Outputs/NNmass_goodMS_32_2000_0.99_20TDnrns.nc",
                                         BART_m = 300, Mmean=50, Mvar=20, NNnodes=16,
                                         test=True) # disregards X, X_er for test=True / uses test values
 
@@ -83,4 +83,4 @@ def bart_bhs_train(target):
     plt.close()
 
 if __name__ == '__main__':
-    bart_bhs_train('Radius')
+    bart_bhs_train('Mass')
