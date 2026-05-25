@@ -4,6 +4,7 @@ JK 22/04/26
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 def err_maskomatic(df, L=50):
     """Return an error mask on a df with given limits. And df of average errors.
@@ -67,6 +68,17 @@ def logomatic(df, var):
     df["elog"+var+"2"] = df["log"+var] - np.log10(df[var] - df["e"+var+"2"])
     return None
 
+def spreadomatic(df, var, save_path, hue=None, xlabel=None):
+    """Make a histogram for a given var (which should be one of df's keys)
+    """
+    plt.figure()
+    sns.histplot(data=df, x=var, hue=hue)
+    if xlabel:
+        plt.xlabel(xlabel)
+    plt.ylabel("Number of stars")
+    plt.savefig(save_path)
+    plt.close()
+
 df = pd.read_csv("DataExploring/datos_todos_v20261905.txt", sep="\t", comment="#")
 
 check_params1 = ["eM1", "eR1", "elogg1", "eL1", "eFe/H1", "eTeff1"]
@@ -97,7 +109,6 @@ df_err, err_mask = err_maskomatic(df_all6_MS)
 df_good_MS = df_all6_MS[err_mask]
 print("All 6 MS, err cleaned: ", len(df_good_MS))
 df_good_errs = df_err[err_mask]
-df_good_MS.to_csv("DataExploring/good_MS.txt", index=False, na_rep="NA", sep="\t")
 
 #err cleaned betaMS - 'metaMS'
 df_err_beta, err_mask_beta = err_maskomatic(df_all6beta_MS)
@@ -105,7 +116,6 @@ df_metaMS = df_all6beta_MS[err_mask_beta]
 print("Stars with all 5 except Fe/H, but with M/H: ", len(df_metaMS))
 print("Of which M<=0.8: ", len(df_metaMS[df_metaMS["M"]<=0.8]))
 print("Of which M>=1.4: ", len(df_metaMS[df_metaMS["M"]>=1.4]))
-print(df_metaMS)
 
 #Strict error filter version of good_MS.txt
 err_mask_strict = (df_err["percent_eL"]<=50) & (df_err["percent_eR"]<=7) & (df_err["elogg1"]<=0.05) & (df_err["percent_eTeff"]<=5) & (df_err["eFe/H1"]<=0.2)
@@ -123,6 +133,13 @@ print("All 6 MS, err cleaned, no fills: ", len(df_no_fills))
 logomatic(df_good_MS, "L")
 logomatic(df_good_MS, "Teff")
 
+features = ["L", "logL", "Fe/H", "Teff", "logTeff", "logg"]
+for f in features:
+    savepath = "DataExploring/goodMSspreads/"+f+"_MS_spread.pdf"
+    if f == "Fe/H":
+        savepath = "DataExploring/goodMSspreads/FeH_MS_spread.pdf"
+    spreadomatic(df_good_MS, f, savepath)
+
 fig2, ax2 = plt.subplots(1,2)
 
 ax2[0].plot(df_good_MS["elogTeff1"], df_good_MS["elogTeff2"], 'o')
@@ -135,6 +152,7 @@ ax2[1].set_ylabel("logL -err")
 
 plt.tight_layout()
 plt.savefig("DataExploring/logTeff_logL_errs.pdf")
+plt.close()
 
 #------------------------------
 #see err dist
@@ -193,7 +211,6 @@ ax[1,2].set_xlabel("Error (dex)")
 plt.tight_layout()
 plt.savefig("DataExploring/db_new_err_dists.pdf")
 
-
 #consistency checks...
 #---------------------
 #get SB Ls and errs
@@ -236,4 +253,5 @@ plt.savefig("DataExploring/MS_L_check.pdf")
 
 print("Non-physical Ls, assuming R and Teff are stellar:\n", df_bad_Ls)
 
+df_good_MS.to_csv("DataExploring/good_MS.txt", index=False, na_rep="NA", sep="\t")
 diagnostics(df_good_MS, "Good MS")

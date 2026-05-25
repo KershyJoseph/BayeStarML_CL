@@ -354,7 +354,7 @@ if __name__ == '__main__':
     mp.set_start_method('spawn', force=True)
 
     #load data
-    df_train = get_dataset('DataExploring/good_RGB.txt', logL=True)
+    df_train = get_dataset('DataExploring/good_MS.txt', logL=True)
 
     (x_train, x_train_er, x_test, x_test_err, mass_train, emass_train,
     mass_test, emass_test, rad_train, erad_train, rad_test, erad_test
@@ -383,7 +383,7 @@ if __name__ == '__main__':
 
     #HAVE YOU UPDATED CONSTANTS.PY AND CHECKED OUTPUT FILE PATHS AND LOGL
 
-    print("Latest goodMS with high mass filter.")
+    print("Latest goodMS with high mass filter. Also logL")
     print("::::::::::::::::::::::::::::::::::::::")
 
     process = psutil.Process()
@@ -392,8 +392,8 @@ if __name__ == '__main__':
     start_time_CPU = time.process_time()
     start_time = time.time()
 
-    print("bigGPrun - mass - MS stars. 50, 20, target_accept=0.99. TD 20 still.")
-    mass_train_GP(dataset, 50, 20, 4, target_accept=0.99)
+    print("bigGPrun - mass - MS stars. LogL! 50_20_1000, target_accept=0.99, TD 20.")
+    mass_train_GP(dataset, 50, 20, 1000, target_accept=0.99)
 
     end_time_CPU = time.process_time()
     #from Gemini
@@ -426,4 +426,3 @@ if __name__ == '__main__':
     # print(f"Total run time: {time.time()-start_time2:.5f} s")
 
     # print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
-
