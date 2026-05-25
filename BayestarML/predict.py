@@ -21,7 +21,7 @@ import pandas as pd
 
 def predict4(X, X_er, target,
              training_dataset_path, GP_trace_path, NN_trace_path,
-             Mmean, Mvar, NNnodes,
+             BART_m, Mmean, Mvar, NNnodes,
              test=False):
 
     df_train = get_dataset(training_dataset_path, 'MS')
@@ -42,7 +42,7 @@ def predict4(X, X_er, target,
         bart4_pred, lpd_BART4 = sample_pred_BART(bart4_model,
                                       X,
                                       X_er, 'mass',
-                                      2000, 4)
+                                      2000, 4, m=BART_m)
 
         print("-------Start GP buisness----------")
         gp4_model, μ_gp4, lg_σ_gp4, Xu4, Xu_er4 = gp.sparse_fully_heteroscedastic_gp(x_train, x_train_er, mass_train, Mmean, Mvar)#80, 40
@@ -95,25 +95,29 @@ def predict4(X, X_er, target,
 
         unorm_rad = denormalise_val(rad_train, 'radius')
 
+        print("-------Start BART buisness----------")
         bart4_model = bart.BART_R(x_train, x_train_er, rad_train, erad_train)
         bart4_pred, lpd_BART4 = sample_pred_BART(bart4_model,
                                       X,
                                       X_er, 'radius',
-                                      1000,4)
+                                      2000,4,m=BART_m)
 
-        gp4_model, μ_gp4, lg_σ_gp4, Xu4, Xu_er4 = gp.sparse_fully_heteroscedastic_gp(x_train, x_train_er, rad_train, 80, 40)
-        gp4_trace = az.from_netcdf('models/model_artifacts/gp_radius.nc') 
+        print("-------Start GP buisness----------")
+        gp4_model, μ_gp4, lg_σ_gp4, Xu4, Xu_er4 = gp.sparse_fully_heteroscedastic_gp(x_train, x_train_er, rad_train, Mmean, Mvar)
+        gp4_trace = az.from_netcdf(GP_trace_path) 
         gp4_pred, lpd_GP4 = posterior_predictive_GP(gp4_model, μ_gp4, lg_σ_gp4, 
                                             gp4_trace, X,
                                             X_er,
                                             Xu4, Xu_er4, 4, 'radius')
 
-        hbnn4_trace = az.from_netcdf('models/model_artifacts/HBNN_sig_015_15_nodes_radius_4_param.nc')
+        print("-------Start HBNN buisness----------")
+        hbnn4_trace = az.from_netcdf(NN_trace_path)
         hbnn4_pred, lpd_HBNN4 = sample_post_pred_HBNN_para(hbnn4_trace,  
                                                       X,
                                                       X_er,
-                                                      15, 4, 'radius')
+                                                      NNnodes, 4, 'radius')
 
+        print("-------Start BHS buisness----------")
         (bhs_trace, bhs_pred, bhs_w) = run_stack(bart4_pred, hbnn4_pred, gp4_pred,
                                             x_train, X, lpd_BART4, lpd_HBNN4,
                                             lpd_GP4)
