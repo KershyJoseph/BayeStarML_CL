@@ -78,7 +78,7 @@ def mass_train_GP(data: Dataset, M_mean, M_var, draws=1000, advi=False, target_a
     print(az.loo(trace))
 
     pred, lpd = posterior_predictive_GP(model, μ_gp, lg_σ_gp, trace,
-                                        data.x_test, data.x_test_err, Xu, Xu_er, 4, 'mass')
+                                        data.x_test, data.x_test_err, Xu, Xu_er, 4, 'Mass')
 
     stds = pred.std(0)
     means = pred.mean(0)
@@ -147,7 +147,7 @@ def radius_train_GP(data: Dataset, M_mean, M_var, draws=1000, advi=False, target
     print(az.loo(trace))
 
     pred, lpd = posterior_predictive_GP(model, μ_gp, lg_σ_gp, trace,
-                                        data.x_test, data.x_test_err, Xu, Xu_er, 4, 'radius')
+                                        data.x_test, data.x_test_err, Xu, Xu_er, 4, 'Radius')
 
     stds = pred.std(0)
     means = pred.mean(0)
@@ -203,7 +203,7 @@ def mass_train_SIMPLE_NN(data: Dataset, n_hidden=5, draw=1000, chains=4, target_
 
     print("loo trace: ", az.loo(trace))
 
-    pred, lpd = SIMPLE_sample_post_pred_HBNN_para(trace, data.x_test, data.x_test_err, n_hidden, 4, "mass")
+    pred, lpd = SIMPLE_sample_post_pred_HBNN_para(trace, data.x_test, data.x_test_err, n_hidden, 4, "Mass")
 
     stds = pred.std(0)
     means = pred.mean(0)
@@ -257,7 +257,7 @@ def mass_train_NN(data: Dataset, n_hidden=15, draw=1000, chains=4, target_accept
 
     print("loo trace: ", az.loo(trace))
 
-    pred, lpd = sample_post_pred_HBNN_para(trace, data.x_test, data.x_test_err, n_hidden, 4, "mass")
+    pred, lpd = sample_post_pred_HBNN_para(trace, data.x_test, data.x_test_err, n_hidden, 4, "Mass")
 
     stds = pred.std(0)
     means = pred.mean(0)
@@ -318,7 +318,7 @@ def radius_train_NN(data: Dataset, n_hidden, draw=1000, chains=4, target_accept=
 
     print("loo trace: ", az.loo(trace))
 
-    pred, lpd = sample_post_pred_HBNN_para(trace, data.x_test, data.x_test_err, n_hidden, 4, "radius")
+    pred, lpd = sample_post_pred_HBNN_para(trace, data.x_test, data.x_test_err, n_hidden, 4, "Radius")
 
     stds = pred.std(0)
     means = pred.mean(0)
@@ -377,8 +377,8 @@ if __name__ == '__main__':
         mass_test=mass_test,
         emass_test=emass_test,
 
-        unorm_mass = denormalise_val(mass_test, 'mass'),
-        unorm_radius = denormalise_val(rad_test, 'radius')
+        unorm_mass = denormalise_val(mass_test, 'Mass'),
+        unorm_radius = denormalise_val(rad_test, 'Radius')
         )
 
     #HAVE YOU UPDATED CONSTANTS.PY AND CHECKED OUTPUT FILE PATHS AND LOGL
@@ -392,8 +392,8 @@ if __name__ == '__main__':
     start_time_CPU = time.process_time()
     start_time = time.time()
 
-    print("bigGPrun - mass - MS stars. LogL! 50_20_1000, target_accept=0.99, TD 20.")
-    mass_train_GP(dataset, 50, 20, 1000, target_accept=0.99)
+    print("bigGPrun - radius - MS stars. LogL! 50_20_1000, target_accept=0.99, TD 20.")
+    radius_train_GP(dataset, 50, 20, 1000, target_accept=0.99)
 
     end_time_CPU = time.process_time()
     #from Gemini

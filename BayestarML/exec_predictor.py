@@ -8,7 +8,7 @@ Created on Wed Nov  5 18:53:33 2025
 
 from preprocess import prepare_pred4, prepare_pred3, denormalise_val, denormalise_err
 from predict import predict3, predict4
-from utils import mard, mrd
+from utils import mard, mrd, model_pred_plotter
 from sklearn.metrics import mean_absolute_error
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -16,13 +16,6 @@ import matplotlib.pyplot as plt
 def bart_bhs_pred(target):
     """Train BART and BHS and then make some predictions
     """
-    _, bhs_pred, bhs_w = predict4(X=None, X_er=None, target=target,
-                                  training_dataset_path="DataExploring/good_MS.txt",
-                                  GP_trace_path="Outputs/bigGPruns/GPrad_50_20_1000_0.99.nc",
-                                  NN_trace_path="Outputs/bigNNruns/NNrad_goodMS_16_1000nrns.nc",
-                                  BART_m = 300, Mmean=50, Mvar=20, NNnodes=16,
-                                  test=True) # disregards X, X_er for test=True / uses test values
-
     X, X_er = prepare_pred4("Datasets/plato_data.txt")
     _, pred, w4 = predict4(X=X, X_er=X_er, target=target,
                            training_dataset_path="DataExploring/good_MS.txt",
@@ -31,12 +24,12 @@ def bart_bhs_pred(target):
                            BART_m = 300, Mmean=50, Mvar=20, NNnodes=16)
 
     df_p = pd.read_csv("Datasets/plato_data.txt", sep='\t')
-    if target=='radius':
+    if target=='Radius':
         t = "R"
-    elif target=='mass':
+    elif target=='Mass':
         t = "M"
     else:
-        raise ValueError("target should be string 'mass' or 'radius'")
+        raise ValueError("target should be string 'Mass' or 'Radius'")
     unorm_target = df_p[t]
 
     means = pred.mean(0)
@@ -46,22 +39,48 @@ def bart_bhs_pred(target):
     print('MARD on plato ', target,': ', mard(unorm_target, means))
     print('MRD on plato ', target,': ', mrd(unorm_target, means))
 
-    plt.figure(figsize=(8, 6))
-    plt.errorbar(unorm_target, means, yerr=stds, fmt='o', label='Predictions with Uncertainty', alpha=0.7)
-    plt.plot([unorm_target.min(), unorm_target.max()], [unorm_target.min(), unorm_target.max()], 'r--')
-    plt.xlabel('True ', target)
-    plt.ylabel('Predicted ', target)
-    plt.title('BHS Predictions with Uncertainty')
-    plt.legend()
-    plt.savefig("Outputs/predictions/BHS_plato_rad_preds.pdf")
+    model_pred_plotter(unorm_target, means, stds, target, 'BHS', 'Outputs/BHS', 'PLATO')
 
-    plt.figure(figsize=(8, 6))
-    plt.errorbar(unorm_target, means - unorm_target, yerr=stds, fmt='o', label='Predictions with Uncertainty', alpha=0.7)
-    plt.hlines(0, unorm_target.min(), unorm_target.max(), 'r', linestyle='--')
-    plt.xlabel('True ', target)
-    plt.ylabel('Residual ', target)
+
+def bart_bhs_train(target):
+    """Just train up BART and BHS and make preds on test set.
+    Get figures of preds as funcs of params.
+    """
+    _, bhs_pred, bhs_w, X, Xer, y = predict4(X=None, X_er=None, target=target,
+                                        training_dataset_path="DataExploring/good_MS.txt",
+                                        GP_trace_path="Outputs/bigGPruns/GPrad_50_20_1000_0.99.nc",
+                                        NN_trace_path="Outputs/bigNNruns/NNrad_goodMS_16_1000nrns.nc",
+                                        BART_m = 300, Mmean=50, Mvar=20, NNnodes=16,
+                                        test=True) # disregards X, X_er for test=True / uses test values
+
+    target_ms = bhs_pred.mean(0)
+    target_stds = bhs_pred.std(0)
+
+    model_pred_plotter(y, target_ms, target_stds, target, 'BHS', 'Outputs/BHS', 'train')
+
+    plt.figure()
+    plt.errorbar(X["L"], target_ms, target_stds, fmt='o', alpha=0.5,
+                 label="BHS "+target+" Predictions")
+    plt.plot(X["L"], y, 'x',
+             label="True "+target)
+    plt.xlabel("Luminosity (Lsol)")
+    plt.ylabel(target+" ("+target[0]+"sol)")
+    plt.title("Test set predictions")
     plt.legend()
-    plt.savefig("Outputs/predictions/BHS_plato_rad_res.pdf")
+    plt.savefig("Outputs/BHS/bhs_LM.pdf")
+    plt.close()
+
+    plt.figure()
+    plt.errorbar(X["logg"], target_ms, target_stds, fmt='o', alpha=0.5,
+                 label="BHS "+target+" Predictions")
+    plt.plot(X["logg"], y, 'x',
+             label="True "+target)
+    plt.xlabel("Surface Gravity log(g) (dex)")
+    plt.ylabel(target+" ("+target[0]+"sol)")
+    plt.title("Test set predictions")
+    plt.legend()
+    plt.savefig("Outputs/BHS/bhs_LM.pdf")
+    plt.close()
 
 if __name__ == '__main__':
-    bart_bhs_pred('radius')
+    bart_bhs_train('Radius')

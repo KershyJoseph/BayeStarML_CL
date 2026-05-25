@@ -10,6 +10,7 @@ import arviz as az
 import pandas as pd
 import numpy as np
 import pymc as pm
+import matplotlib.pyplot as plt
 
 def get_dataset(data_file, star_class='MS', logL=False):
     """
@@ -157,6 +158,28 @@ def mrd(y_true, y_pred):
     """
     relative_diff = (np.array(y_true) - np.array(y_pred)) / np.array(y_true)
     return np.mean(relative_diff) * 100  
-    
-    
-    
+
+def model_pred_plotter(y_true, y_pred, y_pred_err, 
+                       target:str, model:str, save_folder:str, hyperps=""):
+    """Plot predictions of a trained model against true values
+    Saves a preds figure and a residuals figure
+    """
+    plt.figure(figsize=(8, 6))
+    plt.errorbar(y_true, y_pred, yerr=y_pred_err, fmt='o', label='Predictions with Uncertainty', alpha=0.7)
+    plt.plot([y_true.min(), y_true.max()], [y_true.min(), y_true.max()], 'r--')
+    plt.xlabel('True ', target)
+    plt.ylabel('Predicted ', target)
+    plt.title(model+' Predictions with Uncertainty')
+    plt.legend()
+    plt.savefig(save_folder+"/"+model+target+"_preds_"+hyperps+".pdf")
+    plt.close()
+
+    plt.figure(figsize=(8, 6))
+    plt.errorbar(y_true, y_pred - y_true, yerr=y_pred_err, fmt='o', label='Predictions with Uncertainty', alpha=0.7)
+    plt.hlines(0, y_true.min(), y_true.max(), 'r', linestyle='--')
+    plt.xlabel('True ', target)
+    plt.ylabel('Residual ', target)
+    plt.title(model+' Prediction Residuals')
+    plt.legend()
+    plt.savefig(save_folder+"/"+model+target+"_preds_"+hyperps+".pdf")
+    plt.close()

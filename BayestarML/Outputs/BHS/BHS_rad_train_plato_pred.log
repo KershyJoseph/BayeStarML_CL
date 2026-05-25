@@ -58,7 +58,7 @@ finished chain 3/4
 -------Start BHS buisness----------
 Traceback (most recent call last):
   File "/Users/user1/BayeStarML_CL/BayestarML/exec_predictor.py", line 67, in <module>
-    bart_bhs_pred('radius')
+    bart_bhs_pred('Radius')
   File "/Users/user1/BayeStarML_CL/BayestarML/exec_predictor.py", line 19, in bart_bhs_pred
     _, bhs_pred, bhs_w = predict4(X=None, X_er=None, target=target,
                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
