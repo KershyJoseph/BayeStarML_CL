@@ -46,7 +46,7 @@ class Dataset:
 def mass_train_GP(data: Dataset, M_mean, M_var, draws=1000, advi=False, target_accept=.95):
     """Function to train GP on mass prediction
     """
-    hyperp_str = "RGB"+str(M_mean)+"_"+str(M_var)+"_"+str(draws)+"_"+str(target_accept)
+    hyperp_str = "MS"+str(M_mean)+"_"+str(M_var)+"_"+str(draws)+"_"+str(target_accept)
 
     model, μ_gp, lg_σ_gp, Xu, Xu_er = gp.sparse_fully_heteroscedastic_gp(data.x_train,
                                                                         data.x_train_er,
@@ -64,7 +64,7 @@ def mass_train_GP(data: Dataset, M_mean, M_var, draws=1000, advi=False, target_a
 
     else:
         trace = train(model,
-                  "Outputs/RGB/GPmass"+hyperp_str+".nc",
+                  "Outputs/GPmass/GPmass"+hyperp_str+".nc",
                   draw=draws, chains=4, target_accept=target_accept, max_treedepth=20)
 
     r_hat_values = az.rhat(trace)
@@ -103,7 +103,7 @@ def mass_train_GP(data: Dataset, M_mean, M_var, draws=1000, advi=False, target_a
     plt.ylabel('Predicted Mass')
     plt.title('GP Predictions with Uncertainty')
     plt.legend()
-    plt.savefig("Outputs/RGB/GPmass_preds"+hyperp_str+".pdf")
+    plt.savefig("Outputs/GPmass/GPmass_preds"+hyperp_str+".pdf")
 
     plt.figure(figsize=(8, 6))
     plt.errorbar(data.unorm_mass, means - data.unorm_mass, yerr=stds, fmt='o', label='Predictions with Uncertainty', alpha=0.7)
@@ -111,7 +111,7 @@ def mass_train_GP(data: Dataset, M_mean, M_var, draws=1000, advi=False, target_a
     plt.xlabel('True Mass')
     plt.ylabel('Residual Mass')
     plt.legend()
-    plt.savefig("Outputs/RGB/GPmass_res"+hyperp_str+".pdf")
+    plt.savefig("Outputs/GPmass/GPmass_res"+hyperp_str+".pdf")
 
 def radius_train_GP(data: Dataset, M_mean, M_var, draws=1000, advi=False, target_accept=.95):
     """Function to train GP on radius prediction
@@ -380,80 +380,50 @@ if __name__ == '__main__':
         unorm_mass = denormalise_val(mass_test, 'mass'),
         unorm_radius = denormalise_val(rad_test, 'radius')
         )
-    
-    # print("NN advi radius testing - all 2 layer with n=100,000")
-    # trials = [4, 8, 16, 32, 64]
-    # for t in trials:
-    #     print("-------------")
-    #     print(f"Trial with {t} nodes.")
-    #     print("-------------")
-    #     radius_train_NN(t, advi=True)
 
     #HAVE YOU UPDATED CONSTANTS.PY AND CHECKED OUTPUT FILE PATHS AND LOGL
 
-    print("First go at some RGB stuff - mass NN")
+    print("Latest goodMS with high mass filter.")
     print("::::::::::::::::::::::::::::::::::::::")
-
-    # print("GP runs over night - two radius and one mass on goodMS")
-    # print("::::::::::::::::::::::::::::::::::::::")
 
     process = psutil.Process()
     #tracemalloc.start() #for memory usage estimate
     #snapshot1 = tracemalloc.take_snapshot()
-    # start_time_CPU = time.process_time()
-    # start_time = time.time()
+    start_time_CPU = time.process_time()
+    start_time = time.time()
 
-    # print("bigNNrun - mass - RGB stars. 16, 2000, 4, target_accept=0.99. TD 20 still.")
-    # mass_train_NN(dataset, 16, 2000, 4, target_accept=0.99)
-    # # print("bigGPrun - radius - 50_20_1000_4 with 20TD, 0.99TA and hopefully improved priors.")
-    # # print("(On good MS)")
-    # # radius_train_GP(dataset, 50, 20, 1000, target_accept=0.99)
+    print("bigGPrun - mass - MS stars. 50, 20, target_accept=0.99. TD 20 still.")
+    mass_train_GP(dataset, 50, 20, 4, target_accept=0.99)
 
-    # end_time_CPU = time.process_time()
-    # #from Gemini
-    # # snapshot2 = tracemalloc.take_snapshot()
-    # # top_stats = snapshot2.compare_to(snapshot1, 'lineno')
-    # # print("[ Top 5 memory changes ]")
-    # # for stat in top_stats[:5]:
-    # #     print(stat)
+    end_time_CPU = time.process_time()
+    #from Gemini
+    # snapshot2 = tracemalloc.take_snapshot()
+    # top_stats = snapshot2.compare_to(snapshot1, 'lineno')
+    # print("[ Top 5 memory changes ]")
+    # for stat in top_stats[:5]:
+    #     print(stat)
 
     mem1 = process.memory_info().rss / 1024**2
-    # print(f"Peak Memory: {mem1:.2f} MB")
-    # print(f"CPU time used: {(end_time_CPU-start_time_CPU):.5f} s")
-    # print(f"Total run time: {time.time()-start_time:.5f} s")
+    print(f"Peak Memory: {mem1:.2f} MB")
+    print(f"CPU time used: {(end_time_CPU-start_time_CPU):.5f} s")
+    print(f"Total run time: {time.time()-start_time:.5f} s")
 
     print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
 
-    start_time_CPU2 = time.process_time()
-    start_time2 = time.time()
+    # start_time_CPU2 = time.process_time()
+    # start_time2 = time.time()
 
-    print("bigNNrun - mass - RGB stars. With L in log space. On SimpleNN to start with. 8, 1000, 4, target_accept=0.95. 20TD still.")
-    # print("bigGPrun - radius - 80_40_1000_4 with 20TD, 0.99TA and hopefully improved priors.")
-    # print("(On good MS)")
-    mass_train_SIMPLE_NN(dataset, 8, 1000, target_accept=0.95)
+    # print("bigNNrun - mass - RGB stars. With L in log space. On SimpleNN to start with. 8, 1000, 4, target_accept=0.95. 20TD still.")
+    # # print("bigGPrun - radius - 80_40_1000_4 with 20TD, 0.99TA and hopefully improved priors.")
+    # # print("(On good MS)")
+    # mass_train_SIMPLE_NN(dataset, 8, 1000, target_accept=0.95)
 
-    end_time_CPU2 = time.process_time()
+    # end_time_CPU2 = time.process_time()
 
-    mem2 = process.memory_info().rss / 1024**2
-    print(f"Peak Memory: {(mem2-mem1):.2f} MB")
-    print(f"CPU time used: {(end_time_CPU2-start_time_CPU2):.5f} s")
-    print(f"Total run time: {time.time()-start_time2:.5f} s")
+    # mem2 = process.memory_info().rss / 1024**2
+    # print(f"Peak Memory: {(mem2-mem1):.2f} MB")
+    # print(f"CPU time used: {(end_time_CPU2-start_time_CPU2):.5f} s")
+    # print(f"Total run time: {time.time()-start_time2:.5f} s")
 
-    print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
+    # print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
 
-    # start_time_CPU3 = time.process_time()
-    # start_time3 = time.time()
-
-    # print("bigGPrun - mass - 80_40_1000_4 with 20TD, 0.99TA and hopefully improved priors.")
-    # print("(On good MS)")
-    # mass_train_GP(dataset, 80, 40, 1000, target_accept=0.99)
-
-    # end_time_CPU3 = time.process_time()
-
-    # mem3 = process.memory_info().rss / 1024**2
-    # print(f"Peak Memory: {(mem3-mem2):.2f} MB")
-    # print(f"CPU time used: {(end_time_CPU3-start_time_CPU3):.5f} s")
-    # print(f"Total run time: {time.time()-start_time3:.5f} s")
-
-    # print("><><><><><><><><><><><><>><><><><>")
-    print("You made it buckaroo Xx")

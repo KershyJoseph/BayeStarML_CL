@@ -96,7 +96,7 @@ def predict4(X, X_er, target,
         unorm_rad = denormalise_val(rad_train, 'radius')
 
         print("-------Start BART buisness----------")
-        bart4_model = bart.BART_R(x_train, x_train_er, rad_train, erad_train, m=BART_m)
+        bart4_model = bart.BART_M(x_train, x_train_er, rad_train, erad_train, m=BART_m)
         bart4_pred, lpd_BART4 = sample_pred_BART(bart4_model,
                                       X,
                                       X_er, 'radius',
