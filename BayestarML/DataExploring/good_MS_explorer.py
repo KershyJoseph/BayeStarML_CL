@@ -45,4 +45,20 @@ df_strict = pd.read_csv("DataExploring/strict_MS.txt", sep="\t", comment="#")
 plot_target_spread(df_strict, "strictMS", "M")
 
 plot_target_spread(df, "goodMS", "M")
-plot_target_spread(df, "goodMS", "R")
+#plot_target_spread(df, "goodMS", "R")
+
+def plot_feature_target(df, feature:str, target:str):
+    """Plot target as a function of feature - should be keys in df
+    """
+    plt.figure()
+    x = df[feature]
+    x_err = df["e"+feature]#+"1"]
+    y = df[target]
+    y_err = df["e"+target]
+    plt.errorbar(x, y, y_err, x_err, fmt='o', alpha=0.3)
+    plt.xlabel(feature)
+    plt.ylabel(target+" ("+target[0]+"sol)")
+    plt.savefig("DataExploring/feature_target_figs/"+feature+"_"+target+".pdf")
+    plt.close()
+
+plot_feature_target(df, "FeH", "R")

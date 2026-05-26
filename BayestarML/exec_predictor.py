@@ -50,7 +50,7 @@ def bart_bhs_train(target):
                                         training_dataset_path="DataExploring/good_MS.txt",
                                         GP_trace_path="Outputs/bigGPruns/GPmass50_20_1000_0.99.nc",
                                         NN_trace_path="Outputs/NNmass_goodMS_32_2000_0.99_20TDnrns.nc",
-                                        BART_m = 300, Mmean=50, Mvar=20, NNnodes=16,
+                                        BART_m = 300, Mmean=50, Mvar=20, NNnodes=32,
                                         test=True) # disregards X, X_er for test=True / uses test values
 
     target_ms = bhs_pred.mean(0)
@@ -67,7 +67,7 @@ def bart_bhs_train(target):
     plt.ylabel(target+" ("+target[0]+"sol)")
     plt.title("Test set predictions")
     plt.legend()
-    plt.savefig("Outputs/BHS/bhs_LM.pdf")
+    plt.savefig("Outputs/BHS/bhs_L_M.pdf")
     plt.close()
 
     plt.figure()
@@ -79,7 +79,7 @@ def bart_bhs_train(target):
     plt.ylabel(target+" ("+target[0]+"sol)")
     plt.title("Test set predictions")
     plt.legend()
-    plt.savefig("Outputs/BHS/bhs_LM.pdf")
+    plt.savefig("Outputs/BHS/bhs_logg_M.pdf")
     plt.close()
 
 if __name__ == '__main__':

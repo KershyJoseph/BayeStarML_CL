@@ -50,7 +50,7 @@ def predict4(X, X_er, target,
         gp4_pred, lpd_GP4 = posterior_predictive_GP(gp4_model, μ_gp4, lg_σ_gp4, 
                                             gp4_trace, X,
                                             X_er,
-                                            Xu4, Xu_er4, 4, 'Mass')
+                                            Xu4, Xu_er4, 4, 'Mass') 
 
         print("-------Start HBNN buisness----------")
         hbnn4_trace = az.from_netcdf(NN_trace_path)
@@ -209,12 +209,12 @@ def predict3(X, X_er, target, test=False):
     ) = return_train_test(df_train)
     
     
-    x_train3 = x_train[['Teff', 'logg', 'Fe/H']]
-    x_train3_er = x_train_er[['eTeff', 'elogg', 'eFe/H']]
+    x_train3 = x_train[['Teff', 'logg', 'FeH']]
+    x_train3_er = x_train_er[['eTeff', 'elogg', 'eFeH']]
     
     if test == True:
-        X = x_test[['Teff', 'logg', 'Fe/H']]
-        X_er = x_test_err[['eTeff', 'elogg', 'eFe/H']]
+        X = x_test[['Teff', 'logg', 'FeH']]
+        X_er = x_test_err[['eTeff', 'elogg', 'eFeH']]
     
     if target == 'Mass':
         

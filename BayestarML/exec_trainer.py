@@ -272,11 +272,11 @@ if __name__ == '__main__':
     ) = return_train_test(df_train, logL=True)
 
     dataset = Dataset(
-        x_train = x_train[['Teff', 'logg', 'Fe/H', 'logL']],
-        x_train_er = x_train_er[['eTeff', 'elogg', 'eFe/H', 'elogL']],
+        x_train = x_train[['Teff', 'logg', 'FeH', 'logL']],
+        x_train_er = x_train_er[['eTeff', 'elogg', 'eFeH', 'elogL']],
 
-        x_test = x_test[['Teff', 'logg', 'Fe/H', 'logL']],
-        x_test_err = x_test_err[['eTeff', 'elogg', 'eFe/H', 'elogL']],
+        x_test = x_test[['Teff', 'logg', 'FeH', 'logL']],
+        x_test_err = x_test_err[['eTeff', 'elogg', 'eFeH', 'elogL']],
 
         rad_train=rad_train,
         erad_train=erad_train,

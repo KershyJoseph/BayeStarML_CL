@@ -52,7 +52,7 @@ def get_dataset(data_file, star_class='MS', logL=False):
          'M', 'eM1', 'eM2',
          'Teff', 'eTeff1', 'eTeff2',
          'logg', 'elogg1', 'elogg2',    
-         'Fe/H', 'eFe/H1', 'eFe/H2',
+         'FeH', 'eFeH1', 'eFeH2',
          L, eL1, eL2]
          ].copy()
 

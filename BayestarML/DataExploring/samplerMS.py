@@ -13,23 +13,25 @@ def err_maskomatic(df, L=50):
     #adapted from Max
     #get mean errors for non-symmetric ones
     df1 = df[
-        ['eTeff1', 'elogg1', 'eFe/H1', 'eL1', 'eM1', 'eR1']
+        ['eTeff1', 'elogg1', 'eFeH1', 'eL1', 'eM1', 'eR1']
         ].copy()
     df2 = df[
-        ['eTeff2', 'elogg2', 'eFe/H2', 'eL2', 'eM2', 'eR2']
+        ['eTeff2', 'elogg2', 'eFeH2', 'eL2', 'eM2', 'eR2']
         ].copy()
-    df2.columns = ['eTeff1', 'elogg1', 'eFe/H1', 'eL1', 'eM1', 'eR1']
+    df2.columns = ['eTeff1', 'elogg1', 'eFeH1', 'eL1', 'eM1', 'eR1']
     df_err = (df1 + df2) / 2
+    mapper = {'eTeff1': 'eTeff', 'elogg1': 'elogg', 'eFeH1': 'eFeH', 'eL1': 'eL', 'eM1': 'eM', 'eR1': 'eR'}
+    df_err.rename(columns = mapper, inplace=True)
     #get percentage errors for M, R, L
-    df_err["percent_eL"] = 100 * df_err["eL1"] / df["L"]
-    df_err["percent_eM"] = 100 * df_err["eM1"] / df["M"]
-    df_err["percent_eR"] = 100 * df_err["eR1"] / df["R"]
-    df_err["percent_eTeff"] = 100 * df_err["eTeff1"] / df["Teff"]
-    df_err["percent_elogg"] = 100 * df_err["elogg1"] / df["logg"]
-    df_err["percent_eFe/H"] = 100 * df_err["eFe/H1"] / df["Fe/H"] #some are /0!
+    df_err["percent_eL"] = 100 * df_err["eL"] / df["L"]
+    df_err["percent_eM"] = 100 * df_err["eM"] / df["M"]
+    df_err["percent_eR"] = 100 * df_err["eR"] / df["R"]
+    df_err["percent_eTeff"] = 100 * df_err["eTeff"] / df["Teff"]
+    df_err["percent_elogg"] = 100 * df_err["elogg"] / df["logg"]
+    df_err["percent_eFeH"] = 100 * df_err["eFeH"] / df["FeH"] #some are /0!
 
     #make mask
-    err_mask = (df_err["percent_eL"]<=L)# & (df_err["percent_eR"]<=7) & (df_err["elogg1"]<=0.05) & (df_err["percent_eTeff"]<=5) & (df_err["eFe/H1"]<=0.2)
+    err_mask = (df_err["percent_eL"]<=L)# & (df_err["percent_eR"]<=7) & (df_err["elogg1"]<=0.05) & (df_err["percent_eTeff"]<=5) & (df_err["eFeH1"]<=0.2)
 
     return df_err, err_mask
 
@@ -81,8 +83,8 @@ def spreadomatic(df, var, save_path, hue=None, xlabel=None):
 
 df = pd.read_csv("DataExploring/datos_todos_v20261905.txt", sep="\t", comment="#")
 
-check_params1 = ["eM1", "eR1", "elogg1", "eL1", "eFe/H1", "eTeff1"]
-check_params2 = ["eM2", "eR2", "elogg2", "eL2", "eFe/H2", "eTeff2"]
+check_params1 = ["eM1", "eR1", "elogg1", "eL1", "eFeH1", "eTeff1"]
+check_params2 = ["eM2", "eR2", "elogg2", "eL2", "eFeH2", "eTeff2"]
 df_all6_MS = df[(df["class"]=="MS") & 
                 (df["well_detached"]!=False) &
                 (df[check_params1].notna().all(axis=1)) &
@@ -91,14 +93,14 @@ df_all6_MS = df[(df["class"]=="MS") &
                 (df[check_params2].gt(0).all(axis=1)) &
                 (df["M"]<=2.5)] #for outliers
 
-#no Fe/H but yes M/H
-check_params_beta = ["eM1", "eR1", "elogg1", "eL1", "eM/H1", "eTeff1", "eM2", "eR2", "elogg2", "eL2", "eM/H2", "eTeff2"]
+#no FeH but yes MH
+check_params_beta = ["eM1", "eR1", "elogg1", "eL1", "eMH1", "eTeff1", "eM2", "eR2", "elogg2", "eL2", "eMH2", "eTeff2"]
 df_all6beta_MS = df[(df["class"]=="MS") & 
                     (df["well_detached"]!=False) &
                     (df[check_params_beta].notna().all(axis=1)) &
                     (df[check_params_beta].gt(0).all(axis=1)) &
                     (df["M"]<=2.5) &
-                    (df["Fe/H"].isna())] #no Fe/H but yes M/H
+                    (df["FeH"].isna())] #no FeH but yes MH
 
 #file for MS stars with all 6 params and all binary systems well-detached
 df_all6_MS.to_csv("DataExploring/all6_MS.txt", index=False, na_rep="NA", sep="\t")
@@ -106,19 +108,20 @@ print("All 6 MS: ", len(df_all6_MS))
 
 #err cleaned MS - 'goodMS'
 df_err, err_mask = err_maskomatic(df_all6_MS)
-df_good_MS = df_all6_MS[err_mask]
+df_all6_MS_with_err = pd.concat([df_all6_MS, df_err], axis=1)
+df_good_MS = df_all6_MS_with_err[err_mask] #good_MS now has errs recorded there too
 print("All 6 MS, err cleaned: ", len(df_good_MS))
 df_good_errs = df_err[err_mask]
 
 #err cleaned betaMS - 'metaMS'
 df_err_beta, err_mask_beta = err_maskomatic(df_all6beta_MS)
 df_metaMS = df_all6beta_MS[err_mask_beta]
-print("Stars with all 5 except Fe/H, but with M/H: ", len(df_metaMS))
+print("Stars with all 5 except FeH, but with MH: ", len(df_metaMS))
 print("Of which M<=0.8: ", len(df_metaMS[df_metaMS["M"]<=0.8]))
 print("Of which M>=1.4: ", len(df_metaMS[df_metaMS["M"]>=1.4]))
 
 #Strict error filter version of good_MS.txt
-err_mask_strict = (df_err["percent_eL"]<=50) & (df_err["percent_eR"]<=7) & (df_err["elogg1"]<=0.05) & (df_err["percent_eTeff"]<=5) & (df_err["eFe/H1"]<=0.2)
+err_mask_strict = (df_err["percent_eL"]<=50) & (df_err["percent_eR"]<=7) & (df_err["elogg"]<=0.05) & (df_err["percent_eTeff"]<=5) & (df_err["eFeH"]<=0.2)
 df_strict_MS = df_all6_MS[err_mask_strict]
 df_strict_MS.to_csv("DataExploring/strict_MS.txt", index=False, na_rep="NA", sep="\t")
 
@@ -133,10 +136,10 @@ print("All 6 MS, err cleaned, no fills: ", len(df_no_fills))
 logomatic(df_good_MS, "L")
 logomatic(df_good_MS, "Teff")
 
-features = ["L", "logL", "Fe/H", "Teff", "logTeff", "logg"]
+features = ["L", "logL", "FeH", "Teff", "logTeff", "logg"]
 for f in features:
     savepath = "DataExploring/goodMSspreads/"+f+"_MS_spread.pdf"
-    if f == "Fe/H":
+    if f == "FeH":
         savepath = "DataExploring/goodMSspreads/FeH_MS_spread.pdf"
     spreadomatic(df_good_MS, f, savepath)
 
@@ -184,15 +187,15 @@ ax[1,0].set_ylabel("Number")
 ax[1,0].set_xlabel("% Error")
 #ax[1,0].legend()
 
-ax[1,1].hist(df_good_errs["elogg1"], bins='auto')
+ax[1,1].hist(df_good_errs["elogg"], bins='auto')
 #ax[1,1].vlines(0.05,0,220,linestyle='--',color='r',label="0.05dex")
 ax[1,1].set_title("log(g)")
 ax[1,1].set_xlabel("Error (dex)")
 #ax[1,1].legend()
 
-ax[1,2].hist(df_good_errs["eFe/H1"], bins='auto')
+ax[1,2].hist(df_good_errs["eFeH"], bins='auto')
 #ax[1,2].vlines(.15,0,250,linestyle='--',color='r',label="0.15dex")
-ax[1,2].set_title("Fe/H")
+ax[1,2].set_title("FeH")
 ax[1,2].set_xlabel("Error (dex)")
 #ax[1,2].legend()
 

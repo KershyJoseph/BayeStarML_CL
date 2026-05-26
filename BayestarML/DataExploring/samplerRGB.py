@@ -8,8 +8,8 @@ import seaborn as sns
 
 df = pd.read_csv("DataExploring/datos_todos_v20261905.txt", sep="\t", comment="#")
 
-check_params1 = ["eM1", "eR1", "elogg1", "eL1", "eFe/H1", "eTeff1"]
-check_params2 = ["eM2", "eR2", "elogg2", "eL2", "eFe/H2", "eTeff2"]
+check_params1 = ["eM1", "eR1", "elogg1", "eL1", "eFeH1", "eTeff1"]
+check_params2 = ["eM2", "eR2", "elogg2", "eL2", "eFeH2", "eTeff2"]
 
 df_all6_RGB = df[(df["class"]=="RGB") & 
                 (df["well_detached"]!=False) &
@@ -23,9 +23,9 @@ print("All 6 RGB:", len(df_all6_RGB))
 
 #adapted from Max
 #get mean errors for non-symmetric ones
-df1 = df_all6_RGB[['eTeff1', 'elogg1', 'eFe/H1', 'eL1', 'eM1', 'eR1']].copy()
-df2 = df_all6_RGB[['eTeff2', 'elogg2', 'eFe/H2', 'eL2', 'eM2', 'eR2']].copy()
-df2.columns = ['eTeff1', 'elogg1', 'eFe/H1', 'eL1', 'eM1', 'eR1']
+df1 = df_all6_RGB[['eTeff1', 'elogg1', 'eFeH1', 'eL1', 'eM1', 'eR1']].copy()
+df2 = df_all6_RGB[['eTeff2', 'elogg2', 'eFeH2', 'eL2', 'eM2', 'eR2']].copy()
+df2.columns = ['eTeff1', 'elogg1', 'eFeH1', 'eL1', 'eM1', 'eR1']
 df_err = (df1 + df2) / 2
 #get percentage errors for M, R, L
 df_err["percent_eL"] = 100 * df_err["eL1"] / df_all6_RGB["L"]
@@ -33,7 +33,7 @@ df_err["percent_eM"] = 100 * df_err["eM1"] / df_all6_RGB["M"]
 df_err["percent_eR"] = 100 * df_err["eR1"] / df_all6_RGB["R"]
 df_err["percent_eTeff"] = 100 * df_err["eTeff1"] / df_all6_RGB["Teff"]
 #make mask
-err_mask = (df_err["percent_eL"]<=50) & (df_err["eTeff1"]>30) #& (df_err["percent_eR"]<=25)# & (df_err["percent_eM"]<=7) & (df_err["elogg1"]<=0.05) & (df_err["eFe/H1"]<=0.15)
+err_mask = (df_err["percent_eL"]<=50) & (df_err["eTeff1"]>30) #& (df_err["percent_eR"]<=25)# & (df_err["percent_eM"]<=7) & (df_err["elogg1"]<=0.05) & (df_err["eFeH1"]<=0.15)
 
 df_good_RGB = df_all6_RGB[err_mask]
 print("Error filtered RGB stars:", len(df_good_RGB))
@@ -74,9 +74,9 @@ ax[1,1].set_title("log(g)")
 ax[1,1].set_xlabel("Error (dex)")
 ax[1,1].legend()
 
-ax[1,2].hist(df_good_errs["eFe/H1"], bins='auto')
+ax[1,2].hist(df_good_errs["eFeH1"], bins='auto')
 ax[1,2].vlines(.15,0,6200,linestyle='--',color='r',label="0.15dex")
-ax[1,2].set_title("Fe/H")
+ax[1,2].set_title("FeH")
 ax[1,2].set_xlabel("Error (dex)")
 ax[1,2].legend()
 
@@ -144,7 +144,7 @@ df_good_RGB["elogR2"] = df_good_RGB["logR"] - np.log10(df_good_RGB["R"] - df_goo
 df_good_RGB = df_good_RGB[df_good_RGB["M"]<=2.5]
 
 #see what spread is like in variables
-for col in ["M", "R", "logR", "logg", "logL", "L", "Fe/H", "Teff"]:
+for col in ["M", "R", "logR", "logg", "logL", "L", "FeH", "Teff"]:
     print("--------",col,"---------")
     print("Min. - ", df_good_RGB[col].min())
     print("Max. - ", df_good_RGB[col].max())

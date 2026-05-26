@@ -17,17 +17,17 @@ col_specs = [
     (333, 342), #L err
     (411, 418), #Teff
     (419, 425), #Teff err
-    (690, 696), #Fe/H
-    (697, 703), #Fe/H err
+    (690, 696), #FeH
+    (697, 703), #FeH err
 ]
 
-col_names = ["ID", "component", "obj_type", "R", "eR", "logg", "elogg", "M", "eM", "L", "eL", "Teff", "eTeff", "Fe/H", "eFe/H"]
+col_names = ["ID", "component", "obj_type", "R", "eR", "logg", "elogg", "M", "eM", "L", "eL", "Teff", "eTeff", "FeH", "eFeH"]
 
 plato_df = pd.read_fwf("Datasets/benchmark_stars_20260420.dat", colspecs=col_specs, names=col_names)
 print(plato_df)
 print("Total stars: ", len(plato_df))
 
-check_params = ["eM", "eR", "elogg", "eL", "eFe/H", "eTeff"]
+check_params = ["eM", "eR", "elogg", "eL", "eFeH", "eTeff"]
 
 df_plato_all6 = plato_df[(plato_df[check_params].notna().all(axis=1)) & 
                          (plato_df[check_params].gt(0).any(axis=1))]
@@ -40,7 +40,7 @@ print("MS stars with all 6: ", len(df_plato_all6_MS))
 #could verify this with a quick HR plot...
 
 df_plato_goodMS = df_plato_all6_MS[["ID", "component", "M", "eM", "R", "eR", "Teff", "eTeff",
-                                   "L", "eL", "logg", "elogg", "Fe/H", "eFe/H"]]
+                                   "L", "eL", "logg", "elogg", "FeH", "eFeH"]]
 
 #check for duplicates in my database
 df_us = pd.read_csv("DataExploring/datos_todos_v20261905.txt", sep="\t", comment="#")

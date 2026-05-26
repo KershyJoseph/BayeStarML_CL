@@ -14,7 +14,7 @@ from numpy import absolute
 
 #load data
 df = read_csv("Datasets/datos_tot_v20180517_adapted.txt", sep="\t", comment="#")
-training_fs = ["Teff", "Fe/H", "L", "logg"]
+training_fs = ["Teff", "FeH", "L", "logg"]
 X, y = df[training_fs], df["R"] #swap for M/R
 
 #make model
