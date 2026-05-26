@@ -60,11 +60,11 @@ def mass_train_GP(data: Dataset, M_mean, M_var, draws=1000, advi=False, target_a
         print("ELBO:\n", approx.hist)
 
         trace.extend(pm.compute_log_likelihood(trace, model=model, var_names='y'))
-        trace.to_netcdf("Outputs/Testing/GP_mass_testing/GPmass_ADVI_test"+hyperp_str+".nc")
+        trace.to_netcdf("Outputs707MS/Testing/GP_mass_testing/GPmass_ADVI_test"+hyperp_str+".nc")
 
     else:
         trace = train(model,
-                  "Outputs/GPmass/GPmass"+hyperp_str+".nc",
+                  "Outputs707MS/GPmass/GPmass"+hyperp_str+".nc",
                   draw=draws, chains=4, target_accept=target_accept, max_treedepth=20)
 
     r_hat_values = az.rhat(trace)
@@ -90,7 +90,7 @@ def mass_train_GP(data: Dataset, M_mean, M_var, draws=1000, advi=False, target_a
     print('MARD', mard(data.unorm_mass, means))
     print('MRD', mrd(data.unorm_mass, means))
 
-    model_pred_plotter(data.unorm_mass, means, stds, 'Mass', 'GP', 'Outputs/GPmass', hyperp_str)
+    model_pred_plotter(data.unorm_mass, means, stds, 'Mass', 'GP', 'Outputs707MS/GPmass', hyperp_str)
 
 def radius_train_GP(data: Dataset, M_mean, M_var, draws=1000, advi=False, target_accept=.95):
     """Function to train GP on radius prediction
@@ -107,11 +107,11 @@ def radius_train_GP(data: Dataset, M_mean, M_var, draws=1000, advi=False, target
         print("ELBO:\n", approx.hist)
 
         trace.extend(pm.compute_log_likelihood(trace, model=model, var_names='y'))
-        trace.to_netcdf("Outputs/Testing/GP_rad_testing/GP_ADVI_rad_"+hyperp_str+".nc")
+        trace.to_netcdf("Outputs707MS/Testing/GP_rad_testing/GP_ADVI_rad_"+hyperp_str+".nc")
 
     else:
         trace = train(model,
-                  "Outputs/GPrad/GPrad_"+hyperp_str+".nc",
+                  "Outputs707MS/GPrad/GPrad_"+hyperp_str+".nc",
                   draw=draws, chains=4, target_accept=target_accept,
                   max_treedepth=20)
 
@@ -138,7 +138,7 @@ def radius_train_GP(data: Dataset, M_mean, M_var, draws=1000, advi=False, target
     print('MARD', mard(data.unorm_radius, means))
     print('MRD', mrd(data.unorm_radius, means))
 
-    model_pred_plotter(data.unorm_radius, means, stds, 'Radius', 'GP', 'Outputs/GPrad', hyperp_str)
+    model_pred_plotter(data.unorm_radius, means, stds, 'Radius', 'GP', 'Outputs707MS/GPrad', hyperp_str)
 
 def mass_train_SIMPLE_NN(data: Dataset, n_hidden=5, draw=1000, chains=4, target_accept=.95):
     """
@@ -151,7 +151,7 @@ def mass_train_SIMPLE_NN(data: Dataset, n_hidden=5, draw=1000, chains=4, target_
     model = hbnn.HBNN_M4_simpler(data.x_train, mass_train, data.x_train_er, data.emass_train, n_hidden)
     model.debug(verbose=True)
     trace = train(model,
-                  "Outputs/NNmass/simpleNN_mass"+hyperp_str+".nc",
+                  "Outputs707MS/NNmass/simpleNN_mass"+hyperp_str+".nc",
                   draw=draw, chains=chains,
                   target_accept=target_accept, max_treedepth=20)
 
@@ -177,7 +177,7 @@ def mass_train_SIMPLE_NN(data: Dataset, n_hidden=5, draw=1000, chains=4, target_
     print('MARD', mard(data.unorm_mass, means))
     print('MRD', mrd(data.unorm_mass, means))
 
-    model_pred_plotter(data.unorm_mass, means, stds, 'Mass', 'simpleNN', 'Outputs/NNmass', hyperp_str)
+    model_pred_plotter(data.unorm_mass, means, stds, 'Mass', 'simpleNN', 'Outputs707MS/NNmass', hyperp_str)
 
 def mass_train_NN(data: Dataset, n_hidden=15, draw=1000, chains=4, target_accept=.95):
     """Function to train NN on mass prediction
@@ -188,7 +188,7 @@ def mass_train_NN(data: Dataset, n_hidden=15, draw=1000, chains=4, target_accept
     model = hbnn.HBNN_M4(data.x_train, mass_train, data.x_train_er, data.emass_train, n_hidden)
     model.debug(verbose=True)
     trace = train(model,
-                  "Outputs/NNmass/NNmass_"+hyperp_str+"nrns.nc",
+                  "Outputs707MS/NNmass/NNmass_"+hyperp_str+"nrns.nc",
                   draw=draw, chains=chains, target_accept=target_accept,
                   max_treedepth=20)
 
@@ -214,7 +214,7 @@ def mass_train_NN(data: Dataset, n_hidden=15, draw=1000, chains=4, target_accept
     print('MARD', mard(data.unorm_mass, means))
     print('MRD', mrd(data.unorm_mass, means))
 
-    model_pred_plotter(data.unorm_mass, means, stds, 'Mass', 'NN', 'Outputs/NNmass', hyperp_str)
+    model_pred_plotter(data.unorm_mass, means, stds, 'Mass', 'NN', 'Outputs707MS/NNmass', hyperp_str)
 
 def radius_train_NN(data: Dataset, n_hidden, draw=1000, chains=4, target_accept=.95, advi=False): 
     """Function to train NN on radius prediction
@@ -230,10 +230,10 @@ def radius_train_NN(data: Dataset, n_hidden, draw=1000, chains=4, target_accept=
         print("ELBO:\n", approx.hist)
 
         trace.extend(pm.compute_log_likelihood(trace, model=model, var_names='y'))
-        trace.to_netcdf("Outputs/NN_rad_testing/NN_ADVI_rad_"+hyperp_str+".nc")
+        trace.to_netcdf("Outputs707MS/NN_rad_testing/NN_ADVI_rad_"+hyperp_str+".nc")
     else:
         trace = train(model,
-                "Outputs/RGB/NNrad"+hyperp_str+"nrns.nc",
+                "Outputs707MS/RGB/NNrad"+hyperp_str+"nrns.nc",
                 draw=draw, chains=chains, max_treedepth=20, target_accept=target_accept)
 
     r_hat_values = az.rhat(trace)
@@ -258,7 +258,7 @@ def radius_train_NN(data: Dataset, n_hidden, draw=1000, chains=4, target_accept=
     print('MARD', mard(data.unorm_radius, means))
     print('MRD', mrd(data.unorm_radius, means))
 
-    model_pred_plotter(data.unorm_mass, means, stds, 'Radius', 'NNrad', 'Outputs/NNrad', hyperp_str)
+    model_pred_plotter(data.unorm_mass, means, stds, 'Radius', 'NNrad', 'Outputs707MS/NNrad', hyperp_str)
 
 if __name__ == '__main__':
     #pick which function(s) to run when file is run
@@ -294,7 +294,7 @@ if __name__ == '__main__':
 
     #HAVE YOU UPDATED CONSTANTS.PY AND CHECKED OUTPUT FILE PATHS AND LOGL
 
-    print("Latest goodMS with high mass filter. Also logL")
+    print("Latest goodMS - 707 - with high mass filter. Also logL")
     print("::::::::::::::::::::::::::::::::::::::")
 
     process = psutil.Process()
@@ -303,8 +303,8 @@ if __name__ == '__main__':
     start_time_CPU = time.process_time()
     start_time = time.time()
 
-    print("bigGPrun - radius - MS stars. LogL! 50_20_1000, target_accept=0.99, TD 20.")
-    radius_train_GP(dataset, 50, 20, 1000, target_accept=0.99)
+    print("bigGPrun - radius - MS stars. LogL! 50_20_1000, target_accept=0.95, TD 20.")
+    radius_train_GP(dataset, 50, 20, 1000, target_accept=0.95)
 
     end_time_CPU = time.process_time()
     #from Gemini

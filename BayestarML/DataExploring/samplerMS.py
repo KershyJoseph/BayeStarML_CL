@@ -6,24 +6,24 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-def err_maskomatic(df, L=50):
+def err_maskomatic(df, L=0.5):
     """Return an error mask on a df with given limits. And df of average errors.
     L - percent L err limit
     """
     #adapted from Max
     #get mean errors for non-symmetric ones
     df1 = df[
-        ['eTeff1', 'elogg1', 'eFeH1', 'eL1', 'eM1', 'eR1']
+        ['eTeff1', 'elogg1', 'eFeH1', 'eL1', 'elogL1', 'eM1', 'eR1']
         ].copy()
     df2 = df[
-        ['eTeff2', 'elogg2', 'eFeH2', 'eL2', 'eM2', 'eR2']
+        ['eTeff2', 'elogg2', 'eFeH2', 'eL2', 'elogL2', 'eM2', 'eR2']
         ].copy()
-    df2.columns = ['eTeff1', 'elogg1', 'eFeH1', 'eL1', 'eM1', 'eR1']
+    df1.columns = ['eTeff', 'elogg', 'eFeH', 'eL', 'elogL', 'eM', 'eR']
+    df2.columns = ['eTeff', 'elogg', 'eFeH', 'eL', 'elogL', 'eM', 'eR']
     df_err = (df1 + df2) / 2
-    mapper = {'eTeff1': 'eTeff', 'elogg1': 'elogg', 'eFeH1': 'eFeH', 'eL1': 'eL', 'eM1': 'eM', 'eR1': 'eR'}
-    df_err.rename(columns = mapper, inplace=True)
     #get percentage errors for M, R, L
     df_err["percent_eL"] = 100 * df_err["eL"] / df["L"]
+    df_err["percent_elogL"] = np.abs(100 * df_err["elogL"] / df["logL"]) #some are /0!
     df_err["percent_eM"] = 100 * df_err["eM"] / df["M"]
     df_err["percent_eR"] = 100 * df_err["eR"] / df["R"]
     df_err["percent_eTeff"] = 100 * df_err["eTeff"] / df["Teff"]
@@ -31,7 +31,7 @@ def err_maskomatic(df, L=50):
     df_err["percent_eFeH"] = 100 * df_err["eFeH"] / df["FeH"] #some are /0!
 
     #make mask
-    err_mask = (df_err["percent_eL"]<=L)# & (df_err["percent_eR"]<=7) & (df_err["elogg1"]<=0.05) & (df_err["percent_eTeff"]<=5) & (df_err["eFeH1"]<=0.2)
+    err_mask = (df_err["elogL"]<=L)# & (df_err["percent_eR"]<=7) & (df_err["elogg1"]<=0.05) & (df_err["percent_eTeff"]<=5) & (df_err["eFeH1"]<=0.2)
 
     return df_err, err_mask
 
@@ -106,6 +106,10 @@ df_all6beta_MS = df[(df["class"]=="MS") &
 df_all6_MS.to_csv("DataExploring/all6_MS.txt", index=False, na_rep="NA", sep="\t")
 print("All 6 MS: ", len(df_all6_MS))
 
+#add logL cols to df_all6_MS and df_all6beta_MS
+logomatic(df_all6_MS, "L")
+logomatic(df_all6beta_MS, "L")
+
 #err cleaned MS - 'goodMS'
 df_err, err_mask = err_maskomatic(df_all6_MS)
 df_all6_MS_with_err = pd.concat([df_all6_MS, df_err], axis=1)
@@ -133,7 +137,6 @@ df_no_fills.to_csv("DataExploring/good_MS_no_fills.txt",
 print("All 6 MS, err cleaned, no fills: ", len(df_no_fills))
 
 #Try logL and logTeff columns and see how logTeff and logL errors look
-logomatic(df_good_MS, "L")
 logomatic(df_good_MS, "Teff")
 
 features = ["L", "logL", "FeH", "Teff", "logTeff", "logg"]
@@ -159,7 +162,7 @@ plt.close()
 
 #------------------------------
 #see err dist
-fig, ax = plt.subplots(2,4)
+fig, ax = plt.subplots(2,3)
 
 ax[0,0].hist(df_good_errs["percent_eM"], bins='auto')
 ax[0,0].vlines(7,0,150,linestyle='--',color='r',label="7%")
@@ -174,9 +177,9 @@ ax[0,1].set_title("R")
 ax[0,1].set_xlabel("% Error")
 #ax[0,1].legend()
 
-ax[0,2].hist(df_good_errs["percent_eL"], bins='auto')
-ax[0,2].vlines(10,0,250,linestyle='--',color='r',label="10%")
-ax[0,2].set_title("L")
+ax[0,2].hist(df_good_errs["elogL"], bins='auto')
+ax[0,2].vlines(0.05,0,250,linestyle='--',color='r',label="0.05")
+ax[0,2].set_title("logL")
 ax[0,2].set_xlabel("% Error")
 #ax[0,2].legend()
 
