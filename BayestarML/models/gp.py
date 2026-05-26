@@ -206,7 +206,7 @@ def make_inducing_points(
         km.fit(X, sample_weight=sample_weight)
         Xu_km = km.cluster_centers_
         Xu_fp = _farthest_point_sampling(X, M_fp, seed=seed)
-        Xu = deduplicate(np.vstack(Xu_km, Xu_fp)) #in case the two methods pick the same IP
+        Xu = deduplicate(np.vstack([Xu_km, Xu_fp])) #in case the two methods pick the same IP
     else:  # 'fps'
         Xu = _farthest_point_sampling(X, M, seed=seed)
 
