@@ -258,7 +258,7 @@ def sparse_fully_heteroscedastic_gp(
 
     # Inducing points for mean GP
     Xu = make_inducing_points(X, X_er=X_err, M=M_mean,
-                              method="kmeans",
+                              method="blend",
                               add_bounds=True,
                               weight_by_error=True,
                               seed=seed)
@@ -266,7 +266,7 @@ def sparse_fully_heteroscedastic_gp(
     X_var = np.hstack([X[:,:2], X_err[:,:2]])  # use only Teff and logg to model log variance
     # X_var = X_err 
     Xu_var = make_inducing_points(X_var, M=M_var,
-                                  method="kmeans",
+                                  method="blend",
                                   add_bounds=True,
                                   weight_by_error=False,  # maybe off here
                                   seed=seed)
