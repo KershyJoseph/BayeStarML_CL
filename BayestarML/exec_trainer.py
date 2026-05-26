@@ -17,8 +17,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_absolute_error
 
-import multiprocessing as mp
-import tracemalloc
+#import multiprocessing as mp
+#import tracemalloc
 import psutil
 import time
 from dataclasses import dataclass
@@ -262,7 +262,7 @@ def radius_train_NN(data: Dataset, n_hidden, draw=1000, chains=4, target_accept=
 
 if __name__ == '__main__':
     #pick which function(s) to run when file is run
-    mp.set_start_method('spawn', force=True)
+    #mp.set_start_method('spawn', force=True)
 
     #load data
     df_train = get_dataset('DataExploring/good_MS.txt', logL=True)
