@@ -191,5 +191,5 @@ def model_pred_plotter(y_true, y_pred, y_pred_err,
     plt.ylabel('Residual '+target)
     plt.title(model+' Prediction Residuals')
     plt.legend()
-    plt.savefig(save_folder+"/"+model+target+"_preds_"+hyperps+".pdf")
+    plt.savefig(save_folder+"/"+model+target+"_res_"+hyperps+".pdf")
     plt.close()
