@@ -6,7 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-def err_maskomatic(df, L=0.5):
+def err_maskomatic(df, L=.5):
     """Return an error mask on a df with given limits. And df of average errors.
     L - percent L err limit
     """
@@ -260,4 +260,5 @@ plt.savefig("DataExploring/MS_L_check.pdf")
 print("Non-physical Ls, assuming R and Teff are stellar:\n", df_bad_Ls)
 
 df_good_MS.to_csv("DataExploring/good_MS.txt", index=False, na_rep="NA", sep="\t")
+print(len(df_good_MS))
 diagnostics(df_good_MS, "Good MS")

@@ -263,6 +263,7 @@ def run_stack(
             random_seed=random_seed,
             target_accept=0.9,
             progressbar=True,
+            nuts_sampler="nutpie"
         )
     #Some cheeky diagnostics
     r_hat_values = az.rhat(trace)
