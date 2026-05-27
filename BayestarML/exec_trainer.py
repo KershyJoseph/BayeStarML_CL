@@ -84,7 +84,7 @@ def mass_train_GP(data: Dataset, M_mean, M_var, draws=1000, advi=False, target_a
 def radius_train_GP(data: Dataset, M_mean, M_var, draws=1000, advi=False, target_accept=.95):
     """Function to train GP on radius prediction
     """
-    hyperp_str = "NUTPIE_MS"+str(M_mean)+"_"+str(M_var)+"_"+str(draws)+"_"+str(target_accept)
+    hyperp_str = "MS"+str(M_mean)+"_"+str(M_var)+"_"+str(draws)+"_"+str(target_accept)
 
     model, μ_gp, lg_σ_gp, Xu, Xu_er = gp.sparse_fully_heteroscedastic_gp(data.x_train,
                                                                         data.x_train_er,
@@ -192,7 +192,7 @@ def radius_train_NN(data: Dataset, n_hidden, draw=1000, chains=4, target_accept=
         trace.to_netcdf("Outputs707MS/NN_rad_testing/NN_ADVI_rad_"+hyperp_str+".nc")
     else:
         trace = train(model,
-                "Outputs707MS/RGB/NNrad"+hyperp_str+"nrns.nc",
+                "Outputs707MS/NNrad/NNrad"+hyperp_str+"nrns.nc",
                 draw=draw, chains=chains, max_treedepth=20, target_accept=target_accept)
 
     pred, lpd = sample_post_pred_HBNN_para(trace, data.x_test, data.x_test_err, n_hidden, 4, "Radius")
@@ -242,9 +242,6 @@ if __name__ == '__main__':
 
     #HAVE YOU UPDATED CONSTANTS.PY AND CHECKED OUTPUT FILE PATHS AND LOGL
 
-    print("NUTPIE TEST")
-    print("::::::::::::::::::::::::::::::::::::::")
-
     print("Latest goodMS - 707 - with high mass filter. Also logL")
     print("::::::::::::::::::::::::::::::::::::::")
 
@@ -254,8 +251,8 @@ if __name__ == '__main__':
     start_time_CPU = time.process_time()
     start_time = time.time()
 
-    print("bigGPrun - radius - MS stars. LogL! 50_20_1000, target_accept=0.95, TD 20.")
-    radius_train_GP(dataset, 50, 20, 1000, target_accept=0.95)
+    print("bigGPmass - radius - MS stars. LogL! 50_20_1000, target_accept=0.95, TD 20.")
+    mass_train_GP(dataset, 50, 20, 1000, target_accept=0.95)
 
     end_time_CPU = time.process_time()
     #from Gemini
@@ -272,32 +269,33 @@ if __name__ == '__main__':
 
     print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
 
-    # start_time_CPU2 = time.process_time()
-    # start_time2 = time.time()
+    start_time_CPU2 = time.process_time()
+    start_time2 = time.time()
 
-    # print("bigNNrun - mass - goodMS stars. With L in log space. 16, 2000, 4, target_accept=0.99. 20TD still.")
-    # mass_train_NN(dataset, 16, 2000, target_accept=0.99)
+    print("bigNNrun - mass - goodMS stars. With L in log space. 16, 2000, 4, target_accept=0.95. 20TD still.")
+    mass_train_NN(dataset, 16, 2000, target_accept=0.95)
 
-    # end_time_CPU2 = time.process_time()
+    end_time_CPU2 = time.process_time()
 
-    # mem2 = process.memory_info().rss / 1024**2
-    # print(f"Peak Memory: {(mem2-mem1):.2f} MB")
-    # print(f"CPU time used: {(end_time_CPU2-start_time_CPU2):.5f} s")
-    # print(f"Total run time: {time.time()-start_time2:.5f} s")
+    mem2 = process.memory_info().rss / 1024**2
+    print(f"Peak Memory: {(mem2-mem1):.2f} MB")
+    print(f"CPU time used: {(end_time_CPU2-start_time_CPU2):.5f} s")
+    print(f"Total run time: {time.time()-start_time2:.5f} s")
 
-    # print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
+    print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
 
-    # start_time_CPU3 = time.process_time()
-    # start_time3 = time.time()
+    start_time_CPU3 = time.process_time()
+    start_time3 = time.time()
 
-    # print("bigNNrun - radius - goodMS stars. With L in log space. 16, 2000, 4, target_accept=0.99. 20TD still.")
-    # radius_train_NN(dataset, 16, 2000, target_accept=0.99)
+    print("bigNNrun - radius - goodMS stars. With L in log space. 16, 2000, 4, target_accept=0.95. 20TD still.")
+    radius_train_NN(dataset, 16, 2000, target_accept=0.95)
 
-    # end_time_CPU3 = time.process_time()
+    end_time_CPU3 = time.process_time()
 
-    # mem3 = process.memory_info().rss / 1024**2
-    # print(f"Peak Memory: {(mem3-mem2):.2f} MB")
-    # print(f"CPU time used: {(end_time_CPU3-start_time_CPU3):.5f} s")
-    # print(f"Total run time: {time.time()-start_time3:.5f} s")
+    mem3 = process.memory_info().rss / 1024**2
+    print(f"Peak Memory: {(mem3-mem2):.2f} MB")
+    print(f"CPU time used: {(end_time_CPU3-start_time_CPU3):.5f} s")
+    print(f"Total run time: {time.time()-start_time3:.5f} s")
 
-    # print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
+    print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
+    print("Salve Regina")

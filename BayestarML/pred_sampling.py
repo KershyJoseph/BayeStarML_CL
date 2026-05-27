@@ -860,11 +860,8 @@ def sample_pred_BART(model, X, X_er, target, draws=1000, chains=2):
     """
     print("-----------Start BART Sampling------------")
     with model:
-        init_vals = pm.init_nuts(init="jitter+adapt_diag", chains=chains)
-
         trace = pm.sample(draws=draws, tune=int(2*draws), chains=chains#, 
                           #nuts_sampler="nutpie",
-                          #initvals = init_vals
                           )
         trace.extend(pm.compute_log_likelihood(trace))
         # pp = pm.sample_posterior_predictive(trace)
