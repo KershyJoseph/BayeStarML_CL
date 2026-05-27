@@ -105,11 +105,14 @@ def train(model, filename, draw=1000, chains=2,
     arviz.InferenceData
         Posterior samples with computed log-likelihoods.
     """
+    init_vals = pm.init_nuts(model=model, init="jitter+adapt_diag", chains=chains)
+
     print('target_accept=', target_accept)
-    trace = pm.sample(draws=draw, tune=int(1.5*draw), chains=chains,
+    trace = pm.sample(draws=draw, tune=int(2*draw), chains=chains,
                       cores=chains, model=model, target_accept=target_accept,
-                      max_treedepth=max_treedepth#,
-                      #nuts_sampler="nutpie"
+                      max_treedepth=max_treedepth,
+                      nuts_sampler="nutpie",
+                      initvals=init_vals
                       )
 
     with pd.option_context("display.max_rows", None):

@@ -84,7 +84,7 @@ def mass_train_GP(data: Dataset, M_mean, M_var, draws=1000, advi=False, target_a
 def radius_train_GP(data: Dataset, M_mean, M_var, draws=1000, advi=False, target_accept=.95):
     """Function to train GP on radius prediction
     """
-    hyperp_str = "MS"+str(M_mean)+"_"+str(M_var)+"_"+str(draws)+"_"+str(target_accept)
+    hyperp_str = "NUTPIE_MS"+str(M_mean)+"_"+str(M_var)+"_"+str(draws)+"_"+str(target_accept)
 
     model, μ_gp, lg_σ_gp, Xu, Xu_er = gp.sparse_fully_heteroscedastic_gp(data.x_train,
                                                                         data.x_train_er,
@@ -241,6 +241,9 @@ if __name__ == '__main__':
         )
 
     #HAVE YOU UPDATED CONSTANTS.PY AND CHECKED OUTPUT FILE PATHS AND LOGL
+
+    print("NUTPIE TEST")
+    print("::::::::::::::::::::::::::::::::::::::")
 
     print("Latest goodMS - 707 - with high mass filter. Also logL")
     print("::::::::::::::::::::::::::::::::::::::")
