@@ -1,0 +1,195 @@
+Initializing NUTS using jitter+adapt_diag...
+Multiprocess sampling (4 chains in 4 jobs)
+NUTS: [log_ls, eta, u_rotated_μ, log_ls_v, eta_var, alpha_log_var, u_rotated_log_var_f]
+6013.79056880734 4.194425565880734 -0.0722354128440367 0.3474829129461819 1.1630000366972477 1.5145330458715596
+828.5709209400139 0.26409162887226345 0.20715231760925246 0.6662589985155178 0.3049096296859578 0.5442063616548278
+Latest goodMS with high mass filter. Also logL
+::::::::::::::::::::::::::::::::::::::
+bigGPrun - radius - MS stars. LogL! 50_20_1000, target_accept=0.99, TD 20.
+target_accept= 0.99
+                                                                                                                        
+  Progress                         Draws   Divergences   Step size   Grad evals   Sampling Speed   Elapsed   Remaining  
+ ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── 
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━   2500    0             0.00        4095         12.00 s/draws    8:19:53   0:00:00    
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━   2500    3             0.00        4095         11.17 s/draws    7:45:04   0:00:00    
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━   2500    2             0.00        4095         12.08 s/draws    8:23:03   0:00:00    
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━   2500    1             0.00        4095         12.75 s/draws    8:50:51   0:00:00    
+                                                                                                                        
+Sampling 4 chains for 1_500 tune and 1_000 draw iterations (6_000 + 4_000 draws total) took 31864 seconds.
+There were 6 divergences after tuning. Increase `target_accept` or reparameterize.
+The rhat statistic is larger than 1.01 for some parameters. This indicates problems during sampling. See https://arxiv.org/abs/1903.08008 for details
+The effective sample size per chain is smaller than 100 for some parameters.  A higher number is needed for reliable rhat and ess computation. See https://arxiv.org/abs/1903.08008 for details
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/pymc/model/fgraph.py:163: UserWarning: Detected variables likely created by GP objects. Further use of these old GP objects should be avoided as it may reintroduce variables from the old model. See issue: https://github.com/pymc-devs/pymc/issues/6883
+  warnings.warn(
+AZ Stats for ESS Bulk < 400:
+                      mean     sd  hdi_3%  ...  ess_bulk  ess_tail  r_hat
+log_ls[3]           0.499  0.139   0.163  ...     153.0     138.0   1.04
+ls[3]               1.662  0.215   1.168  ...     153.0     138.0   1.04
+u_rotated_μ[2]     -0.033  0.037  -0.115  ...     178.0     175.0   1.04
+u_rotated_μ[3]     -0.004  0.051  -0.126  ...     183.0     145.0   1.03
+log_var[501]       -6.899  2.984 -11.478  ...     251.0     405.0   1.03
+u_rotated_μ[1]     -0.739  0.177  -1.066  ...     251.0     450.0   1.02
+σ_f[501]            0.105  0.210   0.001  ...     251.0     405.0   1.03
+u_μ[0]             -2.194  0.941  -3.958  ...     255.0     823.0   1.02
+mu_log_var_f[501]  -3.623  3.017  -8.561  ...     257.0     414.0   1.02
+u_log_var_f[15]    -3.623  3.017  -8.561  ...     257.0     414.0   1.02
+mu_μ[362]          -1.803  0.030  -1.859  ...     263.0     315.0   1.03
+log_var[52]        -9.752  0.709 -11.320  ...     275.0     217.0   1.02
+σ_f[52]             0.008  0.002   0.003  ...     275.0     217.0   1.02
+u_rotated_μ[27]     0.614  0.735  -0.759  ...     279.0     630.0   1.03
+σ_f[309]            0.007  0.002   0.002  ...     281.0     210.0   1.02
+log_var[309]      -10.133  0.750 -11.574  ...     281.0     210.0   1.02
+σ_f[360]            0.007  0.002   0.002  ...     282.0     210.0   1.01
+log_var[360]      -10.122  0.753 -11.555  ...     282.0     210.0   1.02
+σ_f[285]            0.006  0.002   0.002  ...     290.0     208.0   1.01
+u_rotated_μ[46]    -0.196  0.498  -1.185  ...     290.0     239.0   1.02
+log_var[285]      -10.231  0.733 -11.613  ...     290.0     208.0   1.02
+σ_f[531]            0.014  0.003   0.007  ...     296.0     217.0   1.01
+log_var[531]       -8.639  0.527  -9.697  ...     296.0     217.0   1.02
+mu_μ[501]          -2.502  0.276  -2.697  ...     303.0     438.0   1.03
+u_μ[39]            -2.502  0.276  -2.697  ...     303.0     438.0   1.03
+u_μ[1]             -1.820  0.009  -1.837  ...     305.0     490.0   1.02
+σ_f[162]            0.006  0.002   0.002  ...     312.0     213.0   1.01
+log_var[162]      -10.249  0.722 -11.665  ...     312.0     213.0   1.02
+log_var[367]       -7.779  0.467  -8.672  ...     312.0     255.0   1.02
+σ_f[367]            0.021  0.005   0.012  ...     312.0     255.0   1.02
+log_var[20]        -9.255  0.899 -11.085  ...     318.0     306.0   1.02
+σ_f[20]             0.011  0.005   0.003  ...     318.0     306.0   1.02
+eta                 2.337  0.449   1.567  ...     319.0     820.0   1.02
+ls_v[1]             2.015  0.260   1.532  ...     323.0     557.0   1.02
+log_ls_v[1]         0.692  0.131   0.441  ...     323.0     557.0   1.02
+mu_μ[140]          -0.708  0.035  -0.773  ...     324.0     237.0   1.02
+σ_f[457]            0.010  0.004   0.002  ...     327.0     283.0   1.02
+log_var[457]       -9.370  0.866 -11.008  ...     327.0     283.0   1.02
+u_rotated_μ[21]     0.531  0.378  -0.097  ...     346.0     605.0   1.01
+σ_f[294]            0.014  0.004   0.006  ...     348.0     292.0   1.01
+log_var[294]       -8.633  0.673  -9.964  ...     348.0     292.0   1.02
+mu_μ[218]          -1.162  0.024  -1.208  ...     352.0     448.0   1.02
+mu_μ[341]          -2.277  0.004  -2.286  ...     352.0     253.0   1.02
+u_rotated_μ[6]      0.306  0.122   0.056  ...     360.0     281.0   1.01
+log_var[378]       -7.619  0.626  -8.788  ...     361.0     416.0   1.02
+σ_f[378]            0.023  0.007   0.011  ...     361.0     416.0   1.02
+log_var[365]       -9.132  0.681 -10.569  ...     370.0     322.0   1.02
+σ_f[365]            0.011  0.004   0.004  ...     370.0     322.0   1.01
+log_var[441]       -7.304  0.463  -8.200  ...     371.0     414.0   1.02
+σ_f[441]            0.027  0.006   0.016  ...     371.0     414.0   1.02
+σ_f[411]            0.019  0.004   0.012  ...     373.0     261.0   1.01
+log_var[286]       -6.937  0.930  -8.658  ...     373.0     476.0   1.02
+σ_f[286]            0.035  0.016   0.009  ...     373.0     476.0   1.02
+log_var[411]       -7.987  0.399  -8.777  ...     373.0     261.0   1.01
+log_ls[0]           1.103  0.150   0.802  ...     376.0     659.0   1.01
+ls[0]               3.046  0.460   2.217  ...     376.0     659.0   1.01
+σ_f[307]            0.007  0.002   0.002  ...     382.0     230.0   1.01
+log_var[307]      -10.180  0.731 -11.435  ...     382.0     230.0   1.02
+log_var[489]       -9.610  0.703 -11.091  ...     390.0     343.0   1.01
+σ_f[489]            0.009  0.003   0.003  ...     390.0     343.0   1.01
+log_var[147]       -7.852  0.547  -8.977  ...     398.0     358.0   1.01
+σ_f[147]            0.020  0.005   0.010  ...     398.0     358.0   1.01
+
+[62 rows x 9 columns]
+Computing ... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are very different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are very different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+Sampling: [X_new_latent, X_var_new_latent, f_mu_pred, log_var_pred_latent, y_pred]
+[('log_ls', 1.0357532966121878), ('u_rotated_μ', 1.0359338859822207), ('log_ls_v', 1.0166788993915732), ('alpha_log_var', 1.0011734378023749), ('u_rotated_log_var_f', 1.0163609918934304), ('eta', 1.0155653775150255), ('eta_var', 1.0020854432588078), ('ls', 1.0357532966121878), ('u_μ', 1.027988498225352), ('mu_μ', 1.0279937074364904), ('ls_v', 1.0166788993915732), ('u_log_var_f', 1.0247873267799417), ('mu_log_var_f', 1.0247873733424446), ('log_var', 1.0268057596564442), ('σ_f', 1.0268057596564442)]
+Computed from 4000 posterior samples and 545 observations log-likelihood matrix.
+
+         Estimate       SE
+elpd_loo   647.16    38.22
+p_loo       89.22        -
+
+There has been a warning during the calculation. Please check the results.
+------
+
+Pareto k diagnostic values:
+                         Count   Pct.
+(-Inf, 0.70]   (good)      524   96.1%
+   (0.70, 1]   (bad)        13    2.4%
+   (1, Inf)   (very bad)    8    1.5%
+
+Sampling ... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00 / 0:00:03
+[0.10680252 0.06960537 0.02887272 0.02591061 0.0173542  0.05242779
+ 0.04620386 0.0482856  0.0342325  0.06971772 0.05123496 0.05472461
+ 0.0520269  0.05586243 0.01626512 0.07137052 0.04734156 0.0426796
+ 0.04299952 0.0342014  0.03017224 0.03774814 0.03874824 0.01617584
+ 0.01616956 0.04179418 0.03379034 0.03647309 0.04860182 0.03356219
+ 0.0515095  0.05622456 0.04690151 0.12511358 0.0440767  0.05743476
+ 0.03711879 0.08353297 0.03081162 0.03274429 0.015209   0.04058096
+ 0.26352722 0.0599566  0.03828041 0.03030961 0.01112849 0.0376141
+ 0.05126294 0.04473728 0.02596646 0.047775   0.05886203 0.05201561
+ 0.07369996 0.04979393 0.05570628 0.04246152 0.02997952 0.05567661
+ 0.09193305 0.17275332 0.28783468 0.05229357 0.0074759  0.05632021
+ 0.0404904  0.58058694 0.04691478 0.05422037 0.05809906 0.07326945
+ 0.0417226  0.06791161 0.03203204 0.04075971 0.0261912  0.06877123
+ 0.05696602 0.05664845 0.01818065 0.04625853 0.12275789 0.04205091
+ 0.06086609 0.0532607  0.05181524 0.02288119 0.05437793 0.057089
+ 0.02071385 0.05266249 0.04712887 0.04593215 0.05362072 0.02926835
+ 0.40126187 0.01136519 0.03971679 0.04162315 0.10975848 0.06150681
+ 0.06905886 0.04140932 0.04335855 0.19195071 0.05047693 0.0348529
+ 0.09400634 0.05622361 0.02362229 0.03753002 0.04228673 0.04092799
+ 0.05511032 0.05610812 0.10371973 0.04400502 0.14528933 0.06412448
+ 0.03929389 0.04868083 0.05137634 0.10371625 0.04817095 0.03475317
+ 0.06445588 0.05994473 0.02449846 0.0357945  0.03142044 0.03988025
+ 0.04923906 0.04277645 0.03910687 0.03452116 0.05740052]
+[0.27129333 2.34605326 1.60583882 0.93759235 1.14810255 1.31293333
+ 0.36244411 1.81287156 1.51358938 1.35924244 1.68328426 1.11688703
+ 1.48619866 2.39609159 1.26693609 2.42165845 1.69413861 0.448865
+ 1.65257324 1.41369156 1.55364779 1.55531077 1.43819212 1.0308091
+ 1.1284532  1.98213093 1.30417317 1.15361448 1.40729165 1.34800283
+ 1.88282209 1.44800012 1.64056027 2.07880161 1.68166871 2.04683591
+ 1.51668794 2.77754328 1.28884881 1.66084887 0.61218761 2.05262098
+ 0.10936897 2.0220657  1.40487834 1.22664809 0.75353112 1.7176141
+ 1.50782027 1.48936187 1.55848597 1.63107433 2.02835414 1.64930033
+ 2.61200737 2.055066   1.59267968 1.33573888 1.44379702 2.09532987
+ 1.83181766 1.56668562 1.88513509 1.44079747 0.78938987 1.95982844
+ 1.6819584  2.33464239 2.14054278 2.11347552 2.40393535 2.79757768
+ 1.54082443 1.70843779 1.04549347 2.02394184 1.24936624 2.51953379
+ 2.04821162 2.18283124 1.16468662 1.96047329 1.7400443  1.3290438
+ 1.98768154 2.45486316 1.55209803 1.16695592 2.11784989 1.96492721
+ 1.20640651 1.51928982 1.70243099 1.87581303 2.34392638 1.43981413
+ 2.13017868 0.91004347 1.18964884 1.93139947 0.24115864 1.92548734
+ 1.49488653 1.91581461 1.50382061 0.17069446 2.02906675 1.40300581
+ 1.256258   1.89781641 0.98666618 1.39305532 1.52181006 1.79797584
+ 1.50300695 1.60506627 0.24042568 1.51735953 1.87182075 2.20601185
+ 1.30251241 1.99847474 1.55630964 0.51920907 1.58122006 1.4152509
+ 2.00977127 1.74901953 1.03667621 1.12473203 1.15575768 1.87755749
+ 2.31275873 2.07637475 1.6067122  1.2438084  2.00314307]
+597    0.266
+395    2.291
+81     1.614
+576    0.940
+205    1.140
+       ...  
+41     2.340
+381    2.054
+663    1.610
+538    1.285
+296    1.968
+Name: R, Length: 137, dtype: float64
+MAE:  0.03988061072984968
+MARD 2.54209089428851
+MRD 0.37810697382546116
+Traceback (most recent call last):
+  File "/Users/user1/BayeStarML_CL/BayestarML/exec_trainer.py", line 307, in <module>
+    radius_train_GP(dataset, 50, 20, 1000, target_accept=0.99)
+  File "/Users/user1/BayeStarML_CL/BayestarML/exec_trainer.py", line 141, in radius_train_GP
+    model_pred_plotter(data.unorm_radius, means, stds, 'Radius', 'GP', 'Outputs/GPrad', hyperp_str)
+  File "/Users/user1/BayestarML_CL/BayestarML/utils.py", line 170, in model_pred_plotter
+    plt.xlabel('True ', target)
+  File "/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/matplotlib/pyplot.py", line 4398, in xlabel
+    return gca().set_xlabel(
+           ^^^^^^^^^^^^^^^^^
+  File "/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/matplotlib/axes/_base.py", line 3600, in set_xlabel
+    return self.xaxis.set_label_text(xlabel, fontdict, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/matplotlib/axis.py", line 1912, in set_label_text
+    self.label.update(fontdict)
+  File "/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/matplotlib/text.py", line 197, in update
+    kwargs = cbook.normalize_kwargs(kwargs, Text)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/matplotlib/cbook.py", line 1787, in normalize_kwargs
+    for k, v in kw.items():
+                ^^^^^^^^
+AttributeError: 'str' object has no attribute 'items'

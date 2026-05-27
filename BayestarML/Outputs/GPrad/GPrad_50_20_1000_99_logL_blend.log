@@ -1,0 +1,9 @@
+Initializing NUTS using jitter+adapt_diag...
+Multiprocess sampling (4 chains in 4 jobs)
+NUTS: [log_ls, eta, u_rotated_μ, log_ls_v, eta_var, alpha_log_var, u_rotated_log_var_f]
+6013.79056880734 4.194425565880734 -0.0722354128440367 0.3474829129461819 1.1630000366972477 1.5145330458715596
+828.5709209400139 0.26409162887226345 0.20715231760925246 0.6662589985155178 0.3049096296859578 0.5442063616548278
+Latest goodMS with high mass filter. Also logL
+::::::::::::::::::::::::::::::::::::::
+bigGPrun - radius - MS stars. LogL! 50_20_1000, target_accept=0.99, TD 20.
+target_accept= 0.99
