@@ -109,14 +109,24 @@ def train(model, filename, draw=1000, chains=2,
     trace = pm.sample(draws=draw, tune=int(1.5*draw), chains=chains,
                       cores=chains, model=model, target_accept=target_accept,
                       max_treedepth=max_treedepth,
-                      nuts_sampler="nutpie")
+                      nuts_sampler="nutpie",
+                      idata_kwargs={"log_likelihood": True})
 
     with pd.option_context("display.max_rows", None):
         df = az.summary(trace)
         df.sort_values(by="ess_bulk", inplace=True)
         print("AZ Stats for ESS Bulk < 400:\n", df[df["ess_bulk"]<400])
 
-    trace.extend(pm.compute_log_likelihood(trace, model=model, var_names='y'))
+    r_hat_values = az.rhat(trace)
+    all_rhats = []
+    for var in r_hat_values.data_vars:
+        max_rhat = r_hat_values[var].max().values.item()
+        all_rhats.append((var, max_rhat))
+
+    print("rhats: ", all_rhats)
+
+    print("loo trace: ", az.loo(trace))
+
     trace.to_netcdf(filename)
 
     return trace

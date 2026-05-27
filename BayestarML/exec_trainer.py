@@ -17,7 +17,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_absolute_error
 
-import multiprocessing as mp
 #import tracemalloc
 import psutil
 import time
@@ -67,16 +66,6 @@ def mass_train_GP(data: Dataset, M_mean, M_var, draws=1000, advi=False, target_a
                   "Outputs707MS/GPmass/GPmass"+hyperp_str+".nc",
                   draw=draws, chains=4, target_accept=target_accept, max_treedepth=20)
 
-    r_hat_values = az.rhat(trace)
-    all_rhats = []
-    for var in r_hat_values.data_vars:
-        max_rhat = r_hat_values[var].max().values.item()
-        all_rhats.append((var, max_rhat))
-    print(all_rhats)
-
-    print("LOO")
-    print(az.loo(trace))
-
     pred, lpd = posterior_predictive_GP(model, μ_gp, lg_σ_gp, trace,
                                         data.x_test, data.x_test_err, Xu, Xu_er, 4, 'Mass')
 
@@ -115,16 +104,6 @@ def radius_train_GP(data: Dataset, M_mean, M_var, draws=1000, advi=False, target
                   draw=draws, chains=4, target_accept=target_accept,
                   max_treedepth=20)
 
-    r_hat_values = az.rhat(trace)
-    all_rhats = []
-    for var in r_hat_values.data_vars:
-        max_rhat = r_hat_values[var].max().values.item()
-        all_rhats.append((var, max_rhat))
-
-    print(all_rhats)
-
-    print(az.loo(trace))
-
     pred, lpd = posterior_predictive_GP(model, μ_gp, lg_σ_gp, trace,
                                         data.x_test, data.x_test_err, Xu, Xu_er, 4, 'Radius')
 
@@ -155,16 +134,6 @@ def mass_train_SIMPLE_NN(data: Dataset, n_hidden=5, draw=1000, chains=4, target_
                   draw=draw, chains=chains,
                   target_accept=target_accept, max_treedepth=20)
 
-    r_hat_values = az.rhat(trace)
-    all_rhats = []
-    for var in r_hat_values.data_vars:
-        max_rhat = r_hat_values[var].max().values.item()
-        all_rhats.append((var, max_rhat))
-
-    print("rhats: ", all_rhats)
-
-    print("loo trace: ", az.loo(trace))
-
     pred, lpd = SIMPLE_sample_post_pred_HBNN_para(trace, data.x_test, data.x_test_err, n_hidden, 4, "Mass")
 
     stds = pred.std(0)
@@ -191,16 +160,6 @@ def mass_train_NN(data: Dataset, n_hidden=15, draw=1000, chains=4, target_accept
                   "Outputs707MS/NNmass/NNmass_"+hyperp_str+"nrns.nc",
                   draw=draw, chains=chains, target_accept=target_accept,
                   max_treedepth=20)
-
-    r_hat_values = az.rhat(trace)
-    all_rhats = []
-    for var in r_hat_values.data_vars:
-        max_rhat = r_hat_values[var].max().values.item()
-        all_rhats.append((var, max_rhat))
-
-    print("rhats: ", all_rhats)
-
-    print("loo trace: ", az.loo(trace))
 
     pred, lpd = sample_post_pred_HBNN_para(trace, data.x_test, data.x_test_err, n_hidden, 4, "Mass")
 
@@ -236,16 +195,6 @@ def radius_train_NN(data: Dataset, n_hidden, draw=1000, chains=4, target_accept=
                 "Outputs707MS/RGB/NNrad"+hyperp_str+"nrns.nc",
                 draw=draw, chains=chains, max_treedepth=20, target_accept=target_accept)
 
-    r_hat_values = az.rhat(trace)
-    all_rhats = []
-    for var in r_hat_values.data_vars:
-        max_rhat = r_hat_values[var].max().values.item()
-        all_rhats.append((var, max_rhat))
-
-    print("rhats: ", all_rhats)
-
-    print("loo trace: ", az.loo(trace))
-
     pred, lpd = sample_post_pred_HBNN_para(trace, data.x_test, data.x_test_err, n_hidden, 4, "Radius")
 
     stds = pred.std(0)
@@ -262,7 +211,6 @@ def radius_train_NN(data: Dataset, n_hidden, draw=1000, chains=4, target_accept=
 
 if __name__ == '__main__':
     #pick which function(s) to run when file is run
-    mp.set_start_method('spawn', force=True)
 
     #load data
     df_train = get_dataset('DataExploring/good_MS.txt', logL=True)
