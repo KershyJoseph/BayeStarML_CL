@@ -720,6 +720,10 @@ def posterior_predictive_GP(
     # Posterior predictive draws for y
     y_draws = ppc.predictions["y_pred"].stack(sample=("chain", "draw")).values
 
+    #nutpie debugging
+    print(y_draws.shape)
+    print(ppc.predictions["y_pred"].dims)
+
     return denormalise_val(y_draws, target).T, lpd_GP
 
 # def posterior_predictive_GP(
