@@ -116,10 +116,9 @@ def train(model, filename, draw=1000, chains=2,
     #debugging nutpie
     print("Trace type: ", type(trace))
     print("Trace posterior:\n", trace.posterior)
-    print("lengthscale shape:\n", trace.posterior["ls"].shape)
     print(".")
     print(".")
-    print("Healthy sampling check - look at ls params\n", az.summary(trace, var_names=["ls"]))
+    print("Healthy sampling check - look at ls params\n", az.summary(trace, var_names=["w_1_2"]))
 
     with pd.option_context("display.max_rows", None):
         df = az.summary(trace)
