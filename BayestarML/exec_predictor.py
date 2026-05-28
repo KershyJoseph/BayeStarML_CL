@@ -50,7 +50,7 @@ def bart_bhs_train(target):
                                         training_dataset_path="DataExploring/good_MS.txt",
                                         GP_trace_path="Outputs707MS/GPmass/GPmassMS50_20_1000_0.95.nc",
                                         NN_trace_path="Outputs707MS/NNmass/NNmass_MS16_2000_0.95_20TDnrns.nc",
-                                        BART_m = 200, Mmean=50, Mvar=20, NNnodes=32,
+                                        BART_m = 200, Mmean=50, Mvar=20, NNnodes=16,
                                         test=True) # disregards X, X_er for test=True / uses test values
 
     target_ms = bhs_pred.mean(0)
