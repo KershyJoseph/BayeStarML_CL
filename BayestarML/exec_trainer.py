@@ -251,7 +251,7 @@ if __name__ == '__main__':
     start_time_CPU = time.process_time()
     start_time = time.time()
 
-    print("bigGPmass - radius - MS stars. LogL! 50_20_1000, target_accept=0.95, TD 20.")
+    print("GP mass - MS stars. LogL! 50_20_1000, target_accept=0.95, TD 20.")
     mass_train_GP(dataset, 50, 20, 1000, target_accept=0.95)
 
     end_time_CPU = time.process_time()
@@ -269,33 +269,33 @@ if __name__ == '__main__':
 
     print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
 
-    start_time_CPU2 = time.process_time()
-    start_time2 = time.time()
+    # start_time_CPU2 = time.process_time()
+    # start_time2 = time.time()
 
-    print("bigNNrun - mass - goodMS stars. With L in log space. 16, 2000, 4, target_accept=0.95. 20TD still.")
-    mass_train_NN(dataset, 16, 2000, target_accept=0.95)
+    # print("bigNNrun - mass - goodMS stars. With L in log space. 16, 2000, 4, target_accept=0.95. 20TD still.")
+    # mass_train_NN(dataset, 16, 2000, target_accept=0.95)
 
-    end_time_CPU2 = time.process_time()
+    # end_time_CPU2 = time.process_time()
 
-    mem2 = process.memory_info().rss / 1024**2
-    print(f"Peak Memory: {(mem2-mem1):.2f} MB")
-    print(f"CPU time used: {(end_time_CPU2-start_time_CPU2):.5f} s")
-    print(f"Total run time: {time.time()-start_time2:.5f} s")
+    # mem2 = process.memory_info().rss / 1024**2
+    # print(f"Peak Memory: {(mem2-mem1):.2f} MB")
+    # print(f"CPU time used: {(end_time_CPU2-start_time_CPU2):.5f} s")
+    # print(f"Total run time: {time.time()-start_time2:.5f} s")
 
-    print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
+    # print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
 
-    start_time_CPU3 = time.process_time()
-    start_time3 = time.time()
+    # start_time_CPU3 = time.process_time()
+    # start_time3 = time.time()
 
-    print("bigNNrun - radius - goodMS stars. With L in log space. 16, 2000, 4, target_accept=0.95. 20TD still.")
-    radius_train_NN(dataset, 16, 2000, target_accept=0.95)
+    # print("bigNNrun - radius - goodMS stars. With L in log space. 16, 2000, 4, target_accept=0.95. 20TD still.")
+    # radius_train_NN(dataset, 16, 2000, target_accept=0.95)
 
-    end_time_CPU3 = time.process_time()
+    # end_time_CPU3 = time.process_time()
 
-    mem3 = process.memory_info().rss / 1024**2
-    print(f"Peak Memory: {(mem3-mem2):.2f} MB")
-    print(f"CPU time used: {(end_time_CPU3-start_time_CPU3):.5f} s")
-    print(f"Total run time: {time.time()-start_time3:.5f} s")
+    # mem3 = process.memory_info().rss / 1024**2
+    # print(f"Peak Memory: {(mem3-mem2):.2f} MB")
+    # print(f"CPU time used: {(end_time_CPU3-start_time_CPU3):.5f} s")
+    # print(f"Total run time: {time.time()-start_time3:.5f} s")
 
-    print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
-    print("Salve Regina")
+    # print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
+    # print("Salve Regina")
