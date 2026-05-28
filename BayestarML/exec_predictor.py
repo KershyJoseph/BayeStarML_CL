@@ -16,12 +16,12 @@ import matplotlib.pyplot as plt
 def bart_bhs_pred(target):
     """Train BART and BHS and then make some predictions
     """
-    X, X_er = prepare_pred4("Datasets/plato_data.txt")
+    X, X_er = prepare_pred4("Datasets/plato_data.txt", logL=True)
     _, pred, w4 = predict4(X=X, X_er=X_er, target=target,
                            training_dataset_path="DataExploring/good_MS.txt",
-                           GP_trace_path="Outputs/bigGPruns/GPmass50_20_1000_0.99.nc",
-                           NN_trace_path="Outputs/bigNNruns/NNrad_goodMS_16_1000nrns.nc",
-                           BART_m = 300, Mmean=50, Mvar=20, NNnodes=16)
+                           GP_trace_path="Outputs707MS/GPmass/GPmassMS50_20_1000_0.95.nc",
+                           NN_trace_path="Outputs707MS/NNmass/NNmass_MS16_2000_0.95_20TDnrns.nc",
+                           BART_m = 200, Mmean=50, Mvar=20, NNnodes=16)
 
     df_p = pd.read_csv("Datasets/plato_data.txt", sep='\t')
     if target=='Radius':
@@ -39,7 +39,7 @@ def bart_bhs_pred(target):
     print('MARD on plato ', target,': ', mard(unorm_target, means))
     print('MRD on plato ', target,': ', mrd(unorm_target, means))
 
-    model_pred_plotter(unorm_target, means, stds, target, 'BHS', 'Outputs/BHS', 'PLATO')
+    model_pred_plotter(unorm_target, means, stds, target, 'BHS', 'Outputs707MS/BHS_'+target, 'PLATO')
 
 
 def bart_bhs_train(target):
@@ -48,26 +48,26 @@ def bart_bhs_train(target):
     """
     _, bhs_pred, bhs_w, X, Xer, y = predict4(X=None, X_er=None, target=target,
                                         training_dataset_path="DataExploring/good_MS.txt",
-                                        GP_trace_path="Outputs/bigGPruns/GPmass50_20_1000_0.99.nc",
-                                        NN_trace_path="Outputs/NNmass_goodMS_32_2000_0.99_20TDnrns.nc",
-                                        BART_m = 300, Mmean=50, Mvar=20, NNnodes=32,
+                                        GP_trace_path="Outputs707MS/GPmass/GPmassMS50_20_1000_0.95.nc",
+                                        NN_trace_path="Outputs707MS/NNmass/NNmass_MS16_2000_0.95_20TDnrns.nc",
+                                        BART_m = 200, Mmean=50, Mvar=20, NNnodes=32,
                                         test=True) # disregards X, X_er for test=True / uses test values
 
     target_ms = bhs_pred.mean(0)
     target_stds = bhs_pred.std(0)
 
-    model_pred_plotter(y, target_ms, target_stds, target, 'BHS', 'Outputs/BHS', 'train')
+    model_pred_plotter(y, target_ms, target_stds, target, 'BHS', 'Outputs707MS/BHS_'+target, 'train')
 
     plt.figure()
-    plt.errorbar(X["L"], target_ms, target_stds, fmt='o', alpha=0.5,
+    plt.errorbar(X["logL"], target_ms, target_stds, fmt='o', alpha=0.5,
                  label="BHS "+target+" Predictions")
-    plt.plot(X["L"], y, 'x',
+    plt.plot(X["logL"], y, 'x',
              label="True "+target)
     plt.xlabel("Luminosity (Lsol)")
     plt.ylabel(target+" ("+target[0]+"sol)")
     plt.title("Test set predictions")
     plt.legend()
-    plt.savefig("Outputs/BHS/bhs_L_M.pdf")
+    plt.savefig("Outputs707MS/BHS_"+target+"/bhs_L_M.pdf")
     plt.close()
 
     plt.figure()
@@ -79,8 +79,9 @@ def bart_bhs_train(target):
     plt.ylabel(target+" ("+target[0]+"sol)")
     plt.title("Test set predictions")
     plt.legend()
-    plt.savefig("Outputs/BHS/bhs_logg_M.pdf")
+    plt.savefig("Outputs707MS/BHS_"+target+"/bhs_logg_M.pdf")
     plt.close()
 
 if __name__ == '__main__':
     bart_bhs_train('Mass')
+    bart_bhs_pred('Mass')

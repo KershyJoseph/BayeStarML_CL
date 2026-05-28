@@ -1,0 +1,135 @@
+bigNNrun - mass - goodMS stars. With L in log space. 16, 2000, 4, target_accept=0.95. 20TD still.
+
+No problems found
+target_accept= 0.95
+Initializing NUTS using jitter+adapt_diag...
+Multiprocess sampling (4 chains in 4 jobs)
+NUTS: [Omega, X_latent, w_in_1, w_1_2, w_2_out, bias_1, bias_2, bias_out, er]
+
+  Progress                         Draws   Divergences   Step size   Grad evals   Sampling Speed   Elapsed   Remaining
+ ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  ──────────────────────────────   5000    0             0.01        511          2.70 draws/s     0:30:54   0:00:00
+  ──────────────────────────────   5000    0             0.01        511          2.70 draws/s     0:30:53   0:00:00
+  ──────────────────────────────   5000    0             0.01        511          2.68 draws/s     0:31:06   0:00:00
+  ──────────────────────────────   5000    0             0.01        511          2.70 draws/s     0:30:51   0:00:00
+
+Sampling 4 chains for 3_000 tune and 2_000 draw iterations (12_000 + 8_000 draws total) took 1878 seconds.
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/diagnostics.py:596: RuntimeWarning: invali
+d value encountered in scalar divide
+  (between_chain_variance / within_chain_variance + num_samples - 1) / (num_samples)
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/diagnostics.py:991: RuntimeWarning: invali
+d value encountered in scalar divide
+  varsd = varvar / evar / 4
+
+AZ Stats for ESS Bulk < 400:
+ Empty DataFrame
+Columns: [mean, sd, hdi_3%, hdi_97%, mcse_mean, mcse_sd, ess_bulk, ess_tail, r_hat]
+Index: []
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/diagnostics.py:596: RuntimeWarning: invali
+d value encountered in scalar divide
+  (between_chain_variance / within_chain_variance + num_samples - 1) / (num_samples)
+rhats:  [('X_latent', 1.0036341006143286), ('w_in_1', 1.0076053938370324), ('w_1_2', 1.0027166238324856), ('w_2_out', 1.
+0073435214898023), ('bias_1', 1.0009557679833698), ('bias_2', 1.001760548234658), ('bias_out', 1.0007265105489396), ('Om
+ega', 1.001026271914774), ('er', 0.9999993106725579), ('Omega_corr', 1.001498473526896), ('Omega_stds', 1.00024194081569
+9), ('ann_input', 1.0036341006143286), ('act_1', 1.0080121503909238), ('act_2', 1.0066760123050031), ('act_out', 1.00243
+38084166577)]
+Computing ... ──────────────────────────────────────── 100% 0:00:00
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape
+ parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust
+model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are v
+ery different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+loo trace:  Computed from 8000 posterior samples and 565 observations log-likelihood matrix.
+
+         Estimate       SE
+elpd_loo   -26.99    29.37
+p_loo      148.38        -
+
+There has been a warning during the calculation. Please check the results.
+------
+
+Pareto k diagnostic values:
+                         Count   Pct.
+(-Inf, 0.70]   (good)      563   99.6%
+   (0.70, 1]   (bad)         2    0.4%
+   (1, Inf)   (very bad)    0    0.0%
+
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape
+ parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust
+model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are v
+ery different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+starting parallel prediction on 32 worker(s)_
+finished chain 3/4
+finished chain 1/4
+finished chain 4/4
+finished chain 2/4
+stdvs:  [0.0407847  0.05521351 0.0331885  0.04075391 0.04212873 0.04492328
+ 0.03699761 0.03295727 0.04166874 0.06851274 0.04373584 0.04384131                                      02:39 [234/1954]
+ 0.04505202 0.03735928 0.02532056 0.01788858 0.04187031 0.07494559
+ 0.05441333 0.03021975 0.01860415 0.03128372 0.06781419 0.02318849
+ 0.0340512  0.04540949 0.04549605 0.01612532 0.03797837 0.05891406
+ 0.04031665 0.03729435 0.04191748 0.03901411 0.03578284 0.03416518
+ 0.02236186 0.02945091 0.04956001 0.0358404  0.03304537 0.03645422
+ 0.04040348 0.02801791 0.03085142 0.01720998 0.05337405 0.02139803
+ 0.02684016 0.01899208 0.05461101 0.04289879 0.04433179 0.01999687
+ 0.04475475 0.02538878 0.04327941 0.04048951 0.03855575 0.03336784
+ 0.02269918 0.03653508 0.03800543 0.04478091 0.04494399 0.02759639
+ 0.0373712  0.01642479 0.03903356 0.03237079 0.01920728 0.05320256
+ 0.11882766 0.0421346  0.02054989 0.03704905 0.01914961 0.03018137
+ 0.03351953 0.04348777 0.04231056 0.04286052 0.0441537  0.03341077
+ 0.03590536 0.03994395 0.04144019 0.04518902 0.0145961  0.03874341
+ 0.04442375 0.04672898 0.03110265 0.0191388  0.04171558 0.03351242
+ 0.0329392  0.0319848  0.04440894 0.04641323 0.05016037 0.04150964
+ 0.03212401 0.03778231 0.03945718 0.03719167 0.0437982  0.04159207
+ 0.03680451 0.02587501 0.03535162 0.0460901  0.0365183  0.02900127
+ 0.04495841 0.03708672 0.04000204 0.0156115  0.0387014  0.0122194
+ 0.02961506 0.03780276 0.11468433 0.04266312 0.04214107 0.04079839
+ 0.05033201 0.01759302 0.041932   0.03601205 0.02410744 0.02432607
+ 0.03507083 0.04220181 0.04189325 0.03608403 0.04416611 0.03322109
+ 0.04323733 0.03326483 0.02788785 0.03610168]
+means:  [1.28173619 1.24285962 1.00390245 1.43287551 1.36142929 1.39774173
+ 1.13161609 1.06975267 1.21071331 1.64458188 1.22677976 1.31878429
+ 1.17732907 1.18264877 0.82449926 0.37641087 1.22392205 1.30802973
+ 1.24725562 0.99924149 0.5267016  1.4261416  1.32674395 0.92150914
+ 1.2276986  1.33259884 1.30594467 1.41443116 1.14370147 2.11429526
+ 1.30448023 1.46337479 1.16445685 1.13180317 1.24071649 1.24332595
+ 1.0515771  1.01578719 1.43162562 1.16301539 1.31564171 1.4161701
+ 1.34644519 1.06971802 1.12106958 1.03510886 1.22717057 0.97173381
+ 1.09382927 1.39677373 1.1029593  1.39909992 1.29577205 0.95271176
+ 1.39377339 1.05935859 1.17365237 0.9872423  1.04806026 1.06582747
+ 0.81161106 1.10210272 1.20009538 1.33016743 1.42932275 0.72512709
+ 1.39342174 0.67712797 1.11079093 1.16830719 0.72512556 1.44896419
+ 1.3486645  1.1903477  0.30707311 1.12199096 1.09982307 1.09740783
+ 1.62170079 1.74410824 1.08278488 1.46971912 1.24561593 1.10710274
+ 1.45858953 1.36307011 1.24172738 1.413779   1.22756721 1.43627406
+ 1.35969174 1.38443264 1.73499999 1.04129051 2.04539138 1.8556632
+ 1.03637919 1.10286616 1.4108309  1.58868669 1.15108941 1.4185754
+ 0.91191826 1.25386047 1.27440684 1.48653623 1.34495177 1.25392105
+ 1.50177401 0.97203762 1.25568197 1.48136742 1.32705493 1.02566911
+ 0.99637356 0.35501105 1.31747887 1.33848401 1.21857201 1.07688326
+ 1.1239586  1.14930405 1.34086952 1.36095358 1.10690594 1.30220417
+ 1.28214177 0.66909246 1.14475144 1.21718435 0.97351683 0.33324757
+ 0.40531478 1.15448388 1.1373057  0.88363992 1.32864799 0.48626318
+ 1.11545024 1.09080661 0.80758066 1.18627477]
+
+89     1.2890
+42     0.9600
+408    1.4770
+285    1.3380
+        ...
+624    0.5680
+153    0.9862
+338    1.0790
+247    0.7430
+502    1.1170
+Name: M, Length: 142, dtype: float64
+
+MAE:  0.07074829931906629
+MARD 6.616070608547293
+MRD -0.8870356693990561
+
+Peak Memory: 4155.55 MB
+CPU time used: 467.46214 s
+Total run time: 2397.60200 s
+><><><><><><><><><><><><><><><><><><><><><><><><><><

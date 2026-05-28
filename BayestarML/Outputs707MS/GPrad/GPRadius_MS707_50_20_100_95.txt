@@ -92,6 +92,7 @@ Pareto k diagnostic values:
 MAE:  0.04623685220690198
 MARD 2.64088806449716
 MRD 0.17016316553423297
+
 Peak Memory: 727.90 MB
 CPU time used: 897.92213 s
 Total run time: 20132.96649 s

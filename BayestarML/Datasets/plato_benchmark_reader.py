@@ -2,6 +2,20 @@
 File to read Plato Benchmark Stars from Maxted
 """
 import pandas as pd
+import numpy as np
+
+def logomatic_sym(df, var:str):
+    """Edit for symmetric errs in linear space
+
+    Add a log(var) column to df with bounds method 
+    var should be string key of existing column in df
+    """
+    df["log"+var] = np.log10(df[var])
+    elog1 = np.log10(df[var] + df["e"+var]) - df["log"+var]
+    elog2 = df["log"+var] - np.log10(df[var] - df["e"+var])
+    df["elog"+var] = (elog1 + elog2)/2 #avg err
+
+    return None
 
 col_specs = [
     (0, 32), #ID
@@ -67,4 +81,14 @@ print("New plato stars: ", len(df_plato_goodMS_new))
 print(df_plato_goodMS_new["ID"].unique())
 #print(df_us["ID"])
 
+#add logL col
+logomatic_sym(df_plato_goodMS_new, "L")
+
 df_plato_goodMS_new.to_csv("Datasets/plato_data.txt", sep='\t', index=False)
+
+for col in ["M", "R"]:
+    print("--------",col,"---------")
+    print("Min. - ", df_plato_goodMS_new[col].min())
+    print("Max. - ", df_plato_goodMS_new[col].max())
+    print("Mean - ", df_plato_goodMS_new[col].mean())
+    print("Std - ", df_plato_goodMS_new[col].std())

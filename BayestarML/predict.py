@@ -22,12 +22,12 @@ import pandas as pd
 def predict4(X, X_er, target,
              training_dataset_path, GP_trace_path, NN_trace_path,
              BART_m, Mmean, Mvar, NNnodes,
-             test=False):
+             test=False, logL=True):
 
-    df_train = get_dataset(training_dataset_path, 'MS')
+    df_train = get_dataset(training_dataset_path, 'MS', logL=logL)
     (x_train, x_train_er, x_test, x_test_err, mass_train, emass_train,
       mass_test, emass_test, rad_train, erad_train, rad_test, erad_test
-    ) = return_train_test(df_train)
+    ) = return_train_test(df_train, logL=logL)
 
     if test == True:
         X = x_test
@@ -63,6 +63,8 @@ def predict4(X, X_er, target,
         (bhs_trace, bhs_pred, bhs_w) = run_stack(bart4_pred, hbnn4_pred, gp4_pred,
                                             x_train, X, lpd_BART4, lpd_HBNN4,
                                             lpd_GP4)
+
+        bhs_trace.to_netcdf("Outputs707MS/BHS_Mass/BHStrace_Mass_"+str(BART_m)+"_"+str(Mmean)+"_"+str(Mvar)+"_"+str(NNnodes)+".nc")
 
         if test == True:
             mard_BART = mard(unorm_mass, bart4_pred.mean(0))

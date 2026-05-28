@@ -1,0 +1,137 @@
+bigNNrun - radius - goodMS stars. With L in log space. 16, 2000, 4, target_accept=0.95. 20TD still.
+target_accept= 0.95
+Initializing NUTS using jitter+adapt_diag...
+Multiprocess sampling (4 chains in 4 jobs)
+NUTS: [Omega, X_latent, w_in_1, w_1_2, w_2_out, bias_1, bias_2, bias_out, er]
+
+  Progress                         Draws   Divergences   Step size   Grad evals   Sampling Speed   Elapsed   Remaining
+ ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  ──────────────────────────────   5000    0             0.00        2047         1.45 s/draws     2:00:41   0:00:00
+  ──────────────────────────────   5000    0             0.00        2047         1.45 s/draws     2:01:10   0:00:00
+  ──────────────────────────────   5000    0             0.00        2047         1.46 s/draws     2:01:59   0:00:00
+  ──────────────────────────────   5000    0             0.00        2047         1.45 s/draws     2:00:40   0:00:00
+
+Sampling 4 chains for 3_000 tune and 2_000 draw iterations (12_000 + 8_000 draws total) took 7331 seconds.
+The rhat statistic is larger than 1.01 for some parameters. This indicates problems during sampling. See https://arxiv.o
+rg/abs/1903.08008 for details
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/diagnostics.py:596: RuntimeWarning: invali
+d value encountered in scalar divide
+  (between_chain_variance / within_chain_variance + num_samples - 1) / (num_samples)
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/diagnostics.py:991: RuntimeWarning: invali
+d value encountered in scalar divide
+  varsd = varvar / evar / 4
+
+AZ Stats for ESS Bulk < 400:
+ Empty DataFrame
+Columns: [mean, sd, hdi_3%, hdi_97%, mcse_mean, mcse_sd, ess_bulk, ess_tail, r_hat]
+Index: []
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/diagnostics.py:596: RuntimeWarning: invali
+d value encountered in scalar divide
+  (between_chain_variance / within_chain_variance + num_samples - 1) / (num_samples)
+rhats:  [('X_latent', 1.004069046363737), ('w_in_1', 1.0150252652172014), ('w_1_2', 1.0032646884088243), ('w_2_out', 1.0
+091465992773947), ('bias_1', 1.0061918522547948), ('bias_2', 1.0045600612844827), ('bias_out', 1.0001186729552143), ('Om
+ega', 1.0006042343314916), ('er', 1.004590277746167), ('Omega_corr', 1.0003785651178436), ('Omega_stds', 1.0004835163853
+432), ('ann_input', 1.004069046363737), ('act_1', 1.0184150771388287), ('act_2', 1.0076957416083832), ('act_out', 1.0027
+633288455935)]
+Computing ... ──────────────────────────────────────── 100% 0:00:00
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape
+ parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust
+model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are v
+ery different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+loo trace:  Computed from 8000 posterior samples and 565 observations log-likelihood matrix.
+
+         Estimate       SE
+elpd_loo   505.57    34.43
+p_loo      449.34        -
+
+There has been a warning during the calculation. Please check the results.
+------
+
+Pareto k diagnostic values:
+                         Count   Pct.                                                                   04:49 [118/1954]
+(-Inf, 0.70]   (good)      442   78.2%
+   (0.70, 1]   (bad)        95   16.8%
+   (1, Inf)   (very bad)   28    5.0%
+
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape
+ parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust
+model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are v
+ery different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+starting parallel prediction on 32 worker(s)_
+finished chain 3/4
+finished chain 4/4
+finished chain 2/4
+finished chain 1/4
+stdvs:  [0.04695126 0.04092458 0.04179105 0.0446868  0.04892913 0.06233264
+ 0.03438792 0.03454645 0.04925925 0.06316369 0.03432943 0.04901051
+ 0.04626792 0.03094177 0.02907577 0.01292171 0.04980607 0.0735354
+ 0.03826269 0.03208992 0.01297149 0.03258941 0.21310781 0.04509266
+ 0.02977185 0.03791437 0.04024519 0.04670097 0.0444607  0.05633006
+ 0.060748   0.05610772 0.04291313 0.03523816 0.0239923  0.01988977
+ 0.01194563 0.02695161 0.0535459  0.0240119  0.03594475 0.04137874
+ 0.05082388 0.01690873 0.08446103 0.01536801 0.0458752  0.01546705
+ 0.02082543 0.08554193 0.04709988 0.05114948 0.04361154 0.01219169
+ 0.04722212 0.02433186 0.02549482 0.01945147 0.036275   0.03015225
+ 0.06074954 0.09930991 0.0489194  0.03968863 0.08028176 0.06965766
+ 0.04472142 0.01707564 0.02676027 0.01628195 0.0134864  0.062754
+ 0.31496491 0.03947303 0.01051994 0.02637259 0.01490199 0.03545043
+ 0.03638462 0.0367191  0.0300395  0.05620507 0.06116994 0.02774936
+ 0.05521957 0.02612163 0.02969712 0.05282603 0.01570221 0.05418355
+ 0.05340914 0.02971563 0.10559786 0.04605083 0.04064626 0.0623178
+ 0.03603898 0.02391836 0.04777312 0.06305599 0.03820834 0.04836708
+ 0.03064062 0.02522487 0.05897359 0.05016878 0.04809186 0.02829788
+ 0.06146364 0.02867812 0.02545925 0.06153055 0.03426995 0.02461674
+ 0.04298453 0.02060817 0.04094032 0.02004531 0.08436014 0.04232595
+ 0.02046612 0.04410928 0.27917218 0.05334888 0.0411922  0.03310656
+ 0.07167493 0.02478273 0.03409691 0.0203795  0.0167158  0.02642431
+ 0.05821411 0.03394664 0.04175052 0.08292617 0.0596829  0.05669238
+ 0.02307613 0.0271781  0.05137161 0.03096135]
+means:  [1.72017826 1.69119661 1.44410076 2.56146926 2.32081855 1.96269863
+ 1.33975645 1.56074336 1.82343706 2.01129486 1.58152616 1.97838355
+ 2.02906728 1.49490796 0.70570103 0.36162401 1.8652717  2.82257873
+ 1.67650789 1.01779488 0.58111884 1.96550352 2.1200178  0.92357043
+ 1.37357423 1.64425434 2.12864017 1.89914963 1.73599459 2.58360662
+ 1.91690096 1.80366599 1.81878013 1.12968058 1.34756541 1.33797012
+ 1.08217364 1.21957916 1.96719428 1.32467816 1.86011555 1.69009503
+ 1.95903518 1.18872683 1.43325461 1.03821257 1.64557697 1.0037537
+ 1.43077605 1.72764597 1.42845343 2.67663709 2.14821128 1.07627545
+ 2.67718534 1.50074202 1.34624812 0.96938513 1.26462938 1.19231657
+ 1.0196201  1.36913317 1.56901179 2.19149155 2.50278718 0.8550568
+ 2.39630624 0.63153895 1.32603577 1.30428566 0.75184795 2.55552757
+ 1.46348154 1.63295345 0.27403436 1.21037001 1.24278651 1.3121188
+ 2.7932973  1.66684022 1.36020581 2.38378309 1.57265614 1.57949326
+ 2.10139351 1.65252428 1.7723243  2.01832886 1.26333016 2.46473259
+ 2.06011218 1.59073618 2.31142812 1.08710203 1.85576026 2.092798
+ 1.50039732 1.32604938 2.63602782 2.39543863 1.55784196 1.97485353
+ 1.16968113 1.41907139 1.99503022 2.26455752 1.92547387 1.52024726
+ 2.29212344 1.15674488 1.25106549 2.31410423 1.51654164 1.13107538
+ 1.36192157 0.38707072 1.95687668 1.35311089 1.40190696 1.21908811
+ 1.45051434 1.51360883 2.04909116 2.13831562 1.39645674 1.88660003
+ 1.86692546 0.71948554 1.38746843 1.40649411 0.938068   0.33701914
+ 0.51259484 1.50198013 1.8872603  0.95735127 2.35192503 0.54867369
+ 0.9956992  1.39911504 0.84148081 1.67523257]
+
+89     1.727
+42     1.440
+408    2.610
+285    2.285
+       ...
+624    0.760
+153    0.932
+338    1.388
+247    0.756
+502    1.632
+Name: R, Length: 142, dtype: float64
+
+MAE:  0.05674168944299739
+MARD 3.7175809604328425
+MRD -0.6664177012598617
+
+Peak Memory: 58.00 MB
+CPU time used: 726.50642 s
+Total run time: 7777.45210 s
+
+><><><><><><><><><><><><><><><><><><><><><><><><><><
+Salve Regina
