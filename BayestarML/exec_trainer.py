@@ -242,7 +242,9 @@ if __name__ == '__main__':
 
     #HAVE YOU UPDATED CONSTANTS.PY AND CHECKED OUTPUT FILE PATHS AND LOGL
 
-    print("Latest goodMS - 707 - with high mass filter. Also logL")
+    print("''''''''''''''''''''''''\nNUTPIE NN TEST MASS\n......................")
+
+    print("\nLatest goodMS - 707 - with high mass filter. Also logL")
     print("::::::::::::::::::::::::::::::::::::::")
 
     process = psutil.Process()
@@ -251,8 +253,8 @@ if __name__ == '__main__':
     start_time_CPU = time.process_time()
     start_time = time.time()
 
-    print("GP mass - MS stars. LogL! 50_20_1000, target_accept=0.95, TD 20.")
-    mass_train_GP(dataset, 50, 20, 1000, target_accept=0.95)
+    print("NN mass - MS stars. LogL! 16_2000, target_accept=0.95, TD 20.")
+    mass_train_NN(dataset, 16, 2000, target_accept=0.95)
 
     end_time_CPU = time.process_time()
     #from Gemini
