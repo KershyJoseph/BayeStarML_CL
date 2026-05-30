@@ -91,7 +91,7 @@ df_all6_MS = df[(df["class"]=="MS") &
                 (df[check_params1].gt(0).all(axis=1)) &
                 (df[check_params2].notna().all(axis=1)) &
                 (df[check_params2].gt(0).all(axis=1)) &
-                (df["M"]<=2.5)] #for outliers
+                (df["M"]<=2)] #for outliers
 
 #no FeH but yes MH
 check_params_beta = ["eM1", "eR1", "elogg1", "eL1", "eMH1", "eTeff1", "eM2", "eR2", "elogg2", "eL2", "eMH2", "eTeff2"]
@@ -99,11 +99,11 @@ df_all6beta_MS = df[(df["class"]=="MS") &
                     (df["well_detached"]!=False) &
                     (df[check_params_beta].notna().all(axis=1)) &
                     (df[check_params_beta].gt(0).all(axis=1)) &
-                    (df["M"]<=2.5) &
+                    (df["M"]<=2) &
                     (df["FeH"].isna())] #no FeH but yes MH
 
 #file for MS stars with all 6 params and all binary systems well-detached
-df_all6_MS.to_csv("DataExploring/all6_MS.txt", index=False, na_rep="NA", sep="\t")
+#df_all6_MS.to_csv("DataExploring/all6_MS.txt", index=False, na_rep="NA", sep="\t")
 print("All 6 MS: ", len(df_all6_MS))
 
 #add logL cols to df_all6_MS and df_all6beta_MS
@@ -127,23 +127,22 @@ print("Of which M>=1.4: ", len(df_metaMS[df_metaMS["M"]>=1.4]))
 #Strict error filter version of good_MS.txt
 err_mask_strict = (df_err["percent_eL"]<=50) & (df_err["percent_eR"]<=7) & (df_err["elogg"]<=0.05) & (df_err["percent_eTeff"]<=5) & (df_err["eFeH"]<=0.2)
 df_strict_MS = df_all6_MS[err_mask_strict]
-df_strict_MS.to_csv("DataExploring/strict_MS.txt", index=False, na_rep="NA", sep="\t")
+#df_strict_MS.to_csv("DataExploring/strict_MS.txt", index=False, na_rep="NA", sep="\t")
 
 #make file with only stars with data that I did not fill via SB or M,R
 df_no_fills = df_good_MS[(df_good_MS["L_from_SB"]!=1) &
                          (df_good_MS["logg_from_M,R"]!=1)]
-df_no_fills.to_csv("DataExploring/good_MS_no_fills.txt", 
-                   index=False, na_rep="NA", sep="\t")
+#df_no_fills.to_csv("DataExploring/good_MS_no_fills.txt", 
+#                   index=False, na_rep="NA", sep="\t")
 print("All 6 MS, err cleaned, no fills: ", len(df_no_fills))
 
 #Try logL and logTeff columns and see how logTeff and logL errors look
 logomatic(df_good_MS, "Teff")
+logomatic(df_good_MS, "M")
 
-features = ["L", "logL", "FeH", "Teff", "logTeff", "logg"]
+features = ["L", "logL", "FeH", "Teff", "logTeff", "logg", "R", "M", "logM" ]
 for f in features:
     savepath = "DataExploring/goodMSspreads/"+f+"_MS_spread.pdf"
-    if f == "FeH":
-        savepath = "DataExploring/goodMSspreads/FeH_MS_spread.pdf"
     spreadomatic(df_good_MS, f, savepath)
 
 fig2, ax2 = plt.subplots(1,2)

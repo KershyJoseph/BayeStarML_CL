@@ -109,16 +109,15 @@ def train(model, filename, draw=1000, chains=2,
     print('target_accept=', target_accept)
     trace = pm.sample(draws=draw, tune=int(1.5*draw), chains=chains,
                       cores=chains, model=model, target_accept=target_accept,
-                      max_treedepth=max_treedepth,
-                      nuts_sampler="nutpie",
+                      max_treedepth=max_treedepth#,
+                      #nuts_sampler="nutpie",
                       )
 
     #debugging nutpie
+    print(".")
     print("Trace type: ", type(trace))
     print("Trace posterior:\n", trace.posterior)
     print(".")
-    print(".")
-    print("Healthy sampling check - look at ls params\n", az.summary(trace, var_names=["w_1_2"]))
 
     with pd.option_context("display.max_rows", None):
         df = az.summary(trace)
