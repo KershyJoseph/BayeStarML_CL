@@ -1,0 +1,164 @@
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/pymc/pytensorf.py:958: FutureWarning: compile_pymc was renamed to compile. Old name will be removed in a future release of PyMC
+  warnings.warn(
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/pymc/pytensorf.py:958: FutureWarning: compile_pymc was renamed to compile. Old name will be removed in a future release of PyMC
+  warnings.warn(
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/pymc/model/fgraph.py:163: UserWarning: Detected variables likely created by GP objects. Further use of these old GP objects should be avoided as it may reintroduce variables from the old model. See issue: https://github.com/pymc-devs/pymc/issues/6883
+  warnings.warn(
+5978.0969107142855 4.205791666794643 -0.08010071428571429 0.3170239560166381 1.1475716607142856 1.4840080535714286
+831.8751676749379 0.2640866953690148 0.2058107556527279 0.6810411063280138 0.2971137557826593 0.5270303780458729
+
+::::::::::::::::::::::::::::::::::::::
+goodMS700
+::::::::::::::::::::::::::::::::::::::
+
+GP mass - MS stars. 50_20_1000, target_accept=0.95, TD 20.
+target_accept= 0.95
+.
+Trace type:  <class 'arviz.data.inference_data.InferenceData'>
+Trace posterior:
+ <xarray.Dataset> Size: 77MB
+Dimensions:                    (chain: 4, draw: 1000, log_ls_dim_0: 4,
+                                u_rotated_μ_dim_0: 52, log_ls_v_dim_0: 4,
+                                u_rotated_log_var_f_dim_0: 21, ls_dim_0: 4,
+                                u_μ_dim_0: 52, mu_μ_dim_0: 560, ls_v_dim_0: 4,
+                                u_log_var_f_dim_0: 21, mu_log_var_f_dim_0: 560,
+                                log_var_dim_0: 560, σ_f_dim_0: 560)
+Coordinates: (12/14)
+  * chain                      (chain) int64 32B 0 1 2 3
+  * draw                       (draw) int64 8kB 0 1 2 3 4 ... 996 997 998 999
+  * log_ls_dim_0               (log_ls_dim_0) int64 32B 0 1 2 3
+  * u_rotated_μ_dim_0          (u_rotated_μ_dim_0) int64 416B 0 1 2 ... 49 50 51
+  * log_ls_v_dim_0             (log_ls_v_dim_0) int64 32B 0 1 2 3
+  * u_rotated_log_var_f_dim_0  (u_rotated_log_var_f_dim_0) int64 168B 0 1 ... 20
+    ...                         ...
+  * mu_μ_dim_0                 (mu_μ_dim_0) int64 4kB 0 1 2 3 ... 557 558 559
+  * ls_v_dim_0                 (ls_v_dim_0) int64 32B 0 1 2 3
+  * u_log_var_f_dim_0          (u_log_var_f_dim_0) int64 168B 0 1 2 ... 18 19 20
+  * mu_log_var_f_dim_0         (mu_log_var_f_dim_0) int64 4kB 0 1 2 ... 558 559
+  * log_var_dim_0              (log_var_dim_0) int64 4kB 0 1 2 3 ... 557 558 559
+  * σ_f_dim_0                  (σ_f_dim_0) int64 4kB 0 1 2 3 ... 556 557 558 559
+Data variables: (12/17)
+    log_ls                     (chain, draw, log_ls_dim_0) float64 128kB -0.2...
+    eta_log__                  (chain, draw) float64 32kB -2.235 ... -2.61
+    u_rotated_μ                (chain, draw, u_rotated_μ_dim_0) float64 2MB -...
+    log_ls_v                   (chain, draw, log_ls_v_dim_0) float64 128kB 1....
+    eta_var_log__              (chain, draw) float64 32kB -0.7389 ... -0.9004
+    alpha_log_var              (chain, draw) float64 32kB -0.2421 ... 0.2039
+    ...                         ...
+    mu_μ                       (chain, draw, mu_μ_dim_0) float64 18MB -0.0398...
+    ls_v                       (chain, draw, ls_v_dim_0) float64 128kB 3.256 ...
+    u_log_var_f                (chain, draw, u_log_var_f_dim_0) float64 672kB ...
+    mu_log_var_f               (chain, draw, mu_log_var_f_dim_0) float64 18MB ...
+    log_var                    (chain, draw, log_var_dim_0) float64 18MB -0.1...
+    σ_f                        (chain, draw, σ_f_dim_0) float64 18MB 0.935 .....
+Attributes:
+    created_at:                 2026-05-30T12:02:43.743160+00:00
+    arviz_version:              0.21.0
+    inference_library:          nutpie
+    inference_library_version:  0.13.1
+    sampling_time:              96.76145815849304
+    tuning_steps:               1500
+.
+AZ Stats for ESS Bulk < 400:
+ Empty DataFrame
+Columns: [mean, sd, hdi_3%, hdi_97%, mcse_mean, mcse_sd, ess_bulk, ess_tail, r_hat]
+Index: []
+rhats:  [('log_ls', 1.006540465194882), ('eta_log__', 1.0102076339063735), ('u_rotated_μ', 1.0067527555933158), ('log_ls_v', 1.0026842934607594), ('eta_var_log__', 1.0065379015885478), ('alpha_log_var', 1.000533427126104), ('u_rotated_log_var_f', 1.0048074415105968), ('eta', 1.0102076339063735), ('eta_var', 1.0065379015885478), ('ls', 1.006540465194882), ('u_μ', 1.0085999556154033), ('mu_μ', 1.0092897368503644), ('ls_v', 1.0028765494170448), ('u_log_var_f', 1.0042035250486199), ('mu_log_var_f', 1.0045788452278719), ('log_var', 1.0058058476030134), ('σ_f', 1.0058058476030134)]
+Computing ... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:1045: RuntimeWarning: overflow encountered in exp
+  weights = 1 / np.exp(len_scale - len_scale[:, None]).sum(axis=1)
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are very different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:1045: RuntimeWarning: overflow encountered in exp
+  weights = 1 / np.exp(len_scale - len_scale[:, None]).sum(axis=1)
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are very different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+Sampling: [X_new_latent, X_var_new_latent, f_mu_pred, log_var_pred_latent, y_pred]
+loo trace:  Computed from 4000 posterior samples and 560 observations log-likelihood matrix.
+
+         Estimate       SE
+elpd_loo -2038.48   232.05
+p_loo     1252.67        -
+
+There has been a warning during the calculation. Please check the results.
+------
+
+Pareto k diagnostic values:
+                         Count   Pct.
+(-Inf, 0.70]   (good)      503   89.8%
+   (0.70, 1]   (bad)         7    1.2%
+   (1, Inf)   (very bad)   50    8.9%
+
+Sampling ... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00 / 0:00:02
+(4, 1000, 140)
+(4, 1000, 140)
+(4, 1000, 140)
+f range: -0.12284542890700696 0.07464467313623645
+f std over test points: 0.04421912219667381
+[1.1578938  1.15696659 1.15431169 1.12922272 1.12701997 1.16633965
+ 1.15109114 1.13836709 1.15119463 1.1587523  1.16286963 1.14972645
+ 1.16127873 1.15892381 1.14224866 1.15154588 1.12821647 1.14890713
+ 1.14070757 1.15611001 1.14377903 1.14953421 1.15435094 1.15027071
+ 1.14952923 1.1631522  1.1386596  1.16034773 1.13564746 1.13079166
+ 1.16138649 1.16424262 1.17040438 1.15517616 1.14430785 1.14658984
+ 1.15482559 1.16162906 1.16459433 1.12913935 1.15865201 1.14566629
+ 1.15184638 1.14884137 1.15605738 1.14126144 1.12442446 1.13938097
+ 1.1612215  1.1544423  1.1303868  1.15607132 1.14479614 1.15392477
+ 1.14247091 1.11289744 1.15406741 1.15993079 1.16184125 1.14711107
+ 1.13625025 1.16003676 1.13874557 1.10962777 1.12476384 1.15377995
+ 1.14696775 1.11823482 1.16085605 1.15419112 1.13484522 1.14576305
+ 1.16121116 1.13262338 1.14924242 1.12207013 1.14603633 1.13152694
+ 1.15147536 1.16892063 1.14820943 1.13662574 1.12096712 1.16876156
+ 1.11298319 1.15494167 1.10956418 1.15441454 1.16126961 1.15922524
+ 1.14232096 1.13985302 1.14959926 1.12472759 1.15643432 1.13623152
+ 1.11989007 1.17214777 1.13699716 1.12426378 1.16238883 1.15236312
+ 1.16542695 1.15876402 1.15967521 1.15311014 1.1538754  1.14611493
+ 1.16565083 1.14473087 1.13332728 1.16089663 1.15384444 1.15011307
+ 1.16023866 1.13147902 1.16954904 1.15198878 1.14097259 1.16547139
+ 1.16408712 1.13731038 1.1363573  1.15424228 1.1326784  1.13825707
+ 1.15634226 1.1488136  1.14115071 1.15152088 1.1645794  1.15776542
+ 1.16359645 1.11053737 1.15134198 1.14346626 1.13573146 1.14565251
+ 1.15559477 1.16756882]
+[0.29125243 0.30781834 0.3168309  0.30495026 0.28962364 0.3021951
+ 0.29715952 0.29316569 0.30607344 0.29974054 0.31668546 0.29391642
+ 0.29927889 0.29337065 0.29122303 0.31049902 0.29080435 0.2872639
+ 0.29123902 0.31346775 0.29828941 0.3000575  0.29026037 0.30754383
+ 0.29808862 0.2879675  0.27115881 0.28488708 0.30815535 0.29285516
+ 0.29995473 0.34004987 0.32455497 0.29365359 0.29609755 0.29403482
+ 0.29565713 0.29672734 0.29727139 0.30661212 0.29142198 0.29799869
+ 0.30022872 0.2818198  0.30413871 0.29795311 0.3029594  0.32200509
+ 0.292431   0.30774594 0.32413884 0.29748017 0.31614263 0.2965603
+ 0.28260351 0.28991941 0.2918361  0.28967189 0.29965704 0.29254432
+ 0.30836008 0.29862882 0.30253077 0.31395238 0.30473248 0.28948733
+ 0.28806532 0.30274502 0.33017387 0.28742904 0.32309736 0.28491637
+ 0.30305927 0.3096968  0.31236719 0.3100561  0.29088594 0.30343096
+ 0.31454067 0.30659236 0.2984224  0.2981859  0.31511478 0.31894255
+ 0.29161406 0.30570033 0.30704598 0.29342278 0.30521338 0.28958042
+ 0.2888317  0.302073   0.30085612 0.29400748 0.29270229 0.31244572
+ 0.31808648 0.30371558 0.30095052 0.29508933 0.29283095 0.31662647
+ 0.30970865 0.29480348 0.29831007 0.29834571 0.29549716 0.30218493
+ 0.30862143 0.28613279 0.30873961 0.30103121 0.29788371 0.29553688
+ 0.29422731 0.30041422 0.30671727 0.29460376 0.2976252  0.28571891
+ 0.32376989 0.29821859 0.28831602 0.31113779 0.2996138  0.29906027
+ 0.29617509 0.3015915  0.29239584 0.30150111 0.29536407 0.29850754
+ 0.30293372 0.31128271 0.2887141  0.29639903 0.29661659 0.28767229
+ 0.29352696 0.31831232]
+Unorm mass:  130    1.84000
+425    1.53800
+412    1.38300
+351    1.33600
+551    0.95600
+        ...   
+247    1.12100
+490    0.91800
+654    0.23529
+338    1.52200
+417    1.72700
+Name: M, Length: 140, dtype: float64
+MAE:  0.20625444699532405
+MARD 26.752326607716487
+MRD -9.187319970581159
+Peak Memory: 1154.54 MB
+CPU time accumulated: 744.54394 s
+Total wall clock time: 173.63752 s
+><><><><><><><><><><><><><><><><><><><><><><><><><><
