@@ -265,7 +265,7 @@ if __name__ == '__main__':
     start_time_wall = time.perf_counter()
 
     print("GP mass - MS stars. 50_20_1000, target_accept=0.95, TD 20.")
-    mass_train_GP(dataset, 50, 20, 1000, target_accept=0.95)
+    mass_train_GP(dataset, 50, 20, 1000, target_accept=0.95, nutpie=True)
 
     end_time_CPU = time.process_time()
     mem1 = process.memory_info().rss / 1024**2
