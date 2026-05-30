@@ -254,7 +254,7 @@ if __name__ == '__main__':
 
     #HAVE YOU UPDATED CONSTANTS.PY AND CHECKED OUTPUT FILE PATHS AND LOGL
 
-    #print("''''''''''''''''''''''''\nNUTPIE NN TEST MASS\n......................")
+    print("''''''''''''''''''''''''\nNUTPIE NN TEST MASS\n......................")
 
     print("\ngoodMS700")
     print("::::::::::::::::::::::::::::::::::::::")
@@ -264,7 +264,7 @@ if __name__ == '__main__':
     start_time_wall = time.perf_counter()
 
     print("NN mass - MS stars. 16_2000, target_accept=0.95, TD 20.")
-    mass_train_NN(dataset, 16, 2000, target_accept=0.95)
+    mass_train_NN(dataset, 16, 2000, target_accept=0.95, nutpie=True)
 
     end_time_CPU = time.process_time()
     mem1 = process.memory_info().rss / 1024**2
