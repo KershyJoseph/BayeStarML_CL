@@ -109,8 +109,8 @@ def train(model, filename, draw=1000, chains=2,
     print('target_accept=', target_accept)
     trace = pm.sample(draws=draw, tune=int(1.5*draw), chains=chains,
                       cores=chains, model=model, target_accept=target_accept,
-                      max_treedepth=max_treedepth,
-                      nuts_sampler="nutpie",
+                      max_treedepth=max_treedepth#,
+                      #nuts_sampler="nutpie",
                       )
 
     #debugging nutpie
