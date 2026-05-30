@@ -294,7 +294,9 @@ def sparse_fully_heteroscedastic_gp(
         #Try not having data-driven priors on lengthscale. Also LogNormal instead of InverseGamma. 
         log_ls = pm.Normal("log_ls", mu=1.0, sigma=0.5, shape=D)
         ls = pm.Deterministic("ls", pm.math.exp(log_ls))
-        eta = pm.Gamma("eta", alpha=2, beta=1)
+        #eta = pm.Gamma("eta", alpha=2, beta=1)
+        log_eta = pm.Normal("log_eta", mu=np.log(2), sigma=0.5)
+        eta = pm.Deterministic("eta", pm.math.exp(log_eta))
 
         cov_mean = eta**2 * pm.gp.cov.ExpQuad(input_dim=D, ls=ls) \
                    + pm.gp.cov.WhiteNoise(sigma=1e-5)
@@ -320,7 +322,9 @@ def sparse_fully_heteroscedastic_gp(
         ls_v = pm.Deterministic("ls_v", pm.math.exp(log_ls_v))
         # eta_v = pm.LogNormal("eta_var", mu=np.log(0.2), sigma=0.35)
         #eta_v = pm.Gamma("eta_var", alpha=2, beta=1)
-        eta_v = pm.HalfNormal("eta_var", sigma=0.5) #try regulating noise fluctuation a bit more
+        #eta_v = pm.HalfNormal("eta_var", sigma=0.5) #try regulating noise fluctuation a bit more
+        log_eta_v = pm.Normal("log_eta_v", mu=1, sigma=0.5)
+        eta_v = pm.Deterministic("eta_v", pm.math.exp(log_eta_v))
 
         cov_var = eta_v**2 * pm.gp.cov.ExpQuad(input_dim=D_var, ls=ls_v) \
                   + pm.gp.cov.WhiteNoise(sigma=1e-5)
