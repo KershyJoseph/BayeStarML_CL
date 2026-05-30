@@ -1,0 +1,172 @@
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/pymc/pytensorf.py:958: FutureWarning: compile_pymc was renamed to compile. Old name will be removed in a future release of PyMC
+  warnings.warn(
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/pymc/pytensorf.py:958: FutureWarning: compile_pymc was renamed to compile. Old name will be removed in a future release of PyMC
+  warnings.warn(
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/diagnostics.py:596: RuntimeWarning: invalid value encountered in scalar divide
+  (between_chain_variance / within_chain_variance + num_samples - 1) / (num_samples)
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/diagnostics.py:991: RuntimeWarning: invalid value encountered in scalar divide
+  varsd = varvar / evar / 4
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/diagnostics.py:596: RuntimeWarning: invalid value encountered in scalar divide
+  (between_chain_variance / within_chain_variance + num_samples - 1) / (num_samples)
+5978.0969107142855 4.205791666794643 -0.08010071428571429 0.3170239560166381 1.1475716607142856 1.4840080535714286
+831.8751676749379 0.2640866953690148 0.2058107556527279 0.6810411063280138 0.2971137557826593 0.5270303780458729
+''''''''''''''''''''''''
+NUTPIE NN TEST MASS
+......................
+
+goodMS700
+::::::::::::::::::::::::::::::::::::::
+NN mass - MS stars. 16_2000, target_accept=0.95, TD 20.
+target_accept= 0.95
+.
+Trace type:  <class 'arviz.data.inference_data.InferenceData'>
+Trace posterior:
+ <xarray.Dataset> Size: 1GB
+Dimensions:                            (chain: 4, draw: 2000,
+                                        Omega_cholesky-cov-packed___dim_0: 10,
+                                        X_latent_dim_0: 560, X_latent_dim_1: 4,
+                                        w_in_1_dim_0: 16, w_in_1_dim_1: 4,
+                                        w_1_2_dim_0: 16, w_1_2_dim_1: 16,
+                                        w_2_out_dim_0: 16, bias_1_dim_0: 16,
+                                        ...
+                                        Omega_corr_dim_1: 4,
+                                        Omega_stds_dim_0: 4,
+                                        ann_input_dim_0: 560,
+                                        ann_input_dim_1: 4, act_1_dim_0: 560,
+                                        act_1_dim_1: 16, act_2_dim_0: 560,
+                                        act_2_dim_1: 16, act_out_dim_0: 560)
+Coordinates: (12/23)
+  * chain                              (chain) int64 32B 0 1 2 3
+  * draw                               (draw) int64 16kB 0 1 2 ... 1998 1999
+  * Omega_cholesky-cov-packed___dim_0  (Omega_cholesky-cov-packed___dim_0) int64 80B ...
+  * X_latent_dim_0                     (X_latent_dim_0) int64 4kB 0 1 ... 559
+  * X_latent_dim_1                     (X_latent_dim_1) int64 32B 0 1 2 3
+  * w_in_1_dim_0                       (w_in_1_dim_0) int64 128B 0 1 2 ... 14 15
+    ...                                 ...
+  * ann_input_dim_1                    (ann_input_dim_1) int64 32B 0 1 2 3
+  * act_1_dim_0                        (act_1_dim_0) int64 4kB 0 1 2 ... 558 559
+  * act_1_dim_1                        (act_1_dim_1) int64 128B 0 1 2 ... 14 15
+  * act_2_dim_0                        (act_2_dim_0) int64 4kB 0 1 2 ... 558 559
+  * act_2_dim_1                        (act_2_dim_1) int64 128B 0 1 2 ... 14 15
+  * act_out_dim_0                      (act_out_dim_0) int64 4kB 0 1 ... 558 559
+Data variables: (12/17)
+    Omega_cholesky-cov-packed__        (chain, draw, Omega_cholesky-cov-packed___dim_0) float64 640kB ...
+    X_latent                           (chain, draw, X_latent_dim_0, X_latent_dim_1) float64 143MB ...
+    w_in_1                             (chain, draw, w_in_1_dim_0, w_in_1_dim_1) float64 4MB ...
+    w_1_2                              (chain, draw, w_1_2_dim_0, w_1_2_dim_1) float64 16MB ...
+    w_2_out                            (chain, draw, w_2_out_dim_0) float64 1MB ...
+    bias_1                             (chain, draw, bias_1_dim_0) float64 1MB ...
+    ...                                 ...
+    Omega_corr                         (chain, draw, Omega_corr_dim_0, Omega_corr_dim_1) float64 1MB ...
+    Omega_stds                         (chain, draw, Omega_stds_dim_0) float64 256kB ...
+    ann_input                          (chain, draw, ann_input_dim_0, ann_input_dim_1) float64 143MB ...
+    act_1                              (chain, draw, act_1_dim_0, act_1_dim_1) float64 573MB ...
+    act_2                              (chain, draw, act_2_dim_0, act_2_dim_1) float64 573MB ...
+    act_out                            (chain, draw, act_out_dim_0) float64 36MB ...
+Attributes:
+    created_at:                 2026-05-30T11:15:12.063950+00:00
+    arviz_version:              0.21.0
+    inference_library:          nutpie
+    inference_library_version:  0.13.1
+    sampling_time:              431.42087984085083
+    tuning_steps:               3000
+.
+AZ Stats for ESS Bulk < 400:
+               mean     sd  hdi_3%  hdi_97%  ...  mcse_sd  ess_bulk  ess_tail  r_hat
+w_2_out[14]  0.009  0.325  -0.632    0.625  ...    0.009     324.0     630.0   1.03
+w_2_out[9]   0.030  0.309  -0.604    0.625  ...    0.009     390.0     688.0   1.01
+
+[2 rows x 9 columns]
+rhats:  [('Omega_cholesky-cov-packed__', 1.002382118482266), ('X_latent', 1.0040316004815077), ('w_in_1', 1.0120513814570409), ('w_1_2', 1.0040696907018192), ('w_2_out', 1.0346825023618393), ('bias_1', 1.0046441348604631), ('bias_2', 1.0032650126487987), ('bias_out', 1.0032025362541745), ('er_log__', 1.0000197681287435), ('Omega', 1.002382118482266), ('er', 1.0000197681287435), ('Omega_corr', 1.0023550286806435), ('Omega_stds', 1.002044640911063), ('ann_input', 1.0040316004815077), ('act_1', 1.0145981174089869), ('act_2', 1.0229748792676148), ('act_out', 1.0032512428448759)]
+Computing ... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are very different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are very different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+loo trace:  Computed from 8000 posterior samples and 560 observations log-likelihood matrix.
+
+         Estimate       SE
+elpd_loo   -53.03    27.57
+p_loo      129.20        -
+
+There has been a warning during the calculation. Please check the results.
+------
+
+Pareto k diagnostic values:
+                         Count   Pct.
+(-Inf, 0.70]   (good)      559   99.8%
+   (0.70, 1]   (bad)         1    0.2%
+   (1, Inf)   (very bad)    0    0.0%
+
+starting parallel prediction on 32 worker(s)…
+finished chain 1/4
+finished chain 3/4
+finished chain 2/4
+finished chain 4/4
+stdvs:  [0.02682778 0.03309608 0.04077593 0.04163012 0.02614695 0.03962041
+ 0.03871253 0.03506741 0.04646084 0.03854797 0.03818169 0.03894369
+ 0.0360183  0.03919939 0.02664517 0.03679527 0.03197038 0.03319243
+ 0.01700317 0.03310736 0.05495318 0.05432411 0.03360723 0.04834227
+ 0.03561246 0.02663621 0.03974535 0.05236245 0.04451316 0.01713317
+ 0.03907775 0.1095161  0.03599544 0.01644027 0.04164669 0.04143923
+ 0.04186785 0.02664449 0.0402674  0.03449113 0.03475359 0.03360549
+ 0.04561036 0.03531842 0.02880003 0.05476015 0.04313267 0.03961591
+ 0.03077526 0.03714019 0.04225503 0.03760578 0.04135412 0.05504436
+ 0.014532   0.02184595 0.02214994 0.03851292 0.04329156 0.03737717
+ 0.04129186 0.0261102  0.04213806 0.04455843 0.04435404 0.03174044
+ 0.03656039 0.04430906 0.10939705 0.02224857 0.04446668 0.0297635
+ 0.0282014  0.04491234 0.01840364 0.04874352 0.04329349 0.0445014
+ 0.04001367 0.03494068 0.01831651 0.03818987 0.04539264 0.04225842
+ 0.01600657 0.04141217 0.04733828 0.03878823 0.04205665 0.0403106
+ 0.03898687 0.04367742 0.02663143 0.02509242 0.0356853  0.0391354
+ 0.04348541 0.03426751 0.0513757  0.04824164 0.03231685 0.04253489
+ 0.03755972 0.03694755 0.03551371 0.04105675 0.03594119 0.02888308
+ 0.0374639  0.02826475 0.03695725 0.04410364 0.03650943 0.03833343
+ 0.02436212 0.03096978 0.03897037 0.03333385 0.03763936 0.02793281
+ 0.07376828 0.04404344 0.0294175  0.04942091 0.03495044 0.0436152
+ 0.03805296 0.0415167  0.03581849 0.04277667 0.0313308  0.01779374
+ 0.04504854 0.04528394 0.03217819 0.04924777 0.02361474 0.02057456
+ 0.02933704 0.03117982]
+means:  [1.71082456 1.41688662 1.39707238 1.40747061 0.94178833 1.25252943
+ 1.22805324 1.16014    1.20266195 1.11890032 1.36127822 1.18019385
+ 1.33433348 1.43719778 0.27442468 1.36727253 1.40006918 1.11264745
+ 1.04605667 1.42786072 1.25135286 1.10780295 1.16917417 1.4449885
+ 1.40707665 1.02061835 0.46358957 1.58072288 1.18203905 1.0941219
+ 1.32522923 1.34762163 1.46486826 0.68661865 1.19770093 1.08376067
+ 1.33686287 0.97433245 1.20891779 1.00070669 1.32132939 1.14957481
+ 1.20487861 1.61535372 1.45269349 1.23286439 1.13647729 1.10477577
+ 1.41347084 1.2720008  1.39907917 1.25999681 1.39396484 1.25264049
+ 0.90149813 0.83589165 1.34729878 1.04744381 1.42675393 1.1332271
+ 1.40058129 1.25355676 1.29346006 1.13463178 1.32534496 1.06533706
+ 1.17012339 1.32761924 1.34429855 1.21329042 1.37119673 0.89352362
+ 1.40307394 1.24914773 1.04042136 1.21149175 1.33012941 1.31439847
+ 1.35903146 1.46369351 0.88453254 1.16708714 1.18520128 1.39378641
+ 0.95235042 1.41276571 1.18949275 1.20026416 1.36578864 1.3803
+ 0.97668991 1.30607263 1.60057532 1.06378682 1.27067622 1.43791292
+ 1.33432366 1.5493541  1.1573161  0.99796964 0.91362278 1.40352631
+ 1.27916363 1.41747754 1.33174985 1.25912623 1.27068683 0.26489393
+ 1.47161169 0.34210284 1.18224973 0.99938286 1.26265367 1.32673544
+ 1.066495   1.01438512 1.4053804  1.34738307 1.15562341 1.36064311
+ 1.31513731 1.11120912 1.05722949 1.2901478  1.01499466 1.14831212
+ 1.09803098 1.26340509 1.14718108 1.32761798 0.83843872 0.91843281
+ 1.14019645 1.28117583 0.41567846 1.20752827 0.95037766 0.31327459
+ 1.44044171 1.46356831]
+test set:  130    1.84000
+425    1.53800
+412    1.38300
+351    1.33600
+551    0.95600
+        ...   
+247    1.12100
+490    0.91800
+654    0.23529
+338    1.52200
+417    1.72700
+Name: M, Length: 140, dtype: float64
+MAE:  0.0633301174380549
+MARD 6.201523260081036
+MRD -1.8296827617328477
+Peak Memory: 5445.26 MB
+CPU time accumulated: 3403.58507 s
+Total wall clock time: 949.85201 s
+><><><><><><><><><><><><><><><><><><><><><><><><><><
