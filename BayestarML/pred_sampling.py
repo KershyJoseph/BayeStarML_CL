@@ -226,7 +226,7 @@ def _SIMPLE_predict_one_chain(chain_idx,
     return draws, Y
 
 
-    def sample_post_pred_HBNN_para(trace, X, X_er, n_hidden, n_param, target,
+def sample_post_pred_HBNN_para(trace, X, X_er, n_hidden, n_param, target,
                             n_jobs=None):
         """
         Parallel posterior predictive for HBNN with latent-input sampling.
