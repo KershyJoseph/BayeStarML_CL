@@ -88,7 +88,7 @@ def radius_train_GP(data: Dataset, M_mean, M_var, draws=1000, advi=False,
     """
     hyperp_str = "MS"+str(M_mean)+"_"+str(M_var)+"_"+str(draws)+"_"+str(target_accept)
     if nutpie:
-        hyperp_str += "NUTPIE"
+        hyperp_str += "NUTPIE2"
 
     model, μ_gp, lg_σ_gp, Xu, Xu_er = gp.sparse_fully_heteroscedastic_gp(data.x_train,
                                                                         data.x_train_er,
