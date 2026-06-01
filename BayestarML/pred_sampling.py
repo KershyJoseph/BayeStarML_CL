@@ -653,6 +653,7 @@ def posterior_predictive_GP(
 
     # Missingness masks for mean GP inputs
     mask_mu = ~np.isfinite(X_new_raw)
+    print("number NaNs in X_new_raw", len(X_new_raw[mask_mu]))
 
     # Build variance-GP raw design matrix exactly as in training
     X_var_new_raw = np.hstack([
