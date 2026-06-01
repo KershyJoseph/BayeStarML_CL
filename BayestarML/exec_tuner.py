@@ -8,9 +8,11 @@ from models import hbnn
 from utils import train
 import optuna
 import arviz as az
+import matplotlib.pyplot as plt
+import time
 
-def objective(trial, data, draw=1000, chains=4, target_accept=0.95):
-    nodes = trial.suggest_int("nodes", 2, 64)
+def objective(trial, data, min, max, draw=1000, chains=4, target_accept=0.95):
+    nodes = trial.suggest_int("nodes", min, max)
 
     model = hbnn.HBNN_M4(data.x_train, data.mass_train, data.x_train_er, data.emass_train, nodes)
     trace = train(model, draw=draw, chains=chains, target_accept=target_accept)
@@ -19,6 +21,11 @@ def objective(trial, data, draw=1000, chains=4, target_accept=0.95):
     return elpd_loo
 
 if __name__ == '__main__':
+    start_time = time.perf_counter()
+
+    min=2
+    max=8
+    n=2
 
     df_train = get_dataset('DataExploring/good_MS.txt', logL=True)
 
@@ -46,8 +53,23 @@ if __name__ == '__main__':
         )
 
     study = optuna.create_study(direction="maximize", sampler=optuna.samplers.TPESampler())
-    study.optimize(lambda trial: objective(trial, dataset),
-                   n_trials=20)
+    study.optimize(lambda trial: objective(trial, dataset, min, max),
+                   n_trials=n)
 
-    print("Best Number Nodes:", study.best_params)
-    print("Best ELPD-LOO:", study.best_value)
+    df_results = study.trials_dataframe()
+    print(df_results)
+    df_results = df_results[df_results["state"]=="COMPLETE"] #just in case
+    plt.figure()
+    plt.plot(df_results["nodes"], df_results["value"], 'bd')
+    plt.xlabel("Number nodes")
+    plt.ylabel("ELPD-LOO")
+    plt.grid(linestyle="--", alpha=0.5)
+    plt.savefig("Outputs700MS/Tuning/NNmass_elpd.pdf")
+
+    print(f"""After {n} trials for nodes in range [{min},{max}]:
+
+          Best Number Nodes: {study.best_params}
+          Best ELPD-LOO: {study.best_value}
+
+          Wall clock time: {(time.perf_counter()-start_time)/60} mins")
+          """)
