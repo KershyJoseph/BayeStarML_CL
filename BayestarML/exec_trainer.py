@@ -72,9 +72,10 @@ def mass_train_GP(data: Dataset, M_mean, M_var, draws=1000, advi=False,
 
     stds = pred.std(0)
     means = pred.mean(0)
-    print(means)
-    print(stds)
-    print("Unorm mass: ", data.unorm_mass)
+    print("means: ", means)
+    print("stdvs: ", stds)
+    with pd.option_context("display.max_rows", None):
+        print("Unorm mass: ", data.unorm_mass)
 
     print('MAE: ', mean_absolute_error(data.unorm_mass, means))
     print('MARD', mard(data.unorm_mass, means))
@@ -113,9 +114,10 @@ def radius_train_GP(data: Dataset, M_mean, M_var, draws=1000, advi=False,
 
     stds = pred.std(0)
     means = pred.mean(0)
-    print(stds)
-    print(means)
-    print(data.unorm_radius)
+    print("means: ", means)
+    print("stdvs: ", stds)
+    with pd.option_context("display.max_rows", None):
+        print(data.unorm_radius)
 
     print('MAE: ', mean_absolute_error(data.unorm_radius, means))
     print('MARD', mard(data.unorm_radius, means))
@@ -145,8 +147,8 @@ def mass_train_SIMPLE_NN(data: Dataset, n_hidden=5, draw=1000, chains=4,
 
     stds = pred.std(0)
     means = pred.mean(0)
-    print("stdvs: ", stds)
     print("means: ", means)
+    print("stdvs: ", stds)
     print("test set: ", data.unorm_mass)
 
     print('MAE: ', mean_absolute_error(data.unorm_mass, means))
@@ -174,9 +176,10 @@ def mass_train_NN(data: Dataset, n_hidden=15, draw=1000, chains=4,
 
     stds = pred.std(0)
     means = pred.mean(0)
-    print("stdvs: ", stds)
     print("means: ", means)
-    print("test set: ", data.unorm_mass)
+    print("stdvs: ", stds)
+    with pd.option_context("display.max_rows", None):
+        print("test set: ", data.unorm_mass)
 
     print('MAE: ', mean_absolute_error(data.unorm_mass, means))
     print('MARD', mard(data.unorm_mass, means))
@@ -211,9 +214,10 @@ def radius_train_NN(data: Dataset, n_hidden, draw=1000, chains=4,
 
     stds = pred.std(0)
     means = pred.mean(0)
-    print("stdvs: ", stds)
     print("means: ", means)
-    print("test set: ", data.unorm_radius)
+    print("stdvs: ", stds)
+    with pd.option_context("display.max_rows", None):
+        print("test set: ", data.unorm_radius)
 
     print('MAE: ', mean_absolute_error(data.unorm_radius, means))
     print('MARD', mard(data.unorm_radius, means))
@@ -265,7 +269,7 @@ if __name__ == '__main__':
     start_time_wall = time.perf_counter()
 
     print("GP mass - MS stars. 50_20_1000, target_accept=0.95, TD 20.")
-    mass_train_GP(dataset, 50, 20, 1000, target_accept=0.95, nutpie=True)
+    mass_train_GP(dataset, 50, 20, 1000, target_accept=0.95)
 
     end_time_CPU = time.process_time()
     mem1 = process.memory_info().rss / 1024**2
