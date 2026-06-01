@@ -47,7 +47,7 @@ def mass_train_GP(data: Dataset, M_mean, M_var, draws=1000, advi=False,
     """
     hyperp_str = "MS"+str(M_mean)+"_"+str(M_var)+"_"+str(draws)+"_"+str(target_accept)
     if nutpie:
-        hyperp_str += "NUTPIE_p2"
+        hyperp_str += "NUTPIE_nutsps"
 
     model, μ_gp, lg_σ_gp, Xu, Xu_er = gp.sparse_fully_heteroscedastic_gp(data.x_train,
                                                                         data.x_train_er,
@@ -65,7 +65,7 @@ def mass_train_GP(data: Dataset, M_mean, M_var, draws=1000, advi=False,
     else:
         trace = train(model,
                   "Outputs700MS/GPmass/GPmass"+hyperp_str+".nc",
-                  draw=draws, chains=4, target_accept=target_accept, max_treedepth=20)
+                  draw=draws, chains=4, target_accept=target_accept)
 
     pred, lpd = posterior_predictive_GP(model, μ_gp, lg_σ_gp, trace,
                                         data.x_test, data.x_test_err, Xu, Xu_er, 4, 'Mass')
@@ -106,8 +106,7 @@ def radius_train_GP(data: Dataset, M_mean, M_var, draws=1000, advi=False,
     else:
         trace = train(model,
                   "Outputs700MS/GPrad/GPrad_"+hyperp_str+".nc",
-                  draw=draws, chains=4, target_accept=target_accept,
-                  max_treedepth=20)
+                  draw=draws, chains=4, target_accept=target_accept)
 
     pred, lpd = posterior_predictive_GP(model, μ_gp, lg_σ_gp, trace,
                                         data.x_test, data.x_test_err, Xu, Xu_er, 4, 'Radius')
@@ -141,7 +140,7 @@ def mass_train_SIMPLE_NN(data: Dataset, n_hidden=5, draw=1000, chains=4,
     trace = train(model,
                   "Outputs700MS/NNmass/simpleNN_mass"+hyperp_str+".nc",
                   draw=draw, chains=chains,
-                  target_accept=target_accept, max_treedepth=20)
+                  target_accept=target_accept)
 
     pred, lpd = SIMPLE_sample_post_pred_HBNN_para(trace, data.x_test, data.x_test_err, n_hidden, 4, "Mass")
 
@@ -169,8 +168,7 @@ def mass_train_NN(data: Dataset, n_hidden=15, draw=1000, chains=4,
     model = hbnn.HBNN_M4(data.x_train, mass_train, data.x_train_er, data.emass_train, n_hidden)
     trace = train(model,
                   "Outputs700MS/NNmass/NNmass_"+hyperp_str+".nc",
-                  draw=draw, chains=chains, target_accept=target_accept,
-                  max_treedepth=20)
+                  draw=draw, chains=chains, target_accept=target_accept)
 
     pred, lpd = sample_post_pred_HBNN_para(trace, data.x_test, data.x_test_err, n_hidden, 4, "Mass")
 
@@ -208,7 +206,7 @@ def radius_train_NN(data: Dataset, n_hidden, draw=1000, chains=4,
     else:
         trace = train(model,
                 "Outputs700MS/NNrad/NNrad"+hyperp_str+".nc",
-                draw=draw, chains=chains, max_treedepth=20, target_accept=target_accept)
+                draw=draw, chains=chains, target_accept=target_accept)
 
     pred, lpd = sample_post_pred_HBNN_para(trace, data.x_test, data.x_test_err, n_hidden, 4, "Radius")
 
@@ -258,7 +256,7 @@ if __name__ == '__main__':
 
     #HAVE YOU UPDATED CONSTANTS.PY AND CHECKED OUTPUT FILE PATHS AND LOGL
 
-    # print("''''''''''''''''''''''''\nNUTPIE GP TEST - MASS - BETTER PRIORS\n......................")
+    print("''''''''''''''''''''''''\nNUTPIE GP TEST - MASS - PRIORS FROM NUTS\n......................")
 
     print("\n::::::::::::::::::::::::::::::::::::::")
     print("goodMS700")
@@ -269,7 +267,7 @@ if __name__ == '__main__':
     start_time_wall = time.perf_counter()
 
     print("GP mass - MS stars. 50_20_1000, target_accept=0.95, TD 20.")
-    mass_train_GP(dataset, 50, 20, 1000, target_accept=0.95)
+    mass_train_GP(dataset, 50, 20, 1000, target_accept=0.95, nutpie=True)
 
     end_time_CPU = time.process_time()
     mem1 = process.memory_info().rss / 1024**2
