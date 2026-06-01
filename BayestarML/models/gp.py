@@ -53,7 +53,7 @@ class SparseLatent:
         Kuu = self.cov(Xu)
         self.L = tt.slinalg.cholesky(pm.gp.util.stabilize(Kuu))
 
-        self.v = pm.Normal(f"u_rotated_{name}", mu=0.0, sigma=1.0, shape=len(Xu))
+        self.v = pm.Normal(f"u_rotated_{name}", mu=0.0, sigma=3.0, shape=len(Xu))
         self.u = pm.Deterministic(f"u_{name}", tt.dot(self.L, self.v))
 
         Kfu = self.cov(X, Xu)
@@ -259,7 +259,7 @@ def sparse_fully_heteroscedastic_gp(
     # Inducing points for mean GP
     Xu = make_inducing_points(X, X_er=X_err, M=M_mean,
                               method="blend",
-                              add_bounds=False,
+                              add_bounds=True,
                               weight_by_error=True,
                               seed=seed)
     
@@ -267,7 +267,7 @@ def sparse_fully_heteroscedastic_gp(
     # X_var = X_err 
     Xu_var = make_inducing_points(X_var, M=M_var,
                                   method="blend",
-                                  add_bounds=False,
+                                  add_bounds=True,
                                   weight_by_error=False,  # maybe off here
                                   seed=seed)
 
