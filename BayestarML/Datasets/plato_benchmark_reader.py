@@ -2,6 +2,7 @@
 File to read Plato Benchmark Stars from Maxted
 """
 import pandas as pd
+import matplotlib.pyplot as plt
 import numpy as np
 
 def logomatic_sym(df, var:str):
@@ -16,6 +17,13 @@ def logomatic_sym(df, var:str):
     df["elog"+var] = (elog1 + elog2)/2 #avg err
 
     return None
+
+def statomatic(col):
+    print("--------",col,"---------")
+    print("Min. - ", df_plato_goodMS_new[col].min())
+    print("Max. - ", df_plato_goodMS_new[col].max())
+    print("Mean - ", df_plato_goodMS_new[col].mean())
+    print("Std - ", df_plato_goodMS_new[col].std())
 
 col_specs = [
     (0, 32), #ID
@@ -86,9 +94,21 @@ logomatic_sym(df_plato_goodMS_new, "L")
 
 df_plato_goodMS_new.to_csv("Datasets/plato_data.txt", sep='\t', index=False)
 
-for col in ["M", "R"]:
-    print("--------",col,"---------")
-    print("Min. - ", df_plato_goodMS_new[col].min())
-    print("Max. - ", df_plato_goodMS_new[col].max())
-    print("Mean - ", df_plato_goodMS_new[col].mean())
-    print("Std - ", df_plato_goodMS_new[col].std())
+#Compare with my data
+feature = "logL"
+target = "M"
+
+plt.figure()
+lbl = "Our Data"
+for df in [df_us, df_plato_goodMS_new]:
+    x = df[feature]
+    x_err = df["e"+feature]
+    y = df[target]
+    y_err = df["e"+target]
+    plt.errorbar(x, y, y_err, x_err, fmt='o', alpha=0.3, label=lbl)
+    lbl = "Plato Data"
+plt.legend()
+plt.xlabel(feature)
+plt.ylabel(target+" ("+target[0]+"sol)")
+plt.savefig("Datasets/"+feature+"_"+target+"_Plato_Us.pdf")
+plt.close()

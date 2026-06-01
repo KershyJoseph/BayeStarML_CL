@@ -61,7 +61,7 @@ if __name__ == '__main__':
     print(df_results)
     df_results = df_results[df_results["state"]=="COMPLETE"] #just in case
     plt.figure()
-    plt.plot(df_results["nodes"], df_results["value"], 'bd')
+    plt.plot(df_results["params_nodes"], df_results["value"], 'bd')
     plt.xlabel("Number nodes")
     plt.ylabel("ELPD-LOO")
     plt.grid(linestyle="--", alpha=0.5)
