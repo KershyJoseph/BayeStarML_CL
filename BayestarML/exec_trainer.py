@@ -163,7 +163,7 @@ def mass_train_NN(data: Dataset, n_hidden=15, draw=1000, chains=4,
     if nutpie:
         hyperp_str += "NUTPIE"
 
-    model = hbnn.HBNN_M4(data.x_train, mass_train, data.x_train_er, data.emass_train, n_hidden)
+    model = hbnn.HBNN_M4(data.x_train, data.mass_train, data.x_train_er, data.emass_train, n_hidden)
     trace = train(model,
                   "Outputs700MS/NNmass/NNmass_"+hyperp_str+".nc",
                   draw=draw, chains=chains, target_accept=target_accept)
