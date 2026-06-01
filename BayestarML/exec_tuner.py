@@ -25,8 +25,8 @@ if __name__ == '__main__':
     start_time = time.perf_counter()
 
     min=2
-    max=8
-    n=2
+    max=64
+    n=20
 
     df_train = get_dataset('DataExploring/good_MS.txt', logL=True)
 
@@ -61,16 +61,18 @@ if __name__ == '__main__':
     print(df_results)
     df_results = df_results[df_results["state"]=="COMPLETE"] #just in case
     plt.figure()
-    plt.plot(df_results["params_nodes"], df_results["value"], 'bd')
+    plt.plot(df_results["params_nodes"], df_results["value"], 'bx')
     plt.xlabel("Number nodes")
     plt.ylabel("ELPD-LOO")
     plt.grid(linestyle="--", alpha=0.5)
-    plt.savefig("Outputs700MS/Tuning/NNmass_elpd.pdf")
+    plt.savefig("Outputs700MS/Tuning/NNmass_elpd_"+str(n)+"_"+str(min)+"_"+str(max)+".pdf")
 
-    print(f"""After {n} trials for nodes in range [{min},{max}]:
+    print(f"""
+    After {n} trials for nodes in range [{min},{max}]:
 
-          Best Number Nodes: {study.best_params}
-          Best ELPD-LOO: {study.best_value}
+    Best Number Nodes: {study.best_params}
+    Best ELPD-LOO: {study.best_value}
 
-          Wall clock time: {(time.perf_counter()-start_time)/60} mins")
-          """)
+    Wall clock time: {(time.perf_counter()-start_time)/60} mins")
+    """
+    )

@@ -65,7 +65,7 @@ df_plato_goodMS = df_plato_all6_MS[["ID", "component", "M", "eM", "R", "eR", "Te
                                    "L", "eL", "logg", "elogg", "FeH", "eFeH"]]
 
 #check for duplicates in my database
-df_us = pd.read_csv("DataExploring/datos_todos_v20261905.txt", sep="\t", comment="#")
+df_us = pd.read_csv("DataExploring/good_MS.txt", sep="\t", comment="#")
 df_p = df_plato_goodMS.copy()
 
 #bunch of edits to make strings match
@@ -86,7 +86,7 @@ df_us["ID"] = df_us["ID"].str.replace('* ', '')
 dup_mask = df_p["ID"].isin(df_us["ID"]) #True for matches
 df_plato_goodMS_new = df_plato_goodMS[~dup_mask]
 print("New plato stars: ", len(df_plato_goodMS_new))
-print(df_plato_goodMS_new["ID"].unique())
+#print(df_plato_goodMS_new["ID"].unique())
 #print(df_us["ID"])
 
 #add logL col
@@ -100,13 +100,15 @@ target = "M"
 
 plt.figure()
 lbl = "Our Data"
+eL = "1"
 for df in [df_us, df_plato_goodMS_new]:
     x = df[feature]
-    x_err = df["e"+feature]
+    x_err = df["e"+feature+eL]
     y = df[target]
     y_err = df["e"+target]
     plt.errorbar(x, y, y_err, x_err, fmt='o', alpha=0.3, label=lbl)
     lbl = "Plato Data"
+    eL = ""
 plt.legend()
 plt.xlabel(feature)
 plt.ylabel(target+" ("+target[0]+"sol)")
