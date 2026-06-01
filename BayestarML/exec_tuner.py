@@ -4,10 +4,19 @@ JK 01/06/2025
 
 from preprocess import get_dataset, return_train_test, denormalise_val
 from exec_trainer import Dataset
-import optuna as op
+from models import hbnn
+from utils import train
+import optuna
+import arviz as az
 
-def objective():
-    
+def objective(trial, data, draw=1000, chains=4, target_accept=0.95):
+    nodes = trial.suggest_int("nodes", 2, 16)
+
+    model = hbnn.HBNN_M4(data.x_train, mass_train, data.x_train_er, data.emass_train, nodes)
+    trace = train(model, draw=draw, chains=chains, target_accept=target_accept)
+
+    elpd_loo = az.loo(trace).elpd_loo
+    return elpd_loo
 
 if __name__ == '__main__':
 
@@ -36,4 +45,8 @@ if __name__ == '__main__':
         unorm_radius = denormalise_val(rad_test, 'Radius')
         )
 
-    
+    study = optuna.create_study(direction="maximize", sampler=optuna.samplers.TPESampler())
+    study.optimize(objective, n_trials=3)
+
+    print("Best Number Nodes:", study.best_params_)
+    print("Best ELPD-LOO:", study.best_value)

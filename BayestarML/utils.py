@@ -79,7 +79,7 @@ def find_pointwise_loo(trace):
     return az.loo(trace, pointwise=True, scale="log").loo_i.values
 
 
-def train(model, filename, draw=1000, chains=2,
+def train(model, filename=False, draw=1000, chains=2,
           target_accept=0.95, max_treedepth=20):
     """
     Sample from a PyMC model and save the posterior trace.
@@ -136,7 +136,8 @@ def train(model, filename, draw=1000, chains=2,
     trace.extend(pm.compute_log_likelihood(trace, model=model, var_names='y')) 
     print("loo trace: ", az.loo(trace))
 
-    trace.to_netcdf(filename)
+    if filename:
+        trace.to_netcdf(filename)
 
     return trace
 
