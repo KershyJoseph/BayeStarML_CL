@@ -120,7 +120,7 @@ def radius_train_GP(data: Dataset, M_mean, M_var, draws=1000, advi=False,
     print('MARD', mard(data.unorm_radius, means))
     print('MRD', mrd(data.unorm_radius, means))
 
-    model_pred_plotter(data.unorm_radius, means, stds, 'Radius', 'GP', 'Outputs700MS/GPrad', hyperp_str)
+    model_pred_plotter(data.unorm_radius, means, stds, 'Radius', 'GPrad', 'Outputs700MS/GPrad', hyperp_str)
 
 def mass_train_SIMPLE_NN(data: Dataset, n_hidden=5, draw=1000, chains=4,
                          target_accept=.95, nutpie=False):
@@ -188,7 +188,7 @@ def radius_train_NN(data: Dataset, n_hidden, draw=1000, chains=4,
     """Function to train NN on radius prediction
     """
     #for output info
-    hyperp_str = "MS"+str(n_hidden)+"_"+str(draw)#
+    hyperp_str = "MS"+str(n_hidden)+"_"+str(draw)
     if nutpie:
         hyperp_str += "NUTPIE"
 
@@ -254,7 +254,7 @@ if __name__ == '__main__':
 
     #HAVE YOU UPDATED CONSTANTS.PY AND CHECKED OUTPUT FILE PATHS AND LOGL
 
-    print("''''''''''''''''''''''''\nNUTPIE GP TEST - MASS - PRIORS FROM NUTS + GP OBJS FIX\n......................")
+    # print("''''''''''''''''''''''''\nNUTPIE GP TEST - MASS - PRIORS FROM NUTS + GP OBJS FIX\n......................")
 
     print("\n::::::::::::::::::::::::::::::::::::::")
     print("goodMS700")
@@ -264,8 +264,8 @@ if __name__ == '__main__':
     start_time_CPU = time.process_time()
     start_time_wall = time.perf_counter()
 
-    print("GP mass - MS stars. 50_20_1000, target_accept=0.95, TD 20.")
-    mass_train_GP(dataset, 50, 20, 1000, target_accept=0.95, nutpie=True)
+    print("GP rad - MS stars. 50_20_1000, target_accept=0.95, TD 20.")
+    radius_train_GP(dataset, 50, 20, 1000, target_accept=0.95)
 
     end_time_CPU = time.process_time()
     mem1 = process.memory_info().rss / 1024**2
@@ -275,20 +275,20 @@ if __name__ == '__main__':
 
     print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
 
-    # start_time_CPU2 = time.process_time()
-    # start_time2 = time.time()
+    start_time_CPU2 = time.process_time()
+    start_time2 = time.time()
 
-    # print("bigNNrun - mass - goodMS stars. With L in log space. 16, 2000, 4, target_accept=0.95. 20TD still.")
-    # mass_train_NN(dataset, 16, 2000, target_accept=0.95)
+    print("bigNNrun - rad - goodMS stars. With L in log space. 16, 2000, 4, target_accept=0.95. 20TD still.")
+    radius_train_NN(dataset, 16, 2000, target_accept=0.95)
 
-    # end_time_CPU2 = time.process_time()
+    end_time_CPU2 = time.process_time()
 
-    # mem2 = process.memory_info().rss / 1024**2
-    # print(f"Peak Memory: {(mem2-mem1):.2f} MB")
-    # print(f"CPU time used: {(end_time_CPU2-start_time_CPU2):.5f} s")
-    # print(f"Total run time: {time.time()-start_time2:.5f} s")
+    mem2 = process.memory_info().rss / 1024**2
+    print(f"Peak Memory: {(mem2-mem1):.2f} MB")
+    print(f"CPU time used: {(end_time_CPU2-start_time_CPU2):.5f} s")
+    print(f"Total run time: {time.time()-start_time2:.5f} s")
 
-    # print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
+    print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
 
     # start_time_CPU3 = time.process_time()
     # start_time3 = time.time()
@@ -304,4 +304,4 @@ if __name__ == '__main__':
     # print(f"Total run time: {time.time()-start_time3:.5f} s")
 
     # print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
-    # print("Salve Regina")
+    print("Salve Regina")
