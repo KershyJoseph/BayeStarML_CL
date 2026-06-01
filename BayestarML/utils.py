@@ -80,7 +80,7 @@ def find_pointwise_loo(trace):
 
 
 def train(model, filename=False, draw=1000, chains=2,
-          target_accept=0.95, max_treedepth=20, sampler="pymc"):
+          target_accept=0.95, max_treedepth=20, nuts_sampler="pymc"):
     """
     Sample from a PyMC model and save the posterior trace.
 
@@ -110,7 +110,7 @@ def train(model, filename=False, draw=1000, chains=2,
     trace = pm.sample(draws=draw, tune=int(1.5*draw), chains=chains,
                       cores=chains, model=model, target_accept=target_accept,
                       max_treedepth=max_treedepth,
-                      nuts_sampler=sampler,
+                      nuts_sampler=nuts_sampler,
                       )
 
     # # NUTPIE DEBUGGING Extract the learned mean training predictions directly from the trace
