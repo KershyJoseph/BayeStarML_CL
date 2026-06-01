@@ -46,7 +46,7 @@ if __name__ == '__main__':
         )
 
     study = optuna.create_study(direction="maximize", sampler=optuna.samplers.TPESampler())
-    study.optimize(objective, n_trials=3)
+    study.optimize(objective, n_trials=3, data=dataset)
 
     print("Best Number Nodes:", study.best_params_)
     print("Best ELPD-LOO:", study.best_value)
