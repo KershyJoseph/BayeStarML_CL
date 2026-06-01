@@ -53,7 +53,7 @@ class SparseLatent:
         Kuu = self.cov(Xu)
         self.L = tt.slinalg.cholesky(pm.gp.util.stabilize(Kuu))
 
-        self.v = pm.Normal(f"u_rotated_{name}", mu=0.0, sigma=3.0, shape=len(Xu))
+        self.v = pm.Normal(f"u_rotated_{name}", mu=0.0, sigma=1.0, shape=len(Xu))
         self.u = pm.Deterministic(f"u_{name}", tt.dot(self.L, self.v))
 
         Kfu = self.cov(X, Xu)

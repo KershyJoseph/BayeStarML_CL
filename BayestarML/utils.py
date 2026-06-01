@@ -118,6 +118,9 @@ def train(model, filename, draw=1000, chains=2,
     print("Training predictions SD:", np.std(sampled_mu_f))
     print("Training predictions range:", sampled_mu_f.min(), sampled_mu_f.max())
 
+    vs = ["ls", "ls_v", "eta", "eta_v"]
+    print("Posteriors of interest:\n", az.summary(trace, var_names=vs))
+
     with pd.option_context("display.max_rows", None):
         df = az.summary(trace)
         df.sort_values(by="ess_bulk", inplace=True)
