@@ -258,7 +258,7 @@ if __name__ == '__main__':
 
     #HAVE YOU UPDATED CONSTANTS.PY AND CHECKED OUTPUT FILE PATHS AND LOGL
 
-    print("''''''''''''''''''''''''\nNUTPIE GP TEST - MASS - BETTER PRIORS\n......................")
+    # print("''''''''''''''''''''''''\nNUTPIE GP TEST - MASS - BETTER PRIORS\n......................")
 
     print("\n::::::::::::::::::::::::::::::::::::::")
     print("goodMS700")
