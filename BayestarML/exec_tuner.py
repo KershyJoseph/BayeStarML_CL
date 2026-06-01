@@ -15,7 +15,8 @@ def objective(trial, data, min, max, draw=1000, chains=4, target_accept=0.95):
     nodes = trial.suggest_int("nodes", min, max)
 
     model = hbnn.HBNN_M4(data.x_train, data.mass_train, data.x_train_er, data.emass_train, nodes)
-    trace = train(model, draw=draw, chains=chains, target_accept=target_accept)
+    trace = train(model, draw=draw, chains=chains, target_accept=target_accept,
+                  nuts_sampler="nutpie")
 
     elpd_loo = az.loo(trace).elpd_loo
     return elpd_loo
