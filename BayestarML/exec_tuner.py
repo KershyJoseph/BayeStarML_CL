@@ -46,7 +46,7 @@ if __name__ == '__main__':
         )
 
     study = optuna.create_study(direction="maximize", sampler=optuna.samplers.TPESampler())
-    study.optimize(lambda trial: objective(trial, dataset, mass_train, emass_train),
+    study.optimize(lambda trial: objective(trial, dataset),
                    n_trials=2)
 
     print("Best Number Nodes:", study.best_params_)
