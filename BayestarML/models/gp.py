@@ -51,20 +51,24 @@ class SparseLatent:
             GP prior mean evaluated at X.
         """
         Kuu = self.cov(Xu)
-        self.L = tt.slinalg.cholesky(pm.gp.util.stabilize(Kuu))
+        L = tt.slinalg.cholesky(pm.gp.util.stabilize(Kuu))
 
-        self.v = pm.Normal(f"u_rotated_{name}", mu=0.0, sigma=1.0, shape=len(Xu))
-        self.u = pm.Deterministic(f"u_{name}", tt.dot(self.L, self.v))
+        v = pm.Normal(f"u_rotated_{name}", mu=0.0, sigma=1.0, shape=len(Xu))
+        u = pm.Deterministic(f"u_{name}", tt.dot(L, v))
 
         Kfu = self.cov(X, Xu)
-        self.Kuiu = tt.slinalg.solve_triangular(
-            self.L.T, tt.slinalg.solve_triangular(self.L, self.u, lower=True),
+        Kuiu = tt.slinalg.solve_triangular(
+            L.T, tt.slinalg.solve_triangular(L, u, lower=True),
             lower=False
         )
-        self.mu = pm.Deterministic(f"mu_{name}", tt.dot(Kfu, self.Kuiu))
-        return self.mu
+        mu = pm.Deterministic(f"mu_{name}", tt.dot(Kfu, Kuiu))
+        gp_trace = {
+            "L": L,
+            "Kuiu": Kuiu
+        }
+        return mu, gp_trace
 
-    def conditional(self, name, Xnew, Xu):
+    def conditional(self, name, Xnew, Xu, gp_trace):
         """
         Compute the full conditional predictive distribution at new inputs.
 
@@ -82,16 +86,19 @@ class SparseLatent:
         pm.MvNormal
             Multivariate normal random variable representing GP predictions.
         """
+        L = gp_trace["L"]
+        Kuiu = gp_trace["Kuiu"]
+
         Ksu = self.cov(Xnew, Xu)
-        mus = tt.dot(Ksu, self.Kuiu)
-        tmp = tt.slinalg.solve_triangular(self.L, Ksu.T, lower=True)
+        mus = tt.dot(Ksu, Kuiu)
+        tmp = tt.slinalg.solve_triangular(L, Ksu.T, lower=True)
         Qss = tt.dot(tmp.T, tmp)  # Qss = tt.dot(tt.dot(Ksu, tt.nlinalg.pinv(Kuu)), Ksu.T)
         Kss = self.cov(Xnew)
         Lss = tt.slinalg.cholesky(pm.gp.util.stabilize(Kss - Qss))
-        mu_pred = pm.MvNormal(name, mu=mus, chol=Lss, shape=Xnew.eval().shape[0])
+        mu_pred = pm.MvNormal(name, mu=mus, chol=Lss, shape=Xnew.shape[0]) #.eval()
         return mu_pred
-    
-    def conditional_marginal(self, name, Xnew, Xu, jitter=1e-6):
+
+    def conditional_marginal(self, name, Xnew, Xu, gp_trace, jitter=1e-6):
         """
         Compute marginal predictive means and variances at new inputs.
 
@@ -115,12 +122,15 @@ class SparseLatent:
         pm.Normal
             PyMC Normal random variable representing marginal predictions.
         """
+        L = gp_trace["L"]
+        Kuiu = gp_trace["Kuiu"]
+
         Ksu = self.cov(Xnew, Xu)
         # predictive mean:  μ* = K_{x*,u}  K_uu⁻¹  u
-        mu_pred = tt.dot(Ksu, self.Kuiu)             
+        mu_pred = tt.dot(Ksu, Kuiu)             
 
         # marginal variance
-        tmp = tt.slinalg.solve_triangular(self.L, Ksu.T, lower=True)
+        tmp = tt.slinalg.solve_triangular(L, Ksu.T, lower=True)
         Kss_diag = self.cov(Xnew, diag=True)         
         var_pred = Kss_diag - tt.sum(tmp**2, axis=0) + jitter
         sigma_pred = tt.sqrt(var_pred)
@@ -302,7 +312,7 @@ def sparse_fully_heteroscedastic_gp(
                    + pm.gp.cov.WhiteNoise(sigma=1e-5)
 
         μ_gp = SparseLatent(cov_mean)
-        μ_f  = μ_gp.prior("μ", X_mu, Xu)
+        μ_f, μ_trace = μ_gp.prior("μ", X_mu, Xu)
 
         X_var_data = pm.Data("X_var", X_var)
         D_var = X_var.shape[1]
@@ -331,11 +341,11 @@ def sparse_fully_heteroscedastic_gp(
         
         alpha_log_var = pm.Normal("alpha_log_var", mu=0.0, sigma=1.0)
         log_var_gp = SparseLatent(cov_var)
-        log_var_latent  = log_var_gp.prior("log_var_f", X_var_data, Xu_var)
+        log_var_latent, var_trace  = log_var_gp.prior("log_var_f", X_var_data, Xu_var)
         log_var = pm.Deterministic("log_var", alpha_log_var + log_var_latent)
         σ_f     = pm.Deterministic("σ_f", pm.math.exp(0.5 * log_var))
 
         # -------- likelihood --------
         y_obs = pm.Normal("y", mu=μ_f, sigma=σ_f, observed=y)
 
-    return model, μ_gp, log_var_gp, Xu, Xu_var
+    return model, μ_gp, log_var_gp, μ_trace, var_trace, Xu, Xu_var

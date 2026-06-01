@@ -47,9 +47,9 @@ def mass_train_GP(data: Dataset, M_mean, M_var, draws=1000, advi=False,
     """
     hyperp_str = "MS"+str(M_mean)+"_"+str(M_var)+"_"+str(draws)+"_"+str(target_accept)
     if nutpie:
-        hyperp_str += "NUTPIE_nutsps"
+        hyperp_str += "NUTPIE_nutsps_GPobjs"
 
-    model, μ_gp, lg_σ_gp, Xu, Xu_er = gp.sparse_fully_heteroscedastic_gp(data.x_train,
+    model, μ_gp, lg_σ_gp, μ_trace, var_trace, Xu, Xu_er = gp.sparse_fully_heteroscedastic_gp(data.x_train,
                                                                         data.x_train_er,
                                                                         data.mass_train,
                                                                         M_mean,
@@ -61,13 +61,12 @@ def mass_train_GP(data: Dataset, M_mean, M_var, draws=1000, advi=False,
         print("ELBO:\n", approx.hist)
         trace.extend(pm.compute_log_likelihood(trace, model=model, var_names='y'))
         trace.to_netcdf("Outputs700MS/Testing/GP_mass_testing/GPmass_ADVI_test"+hyperp_str+".nc")
-
     else:
         trace = train(model,
                   "Outputs700MS/GPmass/GPmass"+hyperp_str+".nc",
                   draw=draws, chains=4, target_accept=target_accept)
 
-    pred, lpd = posterior_predictive_GP(model, μ_gp, lg_σ_gp, trace,
+    pred, lpd = posterior_predictive_GP(model, μ_gp, lg_σ_gp, μ_trace, var_trace, trace,
                                         data.x_test, data.x_test_err, Xu, Xu_er, 4, 'Mass')
 
     stds = pred.std(0)
@@ -91,7 +90,7 @@ def radius_train_GP(data: Dataset, M_mean, M_var, draws=1000, advi=False,
     if nutpie:
         hyperp_str += "NUTPIE"
 
-    model, μ_gp, lg_σ_gp, Xu, Xu_er = gp.sparse_fully_heteroscedastic_gp(data.x_train,
+    model, μ_gp, lg_σ_gp, μ_trace, var_trace, Xu, Xu_er = gp.sparse_fully_heteroscedastic_gp(data.x_train,
                                                                         data.x_train_er,
                                                                         data.rad_train, M_mean, M_var)
 
@@ -102,13 +101,12 @@ def radius_train_GP(data: Dataset, M_mean, M_var, draws=1000, advi=False,
 
         trace.extend(pm.compute_log_likelihood(trace, model=model, var_names='y'))
         trace.to_netcdf("Outputs700MS/Testing/GP_rad_testing/GP_ADVI_rad_"+hyperp_str+".nc")
-
     else:
         trace = train(model,
                   "Outputs700MS/GPrad/GPrad_"+hyperp_str+".nc",
                   draw=draws, chains=4, target_accept=target_accept)
 
-    pred, lpd = posterior_predictive_GP(model, μ_gp, lg_σ_gp, trace,
+    pred, lpd = posterior_predictive_GP(model, μ_gp, lg_σ_gp, μ_trace, var_trace, trace,
                                         data.x_test, data.x_test_err, Xu, Xu_er, 4, 'Radius')
 
     stds = pred.std(0)
@@ -256,7 +254,7 @@ if __name__ == '__main__':
 
     #HAVE YOU UPDATED CONSTANTS.PY AND CHECKED OUTPUT FILE PATHS AND LOGL
 
-    print("''''''''''''''''''''''''\nNUTPIE GP TEST - MASS - PRIORS FROM NUTS\n......................")
+    print("''''''''''''''''''''''''\nNUTPIE GP TEST - MASS - PRIORS FROM NUTS + GP OBJS FIX\n......................")
 
     print("\n::::::::::::::::::::::::::::::::::::::")
     print("goodMS700")

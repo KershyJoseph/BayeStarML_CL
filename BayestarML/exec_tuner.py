@@ -6,6 +6,9 @@ from preprocess import get_dataset, return_train_test, denormalise_val
 from exec_trainer import Dataset
 import optuna as op
 
+def objective():
+    
+
 if __name__ == '__main__':
 
     df_train = get_dataset('DataExploring/good_MS.txt', logL=True)
@@ -32,3 +35,5 @@ if __name__ == '__main__':
         unorm_mass = denormalise_val(mass_test, 'Mass'),
         unorm_radius = denormalise_val(rad_test, 'Radius')
         )
+
+    

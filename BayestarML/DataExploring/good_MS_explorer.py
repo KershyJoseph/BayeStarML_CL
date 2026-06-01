@@ -4,6 +4,7 @@ JK 27/04/26
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import numpy as np
 
 df = pd.read_csv("DataExploring/good_MS.txt", sep='\t')
 df.set_index("ID", inplace=True)
@@ -41,12 +42,6 @@ def plot_target_spread(df, db_name, target, multiple="stack"):
     plt.savefig("DataExploring/"+target+"_spread_"+db_name+".pdf")
     plt.close()
 
-df_strict = pd.read_csv("DataExploring/strict_MS.txt", sep="\t", comment="#")
-plot_target_spread(df_strict, "strictMS", "M")
-
-plot_target_spread(df, "goodMS", "M")
-#plot_target_spread(df, "goodMS", "R")
-
 def plot_feature_target(df, feature:str, target:str):
     """Plot target as a function of feature - should be keys in df
     """
@@ -56,9 +51,11 @@ def plot_feature_target(df, feature:str, target:str):
     y = df[target]
     y_err = df["e"+target]
     plt.errorbar(x, y, y_err, x_err, fmt='o', alpha=0.3)
+    plt.plot(np.log10(1.193), 0.499, 'rx')
+    plt.plot(np.log10(0.08), 0.566, 'rx')
     plt.xlabel(feature)
     plt.ylabel(target+" ("+target[0]+"sol)")
     plt.savefig("DataExploring/feature_target_figs/"+feature+"_"+target+".pdf")
     plt.close()
 
-plot_feature_target(df, "FeH", "R")
+plot_feature_target(df, "logL", "M")

@@ -596,7 +596,7 @@ def SIMPLE_forward_pass(x_latent, w_in_1, b1, w_1_out, b_out):
 #     return pred, lpd_HBNN
 
 def posterior_predictive_GP(
-    gp_model, mu_gp, log_var_gp, trace,
+    gp_model, mu_gp, log_var_gp, μ_trace, var_trace, trace,
     X_new_raw, X_er_new_raw, Xu, Xu_var,
     n_param, target,
     var_cols_x=(0,1),        # columns of X used in variance GP
@@ -691,13 +691,14 @@ def posterior_predictive_GP(
         X_var_new = tt.where(mask_var, X_var_latent, X_var_obs)
 
         # Mean GP conditional
-        f_mu_pred = mu_gp.conditional_marginal("f_mu_pred", X_new, Xu)
+        f_mu_pred = mu_gp.conditional_marginal("f_mu_pred", X_new, Xu, gp_trace=μ_trace)
 
         # Log-variance GP conditional
         log_var_pred_latent = log_var_gp.conditional_marginal(
             "log_var_pred_latent",
             X_var_new,
             Xu_var,
+            gp_trace=var_trace
         )
 
         # Add intercept from fitted model
