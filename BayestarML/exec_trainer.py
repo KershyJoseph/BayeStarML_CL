@@ -120,7 +120,7 @@ def radius_train_GP(data: Dataset, M_mean, M_var, draws=1000, advi=False,
     print('MARD', mard(data.unorm_radius, means))
     print('MRD', mrd(data.unorm_radius, means))
 
-    model_pred_plotter(data.unorm_radius, means, stds, 'Radius', 'GPrad', 'Outputs700MS/GPrad', hyperp_str)
+    model_pred_plotter(data.unorm_radius, means, stds, 'Radius', 'GP', 'Outputs700MS/GPrad', hyperp_str)
 
 def mass_train_SIMPLE_NN(data: Dataset, n_hidden=5, draw=1000, chains=4,
                          target_accept=.95, nutpie=False):
@@ -219,7 +219,7 @@ def radius_train_NN(data: Dataset, n_hidden, draw=1000, chains=4,
     print('MARD', mard(data.unorm_radius, means))
     print('MRD', mrd(data.unorm_radius, means))
 
-    model_pred_plotter(data.unorm_mass, means, stds, 'Radius', 'NNrad', 'Outputs700MS/NNrad', hyperp_str)
+    model_pred_plotter(data.unorm_radius, means, stds, 'Radius', 'NN', 'Outputs700MS/NNrad', hyperp_str)
 
 if __name__ == '__main__':
     #pick which function(s) to run when file is run

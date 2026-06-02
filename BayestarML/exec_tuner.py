@@ -5,21 +5,28 @@ JK 01/06/2025
 from preprocess import get_dataset, return_train_test, denormalise_val
 from exec_trainer import Dataset
 from models import hbnn
-from utils import train
+from utils import train, mard
+from pred_sampling import posterior_predictive_GP, sample_post_pred_HBNN_para
 import optuna
 import arviz as az
 import matplotlib.pyplot as plt
 import time
 
-def objective(trial, data, min, max, draw=1000, chains=4, target_accept=0.95):
+def objective(trial, data, min, max, score:str, draw=1000, chains=4, target_accept=0.95):
     nodes = trial.suggest_int("nodes", min, max)
 
     model = hbnn.HBNN_M4(data.x_train, data.mass_train, data.x_train_er, data.emass_train, nodes)
     trace = train(model, draw=draw, chains=chains, target_accept=target_accept,
                   nuts_sampler="nutpie")
 
-    elpd_loo = az.loo(trace).elpd_loo
-    return elpd_loo
+    if score=="elpd_loo":
+        elpd_loo = az.loo(trace).elpd_loo
+        return elpd_loo
+    elif score=="MARD":
+        pred, lpd = sample_post_pred_HBNN_para(trace, data.x_test, data.x_test_err, nodes, 4, "Mass")
+        means = pred.mean(0)
+        return mard(data.unorm_mass, means)
+
 
 if __name__ == '__main__':
     start_time = time.perf_counter()
@@ -53,8 +60,8 @@ if __name__ == '__main__':
         unorm_radius = denormalise_val(rad_test, 'Radius')
         )
 
-    study = optuna.create_study(direction="maximize", sampler=optuna.samplers.TPESampler())
-    study.optimize(lambda trial: objective(trial, dataset, min, max),
+    study = optuna.create_study(direction="minimise", sampler=optuna.samplers.TPESampler())
+    study.optimize(lambda trial: objective(trial, dataset, min, max, score="MARD"),
                    n_trials=n)
 
     df_results = study.trials_dataframe()
