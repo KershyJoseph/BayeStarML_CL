@@ -48,15 +48,15 @@ def bart_bhs_train(target):
     """
     _, bhs_pred, bhs_w, X, Xer, y = predict4(X=None, X_er=None, target=target,
                                         training_dataset_path="DataExploring/good_MS.txt",
-                                        GP_trace_path="Outputs707MS/GPmass/GPmassMS50_20_1000_0.95.nc",
-                                        NN_trace_path="Outputs707MS/NNmass/NNmass_MS16_2000_0.95_20TDnrns.nc",
+                                        GP_trace_path="Outputs700MS/GPmass/GPmassMS50_20_1000_0.95.nc",
+                                        NN_trace_path="Outputs700MS/NNmass/NNmass_MS16_2000_0.95.nc",
                                         BART_m = 200, Mmean=50, Mvar=20, NNnodes=16,
                                         test=True) # disregards X, X_er for test=True / uses test values
 
     target_ms = bhs_pred.mean(0)
     target_stds = bhs_pred.std(0)
 
-    model_pred_plotter(y, target_ms, target_stds, target, 'BHS', 'Outputs707MS/BHS_'+target, 'train')
+    model_pred_plotter(y, target_ms, target_stds, target, 'BHS', 'Outputs700MS/BHSmass', 'train')
 
     plt.figure()
     plt.errorbar(X["logL"], target_ms, target_stds, fmt='o', alpha=0.5,
@@ -67,7 +67,7 @@ def bart_bhs_train(target):
     plt.ylabel(target+" ("+target[0]+"sol)")
     plt.title("Test set predictions")
     plt.legend()
-    plt.savefig("Outputs707MS/BHS_"+target+"/bhs_L_M.pdf")
+    plt.savefig("Outputs700MS/BHSmass/bhs_L_M.pdf")
     plt.close()
 
     plt.figure()
@@ -79,8 +79,8 @@ def bart_bhs_train(target):
     plt.ylabel(target+" ("+target[0]+"sol)")
     plt.title("Test set predictions")
     plt.legend()
-    plt.savefig("Outputs707MS/BHS_"+target+"/bhs_logg_M.pdf")
+    plt.savefig("Outputs700MS/BHSmass/bhs_logg_M.pdf")
     plt.close()
 
 if __name__ == '__main__':
-    bart_bhs_pred('Mass')
+    bart_bhs_train('Mass')
