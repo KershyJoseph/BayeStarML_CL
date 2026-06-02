@@ -83,4 +83,4 @@ def bart_bhs_train(target):
     plt.close()
 
 if __name__ == '__main__':
-    bart_bhs_train('Mass')
+    bart_bhs_pred('Mass')

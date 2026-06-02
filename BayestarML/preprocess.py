@@ -260,7 +260,7 @@ def prepare_pred4(filename, logL=False):
         eL = "eL"
 
     X = pd.read_csv(filename, sep='\t')
-    df = get_dataset('DataExploring/datos_todos_v20261905.txt', 'MS')
+    df = get_dataset('DataExploring/good_MS.txt', 'MS')
     mteff, mlogg, mmet, mlum, mtmass, steff, slogg, smet, slum, smass = return_norm(df)
 
     # Helper function to normalize and handle missing values
