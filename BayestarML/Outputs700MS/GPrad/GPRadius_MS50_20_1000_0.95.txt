@@ -81,9 +81,7 @@ rhats:  [('log_ls', 1.009970284747845), ('log_eta', 1.008664593911679), ('u_rota
 2498654700283), ('ls_v', 1.0078851343988118), ('eta_v', 1.0020529693675138), ('u_log_var_f', 1.0101212266805026), ('mu_l
 og_var_f', 1.0136140608123774), ('log_var', 1.010863195692482), ('__f', 1.010863195692482)]
 
-/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/pymc/model/fgraph.py:163: UserWarning: Detected variab
-les likely created by GP objects. Further use of these old GP objects should be avoided as it may reintroduce variables
-from the old model. See issue: https://github.com/pymc-devs/pymc/issues/6883
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/pymc/model/fgraph.py:163: UserWarning: Detected variables likely created by GP objects. Further use of these old GP objects should be avoided as it may reintroduce variables from the old model. See issue: https://github.com/pymc-devs/pymc/issues/6883
   warnings.warn(
 Computing ... ──────────────────────────────────────── 100% 0:00:00
 /Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape

@@ -121,10 +121,12 @@ def train(model, filename=False, draw=1000, chains=2,
     # vs = ["ls", "ls_v", "eta", "eta_v"]
     # print("Posteriors of interest:\n", az.summary(trace, var_names=vs))
 
-    with pd.option_context("display.max_rows", None):
-        df = az.summary(trace)
-        df.sort_values(by="ess_bulk", inplace=True)
-        print("AZ Stats for ESS Bulk < 400:\n", df[df["ess_bulk"]<400])
+    df = az.summary(trace)
+    df.sort_values(by="ess_bulk", inplace=True)
+    df_bad_ess = df[df["ess_bulk"]<400]
+    with pd.option_context("display.max_rows", 30):
+        print("AZ Stats for ESS Bulk < 400:\n", df_bad_ess)
+        print(f"-----etc------\nIn total, {len(df_bad_ess)} params with ESS < 400")
 
     r_hat_values = az.rhat(trace)
     all_rhats = []
