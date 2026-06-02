@@ -10,12 +10,15 @@ def logomatic(df, var):
     """Add a log(var) column to df with bounds method 
     var should be string key of existing column in df
     """
+    invalids = (df["e"+var+"2"]>=df[var])
+    print(f"< Removing {len(df[invalids])} invalids >")
+    df = df[~invalids]
     df["log"+var] = np.log10(df[var])
     df["elog"+var+"1"] = np.log10(df[var] + df["e"+var+"1"]) - df["log"+var]
     df["elog"+var+"2"] = df["log"+var] - np.log10(df[var] - df["e"+var+"2"])
-    return None
+    return df
 
-def err_maskomatic(df, L=.5):
+def err_maskomatic(df):
     """Return an error mask on a df with given limits. And df of average errors.
     L - percent L err limit
     """
@@ -37,7 +40,7 @@ def err_maskomatic(df, L=.5):
     df_err["percent_eTeff"] = 100 * df_err["eTeff"] / df["Teff"]
 
     #make mask
-    err_mask = (df_err["elogL"]<=L)# & (df_err["percent_eR"]<=7) & (df_err["elogg1"]<=0.05) & (df_err["percent_eTeff"]<=5) & (df_err["eFeH1"]<=0.2)
+    err_mask = (df_err["elogL"]<=0.05) & (df_err["percent_eR"]<=7) & (df_err["elogg"]<=0.05) & (df_err["eFeH"]<=0.1) & (df_err["percent_eM"]<=7) & (df_err["eTeff"]<=100)
 
     return df_err, err_mask
 
@@ -53,7 +56,6 @@ df_all6_RGB = df[(df["class"]=="RGB") &
                 (df[check_params1].gt(0).any(axis=1)) &
                 (df[check_params2].gt(0).any(axis=1))]
 
-df_all6_RGB.to_csv("DataExploring/all6_RGB.txt", index=False, na_rep="NA", sep="\t")
 print("All 6 RGB:", len(df_all6_RGB))
 
 #consistency checks...
@@ -99,38 +101,37 @@ plt.savefig("DataExploring/RGB_L_check.pdf")
 print("Non-physical Ls, assuming R and Teff are stellar: ", len(df_bad_Ls))
 
 df_all6_RGB.drop(df_bad_Ls.index, inplace=True)
-print("Error filtered and physical sense L filtered RGB stars: ", len(df_good_RGB))
+print("All 6 and physical sense L filtered RGB stars: ", len(df_all6_RGB))
 
-#add logL col
-df_good_RGB["logL"] = np.log10(df_good_RGB["L"])
-df_good_RGB["elogL1"] = np.log10(df_good_RGB["L"] + df_good_RGB["eL1"]) - df_good_RGB["logL"]
-df_good_RGB["elogL2"] = df_good_RGB["logL"] - np.log10(df_good_RGB["L"] - df_good_RGB["eL2"])
-
-#add logR col
-df_good_RGB["logR"] = np.log10(df_good_RGB["R"])
-df_good_RGB["elogR1"] = np.log10(df_good_RGB["R"] + df_good_RGB["eR1"]) - df_good_RGB["logR"]
-df_good_RGB["elogR2"] = df_good_RGB["logR"] - np.log10(df_good_RGB["R"] - df_good_RGB["eR2"])
+#add logL, logR col
+df_all6_RGB = logomatic(df_all6_RGB, "L")
+df_all6_RGB = logomatic(df_all6_RGB, "R")
 
 #remove areas of sparse training data?
-df_good_RGB = df_good_RGB[(df_good_RGB["M"]<=2.5)]
-print("RGB stars with outliers over 2.5 Msol removed: ", len(df_good_RGB))
+df_good_RGB = df_all6_RGB[(df_all6_RGB["M"]<=2.5)]
+print("Outliers over 2.5 Msol removed: ", len(df_good_RGB))
 
 #see what spread is like in variables
-for col in ["M", "R", "logR", "logg", "logL", "L", "FeH", "Teff"]:
-    print("--------",col,"---------")
-    print("Min. - ", df_good_RGB[col].min())
-    print("Max. - ", df_good_RGB[col].max())
-    print("Mean - ", df_good_RGB[col].mean())
-    print("Std - ", df_good_RGB[col].std())
+def spreadomatic():
+    for col in ["M", "R", "logR", "logg", "logL", "L", "FeH", "Teff"]:
+        print("--------",col,"---------")
+        print("Min. - ", df_good_RGB[col].min())
+        print("Max. - ", df_good_RGB[col].max())
+        print("Mean - ", df_good_RGB[col].mean())
+        print("Std - ", df_good_RGB[col].std())
 
-    plt.figure()
-    sns.histplot(data=df_good_RGB, x=col)
-    plt.xlabel(col)
-    plt.ylabel("Number of stars")
-    plt.savefig("DataExploring/"+col+"_RGB_spread.pdf")
-    plt.close()
+        plt.figure()
+        sns.histplot(data=df_good_RGB, x=col)
+        plt.xlabel(col)
+        plt.ylabel("Number of stars")
+        plt.savefig("DataExploring/"+col+"_RGB_spread.pdf")
+        plt.close()
 
 #err filering
+df_err, err_mask = err_maskomatic(df_good_RGB)
+df_good_RGB = df_good_RGB[err_mask]
+df_good_errs = df_err[err_mask]
+print(f"After error filtering, {len(df_good_RGB)} stars.")
 
 #see err dist
 fig, ax = plt.subplots(2,3)
@@ -143,38 +144,37 @@ ax[0,0].set_xlabel("% Error")
 ax[0,0].legend()
 
 ax[0,1].hist(df_good_errs["percent_eR"], bins='auto')
-ax[0,1].vlines(7,0,3500,linestyle='--',color='r',label="7%")
+#ax[0,1].vlines(7,0,3500,linestyle='--',color='r',label="7%")
 ax[0,1].set_title("R")
 ax[0,1].set_xlabel("% Error")
 ax[0,1].legend()
 
-ax[0,2].hist(df_good_errs["percent_eL"], bins='auto')
-ax[0,2].vlines(10,0,1000,linestyle='--',color='r',label="10%")
-ax[0,2].set_title("L")
-ax[0,2].set_xlabel("% Error")
+ax[0,2].hist(df_good_errs["elogL"], bins='auto')
+#ax[0,2].vlines(0.5,0,1000,linestyle='--',color='r',label="0.5")
+ax[0,2].set_title("elogL")
+ax[0,2].set_xlabel("Error (dex)")
 ax[0,2].legend()
 
-ax[1,0].hist(df_good_errs["eTeff1"], bins='auto')
+ax[1,0].hist(df_good_errs["eTeff"], bins='auto')
 ax[1,0].vlines(100,0,1800,linestyle='--',color='r',label="100K")
 ax[1,0].set_title("T$_{eff}$") #how to make not italic...
 ax[1,0].set_ylabel("Number")
 ax[1,0].set_xlabel("Error (K)")
 ax[1,0].legend()
 
-ax[1,1].hist(df_good_errs["elogg1"], bins='auto')
+ax[1,1].hist(df_good_errs["elogg"], bins='auto')
 ax[1,1].vlines(0.05,0,4500,linestyle='--',color='r',label="0.05dex")
 ax[1,1].set_title("log(g)")
 ax[1,1].set_xlabel("Error (dex)")
 ax[1,1].legend()
 
-ax[1,2].hist(df_good_errs["eFeH1"], bins='auto')
-ax[1,2].vlines(.15,0,6200,linestyle='--',color='r',label="0.15dex")
+ax[1,2].hist(df_good_errs["eFeH"], bins='auto')
+#ax[1,2].vlines(.15,0,6200,linestyle='--',color='r',label="0.15dex")
 ax[1,2].set_title("FeH")
 ax[1,2].set_xlabel("Error (dex)")
 ax[1,2].legend()
 
 plt.tight_layout()
 plt.savefig("DataExploring/db_new_err_distsRGB.pdf")
-
 
 df_good_RGB.to_csv("DataExploring/good_RGB.txt", index=False, na_rep="NA", sep="\t")
