@@ -47,7 +47,7 @@ def predict4(X, X_er, target,
         print("-------Start GP buisness----------")
         gp4_model, μ_gp4, lg_σ_gp4, μ_trace4, var_trace4, Xu4, Xu_er4 = gp.sparse_fully_heteroscedastic_gp(x_train, x_train_er, mass_train, Mmean, Mvar)#80, 40
         gp4_trace = az.from_netcdf(GP_trace_path)
-        gp4_pred, lpd_GP4 = posterior_predictive_GP(gp4_model, μ_gp4, lg_σ_gp4, μ_trace, var_trace, 
+        gp4_pred, lpd_GP4 = posterior_predictive_GP(gp4_model, μ_gp4, lg_σ_gp4, μ_trace4, var_trace4, 
                                             gp4_trace, X,
                                             X_er,
                                             Xu4, Xu_er4, 4, 'Mass') 
