@@ -39,7 +39,7 @@ def bart_bhs_pred(target:str):
     print('MARD on plato ', target,': ', mard(unorm_target, means))
     print('MRD on plato ', target,': ', mrd(unorm_target, means))
 
-    model_pred_plotter(unorm_target, means, stds, target, 'BHS', 'Outputs700MS/BHS_'+target, 'PLATO_trynoMH')
+    model_pred_plotter(unorm_target, means, stds, target, 'BHS', 'Outputs700MS/BHSmass/BHS_'+target, 'PLATO_trynoMH')
 
 
 def bart_bhs_train(target):
