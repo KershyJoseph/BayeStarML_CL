@@ -60,7 +60,7 @@ if __name__ == '__main__':
         unorm_radius = denormalise_val(rad_test, 'Radius')
         )
 
-    study = optuna.create_study(direction="minimise", sampler=optuna.samplers.TPESampler())
+    study = optuna.create_study(direction="minimize", sampler=optuna.samplers.TPESampler())
     study.optimize(lambda trial: objective(trial, dataset, min, max, score="MARD"),
                    n_trials=n)
 
