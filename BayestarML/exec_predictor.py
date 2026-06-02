@@ -13,14 +13,14 @@ from sklearn.metrics import mean_absolute_error
 import pandas as pd
 import matplotlib.pyplot as plt
 
-def bart_bhs_pred(target):
+def bart_bhs_pred(target:str):
     """Train BART and BHS and then make some predictions
     """
     X, X_er = prepare_pred4("Datasets/plato_data.txt", logL=True)
     _, pred, w4 = predict4(X=X, X_er=X_er, target=target,
                            training_dataset_path="DataExploring/good_MS.txt",
-                           GP_trace_path="Outputs707MS/GPmass/GPmassMS50_20_1000_0.95.nc",
-                           NN_trace_path="Outputs707MS/NNmass/NNmass_MS16_2000_0.95_20TDnrns.nc",
+                           GP_trace_path="Outputs700MS/GPmass/GPmassMS50_20_1000_0.95.nc",
+                           NN_trace_path="Outputs700MS/NNmass/NNmass_MS16_2000_0.95.nc",
                            BART_m = 200, Mmean=50, Mvar=20, NNnodes=16)
 
     df_p = pd.read_csv("Datasets/plato_data.txt", sep='\t')
@@ -39,7 +39,7 @@ def bart_bhs_pred(target):
     print('MARD on plato ', target,': ', mard(unorm_target, means))
     print('MRD on plato ', target,': ', mrd(unorm_target, means))
 
-    model_pred_plotter(unorm_target, means, stds, target, 'BHS', 'Outputs707MS/BHS_'+target, 'PLATO')
+    model_pred_plotter(unorm_target, means, stds, target, 'BHS', 'Outputs700MS/BHS_'+target, 'PLATO_trynoMH')
 
 
 def bart_bhs_train(target):
@@ -83,5 +83,4 @@ def bart_bhs_train(target):
     plt.close()
 
 if __name__ == '__main__':
-    bart_bhs_train('Mass')
     bart_bhs_pred('Mass')

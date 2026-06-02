@@ -11,12 +11,15 @@ def logomatic_sym(df, var:str):
     Add a log(var) column to df with bounds method 
     var should be string key of existing column in df
     """
+    invalids = (df["e"+var]>=df[var])
+    print(f"< Removing {len(df[invalids])} invalids >")
+    df = df[~invalids]
     df["log"+var] = np.log10(df[var])
     elog1 = np.log10(df[var] + df["e"+var]) - df["log"+var]
     elog2 = df["log"+var] - np.log10(df[var] - df["e"+var])
     df["elog"+var] = (elog1 + elog2)/2 #avg err
 
-    return None
+    return df
 
 def statomatic(col):
     print("--------",col,"---------")
@@ -46,7 +49,7 @@ col_specs = [
 col_names = ["ID", "component", "obj_type", "R", "eR", "logg", "elogg", "M", "eM", "L", "eL", "Teff", "eTeff", "FeH", "eFeH"]
 
 plato_df = pd.read_fwf("Datasets/benchmark_stars_20260420.dat", colspecs=col_specs, names=col_names)
-print(plato_df)
+#print(plato_df)
 print("Total stars: ", len(plato_df))
 
 check_params = ["eM", "eR", "elogg", "eL", "eFeH", "eTeff"]
@@ -90,27 +93,30 @@ print("New plato stars: ", len(df_plato_goodMS_new))
 #print(df_us["ID"])
 
 #add logL col
-logomatic_sym(df_plato_goodMS_new, "L")
+df_plato_goodMS_new = logomatic_sym(df_plato_goodMS_new, "L")
+print("...With logable L: ", len(df_plato_goodMS_new))
 
-df_plato_goodMS_new.to_csv("Datasets/plato_data.txt", sep='\t', index=False)
+#try getting rid of FeH below -0.5 in case those are MHs throwing model off
+df_noMH = df_plato_goodMS_new[df_plato_goodMS_new["FeH"]>-0.5]
+print("FeH bigger than -0.5 (hopefully no MHs): ", len(df_noMH))
+
+df_noMH.to_csv("Datasets/plato_data.txt", sep='\t', index=False, na_rep="NA")
 
 #Compare with my data
-feature = "logL"
+feature = "logg"
 target = "M"
 
 plt.figure()
 lbl = "Our Data"
-eL = "1"
 for df in [df_us, df_plato_goodMS_new]:
     x = df[feature]
-    x_err = df["e"+feature+eL]
+    x_err = df["e"+feature]
     y = df[target]
     y_err = df["e"+target]
     plt.errorbar(x, y, y_err, x_err, fmt='o', alpha=0.3, label=lbl)
     lbl = "Plato Data"
-    eL = ""
 plt.legend()
 plt.xlabel(feature)
 plt.ylabel(target+" ("+target[0]+"sol)")
-plt.savefig("Datasets/"+feature+"_"+target+"_Plato_Us.pdf")
+plt.savefig("Datasets/PlatoUsFigs/"+feature+"_"+target+"_Plato_Us.pdf")
 plt.close()
