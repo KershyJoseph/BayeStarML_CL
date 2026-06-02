@@ -1,0 +1,108 @@
+5978.0969107142855 4.205791666794643 -0.08010071428571429 0.3170239560166381 1.1475716607142856 1.4840080535714286
+831.8751676749379 0.2640866953690148 0.2058107556527279 0.6810411063280138 0.2971137557826593 0.5270303780458729
+print X, X_er
+          Teff      logg       FeH      logL
+0   -0.633625  0.886862  2.041199 -1.268673
+1   -0.686518  1.568456  0.534961 -1.346879
+2   -0.185240  0.546064  0.632138 -1.195760
+3   -0.443693  0.167401  1.360962 -1.187637
+4    1.092596  0.401794  0.875079 -1.047926
+..        ...       ...       ...       ...
+292  0.007096  0.951234 -0.193864 -1.227275
+293 -2.519725  1.776721 -0.193864 -1.618645
+294 -0.824759  1.303391  0.534961 -1.339814
+295  0.557659  0.375666 -0.582571 -1.089246
+296  0.380950  0.754329 -0.582571 -1.151267
+
+[297 rows x 4 columns]         eTeff     elogg      eFeH     elogL
+0    0.055297  0.075733  0.097177  0.002422
+1    0.056499  0.075733  0.048588  0.002424
+2    0.062509  0.075733  0.097177  0.001468
+3    0.055297  0.075733  0.097177  0.001495
+4    0.290909  0.017419  0.291530  0.020574
+..        ...       ...       ...       ...
+292  0.116604  0.045440  0.388707  0.010674
+293  0.141848  0.037866  0.388707  0.017840
+294  0.092562  0.113599  0.097177  0.005167
+295  0.180316  0.014768  0.583060  0.013614
+296  0.176709  0.023098  0.583060  0.013342
+
+[297 rows x 4 columns]
+-------Start BART buisness----------
+Multiprocess sampling (4 chains in 4 jobs)
+CompoundStep
+>NUTS: [X_dist, sig]
+>PGBART: [mu]
+-----------Start BART Sampling------------
+                                                                                                                        
+  Progress                         Draws   Divergences   Step size   Grad evals   Sampling Speed   Elapsed   Remaining  
+ ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── 
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━   6000    0             0.27        15           12.34 draws/s    0:08:06   0:00:00    
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━   6000    0             0.28        15           12.40 draws/s    0:08:03   0:00:00    
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━   6000    0             0.21        15           12.33 draws/s    0:08:06   0:00:00    
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━   6000    0             0.23        15           12.33 draws/s    0:08:06   0:00:00    
+                                                                                                                        
+Sampling 4 chains for 4_000 tune and 2_000 draw iterations (16_000 + 8_000 draws total) took 499 seconds.
+The rhat statistic is larger than 1.01 for some parameters. This indicates problems during sampling. See https://arxiv.org/abs/1903.08008 for details
+Computing ... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are very different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are very different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+Sampling: [X_dist, mu, y]
+Rhats
+ [('X_dist', 1.00542993263417), ('mu', 1.0227878746730883), ('sig', 1.000770907972998)]
+LOO
+ Computed from 8000 posterior samples and 560 observations log-likelihood matrix.
+
+         Estimate       SE
+elpd_loo  -189.55    34.74
+p_loo       57.55        -
+
+There has been a warning during the calculation. Please check the results.
+------
+
+Pareto k diagnostic values:
+                         Count   Pct.
+(-Inf, 0.70]   (good)      557   99.5%
+   (0.70, 1]   (bad)         3    0.5%
+   (1, Inf)   (very bad)    0    0.0%
+
+Sampling ... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00 / 0:03:44
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are very different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+Sampling: [X_new_latent, X_var_new_latent, f_mu_pred, log_var_pred_latent, y_pred]
+-------Start GP buisness----------
+Sampling ... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00 / 0:00:03
+(4, 1000, 297)
+(4, 1000, 297)
+(4, 1000, 297)
+f range: -1.804266350859171 -0.04362048614995994
+f std over test points: 0.19301095486537606
+-------Start HBNN buisness----------
+starting parallel prediction on 32 worker(s)…
+Initializing NUTS using jitter+adapt_diag...
+Multiprocess sampling (4 chains in 4 jobs)
+NUTS: [mu, sigma, beta_con]
+finished chain 1/4
+finished chain 3/4
+finished chain 2/4
+finished chain 4/4
+-------Start BHS buisness----------
+-------------Start BHS Sampling---------------
+                                                                                                                        
+  Progress                         Draws   Divergences   Step size   Grad evals   Sampling Speed   Elapsed   Remaining  
+ ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── 
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━   2500    0             0.27        15           278.86 draws/s   0:00:08   0:00:00    
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━   2500    0             0.35        15           279.99 draws/s   0:00:08   0:00:00    
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━   2500    0             0.31        15           210.54 draws/s   0:00:11   0:00:00    
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━   2500    0             0.26        15           181.68 draws/s   0:00:13   0:00:00    
+                                                                                                                        
+Sampling 4 chains for 1_500 tune and 1_000 draw iterations (6_000 + 4_000 draws total) took 26 seconds.
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/diagnostics.py:596: RuntimeWarning: invalid value encountered in scalar divide
+  (between_chain_variance / within_chain_variance + num_samples - 1) / (num_samples)
+Rhats
+ [('mu', 1.0019639708083186), ('beta_con', 1.0032807712588396), ('sigma', 1.0018073362595727), ('beta', 1.0024311650350597), ('f', 1.0049109694804883), ('w', 1.0039170618848308), ('f_test', 1.0023707710491208), ('w_test', 1.0024761723830908)]
+MAE on plato  Mass :  0.24823847088432385
+MARD on plato  Mass :  36.89393635146411
+MRD on plato  Mass :  -2.3289813042267142
