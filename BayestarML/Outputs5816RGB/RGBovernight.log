@@ -1,0 +1,12 @@
+Initializing NUTS using jitter+adapt_diag...
+Multiprocess sampling (4 chains in 4 jobs)
+NUTS: [log_ls, log_eta, u_rotated_μ, log_ls_v, log_eta_v, alpha_log_var, u_rotated_log_var_f]
+4679.512053711388 2.6261241816505305 -0.13558035961272477 1.5271938685767643 1.2396409174734901 9.779530820654678
+191.13120310767735 0.3710348997854111 0.2676043511284639 0.32883329146905643 0.23786637364729277 5.212721214946271
+
+::::::::::::::::::::::::::::::::::::::
+goodRGB5816
+::::::::::::::::::::::::::::::::::::::
+
+GP mass - RGB stars. 15_10_1000, target_accept=0.95, TD 20.
+target_accept= 0.95
