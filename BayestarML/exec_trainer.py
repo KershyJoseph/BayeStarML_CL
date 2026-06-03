@@ -46,8 +46,10 @@ def mass_train_GP(data: Dataset, M_mean, M_var, draws=1000, advi=False,
     """Function to train GP on mass prediction
     """
     hyperp_str = "RGB"+str(M_mean)+"_"+str(M_var)+"_"+str(draws)+"_"+str(target_accept)
+    nuts_sampler = "pymc"
     if nutpie:
-        hyperp_str += "NUTPIE_nutsps_GPobjs"
+        hyperp_str += "NUTPIE"
+        nuts_sampler = "nutpie"
 
     model, μ_gp, lg_σ_gp, μ_trace, var_trace, Xu, Xu_er = gp.sparse_fully_heteroscedastic_gp(data.x_train,
                                                                         data.x_train_er,
@@ -64,7 +66,7 @@ def mass_train_GP(data: Dataset, M_mean, M_var, draws=1000, advi=False,
     else:
         trace = train(model,
                   "Outputs5816RGB/GPmass/GPmass"+hyperp_str+".nc",
-                  draw=draws, chains=4, target_accept=target_accept)
+                  draw=draws, chains=4, target_accept=target_accept, nuts_sampler=nuts_sampler)
 
     pred, lpd = posterior_predictive_GP(model, μ_gp, lg_σ_gp, μ_trace, var_trace, trace,
                                         data.x_test, data.x_test_err, Xu, Xu_er, 4, 'Mass')
@@ -87,8 +89,10 @@ def radius_train_GP(data: Dataset, M_mean, M_var, draws=1000, advi=False,
     """Function to train GP on radius prediction
     """
     hyperp_str = "RGB"+str(M_mean)+"_"+str(M_var)+"_"+str(draws)+"_"+str(target_accept)
+    nuts_sampler = "pymc"
     if nutpie:
         hyperp_str += "NUTPIE"
+        nuts_sampler = "nutpie"
 
     model, μ_gp, lg_σ_gp, μ_trace, var_trace, Xu, Xu_er = gp.sparse_fully_heteroscedastic_gp(
         data.x_train, data.x_train_er, data.rad_train, M_mean, M_var)
@@ -103,7 +107,9 @@ def radius_train_GP(data: Dataset, M_mean, M_var, draws=1000, advi=False,
     else:
         trace = train(model,
                   "Outputs5816RGB/GPrad/GPrad_"+hyperp_str+".nc",
-                  draw=draws, chains=4, target_accept=target_accept)
+                  draw=draws, chains=4,
+                  target_accept=target_accept,
+                  nuts_sampler=nuts_sampler)
 
     pred, lpd = posterior_predictive_GP(model, μ_gp, lg_σ_gp, μ_trace, var_trace, trace,
                                         data.x_test, data.x_test_err, Xu, Xu_er, 4, 'Radius')
@@ -129,15 +135,18 @@ def mass_train_SIMPLE_NN(data: Dataset, n_hidden=5, draw=1000, chains=4,
     """
     #for output info
     hyperp_str = "goodRGB_"+str(n_hidden)+"_"+str(draw)+"_"+str(chains)
+    nuts_sampler = "pymc"
     if nutpie:
         hyperp_str += "NUTPIE"
+        nuts_sampler = "nutpie"
 
     model = hbnn.HBNN_M4_simpler(data.x_train, mass_train, data.x_train_er, data.emass_train, n_hidden)
     model.debug(verbose=True)
     trace = train(model,
                   "Outputs5816RGB/NNmass/simpleNN_mass"+hyperp_str+".nc",
                   draw=draw, chains=chains,
-                  target_accept=target_accept)
+                  target_accept=target_accept,
+                  nuts_sampler=nuts_sampler)
 
     pred, lpd = SIMPLE_sample_post_pred_HBNN_para(trace, data.x_test, data.x_test_err, n_hidden, 4, "Mass")
 
@@ -159,13 +168,16 @@ def mass_train_NN(data: Dataset, n_hidden=15, draw=1000, chains=4,
     """
     #for output info
     hyperp_str = "RGB"+str(n_hidden)+"_"+str(draw)+"_"+str(target_accept)
+    nuts_sampler = "pymc"
     if nutpie:
         hyperp_str += "NUTPIE"
+        nuts_sampler = "nutpie"
 
     model = hbnn.HBNN_M4(data.x_train, data.mass_train, data.x_train_er, data.emass_train, n_hidden)
     trace = train(model,
                   "Outputs5816RGB/NNmass/NNmass_"+hyperp_str+".nc",
-                  draw=draw, chains=chains, target_accept=target_accept)
+                  draw=draw, chains=chains, target_accept=target_accept,
+                  nuts_sampler=nuts_sampler)
 
     pred, lpd = sample_post_pred_HBNN_para(trace, data.x_test, data.x_test_err, n_hidden, 4, "Mass")
 
@@ -188,8 +200,10 @@ def radius_train_NN(data: Dataset, n_hidden, draw=1000, chains=4,
     """
     #for output info
     hyperp_str = "RGB"+str(n_hidden)+"_"+str(draw)
+    nuts_sampler = "pymc"
     if nutpie:
         hyperp_str += "NUTPIE"
+        nuts_sampler = "nutpie"
 
     model = hbnn.HBNN_M4(data.x_train, data.rad_train, data.x_train_er, data.erad_train, n_hidden)
 
@@ -203,7 +217,8 @@ def radius_train_NN(data: Dataset, n_hidden, draw=1000, chains=4,
     else:
         trace = train(model,
                 "Outputs5816RGB/NNrad/NNrad"+hyperp_str+".nc",
-                draw=draw, chains=chains, target_accept=target_accept)
+                draw=draw, chains=chains, target_accept=target_accept,
+                nuts_sampler=nuts_sampler)
 
     pred, lpd = sample_post_pred_HBNN_para(trace, data.x_test, data.x_test_err, n_hidden, 4, "Radius")
 
