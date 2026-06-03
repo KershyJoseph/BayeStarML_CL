@@ -260,41 +260,41 @@ if __name__ == '__main__':
     print("::::::::::::::::::::::::::::::::::::::\n")
 
     process = psutil.Process()
-    start_time_CPU = time.process_time()
-    start_time_wall = time.perf_counter()
+    # start_time_CPU = time.process_time()
+    # start_time_wall = time.perf_counter()
 
-    print("GP mass - RGB stars. 15_10_1000, target_accept=0.95, TD 20.")
-    mass_train_GP(dataset, 15, 10, 1000, target_accept=0.95)
+    # print("GP mass - RGB stars. 15_10_1000, target_accept=0.95, TD 20.")
+    # mass_train_GP(dataset, 15, 10, 1000, target_accept=0.95)
 
-    end_time_CPU = time.process_time()
-    mem1 = process.memory_info().rss / 1024**2
-    print(f"Peak Memory: {mem1:.2f} MB")
-    print(f"CPU time accumulated: {(end_time_CPU-start_time_CPU):.5f} s")
-    print(f"Total wall clock time: {time.perf_counter()-start_time_wall:.5f} s")
+    # end_time_CPU = time.process_time()
+    # mem1 = process.memory_info().rss / 1024**2
+    # print(f"Peak Memory: {mem1:.2f} MB")
+    # print(f"CPU time accumulated: {(end_time_CPU-start_time_CPU):.5f} s")
+    # print(f"Total wall clock time: {time.perf_counter()-start_time_wall:.5f} s")
 
-    print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
+    # print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
 
-    start_time_CPU2 = time.process_time()
-    start_time2 = time.time()
+    # start_time_CPU2 = time.process_time()
+    # start_time2 = time.time()
 
-    print("NN mass - RGB stars. With L in log space. 16, 2000, 4, target_accept=0.95. 20TD still.")
-    mass_train_NN(dataset, 16, 2000, target_accept=0.95)
+    # print("NN mass - RGB stars. With L in log space. 16, 2000, 4, target_accept=0.95. 20TD still.")
+    # mass_train_NN(dataset, 16, 2000, target_accept=0.95)
 
-    end_time_CPU2 = time.process_time()
+    # end_time_CPU2 = time.process_time()
 
     mem2 = process.memory_info().rss / 1024**2
-    print(f"Peak Memory: {(mem2-mem1):.2f} MB")
-    print(f"CPU time used: {(end_time_CPU2-start_time_CPU2):.5f} s")
-    print(f"Total run time: {time.time()-start_time2:.5f} s")
+    # print(f"Peak Memory: {(mem2-mem1):.2f} MB")
+    # print(f"CPU time used: {(end_time_CPU2-start_time_CPU2):.5f} s")
+    # print(f"Total run time: {time.time()-start_time2:.5f} s")
 
-    print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
+    # print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
 
     start_time_CPU3 = time.process_time()
     start_time3 = time.time()
 
     print("---------------NUTPIE----------------")
-    print("NN - mass - RGB stars. 16, 2000, 4, target_accept=0.95. 20TD still.")
-    mass_train_NN(dataset, 16, 2000, target_accept=0.95, nutpie=True)
+    print("NN - mass - RGB stars. 16, 1000, 4, target_accept=0.95. 20TD still.")
+    mass_train_NN(dataset, 16, 1000, target_accept=0.95, nutpie=True)
 
     end_time_CPU3 = time.process_time()
 
@@ -305,18 +305,18 @@ if __name__ == '__main__':
 
     print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
 
-    start_time_CPU4 = time.process_time()
-    start_time4 = time.time()
+    # start_time_CPU4 = time.process_time()
+    # start_time4 = time.time()
 
-    print("NN - radius - RGB stars. WITH NUTPIE. 16, 2000, 4, target_accept=0.95. 20TD still.")
-    radius_train_NN(dataset, 16, 2000, target_accept=0.95, nutpie=True)
+    # print("NN - radius - RGB stars. WITH NUTPIE. 16, 2000, 4, target_accept=0.95. 20TD still.")
+    # radius_train_NN(dataset, 16, 2000, target_accept=0.95, nutpie=True)
 
-    end_time_CPU4 = time.process_time()
+    # end_time_CPU4 = time.process_time()
 
-    mem4 = process.memory_info().rss / 1024**2
-    print(f"Peak Memory: {(mem4-mem3):.2f} MB")
-    print(f"CPU time used: {(end_time_CPU4-start_time_CPU4):.5f} s")
-    print(f"Total run time: {time.time()-start_time4:.5f} s")
+    # mem4 = process.memory_info().rss / 1024**2
+    # print(f"Peak Memory: {(mem4-mem3):.2f} MB")
+    # print(f"CPU time used: {(end_time_CPU4-start_time_CPU4):.5f} s")
+    # print(f"Total run time: {time.time()-start_time4:.5f} s")
 
     print("><><><><><><><><><><><><><><><><><><><><><><><><><")
     print("Salve Regina")
