@@ -103,9 +103,10 @@ print("Non-physical Ls, assuming R and Teff are stellar: ", len(df_bad_Ls))
 df_all6_RGB.drop(df_bad_Ls.index, inplace=True)
 print("All 6 and physical sense L filtered RGB stars: ", len(df_all6_RGB))
 
-#add logL, logR col
+#add logL, logR. logTeff col
 df_all6_RGB = logomatic(df_all6_RGB, "L")
 df_all6_RGB = logomatic(df_all6_RGB, "R")
+df_all6_RGB = logomatic(df_all6_RGB, "Teff")
 
 #remove areas of sparse training data?
 df_good_RGB = df_all6_RGB[(df_all6_RGB["M"]<=2.5)]
@@ -177,4 +178,8 @@ ax[1,2].legend()
 plt.tight_layout()
 plt.savefig("DataExploring/db_new_err_distsRGB.pdf")
 
-df_good_RGB.to_csv("DataExploring/good_RGB.txt", index=False, na_rep="NA", sep="\t")
+
+df_good_RGB.set_index("ID", inplace=True)
+df_good_RGB=df_good_RGB[df_good_RGB["logTeff"]<3.74]
+print(f"Removed that one Yildiz funny - now {len(df_good_RGB)} stars")
+df_good_RGB.to_csv("DataExploring/good_RGB.txt", na_rep="NA", sep="\t")

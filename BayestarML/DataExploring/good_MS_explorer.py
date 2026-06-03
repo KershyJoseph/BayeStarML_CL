@@ -57,5 +57,3 @@ def plot_feature_target(df, feature:str, target:str):
     plt.ylabel(target+" ("+target[0]+"sol)")
     plt.savefig("DataExploring/feature_target_figs/"+feature+"_"+target+".pdf")
     plt.close()
-
-plot_feature_target(df, "logL", "M")

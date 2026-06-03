@@ -308,8 +308,8 @@ if __name__ == '__main__':
     start_time3 = time.time()
 
     print("---------------NUTPIE----------------")
-    print("NN - mass - RGB stars. 16, 1000, 4, target_accept=0.95. 20TD still.")
-    mass_train_NN(dataset, 16, 1000, target_accept=0.95, nutpie=True)
+    print("NN - radius - RGB stars. 16, 1000, 4, target_accept=0.95. 20TD still.")
+    radius_train_NN(dataset, 16, 1000, target_accept=0.95, nutpie=True)
 
     end_time_CPU3 = time.process_time()
 
