@@ -290,20 +290,20 @@ def sparse_fully_heteroscedastic_gp(
 
         # -------- mean GP: ARD kernel over X --------
         # Build per-dimension ℓ priors, then pack into a vector
-        ls_mu_list = []
-        ls_sd_list = []
-        for d in range(D):
-            μ_d, σ_d = get_ℓ_prior(X[:, d])
-            ls_mu_list.append(μ_d)
-            ls_sd_list.append(σ_d)
+        # ls_mu_list = []
+        # ls_sd_list = []
+        # for d in range(D):
+        #     μ_d, σ_d = get_ℓ_prior(X[:, d])
+        #     ls_mu_list.append(μ_d)
+        #     ls_sd_list.append(σ_d)
         
-        ls_mu_vec = np.array(ls_mu_list)
-        ls_sd_vec = np.array(ls_sd_list)
-        ls = pm.InverseGamma("ls", mu=np.log(ls_mu_vec), sigma=ls_sd_vec, shape=D)
+        # ls_mu_vec = np.array(ls_mu_list)
+        # ls_sd_vec = np.array(ls_sd_list)
+        # ls = pm.InverseGamma("ls", mu=np.log(ls_mu_vec), sigma=ls_sd_vec, shape=D)
 
         #Try not having data-driven priors on lengthscale. Also LogNormal instead of InverseGamma. 
-        # log_ls = pm.Normal("log_ls", mu=0.6, sigma=0.5, shape=D)
-        # ls = pm.Deterministic("ls", pm.math.exp(log_ls))
+        log_ls = pm.Normal("log_ls", mu=0.6, sigma=0.5, shape=D)
+        ls = pm.Deterministic("ls", pm.math.exp(log_ls))
         #eta = pm.Gamma("eta", alpha=2, beta=1)
         log_eta = pm.Normal("log_eta", mu=0.5, sigma=0.4)
         eta = pm.Deterministic("eta", pm.math.exp(log_eta))
@@ -318,18 +318,18 @@ def sparse_fully_heteroscedastic_gp(
         D_var = X_var.shape[1]
 
         # Priors for ARD lengthscales over concatenated space
-        ls_v_mu_list, ls_v_sd_list = [], []
-        for d in range(D_var):
-            μ_d, σ_d = get_ℓ_prior(X_var[:, d])
-            ls_v_mu_list.append(μ_d)
-            ls_v_sd_list.append(σ_d)
+        # ls_v_mu_list, ls_v_sd_list = [], []
+        # for d in range(D_var):
+        #     μ_d, σ_d = get_ℓ_prior(X_var[:, d])
+        #     ls_v_mu_list.append(μ_d)
+        #     ls_v_sd_list.append(σ_d)
 
-        ls_v_mu_vec = np.array(ls_v_mu_list)
-        ls_v_sd_vec = np.array(ls_v_sd_list)
+        # ls_v_mu_vec = np.array(ls_v_mu_list)
+        # ls_v_sd_vec = np.array(ls_v_sd_list)
 
-        ls_v  = pm.InverseGamma("ls_var", mu=ls_v_mu_vec, sigma=ls_v_sd_vec, shape=D_var)
-        # log_ls_v = pm.Normal("log_ls_v", mu=-0.8, sigma=0.4, shape=D_var)
-        # ls_v = pm.Deterministic("ls_v", pm.math.exp(log_ls_v))
+        # ls_v  = pm.InverseGamma("ls_var", mu=ls_v_mu_vec, sigma=ls_v_sd_vec, shape=D_var)
+        log_ls_v = pm.Normal("log_ls_v", mu=-0.8, sigma=0.4, shape=D_var)
+        ls_v = pm.Deterministic("ls_v", pm.math.exp(log_ls_v))
         # eta_v = pm.LogNormal("eta_var", mu=np.log(0.2), sigma=0.35)
         #eta_v = pm.Gamma("eta_var", alpha=2, beta=1)
         #eta_v = pm.HalfNormal("eta_var", sigma=0.5) #try regulating noise fluctuation a bit more

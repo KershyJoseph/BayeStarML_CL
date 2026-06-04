@@ -15,8 +15,8 @@ import optuna
 
 #load data
 df = read_csv("DataExploring/good_MS.txt", sep="\t", comment="#")
-training_fs = ["Teff", "FeH", "logL", "logg"]
-X, y = df[training_fs], df["R"] #swap for M/R
+training_fs = ["Teff", "logL", "logg"]
+X, y = df[training_fs], df["M"] #swap for M/R
 
 #bayesian optimisation
 def objective(trial):
@@ -60,20 +60,23 @@ def studyrunner():
     #print results
     print(f"Best MARD: {study.best_value:.3f}")
     print(f"For best params: {study.best_params}")
-    study.trials_dataframe().to_csv("XGBresults/XGBradiusBO.txt")
+    study.trials_dataframe().to_csv("XGBresults/XGBmassBO_noFeH.txt")
 
 
 #make predictions on Plato data and see what MARD is like
-df_plato = read_csv("Datasets/plato_data.txt", sep='\t')
-X_plato, y_plato = df_plato[training_fs], df_plato["M"]
+def platopredder():
+    df_plato = read_csv("Datasets/plato_data.txt", sep='\t')
+    X_plato, y_plato = df_plato[training_fs], df_plato["M"]
 
-best_params = {'learning_rate': 0.013233351056378049, 'n_estimators': 633, 'max_depth': 6, 'min_child_weight': 1, 'reg_lambda': 0.004561346827040905, 'reg_alpha': 0.005860201359441429, 'subsample': 0.623075537754977}
-model = XGBRegressor(**best_params, random_state=99)
-model.fit(X,y)
+    best_params = {'learning_rate': 0.019438711953432122, 'n_estimators': 491, 'max_depth': 6, 'min_child_weight': 1,'reg_lambda': 1.2165147000281793, 'reg_alpha': 0.0018771614299610306, 'subsample': 0.5307806524705606}
+    model = XGBRegressor(**best_params, random_state=99)
+    model.fit(X,y)
 
-plato_preds = model.predict(X_plato)
-plato_XGB_mard = np.mean(100*np.abs(y_plato-plato_preds)/(y_plato))
-print(f"Plato mard: {plato_XGB_mard:.3f}%")
+    plato_preds = model.predict(X_plato)
+    plato_XGB_mard = np.mean(100*np.abs(y_plato-plato_preds)/(y_plato))
+    print(f"Plato mard: {plato_XGB_mard:.3f}%")
+
+platopredder()
 
 #RESULTS/////////////////////////////////////////////////////
 
@@ -83,8 +86,15 @@ print(f"Plato mard: {plato_XGB_mard:.3f}%")
 # Best MARD: 5.778
 # For best params: {'learning_rate': 0.013233351056378049, 'n_estimators': 633, 'max_depth': 6, 'min_child_weight': 1, 'reg_lambda': 0.004561346827040905, 'reg_alpha': 0.005860201359441429, 'subsample': 0.623075537754977}
 
+#No FeH
+# Best MARD: 7.061
+# For best params: {'learning_rate': 0.019438711953432122, 'n_estimators': 491, 'max_depth': 6, 'min_child_weight': 1,'reg_lambda': 1.2165147000281793, 'reg_alpha': 0.0018771614299610306, 'subsample': 0.5307806524705606}
+
 #PLATO
-# Plato mard: 9.440% !!!!!!!!!
+# Plato mard: 9.440% !!!!!!!!! (compared to 5.8%)
+
+#PLATO NO FeH
+# Plato mard: 6.000% (compared to 7% mean from k-fold cross v)
 
 #RADIUS - goodMS700
 # Best MARD: 3.659

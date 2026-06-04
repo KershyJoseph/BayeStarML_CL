@@ -26,13 +26,13 @@ def HRplot(df,savename:str,hue:str=None):
 
     fig.savefig("DataExploring/HRds/"+savename)
 
-df = pd.read_csv("DataExploring/good_MS.txt", sep='\t')
-df.set_index("ID", inplace=True)
-HRplot(df, "HRgoodMS700.pdf")
+df_goodMS = pd.read_csv("DataExploring/good_MS.txt", sep='\t')
+df_goodMS.set_index("ID", inplace=True)
+HRplot(df_goodMS, "HRgoodMS700.pdf")
 
 df_RGB = pd.read_csv("DataExploring/good_RGB.txt", sep="\t")
 df_RGB.set_index("ID", inplace=True)
-df_MS_RGB = pd.concat([df, df_RGB], axis=0)
+df_MS_RGB = pd.concat([df_goodMS, df_RGB], axis=0)
 HRplot(df_MS_RGB, "HR_goodMS700_RGB5816.pdf", hue='class')
 
 df_NASA = pd.read_csv("Datasets/NASAexop_archive_stars.txt", sep="\t")
@@ -40,3 +40,6 @@ HRplot(df_NASA, "HR_NASAexop_stars.pdf")
 
 df_old_data = pd.read_csv("Datasets/all6_2018_data.txt", sep="\t")
 HRplot(df_old_data, "HR2018data.pdf", hue="class")
+
+df_all_current = pd.read_csv("DataExploring/good_RGB.txt", sep="\t", comment="#")
+df_MS_subG_RGB
