@@ -45,24 +45,35 @@ def objective(trial):
         model.fit(X_train, y_train)
 
         preds = model.predict(X_test)
-        eps = 1e-8
+        eps = 1e-8 #could get rid to be fair as I know all masses and radii in data are > 0...
         fold_mard = np.mean(100*np.abs(y_test-preds)/(y_test+eps))
         fold_mards.append(fold_mard)
 
     return np.mean(fold_mards) #mean MARD across folds
 
 #run study
-sampler = optuna.samplers.TPESampler(n_startup_trials=15, multivariate=True)
-study = optuna.create_study(sampler=sampler, direction='minimize')
-study.optimize(objective, n_trials=100, show_progress_bar=True)
+def studyrunner():
+    sampler = optuna.samplers.TPESampler(n_startup_trials=15, multivariate=True)
+    study = optuna.create_study(sampler=sampler, direction='minimize')
+    study.optimize(objective, n_trials=100, show_progress_bar=True)
 
-#print results
-print(f"Best MARD: {study.best_value:.3f}")
-print(f"For best params: {study.best_params}")
-study.trials_dataframe().to_csv("XGBresults/XGBradiusBO.txt")
+    #print results
+    print(f"Best MARD: {study.best_value:.3f}")
+    print(f"For best params: {study.best_params}")
+    study.trials_dataframe().to_csv("XGBresults/XGBradiusBO.txt")
 
 
+#make predictions on Plato data and see what MARD is like
+df_plato = read_csv("Datasets/plato_data.txt", sep='\t')
+X_plato, y_plato = df_plato[training_fs], df_plato["M"]
 
+best_params = {'learning_rate': 0.013233351056378049, 'n_estimators': 633, 'max_depth': 6, 'min_child_weight': 1, 'reg_lambda': 0.004561346827040905, 'reg_alpha': 0.005860201359441429, 'subsample': 0.623075537754977}
+model = XGBRegressor(**best_params, random_state=99)
+model.fit(X,y)
+
+plato_preds = model.predict(X_plato)
+plato_XGB_mard = np.mean(100*np.abs(y_plato-plato_preds)/(y_plato))
+print(f"Plato mard: {plato_XGB_mard:.3f}%")
 
 #RESULTS/////////////////////////////////////////////////////
 
@@ -71,6 +82,9 @@ study.trials_dataframe().to_csv("XGBresults/XGBradiusBO.txt")
 #MASS - goodMS700
 # Best MARD: 5.778
 # For best params: {'learning_rate': 0.013233351056378049, 'n_estimators': 633, 'max_depth': 6, 'min_child_weight': 1, 'reg_lambda': 0.004561346827040905, 'reg_alpha': 0.005860201359441429, 'subsample': 0.623075537754977}
+
+#PLATO
+# Plato mard: 9.440% !!!!!!!!!
 
 #RADIUS - goodMS700
 # Best MARD: 3.659
