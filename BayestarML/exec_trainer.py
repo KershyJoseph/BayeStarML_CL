@@ -75,8 +75,7 @@ def mass_train_GP(data: Dataset, M_mean, M_var, outputs_folder , draw=1000, advi
     means = pred.mean(0)
     print("means: ", means)
     print("stdvs: ", stds)
-    with pd.option_context("display.max_rows", None):
-        print("Unorm mass: ", data.unorm_mass)
+    print("Unorm mass: ", data.unorm_mass)
 
     print('MAE: ', mean_absolute_error(data.unorm_mass, means))
     print('MARD', mard(data.unorm_mass, means))
@@ -118,8 +117,7 @@ def radius_train_GP(data: Dataset, M_mean, M_var, outputs_folder , draw=1000, ad
     means = pred.mean(0)
     print("means: ", means)
     print("stdvs: ", stds)
-    with pd.option_context("display.max_rows", None):
-        print(data.unorm_radius)
+    print(data.unorm_radius)
 
     print('MAE: ', mean_absolute_error(data.unorm_radius, means))
     print('MARD', mard(data.unorm_radius, means))
@@ -278,8 +276,8 @@ if __name__ == '__main__':
     start_time_CPU = time.process_time()
     start_time_wall = time.perf_counter()
 
-    print("GP mass - MS stars. 10_3_1000, target_accept=0.95, TD 20.")
-    mass_train_GP(dataset, 10, 10, "Outputs700MS", 1000)
+    print("GP mass - MS stars. 40_10_1000, target_accept=0.95, TD 20.")
+    mass_train_GP(dataset, 40, 10, "Outputs700MS", 1000)
 
     end_time_CPU = time.process_time()
     mem1 = process.memory_info().rss / 1024**2
