@@ -44,6 +44,24 @@ def err_maskomatic(df):
 
     return df_err, err_mask
 
+#see what spread is like in variables
+def spreadomatic(cols):
+    for col in cols:
+        print("--------",col,"---------")
+        print("Min. - ", df_good_RGB[col].min())
+        print("Max. - ", df_good_RGB[col].max())
+        print("Mean - ", df_good_RGB[col].mean())
+        print("Std - ", df_good_RGB[col].std())
+
+        plt.figure()
+        sns.histplot(data=df_good_RGB, x=col)
+        plt.xlabel(col)
+        plt.ylabel("Number of stars")
+        plt.savefig("DataExploring/goodRGBspreads/"+col+"_RGB_spread.pdf")
+        plt.close()
+
+
+
 df = pd.read_csv("DataExploring/datos_todos_v20261905.txt", sep="\t", comment="#")
 
 check_params1 = ["eM1", "eR1", "elogg1", "eL1", "eFeH1", "eTeff1"]
@@ -57,6 +75,10 @@ df_all6_RGB = df[(df["class"]=="RGB") &
                 (df[check_params2].gt(0).any(axis=1))]
 
 print("All 6 RGB:", len(df_all6_RGB))
+
+#add 50K systematic error in quadrature to all Sch-St Teff errs, as taken from APOGEE https://iopscience.iop.org/article/10.3847/1538-4357/ac4891
+old_Teff = df_all6_RGB.loc[df["source"]=="Schonhut-Stasik24", ["eTeff1", "eTeff2"]]
+df_all6_RGB.loc[df["source"]=="Schonhut-Stasik24", ["eTeff1", "eTeff2"]] = np.sqrt(old_Teff**2 + 50**2)
 
 #consistency checks...
 #get SB Ls and errs
@@ -86,17 +108,21 @@ plt.figure()
 yerr = np.array([df_L_check["L_SB_-err"], df_L_check["L_SB_+err"]])
 xerr = np.array([df_L_check["eL2"], df_L_check["eL1"]])
 plt.errorbar(df_L_check["L"], df_L_check["L_SB"], #x,y,yerr,xerr
-             yerr=yerr, xerr=xerr, fmt='bo', ecolor='gray', alpha=0.5)
+             yerr=yerr, xerr=xerr, fmt='go', ecolor='gray', alpha=0.4,
+             zorder=1)
 yerr2 = np.array([df_bad_Ls["L_SB_-err"], df_bad_Ls["L_SB_+err"]])
 xerr2 = np.array([df_bad_Ls["eL2"], df_bad_Ls["eL1"]])
 plt.errorbar(df_bad_Ls["L"], df_bad_Ls["L_SB"],
-             yerr=yerr2, xerr=xerr2, fmt='ro', ecolor='orange', alpha=0.5)
+             yerr=yerr2, xerr=xerr2, fmt='none', ecolor='red', alpha=0.5,
+             zorder=2)
+sns.scatterplot(data=df_bad_Ls,x="L",y="L_SB",hue="source",alpha=0.5,zorder=3)
 plt.xlabel("L")
 plt.ylabel("L from SB")
 plt.plot([0, df_L_check["L"].max()], [0,df_L_check["L"].max()], linestyle='--', color='r')
 #plt.xscale("log")
 #plt.yscale("log")
-plt.savefig("DataExploring/RGB_L_check.pdf")
+plt.savefig("DataExploring/random_plots/RGB_L_check.pdf")
+plt.close()
 
 print("Non-physical Ls, assuming R and Teff are stellar: ", len(df_bad_Ls))
 
@@ -111,22 +137,6 @@ df_all6_RGB = logomatic(df_all6_RGB, "Teff")
 #remove areas of sparse training data?
 df_good_RGB = df_all6_RGB[(df_all6_RGB["M"]<=2.5)]
 print("Outliers over 2.5 Msol removed: ", len(df_good_RGB))
-
-#see what spread is like in variables
-def spreadomatic():
-    for col in ["M", "R", "logR", "logg", "logL", "L", "FeH", "Teff"]:
-        print("--------",col,"---------")
-        print("Min. - ", df_good_RGB[col].min())
-        print("Max. - ", df_good_RGB[col].max())
-        print("Mean - ", df_good_RGB[col].mean())
-        print("Std - ", df_good_RGB[col].std())
-
-        plt.figure()
-        sns.histplot(data=df_good_RGB, x=col)
-        plt.xlabel(col)
-        plt.ylabel("Number of stars")
-        plt.savefig("DataExploring/"+col+"_RGB_spread.pdf")
-        plt.close()
 
 #err filering
 df_err, err_mask = err_maskomatic(df_good_RGB)
@@ -179,7 +189,10 @@ plt.tight_layout()
 plt.savefig("DataExploring/db_new_err_distsRGB.pdf")
 
 
-df_good_RGB.set_index("ID", inplace=True)
 df_good_RGB=df_good_RGB[df_good_RGB["logTeff"]<3.74]
 print(f"Removed that one Yildiz funny - now {len(df_good_RGB)} stars")
+
+spreadomatic(["M", "R", "logR", "logg", "logL", "L", "FeH", "Teff"])
+
+df_all6_RGB.set_index("ID", inplace=True)
 df_good_RGB.to_csv("DataExploring/good_RGB.txt", na_rep="NA", sep="\t")

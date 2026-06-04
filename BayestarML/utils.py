@@ -124,9 +124,7 @@ def train(model, filename=False, draw=1000, chains=2,
     df = az.summary(trace)
     df.sort_values(by="ess_bulk", inplace=True)
     df_bad_ess = df[df["ess_bulk"]<400]
-    with pd.option_context("display.max_rows", 30):
-        print("AZ Stats for ESS Bulk < 400:\n", df_bad_ess)
-        print(f"-----etc------\nIn total, {len(df_bad_ess)} params with ESS < 400")
+    print("AZ Stats for ESS Bulk < 400:\n", df_bad_ess)
 
     r_hat_values = az.rhat(trace)
     all_rhats = []

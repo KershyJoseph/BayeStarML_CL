@@ -11,6 +11,7 @@ import optuna
 import arviz as az
 import matplotlib.pyplot as plt
 import time
+import pandas as pd
 
 def objective(trial, data, min, max, score:str, draw=1000, chains=4, target_accept=0.95):
     nodes = trial.suggest_int("nodes", min, max)
@@ -27,13 +28,27 @@ def objective(trial, data, min, max, score:str, draw=1000, chains=4, target_acce
         means = pred.mean(0)
         return mard(data.unorm_mass, means)
 
+def best_scores_at_trial_n(score, all_scores):
+    best_scores = []
+    best_score = all_scores.iloc[0]
+    for score in all_scores:
+        if score=="MARD":
+            new_best = min(best_score, score)
+        elif score=="elpd_loo":
+            new_best = max(best_score, score)
+        best_scores.append(new_best)
+        best_score = new_best
+    return best_scores
+
 
 if __name__ == '__main__':
     start_time = time.perf_counter()
 
     min=2
     max=64
-    n=20
+    n_startup=3
+    n=7
+    score="MARD"
 
     df_train = get_dataset('DataExploring/good_MS.txt', logL=True)
 
@@ -60,19 +75,22 @@ if __name__ == '__main__':
         unorm_radius = denormalise_val(rad_test, 'Radius')
         )
 
-    study = optuna.create_study(direction="minimize", sampler=optuna.samplers.TPESampler())
-    study.optimize(lambda trial: objective(trial, dataset, min, max, score="MARD"),
+    study = optuna.create_study(direction="minimize", sampler=optuna.samplers.TPESampler(n_startup_trials=n_startup))
+    study.optimize(lambda trial: objective(trial, dataset, min, max, score=score),
                    n_trials=n)
-
     df_results = study.trials_dataframe()
-    print(df_results)
+    with pd.option_context("display.max_rows", None, "display.max_columns", None):
+        print(df_results)
     df_results = df_results[df_results["state"]=="COMPLETE"] #just in case
     plt.figure()
-    plt.plot(df_results["params_nodes"], df_results["value"], 'bx')
-    plt.xlabel("Number nodes")
-    plt.ylabel("ELPD-LOO")
+    plt.plot(df_results["number"], df_results["value"], 'bo', label=score+"at trial n")
+    running_bests = best_scores_at_trial_n(score="MARD", all_scores=df_results["value"])
+    plt.plot(df_results["number"], running_bests, 'b-', label="Best "+score+" at trial n")
+    plt.xlabel("Trial number")
+    plt.ylabel(score)
+    plt.legend()
     plt.grid(linestyle="--", alpha=0.5)
-    plt.savefig("Outputs700MS/Tuning/NNmass_elpd_"+str(n)+"_"+str(min)+"_"+str(max)+".pdf")
+    plt.savefig("Outputs700MS/Tuning/NNmass_"+score+"_"+str(n)+"_"+str(min)+"_"+str(max)+".pdf")
 
     print(f"""
     After {n} trials for nodes in range [{min},{max}]:

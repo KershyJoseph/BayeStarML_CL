@@ -10,48 +10,75 @@ from xgboost import XGBRegressor
 from sklearn.model_selection import RepeatedKFold
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import GridSearchCV
-from numpy import absolute
+import numpy as np
+import optuna
 
 #load data
-df = read_csv("Datasets/datos_tot_v20180517_adapted.txt", sep="\t", comment="#")
-training_fs = ["Teff", "FeH", "L", "logg"]
+df = read_csv("DataExploring/good_MS.txt", sep="\t", comment="#")
+training_fs = ["Teff", "FeH", "logL", "logg"]
 X, y = df[training_fs], df["R"] #swap for M/R
 
-#make model
-model = XGBRegressor(random_state=42)
+#bayesian optimisation
+def objective(trial):
+    """Return MARD for different iterations of below params
+    """
+    params = {
+        "objective": "reg:squarederror", #objective is minimise squared error
+        "eval_metric": "mape", #mean absolute percentage error (basically MARD) - what gets printed
+        "learning_rate": trial.suggest_float("learning_rate", 0.01, 0.3, log=True),
+        "n_estimators": trial.suggest_int("n_estimators", 50, 1000),
+        "max_depth": trial.suggest_int("max_depth", 3, 10),
+        "min_child_weight": trial.suggest_int("min_child_weight", 1, 10),
+        "reg_lambda": trial.suggest_float("reg_lambda", 1e-3, 10.0, log=True),
+        "reg_alpha": trial.suggest_float("reg_alpha", 1e-3, 10.0, log=True),
+        "subsample": trial.suggest_float("subsample", 0.5, 1.0),
+    }
 
-#evaluate with repeated k-fold cross-validation
-cv = RepeatedKFold(n_splits=10, n_repeats=3, random_state=1)
+    #evaluate with k-fold cross-validation
+    cv = RepeatedKFold(n_splits=5, n_repeats=1 , random_state=99)
+    fold_mards = []
+    for train_idxs, test_idxs in cv.split(X,y): #.split() returns generator object with (train, test) indices for each fold
+        X_train, X_test = X.iloc[train_idxs], X.iloc[test_idxs]
+        y_train, y_test = y.iloc[train_idxs], y.iloc[test_idxs]
 
-#search for the best model params
-param_grid = {
-    'eta': [0.2, 0.1, 0.01],
-    'n_estimators': [50, 100, 200, 400, 800],
-    'max_depth': [2, 3, 4],
-    'reg_lambda': [1, 10], #to stop overfitting. Default is 1.
-    'subsample': [0.8, 1],
-    'colsample_bytree': [0.8, 1]
-}
-grid_search = GridSearchCV(
-    estimator=model,
-    param_grid=param_grid,
-    scoring='neg_mean_absolute_percentage_error',
-    cv=cv,
-    n_jobs=-1
-)
-grid_search.fit(X,y)
+        model = XGBRegressor(**params, random_state=99)
+        model.fit(X_train, y_train)
+
+        preds = model.predict(X_test)
+        eps = 1e-8
+        fold_mard = np.mean(100*np.abs(y_test-preds)/(y_test+eps))
+        fold_mards.append(fold_mard)
+
+    return np.mean(fold_mards) #mean MARD across folds
+
+#run study
+sampler = optuna.samplers.TPESampler(n_startup_trials=15, multivariate=True)
+study = optuna.create_study(sampler=sampler, direction='minimize')
+study.optimize(objective, n_trials=100, show_progress_bar=True)
 
 #print results
-best_params = grid_search.best_params_
-best_score = absolute(grid_search.best_score_)*100 #to make it a percent (bad naming)
-best_index = grid_search.best_index_
-best_score_std = grid_search.cv_results_["std_test_score"][best_index]
+print(f"Best MARD: {study.best_value:.3f}")
+print(f"For best params: {study.best_params}")
+study.trials_dataframe().to_csv("XGBresults/XGBradiusBO.txt")
 
-print(f"---- Best params ----\n{best_params}")
-print("-+-+-+-+-+-+-+-+-+-+-")
-print(f"MARD result across all cross-validations: {best_score:.2f} +/- {best_score_std:.2f} %")
+
+
 
 #RESULTS/////////////////////////////////////////////////////
+
+#OPTUNA TPE-SAMPLER BO -------------------------
+
+#MASS - goodMS700
+# Best MARD: 5.778
+# For best params: {'learning_rate': 0.013233351056378049, 'n_estimators': 633, 'max_depth': 6, 'min_child_weight': 1, 'reg_lambda': 0.004561346827040905, 'reg_alpha': 0.005860201359441429, 'subsample': 0.623075537754977}
+
+#RADIUS - goodMS700
+# Best MARD: 3.659
+# For best params: {'learning_rate': 0.012932424554637587, 'n_estimators': 823, 'max_depth': 6, 'min_child_weight': 1, 'reg_lambda': 0.004519051077834074, 'reg_alpha': 0.0024557881422537934, 'subsample': 0.5495253440342718}
+
+
+
+#GRID SEARCH -----------------------------
 
 #MASS
 
