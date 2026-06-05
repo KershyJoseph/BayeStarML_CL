@@ -237,7 +237,7 @@ if __name__ == '__main__':
     #pick which function(s) to run when file is run
 
     #load data
-    df_train = get_dataset('DataExploring/good_RGB.txt', logL=True)
+    df_train = get_dataset('DataExploring/good_MS.txt', logL=True)
 
     (x_train, x_train_er, x_test, x_test_err, mass_train, emass_train,
     mass_test, emass_test, rad_train, erad_train, rad_test, erad_test
