@@ -192,7 +192,12 @@ plt.savefig("DataExploring/db_new_err_distsRGB.pdf")
 df_good_RGB=df_good_RGB[df_good_RGB["logTeff"]<3.74]
 print(f"Removed that one Yildiz funny - now {len(df_good_RGB)} stars")
 
+#cut ends
+df_good_RGB = df_good_RGB[df_good_RGB["M"]<=2.25]
+df_good_RGB = df_good_RGB[df_good_RGB["M"]>=0.75]
+df_good_RGB = df_good_RGB[df_good_RGB["logR"]<=1.6]
 spreadomatic(["M", "R", "logR", "logg", "logL", "L", "FeH", "Teff"])
+print(f"After cuts, {len(df_good_RGB)} stars")
 
-df_all6_RGB.set_index("ID", inplace=True)
+df_good_RGB.set_index("ID", inplace=True)
 df_good_RGB.to_csv("DataExploring/good_RGB.txt", na_rep="NA", sep="\t")

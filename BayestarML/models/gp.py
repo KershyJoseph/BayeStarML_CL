@@ -305,7 +305,7 @@ def sparse_fully_heteroscedastic_gp(
         log_ls = pm.Normal("log_ls", mu=0.6, sigma=0.5, shape=D)
         ls = pm.Deterministic("ls", pm.math.exp(log_ls))
         #eta = pm.Gamma("eta", alpha=2, beta=1)
-        log_eta = pm.Normal("log_eta", mu=0.5, sigma=0.4)
+        log_eta = pm.Normal("log_eta", mu=0.3, sigma=0.4) #was mu=0.4 for MS
         eta = pm.Deterministic("eta", pm.math.exp(log_eta))
 
         cov_mean = eta**2 * pm.gp.cov.ExpQuad(input_dim=D, ls=ls) \

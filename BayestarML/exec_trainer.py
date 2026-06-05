@@ -117,13 +117,13 @@ def radius_train_GP(data: Dataset, M_mean, M_var, outputs_folder , draw=1000, ad
     means = pred.mean(0)
     print("means: ", means)
     print("stdvs: ", stds)
-    print(data.unorm_radius)
+    print(np.log10(np.log10(data.unorm_radius)))
 
-    print('MAE: ', mean_absolute_error(data.unorm_radius, means))
-    print('MARD', mard(data.unorm_radius, means))
-    print('MRD', mrd(data.unorm_radius, means))
+    print('MAE: ', mean_absolute_error(np.log10(np.log10(data.unorm_radius)), means))
+    print('MARD', mard(np.log10(np.log10(data.unorm_radius)), means))
+    print('MRD', mrd(np.log10(np.log10(data.unorm_radius)), means))
 
-    model_pred_plotter(data.unorm_radius, means, stds, 'Radius', 'GP', outputs_folder+'/GPrad', hyperp_str)
+    model_pred_plotter(np.log10(np.log10(data.unorm_radius)), means, stds, 'Radius', 'GP', outputs_folder+'/GPrad', hyperp_str)
 
 def mass_train_SIMPLE_NN(data: Dataset, n_hidden, outputs_folder , draw=1000, chains=4,
                          target_accept=.95, nutpie=False, sclass="MS"):
@@ -225,25 +225,25 @@ def radius_train_NN(data: Dataset, n_hidden, outputs_folder , draw=1000, chains=
     print("means: ", means)
     print("stdvs: ", stds)
     with pd.option_context("display.max_rows", None):
-        print("test set: ", data.unorm_radius)
+        print("test set: ", np.log10(data.unorm_radius))
 
-    print('MAE: ', mean_absolute_error(data.unorm_radius, means))
-    print('MARD', mard(data.unorm_radius, means))
-    print('MRD', mrd(data.unorm_radius, means))
+    print('MAE: ', mean_absolute_error(np.log10(data.unorm_radius), means))
+    print('MARD', mard(np.log10(data.unorm_radius), means))
+    print('MRD', mrd(np.log10(data.unorm_radius), means))
 
-    model_pred_plotter(data.unorm_radius, means, stds, 'Radius', 'NN', outputs_folder+'/NNrad', hyperp_str)
+    model_pred_plotter(np.log10(data.unorm_radius), means, stds, 'Radius', 'NN', outputs_folder+'/NNrad', hyperp_str)
 
 if __name__ == '__main__':
     #pick which function(s) to run when file is run
 
     #load data
-    df_train = get_dataset('DataExploring/good_MS.txt', logL=True)
+    df_train_MS = get_dataset('DataExploring/good_MS.txt', logL=True)
 
     (x_train, x_train_er, x_test, x_test_err, mass_train, emass_train,
     mass_test, emass_test, rad_train, erad_train, rad_test, erad_test
-    ) = return_train_test(df_train, logL=True)
+    ) = return_train_test(df_train_MS, logL=True)
 
-    dataset = Dataset(
+    datasetMS = Dataset(
         x_train = x_train[['Teff', 'logg', 'FeH', 'logL']],
         x_train_er = x_train_er[['eTeff', 'elogg', 'eFeH', 'elogL']],
 
@@ -264,20 +264,47 @@ if __name__ == '__main__':
         unorm_radius = denormalise_val(rad_test, 'Radius')
         )
 
+    df_train_RGB = get_dataset('DataExploring/good_RGB.txt', logL=True, logR=True)
+
+    (x_trainRGB, x_train_erRGB, x_testRGB, x_test_errRGB, mass_trainRGB, emass_trainRGB,
+    mass_testRGB, emass_testRGB, rad_trainRGB, erad_trainRGB, rad_testRGB, erad_testRGB
+    ) = return_train_test(df_train_RGB, logL=True, logR=True)
+
+    datasetRGB = Dataset(
+        x_train = x_trainRGB[['Teff', 'logg', 'FeH', 'logL']],
+        x_train_er = x_train_erRGB[['eTeff', 'elogg', 'eFeH', 'elogL']],
+
+        x_test = x_testRGB[['Teff', 'logg', 'FeH', 'logL']],
+        x_test_err = x_test_errRGB[['eTeff', 'elogg', 'eFeH', 'elogL']],
+
+        rad_train=rad_trainRGB,
+        erad_train=erad_trainRGB,
+        rad_test=rad_testRGB,
+        erad_test=erad_testRGB,
+
+        mass_train=mass_trainRGB,
+        emass_train=emass_trainRGB,
+        mass_test=mass_testRGB,
+        emass_test=emass_testRGB,
+
+        unorm_mass = denormalise_val(mass_testRGB, 'Mass'),
+        unorm_radius = denormalise_val(rad_testRGB, 'Radius')
+        )
+
     #HAVE YOU UPDATED CONSTANTS.PY AND CHECKED OUTPUT FILE PATHS AND LOGL
 
     # print("''''''''''''''''''''''''\nNUTPIE GP TEST - MASS - PRIORS FROM NUTS + GP OBJS FIX\n......................")
 
     print("\n::::::::::::::::::::::::::::::::::::::")
-    print("goodMS700")
+    print("goodRGB5438")
     print("::::::::::::::::::::::::::::::::::::::\n")
 
     process = psutil.Process()
     start_time_CPU = time.process_time()
     start_time_wall = time.perf_counter()
 
-    print("NN rad NUTPIE - MS stars.  target_accept=0.95, TD 20.")
-    radius_train_NN(dataset, 16, "Outputs700MS", 2000, nutpie=True)
+    print("NN rad NUTPIE - RGB stars. 16_4000. target_accept=0.95, TD 20.")
+    radius_train_NN(datasetRGB, 16, "Outputs5438RGB", 4000, nutpie=True, sclass="RGB")
 
     end_time_CPU = time.process_time()
     mem1 = process.memory_info().rss / 1024**2
@@ -287,49 +314,48 @@ if __name__ == '__main__':
 
     print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
 
-    # start_time_CPU2 = time.process_time()
-    # start_time2 = time.time()
+    start_time_CPU2 = time.process_time()
+    start_time2 = time.time()
 
-    # print("NN mass - RGB stars. With L in log space. 16, 2000, 4, target_accept=0.95. 20TD still.")
-    # mass_train_NN(dataset, 16, 2000, target_accept=0.95)
+    print("NN mass - RGB stars. With L in log space. 16, 4000, 4, target_accept=0.95. 20TD still.")
+    mass_train_NN(datasetRGB, 16, "Outputs5438RGB", 4000, target_accept=0.95, nutpie=True, sclass="RGB")
 
-    # end_time_CPU2 = time.process_time()
+    end_time_CPU2 = time.process_time()
 
-    # mem2 = process.memory_info().rss / 1024**2
-    # print(f"Peak Memory: {(mem2-mem1):.2f} MB")
-    # print(f"CPU time used: {(end_time_CPU2-start_time_CPU2):.5f} s")
-    # print(f"Total run time: {time.time()-start_time2:.5f} s")
+    mem2 = process.memory_info().rss / 1024**2
+    print(f"Peak Memory: {(mem2-mem1):.2f} MB")
+    print(f"CPU time used: {(end_time_CPU2-start_time_CPU2):.5f} s")
+    print(f"Total run time: {time.time()-start_time2:.5f} s")
 
-    # print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
+    print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
 
-    # start_time_CPU3 = time.process_time()
-    # start_time3 = time.time()
+    start_time_CPU3 = time.process_time()
+    start_time3 = time.time()
 
-    # print("---------------NUTPIE----------------")
-    # print("NN - radius - RGB stars. 16, 1000, 4, target_accept=0.95. 20TD still.")
-    # radius_train_NN(dataset, 16, 1000, target_accept=0.95, nutpie=True)
+    print("GP - radius - RGB stars. 100, 30, 2000. 20TD still.")
+    radius_train_GP(datasetRGB, 100, 30, "Outputs5438RGB", 2000, target_accept=0.95, sclass="RGB")
 
-    # end_time_CPU3 = time.process_time()
+    end_time_CPU3 = time.process_time()
 
-    # mem3 = process.memory_info().rss / 1024**2
-    # print(f"Peak Memory: {(mem3-mem2):.2f} MB")
-    # print(f"CPU time used: {(end_time_CPU3-start_time_CPU3):.5f} s")
-    # print(f"Total run time: {time.time()-start_time3:.5f} s")
+    mem3 = process.memory_info().rss / 1024**2
+    print(f"Peak Memory: {(mem3-mem2):.2f} MB")
+    print(f"CPU time used: {(end_time_CPU3-start_time_CPU3):.5f} s")
+    print(f"Total run time: {time.time()-start_time3:.5f} s")
 
-    # print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
+    print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
 
-    # start_time_CPU4 = time.process_time()
-    # start_time4 = time.time()
+    start_time_CPU4 = time.process_time()
+    start_time4 = time.time()
 
-    # print("NN - radius - RGB stars. WITH NUTPIE. 16, 2000, 4, target_accept=0.95. 20TD still.")
-    # radius_train_NN(dataset, 16, 2000, target_accept=0.95, nutpie=True)
+    print("GP - mass - RGB stars. 100, 30, 2000. 20TD still.")
+    mass_train_GP(datasetRGB, 100, 30, "Outputs5438RGB", 2000, target_accept=0.95, sclass="RGB")
 
-    # end_time_CPU4 = time.process_time()
+    end_time_CPU4 = time.process_time()
 
-    # mem4 = process.memory_info().rss / 1024**2
-    # print(f"Peak Memory: {(mem4-mem3):.2f} MB")
-    # print(f"CPU time used: {(end_time_CPU4-start_time_CPU4):.5f} s")
-    # print(f"Total run time: {time.time()-start_time4:.5f} s")
+    mem4 = process.memory_info().rss / 1024**2
+    print(f"Peak Memory: {(mem4-mem3):.2f} MB")
+    print(f"CPU time used: {(end_time_CPU4-start_time_CPU4):.5f} s")
+    print(f"Total run time: {time.time()-start_time4:.5f} s")
 
     print("><><><><><><><><><><><><><><><><><><><><><><><><><")
     print("Salve Regina")

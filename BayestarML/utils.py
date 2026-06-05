@@ -12,7 +12,7 @@ import numpy as np
 import pymc as pm
 import matplotlib.pyplot as plt
 
-def get_dataset(data_file, star_class='MS', logL=False, logR=True):
+def get_dataset(data_file, star_class='MS', logL=False, logR=False):
     """
     ***Added logL, logR option***
     Load and clean a stellar dataset for a given star class.
