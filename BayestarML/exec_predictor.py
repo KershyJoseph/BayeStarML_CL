@@ -6,7 +6,7 @@ Created on Wed Nov  5 18:53:33 2025
 @author: LamirelFamily
 """
 
-from preprocess import prepare_pred4, prepare_pred3, denormalise_val, denormalise_err
+from preprocess import prepare_pred4, prepare_pred3, denormalise_val, denormalise_err, get_dataset, return_train_test
 from predict import predict3, predict4
 from utils import mard, mrd, model_pred_plotter
 from sklearn.metrics import mean_absolute_error
@@ -16,30 +16,45 @@ import matplotlib.pyplot as plt
 def bart_bhs_pred(target:str):
     """Train BART and BHS and then make some predictions
     """
-    X, X_er = prepare_pred4("Datasets/plato_data.txt", logL=True)
+    X, X_er = prepare_pred4("Datasets/estrellas_anfitrionas.txt", logL=True)
+    # df_train = get_dataset("DataExploring/good_MS.txt", 'MS', logL=True)
+    # (x_train, x_train_er, x_test, x_test_err, mass_train, emass_train,
+    #   mass_test, emass_test, rad_train, erad_train, rad_test, erad_test
+    # ) = return_train_test(df_train, logL=True)
+
+    # for col in ["Teff", "logg", "FeH", "logL"]:
+    #     plt.figure()
+    #     plt.title(col+"dist")
+    #     plt.hist(X[col], bins='auto', alpha=0.5, label="Plato")
+    #     plt.hist(x_train[col], bins='auto', alpha=0.5, label="Training")
+    #     plt.legend()
+    #     plt.show()
+
     _, pred, w4 = predict4(X=X, X_er=X_er, target=target,
                            training_dataset_path="DataExploring/good_MS.txt",
                            GP_trace_path="Outputs700MS/GPmass/GPmassMS50_20_1000_0.95.nc",
                            NN_trace_path="Outputs700MS/NNmass/NNmass_MS16_2000_0.95.nc",
-                           BART_m = 200, Mmean=50, Mvar=20, NNnodes=16)
+                           BART_m = 250, Mmean=50, Mvar=20, NNnodes=16)
 
-    df_p = pd.read_csv("Datasets/plato_data.txt", sep='\t')
-    if target=='Radius':
-        t = "R"
-    elif target=='Mass':
-        t = "M"
-    else:
-        raise ValueError("target should be string 'Mass' or 'Radius'")
-    unorm_target = df_p[t]
+    # df_p = pd.read_csv("Datasets/plato_data.txt", sep='\t')
+    # if target=='Radius':
+    #     t = "R"
+    # elif target=='Mass':
+    #     t = "M"
+    # else:
+    #     raise ValueError("target should be string 'Mass' or 'Radius'")
+    # unorm_target = df_p[t]
 
     means = pred.mean(0)
     stds = pred.std(0)
 
-    print('MAE on plato ', target,': ', mean_absolute_error(unorm_target, means))
-    print('MARD on plato ', target,': ', mard(unorm_target, means))
-    print('MRD on plato ', target,': ', mrd(unorm_target, means))
+    print(means, stds)
 
-    model_pred_plotter(unorm_target, means, stds, target, 'BHS', 'Outputs700MS/BHSmass', 'PLATO_trynoMH')
+    # print('MAE on plato ', target,': ', mean_absolute_error(unorm_target, means))
+    # print('MARD on plato ', target,': ', mard(unorm_target, means))
+    # print('MRD on plato ', target,': ', mrd(unorm_target, means))
+
+    # model_pred_plotter(unorm_target, means, stds, target, 'BHS', 'Outputs700MS/BHSmass', 'PLATO_trynoMH')
 
 
 def bart_bhs_train(target):

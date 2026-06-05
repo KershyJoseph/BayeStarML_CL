@@ -14,8 +14,9 @@ import numpy as np
 import optuna
 
 #load data
-df = read_csv("DataExploring/good_MS.txt", sep="\t", comment="#")
-training_fs = ["Teff", "FeH", "logL", "logg"]
+df = read_csv("Datasets/all6_2018_data.txt", sep="\t", comment="#") #"DataExploring/good_MS.txt"
+df = df[df["class"]=="MS"]
+training_fs = ["Teff", "FeH", "L", "logg"]
 X, y = df[training_fs], df["M"] #swap for M/R
 
 #bayesian optimisation
@@ -60,7 +61,7 @@ def studyrunner():
     #print results
     print(f"Best MARD: {study.best_value:.3f}")
     print(f"For best params: {study.best_params}")
-    study.trials_dataframe().to_csv("XGBresults/XGBmassBO_noFeH.txt")
+    study.trials_dataframe().to_csv("XGBresults/XGBmassBO_2018data.txt")
 
 
 #make predictions on Plato data and see what MARD is like
@@ -76,7 +77,7 @@ def platopredder():
     plato_XGB_mard = np.mean(100*np.abs(y_plato-plato_preds)/(y_plato))
     print(f"Plato mard: {plato_XGB_mard:.3f}%")
 
-platopredder()
+studyrunner()
 
 #RESULTS/////////////////////////////////////////////////////
 
@@ -95,6 +96,11 @@ platopredder()
 
 #PLATO NO FeH
 # Plato mard: 7.939% (compared to 7% mean from k-fold cross v)
+
+#2018 Data just MS L not logL
+# Best MARD: 3.953 (compared to Max MARDs 3.9 3.5 3.7 3.5)
+# For best params: {'learning_rate': 0.011311727518843268, 'n_estimators': 724, 'max_depth': 5, 'min_child_weight': 2, 'reg_lambda': 0.001615497456041067, 'reg_alpha': 0.031499983937579, 'subsample': 0.5503081652739142}
+
 
 #RADIUS - goodMS700
 # Best MARD: 3.659

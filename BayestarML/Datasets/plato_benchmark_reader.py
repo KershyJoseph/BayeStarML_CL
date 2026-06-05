@@ -15,9 +15,9 @@ def logomatic_sym(df, var:str):
     print(f"< Removing {len(df[invalids])} invalids >")
     df = df[~invalids]
     df["log"+var] = np.log10(df[var])
-    elog1 = np.log10(df[var] + df["e"+var]) - df["log"+var]
-    elog2 = df["log"+var] - np.log10(df[var] - df["e"+var])
-    df["elog"+var] = (elog1 + elog2)/2 #avg err
+    df["elog"+var+"1"] = np.log10(df[var] + df["e"+var]) - df["log"+var]
+    df["elog"+var+"2"] = df["log"+var] - np.log10(df[var] - df["e"+var])
+    df["elog"+var] = (df["elog"+var+"1"] + df["elog"+var+"2"])/2 #avg err
 
     return df
 
@@ -92,9 +92,11 @@ print("New plato stars: ", len(df_plato_goodMS_new))
 #print(df_plato_goodMS_new["ID"].unique())
 #print(df_us["ID"])
 
-#add logL col
+#add logL col and logTeff
 df_plato_goodMS_new = logomatic_sym(df_plato_goodMS_new, "L")
 print("...With logable L: ", len(df_plato_goodMS_new))
+df_plato_goodMS_new = logomatic_sym(df_plato_goodMS_new, "Teff")
+print("...With logable Teff: ", len(df_plato_goodMS_new))
 df_plato_goodMS_new.to_csv("Datasets/plato_data.txt", sep='\t', index=False, na_rep="NA")
 
 #Compare with my data

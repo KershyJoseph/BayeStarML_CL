@@ -42,4 +42,11 @@ df_old_data = pd.read_csv("Datasets/all6_2018_data.txt", sep="\t")
 HRplot(df_old_data, "HR2018data.pdf", hue="class")
 
 df_all_current = pd.read_csv("DataExploring/good_RGB.txt", sep="\t", comment="#")
-df_MS_subG_RGB
+#to be continued
+
+df_plato = pd.read_csv("Datasets/plato_data.txt", sep="\t")
+HRplot(df_plato, "HRplato.pdf")
+
+df_plato["class"] = "PLATO"
+df_plato_goodMS = pd.concat([df_plato, df_goodMS], axis=0)
+HRplot(df_plato_goodMS, "HRplato_goodMS.pdf", hue='class')

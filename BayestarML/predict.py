@@ -44,15 +44,14 @@ def predict4(X, X_er, target,
         bart4_pred, lpd_BART4 = sample_pred_BART(bart4_model,
                                       X,
                                       X_er, 'Mass',
-                                      2000, 4)
+                                      1000, 2)
 
         print("-------Start GP buisness----------")
-        gp4_model, μ_gp4, lg_σ_gp4, μ_trace4, var_trace4, Xu4, Xu_er4 = gp.sparse_fully_heteroscedastic_gp(x_train, x_train_er, mass_train, Mmean, Mvar)#80, 40
+        gp4_model, μ_gp4, lg_σ_gp4, μ_trace4, var_trace4, Xu4, Xu_er4 = gp.sparse_fully_heteroscedastic_gp(x_train, x_train_er, mass_train, Mmean, Mvar)
         gp4_trace = az.from_netcdf(GP_trace_path)
-        gp4_pred, lpd_GP4 = posterior_predictive_GP(gp4_model, μ_gp4, lg_σ_gp4, μ_trace4, var_trace4, 
-                                            gp4_trace, X,
-                                            X_er,
-                                            Xu4, Xu_er4, 4, 'Mass') 
+        gp4_pred, lpd_GP4 = posterior_predictive_GP(
+            gp4_model, μ_gp4, lg_σ_gp4, μ_trace4, var_trace4, gp4_trace,
+            X, X_er, Xu4, Xu_er4, 4, 'Mass')
 
         print("-------Start HBNN buisness----------")
         hbnn4_trace = az.from_netcdf(NN_trace_path)
