@@ -133,8 +133,15 @@ def train(model, filename=False, draw=1000, chains=2,
         all_rhats.append((var, max_rhat))
     print("rhats: ", all_rhats)
 
-    trace.extend(pm.compute_log_likelihood(trace, model=model, var_names='y')) 
-    print("loo trace: ", az.loo(trace))
+    trace.extend(pm.compute_log_likelihood(trace, model=model, var_names='y'))
+    loo = az.loo(trace) 
+    print("loo trace: ", loo)
+
+    #print indices of bad pareto ks
+    pareto_k_values = loo.pareto_k.values
+    bad_indices = np.where(pareto_k_values > 0.7)[0]
+    print(f"Found {len(bad_indices)} problematic data points.")
+    print("Indices of bad points:", bad_indices)
 
     if filename:
         trace.to_netcdf(filename)

@@ -15,7 +15,7 @@ import optuna
 
 #load data
 df = read_csv("DataExploring/good_MS.txt", sep="\t", comment="#")
-training_fs = ["Teff", "logL", "logg"]
+training_fs = ["Teff", "FeH", "logL", "logg"]
 X, y = df[training_fs], df["M"] #swap for M/R
 
 #bayesian optimisation
@@ -68,7 +68,7 @@ def platopredder():
     df_plato = read_csv("Datasets/plato_data.txt", sep='\t')
     X_plato, y_plato = df_plato[training_fs], df_plato["M"]
 
-    best_params = {'learning_rate': 0.019438711953432122, 'n_estimators': 491, 'max_depth': 6, 'min_child_weight': 1,'reg_lambda': 1.2165147000281793, 'reg_alpha': 0.0018771614299610306, 'subsample': 0.5307806524705606}
+    best_params = {'learning_rate': 0.013233351056378049, 'n_estimators': 633, 'max_depth': 6, 'min_child_weight': 1, 'reg_lambda': 0.004561346827040905, 'reg_alpha': 0.005860201359441429, 'subsample': 0.623075537754977}
     model = XGBRegressor(**best_params, random_state=99)
     model.fit(X,y)
 
@@ -88,13 +88,13 @@ platopredder()
 
 #No FeH
 # Best MARD: 7.061
-# For best params: {'learning_rate': 0.019438711953432122, 'n_estimators': 491, 'max_depth': 6, 'min_child_weight': 1,'reg_lambda': 1.2165147000281793, 'reg_alpha': 0.0018771614299610306, 'subsample': 0.5307806524705606}
+# For best params: {'learning_rate': 0.019438711953432122, 'n_estimators': 491, 'max_depth': 6, 'min_child_weight': 1,'reg_lambda': 1.2165147000281793, 'reg_alpha': 0.0018771614299610306, 'subsample': 0.5307806524705606}    
 
 #PLATO
-# Plato mard: 9.440% !!!!!!!!! (compared to 5.8%)
+# Plato mard: 6.213% (compared to 5.8%)
 
 #PLATO NO FeH
-# Plato mard: 6.000% (compared to 7% mean from k-fold cross v)
+# Plato mard: 7.939% (compared to 7% mean from k-fold cross v)
 
 #RADIUS - goodMS700
 # Best MARD: 3.659

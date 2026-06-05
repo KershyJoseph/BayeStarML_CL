@@ -95,17 +95,11 @@ print("New plato stars: ", len(df_plato_goodMS_new))
 #add logL col
 df_plato_goodMS_new = logomatic_sym(df_plato_goodMS_new, "L")
 print("...With logable L: ", len(df_plato_goodMS_new))
-
-#try getting rid of FeH below -0.5 in case those are MHs throwing model off
-df_noMH = df_plato_goodMS_new[df_plato_goodMS_new["FeH"]>-0.5]
-print("FeH bigger than -0.5 (hopefully no MHs): ", len(df_noMH))
-
-df_noMH.to_csv("Datasets/plato_data.txt", sep='\t', index=False, na_rep="NA")
+df_plato_goodMS_new.to_csv("Datasets/plato_data.txt", sep='\t', index=False, na_rep="NA")
 
 #Compare with my data
 feature = "logg"
 target = "M"
-
 plt.figure()
 lbl = "Our Data"
 for df in [df_us, df_plato_goodMS_new]:
