@@ -19,10 +19,8 @@ RANDOM_SEED = 5732
 def normalise_val(x: float | None, key: str) -> float:
     return np.nan if x is None else (x - MU[key]) / SIGMA[key]
 
-
 def normalise_err(e: float | None, key: str) -> float:
     return np.nan if e is None else abs(e) / SIGMA[key]
-
 
 def denormalise_val(y: np.ndarray, key: str) -> np.ndarray:
     return y * SIGMA[key] + MU[key]
@@ -30,85 +28,64 @@ def denormalise_val(y: np.ndarray, key: str) -> np.ndarray:
 def denormalise_err(y: np.ndarray, key: str) -> np.ndarray:
     return y * SIGMA[key]
 
-def return_norm(df, logL=False):
+def logomatic(df, add_logvars):
+    """Add a log(var) column to df with bounds method 
+    var should be string key of existing column in df
     """
-    ***Added a logL option***
+    for var in add_logvars:
+        invalids = (df["e"+var+"2"]>=df[var])
+        print(f"< Removing {len(df[invalids])} star(s) with {var}(s) that couldn't be logged >")
+        df = df[~invalids]
+        df["log"+var] = np.log10(df[var])
+        df["elog"+var+"1"] = np.log10(df[var] + df["e"+var+"1"]) - df["log"+var]
+        df["elog"+var+"2"] = df["log"+var] - np.log10(df[var] - df["e"+var+"2"])
+    return df
 
-    Compute normalization statistics for stellar parameters and their errors.
-
-    Extracts stellar feature columns and their associated asymmetric measurement
-    uncertainties, computes symmetric mean errors, splits the dataset into
-    training and test sets, and calculates the mean and standard deviation
-    of each input and target variable for normalization.
-
-    Parameters
-    ----------
-    df : pandas.DataFrame
-        Input DataFrame containing stellar parameters (`Teff`, `logg`, `FeH`, `L`, `M`)
-        and their asymmetric uncertainties (`eX1`, `eX2` for lower/upper errors).
-
-    Returns
-    -------
-    tuple
-        (mteff, mlogg, mmet, mlum, mtmass, steff, slogg, smet, slum, smass)
-        Mean and standard deviation for each variable, in the order:
-        effective temperature, surface gravity, metallicity, luminosity, and mass.
+def add_symmetric_errs(df, errs1, errs2):
     """
-    if logL == True:
-        eL1 = "elogL1"
-        eL2 = "elogL2"
-        L = "logL"
-        eL = "elogL" 
-    else:
-        eL1 = "eL1"
-        eL2 = "eL2"
-        L = "L"
-        eL = "eL"
-
-    df1 = df[['eTeff1', 'elogg1', 'eFeH1', eL1, 'eM1']].copy()
-    df2 = df[['eTeff2', 'elogg2', 'eFeH2', eL2, 'eM2']].copy()
-    df2.columns = ['eTeff1', 'elogg1', 'eFeH1', eL1, 'eM1']
-
-    # Mean error if non-symmetric
-    X_error = (df1 + df2) / 2 
-
-    X_error.columns = ['eTeff', 'elogg', 'eFeH', eL, 'eM']
-
-    X = pd.concat([df[['Teff', L, 'FeH', 'logg']],
-                   X_error[['eTeff', 'elogg', 'eFeH', eL]]],
-                  axis=1)
-    Y = pd.concat([df['M'], X_error['eM']], axis=1)
-    
-    # do split
-    X_train, X_test, Y_train, Y_test = train_test_split(X, Y,
-                                                        test_size=0.2,
-                                                        random_state=RANDOM_SEED)
-
-    # Extract relevant columns for stellar mass prediction
-    teff = X_train['Teff']
-    logg = X_train['logg']
-    met = X_train['FeH']
-    lum = X_train[L]
-    mass = Y_train["M"]
-
-    # Compute means and standard deviations for standardization
-    mteff = np.mean(teff)
-    mlogg = np.mean(logg)
-    mmet = np.mean(met)
-    mlum = np.mean(lum)
-    mtmass = np.mean(mass)
-
-    steff = np.std(teff)
-    slogg = np.std(logg)
-    smet = np.std(met)
-    slum = np.std(lum)
-    smass = np.std(mass)
-    
-    return mteff, mlogg, mmet, mlum, mtmass, steff, slogg, smet, slum, smass
-
-def return_train_test(df, normalised=True, logL=False):
     """
-    ***Added a logL option***
+    df1 = df[errs1].copy()
+    df2 = df[errs2].copy()
+    df1.columns = errs2
+    print(df1, df2)
+    df_err = (df1 + df2) / 2
+    print(df_err)
+    #df_err.columns = 
+    print([err[:-1] for err in errs2])
+    return pd.concat([df, df_err], axis=1)
+
+def select_clean_data(df: pd.DataFrame,
+                      training_fs: list, targets: list, s_class: str,
+                      add_logvars: list = None,
+                      check_detached=True):
+    """
+    """
+    all_params = training_fs + targets
+    #check params are present based on whether both errors are
+    errs1 = [f"e{param}1" for param in all_params] 
+    errs2 = [f"e{param}2" for param in all_params]
+    all_errs = errs1 + errs2
+    df_allps = df[(df[all_errs].notna().all(axis=1)) &
+                  (df[all_errs].gt(0).all(axis=1))]
+    if s_class:
+        df_allps = df_allps[(df_allps["class"]==s_class)]
+    if check_detached:
+        df_allps = df_allps[(df_allps["well_detached"]!=False)]
+
+    #make any vars log10 scale
+    if add_logvars:
+        df_allps_log = logomatic(df_allps, add_logvars)
+        errs1 += [f"elog{var}1" for var in add_logvars]
+        errs2 += [f"elog{var}2" for var in add_logvars]
+
+    #make an avg symmetric err col for all vars, log or not
+    df_final = add_symmetric_errs(df_allps_log, errs1, errs2)
+
+    return df_final
+
+def return_train_test(df, normalised=True, logL=False, logR=False):
+    """
+    ***Added a logL, logR option***
 
     Parameters
     ----------
@@ -140,19 +117,30 @@ def return_train_test(df, normalised=True, logL=False):
         L = "L"
         eL = "eL"
 
-    df1 = df[['eTeff1', 'elogg1', 'eFeH1', eL1, 'eM1', 'eR1']].copy()
-    df2 = df[['eTeff2', 'elogg2', 'eFeH2', eL2, 'eM2', 'eR2']].copy()
-    df2.columns = ['eTeff1', 'elogg1', 'eFeH1', eL1, 'eM1', 'eR1']
+    if logR == True:
+        eR1 = "elogR1"
+        eR2 = "elogR2"
+        R = "logR"
+        eR = "elogR" 
+    else:
+        eR1 = "eR1"
+        eR2 = "eR2"
+        R = "R"
+        eR = "eR"
+
+    df1 = df[['eTeff1', 'elogg1', 'eFeH1', eL1, 'eM1', eR1]].copy()
+    df2 = df[['eTeff2', 'elogg2', 'eFeH2', eL2, 'eM2', eR2]].copy()
+    df2.columns = ['eTeff1', 'elogg1', 'eFeH1', eL1, 'eM1', eR1]
 
     # Mean error if non-symmetric
     X_error = (df1 + df2) / 2 
 
-    X_error.columns = ['eTeff', 'elogg', 'eFeH', eL, 'eM', 'eR']
+    X_error.columns = ['eTeff', 'elogg', 'eFeH', eL, 'eM', eR]
 
     X = pd.concat([df[['Teff', L, 'FeH', 'logg']],
                    X_error[['eTeff', 'elogg', 'eFeH', eL]]],
                   axis=1)
-    Y = pd.concat([df['M'], X_error['eM'], df['R'], X_error['eR']], axis=1)
+    Y = pd.concat([df['M'], X_error['eM'], df[R], X_error[eR]], axis=1)
 
     # do split
     X_train, X_test, Y_train, Y_test = train_test_split(X, Y,
@@ -166,7 +154,7 @@ def return_train_test(df, normalised=True, logL=False):
     lum = X_train[L]
     #print(lum)
     mass = Y_train["M"]
-    rad = Y_train['R']
+    rad = Y_train[R]
 
     # Compute means and standard deviations for standardization
     mteff = np.mean(teff)
@@ -201,7 +189,7 @@ def return_train_test(df, normalised=True, logL=False):
     emet = abs(X_train['eFeH']) / smet
     elum = X_train[eL] / slum  
     emass = Y_train['eM'] / smass
-    erad = Y_train['eR'] / srad
+    erad = Y_train[eR] / srad
 
     x_train = pd.concat([teff, logg, met, lum], axis=1)
     x_train_er = pd.concat([eteff, elog, emet, elum], axis=1)
@@ -211,7 +199,7 @@ def return_train_test(df, normalised=True, logL=False):
     met_test = X_test['FeH']
     lum_test = X_test[L] 
     mass_test = Y_test['M']
-    rad_test = Y_test['R']
+    rad_test = Y_test[R]
      
     teff_test = (teff_test - mteff) / steff
     logg_test = (logg_test - mlogg) / slogg
@@ -227,7 +215,7 @@ def return_train_test(df, normalised=True, logL=False):
     emet_test = abs(X_test['eFeH']) / smet
     elum_test = X_test[eL] / slum 
     emass_test = Y_test['eM'] / smass
-    erad_test = Y_test['eR'] / srad
+    erad_test = Y_test[eR] / srad
 
     x_test_error = pd.concat([eteff_test, elog_test, emet_test, elum_test],
                              axis=1)
@@ -238,7 +226,7 @@ def return_train_test(df, normalised=True, logL=False):
     if normalised == False:
         return X_train, X_test, Y_train, Y_test
 
-def prepare_pred4(filename, logL=False):
+def prepare_pred4(filename, logL=False, logR=False):
     """
     ***Added logL option***
     Normalize input data and return DataFrames for normalized values and errors.
@@ -258,6 +246,13 @@ def prepare_pred4(filename, logL=False):
     else:
         L = "L"
         eL = "eL"
+
+    if logR == True:
+        R = "logR"
+        eR = "elogR" 
+    else:
+        R = "R"
+        eR = "eR"
 
     X = pd.read_csv(filename, sep='\t')
 
@@ -350,3 +345,78 @@ def prepare_pred3(filename):
 
     return x_test, x_test_error
 
+# def return_norm(df, logL=False):
+#     """
+#     ***Added a logL option***
+
+#     Compute normalization statistics for stellar parameters and their errors.
+
+#     Extracts stellar feature columns and their associated asymmetric measurement
+#     uncertainties, computes symmetric mean errors, splits the dataset into
+#     training and test sets, and calculates the mean and standard deviation
+#     of each input and target variable for normalization.
+
+#     Parameters
+#     ----------
+#     df : pandas.DataFrame
+#         Input DataFrame containing stellar parameters (`Teff`, `logg`, `FeH`, `L`, `M`)
+#         and their asymmetric uncertainties (`eX1`, `eX2` for lower/upper errors).
+
+#     Returns
+#     -------
+#     tuple
+#         (mteff, mlogg, mmet, mlum, mtmass, steff, slogg, smet, slum, smass)
+#         Mean and standard deviation for each variable, in the order:
+#         effective temperature, surface gravity, metallicity, luminosity, and mass.
+#     """
+#     if logL == True:
+#         eL1 = "elogL1"
+#         eL2 = "elogL2"
+#         L = "logL"
+#         eL = "elogL" 
+#     else:
+#         eL1 = "eL1"
+#         eL2 = "eL2"
+#         L = "L"
+#         eL = "eL"
+
+#     df1 = df[['eTeff1', 'elogg1', 'eFeH1', eL1, 'eM1']].copy()
+#     df2 = df[['eTeff2', 'elogg2', 'eFeH2', eL2, 'eM2']].copy()
+#     df2.columns = ['eTeff1', 'elogg1', 'eFeH1', eL1, 'eM1']
+
+#     # Mean error if non-symmetric
+#     X_error = (df1 + df2) / 2 
+
+#     X_error.columns = ['eTeff', 'elogg', 'eFeH', eL, 'eM']
+
+#     X = pd.concat([df[['Teff', L, 'FeH', 'logg']],
+#                    X_error[['eTeff', 'elogg', 'eFeH', eL]]],
+#                   axis=1)
+#     Y = pd.concat([df['M'], X_error['eM']], axis=1)
+    
+#     # do split
+#     X_train, X_test, Y_train, Y_test = train_test_split(X, Y,
+#                                                         test_size=0.2,
+#                                                         random_state=RANDOM_SEED)
+
+#     # Extract relevant columns for stellar mass prediction
+#     teff = X_train['Teff']
+#     logg = X_train['logg']
+#     met = X_train['FeH']
+#     lum = X_train[L]
+#     mass = Y_train["M"]
+
+#     # Compute means and standard deviations for standardization
+#     mteff = np.mean(teff)
+#     mlogg = np.mean(logg)
+#     mmet = np.mean(met)
+#     mlum = np.mean(lum)
+#     mtmass = np.mean(mass)
+
+#     steff = np.std(teff)
+#     slogg = np.std(logg)
+#     smet = np.std(met)
+#     slum = np.std(lum)
+#     smass = np.std(mass)
+    
+#     return mteff, mlogg, mmet, mlum, mtmass, steff, slogg, smet, slum, smass

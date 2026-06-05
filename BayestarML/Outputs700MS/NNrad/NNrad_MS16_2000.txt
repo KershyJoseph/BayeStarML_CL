@@ -265,6 +265,6 @@ MRD -0.7187506211100904
 
 Peak Memory: 2921.78 MB
 CPU time used: 701.53145 s
-Total run time: 7926.26963 s 2.2hours
+Total run time: 7926.26963 s 2.2hours - not nutpie though, I think
 ><><><><><><><><><><><><><><><><><><><><><><><><><><
 Salve Regina

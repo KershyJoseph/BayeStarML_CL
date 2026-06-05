@@ -10,7 +10,7 @@ from preprocess import return_train_test, prepare_pred4, denormalise_val, prepar
 from utils import get_dataset, mard, mrd
 from models import bart, gp
 from pred_sampling import sample_pred_BART, posterior_predictive_GP, sample_post_pred_HBNN_para
-from bhs import run_stack
+from BayestarML.models.bhs import run_stack
 import arviz as az
 import numpy as np
 import pandas as pd

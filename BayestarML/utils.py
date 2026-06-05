@@ -12,9 +12,9 @@ import numpy as np
 import pymc as pm
 import matplotlib.pyplot as plt
 
-def get_dataset(data_file, star_class='MS', logL=False):
+def get_dataset(data_file, star_class='MS', logL=False, logR=True):
     """
-    ***Added logL option***
+    ***Added logL, logR option***
     Load and clean a stellar dataset for a given star class.
 
     Reads a tab-separated file of stellar parameters and their uncertainties,
@@ -42,13 +42,22 @@ def get_dataset(data_file, star_class='MS', logL=False):
         eL1 = "eL1"
         eL2 = "eL2"
 
+    if logR == True:
+        R = "logR"
+        eR1 = "elogR1" 
+        eR2 = "elogR2" 
+    else:
+        R = "R"
+        eR1 = "eR1"
+        eR2 = "eR2"
+
     data = pd.read_table(data_file, sep="\t", comment='#')
     # read data with errors
     data_MS = data[data['class'] == star_class]
     # select Main Sequence Stars
 
     df = data[
-        ['R', 'eR1', 'eR2',
+        [R, eR1, eR2,
          'M', 'eM1', 'eM2',
          'Teff', 'eTeff1', 'eTeff2',
          'logg', 'elogg1', 'elogg2',    
