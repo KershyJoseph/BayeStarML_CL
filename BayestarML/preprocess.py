@@ -88,8 +88,8 @@ def return_norm(df, logL=False):
     teff = X_train['Teff']
     logg = X_train['logg']
     met = X_train['FeH']
-    lum = X_train[L]  
-    mass = Y_train["M"]       
+    lum = X_train[L]
+    mass = Y_train["M"]
 
     # Compute means and standard deviations for standardization
     mteff = np.mean(teff)
@@ -260,8 +260,6 @@ def prepare_pred4(filename, logL=False):
         eL = "eL"
 
     X = pd.read_csv(filename, sep='\t')
-    df = get_dataset('DataExploring/good_MS.txt', 'MS')
-    mteff, mlogg, mmet, mlum, mtmass, steff, slogg, smet, slum, smass = return_norm(df)
 
     # Helper function to normalize and handle missing values
     def normalize(value, mean, std):
@@ -277,17 +275,17 @@ def prepare_pred4(filename, logL=False):
 
     # Normalize each parameter and its error
     norm_data = {
-        'Teff': normalize(X['Teff'], mteff, steff),
-        'logg': normalize(X['logg'], mlogg, slogg),
-        'FeH': normalize(X['FeH'], mmet, smet),
-        L: normalize(X[L], mlum, slum)
+        'Teff': normalize(X['Teff'], MU['Teff'], SIGMA['Teff']),
+        'logg': normalize(X['logg'], MU['logg'], SIGMA['logg']),
+        'FeH': normalize(X['FeH'], MU['FeH'], SIGMA['FeH']),
+        L: normalize(X[L], MU[L], SIGMA[L])
     }
 
     error_data = {
-        'eTeff': normalize_error(X['eTeff'], steff),
-        'elogg': normalize_error(X['elogg'], slogg),
-        'eFeH': normalize_error(X['eFeH'], smet),
-        eL: normalize_error(X[eL], slum)
+        'eTeff': normalize_error(X['eTeff'], SIGMA['Teff']),
+        'elogg': normalize_error(X['elogg'], SIGMA['logg']),
+        'eFeH': normalize_error(X['eFeH'], SIGMA['FeH']),
+        eL: normalize_error(X[eL], SIGMA[L])
     }
 
     # For scalar inputs, we need to create a single-row DataFrame
