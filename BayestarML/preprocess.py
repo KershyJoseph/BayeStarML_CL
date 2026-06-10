@@ -10,6 +10,8 @@ Created on Mon Jul 14 18:03:17 2025
 
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
 from constants import MU, SIGMA
 from utils import get_dataset
 from sklearn.model_selection import train_test_split
@@ -47,19 +49,71 @@ def add_symmetric_errs(df, errs1, errs2):
     df1 = df[errs1].copy()
     df2 = df[errs2].copy()
     df1.columns = errs2
-    print(df1, df2)
     df_err = (df1 + df2) / 2
-    print(df_err)
-    #df_err.columns = 
-    print([err[:-1] for err in errs2])
+    df_err.columns = [err[:-1] for err in errs2]
     return pd.concat([df, df_err], axis=1)
+
+def L_consistency_check(df, logscale=True):
+    """
+    """
+    df_L_check = df[df["L_from_SB"]==0]
+    df_L_check["L_SB"] = df_L_check["R"]**2 * (df_L_check["Teff"]/5772)**4
+    R = df_L_check["R"]
+    Teff = df_L_check["Teff"]
+    df_L_check["L_SB_+err"] = np.sqrt(
+        (R**2*((Teff+df_L_check["eTeff1"])/5772)**4 - df_L_check["L_SB"])**2 
+        + ((R+df_L_check["eR1"])**2*(Teff/5772)**4 - df_L_check["L_SB"])**2 
+    )
+    df_L_check["L_SB_-err"] = np.sqrt(
+        (R**2*((Teff-df_L_check["eTeff2"])/5772)**4 - df_L_check["L_SB"])**2 
+        + ((R-df_L_check["eR2"])**2*(Teff/5772)**4 - df_L_check["L_SB"])**2 
+    )
+
+    #compute distance from recorded Ls
+    df_L_check["L_SB_avg_err"] = (df_L_check["L_SB_+err"] + df_L_check["L_SB_-err"])/2
+    df_L_check["total_L_err"] = np.sqrt(df_L_check["L_SB_avg_err"]**2 + df_L_check["eL1"]**2)
+    df_L_check["L_dist"] = df_L_check["L_SB"]-df_L_check["L"]
+    df_L_check["L_sig_distance"] = np.abs(df_L_check["L_dist"])/df_L_check["total_L_err"]
+    df_bad_Ls = df_L_check[df_L_check["L_sig_distance"]>3]
+
+    plt.figure()
+    yerr = np.array([df_L_check["L_SB_-err"], df_L_check["L_SB_+err"]])
+    xerr = np.array([df_L_check["eL2"], df_L_check["eL1"]])
+    plt.errorbar(df_L_check["L"], df_L_check["L_SB"], #x,y,yerr,xerr
+                yerr=yerr, xerr=xerr, fmt='go', ecolor='gray', alpha=0.4,
+                zorder=1)
+    yerr2 = np.array([df_bad_Ls["L_SB_-err"], df_bad_Ls["L_SB_+err"]])
+    xerr2 = np.array([df_bad_Ls["eL2"], df_bad_Ls["eL1"]])
+    plt.errorbar(df_bad_Ls["L"], df_bad_Ls["L_SB"],
+                yerr=yerr2, xerr=xerr2, fmt='none', ecolor='red', alpha=0.5,
+                zorder=2)
+    sns.scatterplot(data=df_bad_Ls,x="L",y="L_SB",hue="source",alpha=0.5,zorder=3)
+    plt.xlabel("L")
+    plt.ylabel("L from SB")
+    plt.plot([0, df_L_check["L"].max()], [0,df_L_check["L"].max()], linestyle='--', color='r')
+    if logscale:
+        plt.xscale("log")
+        plt.yscale("log")
+    plt.show()
+
+    df.drop(df_bad_Ls.index, inplace=True)
+    print(f"{len(df)} stars after checking L consistency with R and Teff to 3 sigma via SB law.")
+    return df
 
 def select_clean_data(df: pd.DataFrame,
                       training_fs: list, targets: list, s_class: str,
                       add_logvars: list = None,
-                      check_detached=True):
+                      check_detached=True,
+                      L_check=True):
     """
     """
+    if s_class:
+        df = df[(df["class"]==s_class)]
+        print(f"Working with {len(df)} "+s_class+" stars.")
+    if check_detached:
+        df = df[(df["well_detached"]!=False)]
+        print(f"{len(df)} stars left after filtering those not from well-detached binaries.")
+
     all_params = training_fs + targets
     #check params are present based on whether both errors are
     errs1 = [f"e{param}1" for param in all_params] 
@@ -67,10 +121,10 @@ def select_clean_data(df: pd.DataFrame,
     all_errs = errs1 + errs2
     df_allps = df[(df[all_errs].notna().all(axis=1)) &
                   (df[all_errs].gt(0).all(axis=1))]
-    if s_class:
-        df_allps = df_allps[(df_allps["class"]==s_class)]
-    if check_detached:
-        df_allps = df_allps[(df_allps["well_detached"]!=False)]
+    print(f"{len(df_allps)} stars left after checking all training features and targets present with err>0 for each.")
+
+    if L_check:
+        df_allps = L_consistency_check(df_allps)
 
     #make any vars log10 scale
     if add_logvars:
@@ -82,6 +136,46 @@ def select_clean_data(df: pd.DataFrame,
     df_final = add_symmetric_errs(df_allps_log, errs1, errs2)
 
     return df_final
+
+def error_filter(df, abs_err_tols=None, percent_err_tols=None, plot_params=None):
+    """Filter df based on specified error tolerances.
+    """
+    mask = pd.Series(True, index=df.index)
+    if abs_err_tols:
+        for evar, lim in abs_err_tols.items():
+            mask &= (df[evar] <= lim)
+    if percent_err_tols:
+        for evar, p_lim in percent_err_tols.items():
+            df["percent_"+evar] = 100 * df[evar]/df[evar[1:]]
+            mask &= (df["percent_"+evar] <= p_lim)
+    df_filtered = df[mask]
+    print(f"{len(df_filtered)} stars left after error tolerance filtering.")
+
+    if plot_params:
+        plot_cols = int((len(plot_params)+1)/2)
+        fig, ax = plt.subplots(2,plot_cols)
+        i, j = 0, 0
+        for param, spec in plot_params.items():
+            #spec should be a list [nominal err limit to plot, units of value]
+            k=int(j)
+            err = "e"+param
+            if spec[1] == "%": #make percentage errs have the right df key
+                err = "percent_e"+param
+            counts, _, _ = ax[i,k].hist(df_filtered[err], bins='auto')
+            ax[i,k].vlines(spec[0],0,counts.max(),linestyle='--',color='r',label=str(spec[0])+spec[1])
+            ax[i,k].set_title(param)
+            ax[i,k].set_ylabel("Number")
+            ax[i,k].set_xlabel(f"Error ({spec[1]})")
+            ax[i,k].legend()
+            #alternate i between 0 and 1
+            i-=1
+            i=abs(i)
+            #step j up to length plot(cols) waiting once each time
+            j+=1/2
+        plt.tight_layout()
+        plt.show()
+
+    return df_filtered
 
 def return_train_test(df, normalised=True, logL=False, logR=False):
     """
