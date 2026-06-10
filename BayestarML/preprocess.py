@@ -185,7 +185,7 @@ def spreadomatic(df, var, hue=None):
     plt.ylabel("Number of stars")
     plt.show()
 
-def return_train_test(df, training_fs, targets):
+def return_train_test_edit(df, training_fs, targets):
     """
     """
     training_fs_errs = [f"e{f}" for f in training_fs]
@@ -217,56 +217,131 @@ def return_train_test(df, training_fs, targets):
 
 def normalise():
     x = None
-    # # Standardize inputs 
-    # teff = (teff - mteff) / steff
-    # logg = (logg - mlogg) / slogg
-    # met = (met - mmet) / smet
-    # lum = (lum - mlum) / slum
-    # mass = (mass - mtmass) / smass
-    # rad = (rad - mrad) / srad
 
-    # # Uncertainties for the inputs
-    # eteff = X_train['eTeff'] / steff
-    # elog = X_train['elogg'] / slogg
-    # emet = abs(X_train['eFeH']) / smet
-    # elum = X_train[eL] / slum  
-    # emass = Y_train['eM'] / smass
-    # erad = Y_train[eR] / srad
 
-    # x_train = pd.concat([teff, logg, met, lum], axis=1)
-    # x_train_er = pd.concat([eteff, elog, emet, elum], axis=1)
+def return_train_test(df, normalised=True):
+    """
 
-    # teff_test = X_test['Teff']
-    # logg_test = X_test['logg']
-    # met_test = X_test['FeH']
-    # lum_test = X_test[L] 
-    # mass_test = Y_test['M']
-    # rad_test = Y_test[R]
+    Parameters
+    ----------
+    df : TYPE, pandas df
+        DESCRIPTION. The default is df. All data.
+    normalised : TYPE, bool
+        DESCRIPTION. The default is True.
+
+    Returns
+    -------
+    normalised or not normalised training and testing data. 
+    Note that normalised and non normalised don't come in the same format
+    For normalised: x_train, x_train_er, x_test, x_test_error,
+    mass, emass, mass_test, emass_test
+    For non normalised: X_train, X_test, Y_train, Y_test / where errors and
+    data are combined
+    
+    if you want both just call twice
+
+    """
+    df1 = df[['eTeff1', 'elogg1', 'eMeta1', 'eL1', 'eM1', 'eR1']].copy()
+    df2 = df[['eTeff2', 'elogg2', 'eMeta2', 'eL2', 'eM2', 'eR2']].copy()
+    df2.columns = ['eTeff1', 'elogg1', 'eMeta1', 'eL1', 'eM1', 'eR1']
+
+    # Mean error if non-symmetric
+    X_error = (df1 + df2) / 2 
+
+
+    X_error.columns = ['eTeff', 'elogg', 'eMeta', 'eL', 'eM', 'eR']
+
+    X = pd.concat([df[['Teff', 'L', 'Meta', 'logg']],
+                   X_error[['eTeff', 'elogg', 'eMeta', 'eL']]],
+                  axis=1)
+    Y = pd.concat([df['M'], X_error['eM'], df['R'], X_error['eR']], axis=1)
+    
+    # do split
+    X_train, X_test, Y_train, Y_test = train_test_split(X, Y,
+                                                        test_size=0.2,
+                                                        random_state=RANDOM_SEED)
+
+    # Extract relevant columns for stellar mass prediction
+    teff = X_train['Teff']
+    logg = X_train['logg']
+    met = X_train['Meta']
+    lum = X_train['L']  
+    #print(lum)
+    mass = Y_train["M"]       
+    rad = Y_train['R']
+
+    # Compute means and standard deviations for standardization
+    mteff = np.mean(teff)
+    mlogg = np.mean(logg)
+    mmet = np.mean(met)
+    mlum = np.mean(lum)
+    mtmass = np.mean(mass)
+    mrad = np.mean(rad)
+    
+    #print(mteff, mlogg, mmet, mlum, mtmass, mrad)
+
+    steff = np.std(teff)
+    slogg = np.std(logg)
+    smet = np.std(met)
+    slum = np.std(lum)
+    smass = np.std(mass)
+    srad = np.std(rad)
+    
+    #print(steff, slogg, smet, slum, smass, srad)
+
+    # Standardize inputs 
+    teff = (teff - mteff) / steff
+    logg = (logg - mlogg) / slogg
+    met = (met - mmet) / smet
+    lum = (lum - mlum) / slum
+    mass = (mass - mtmass) / smass
+    rad = (rad - mrad) / srad
+
+
+
+    # Uncertainties for the inputs
+    eteff = X_train['eTeff'] / steff
+    elog = X_train['elogg'] / slogg
+    emet = abs(X_train['eMeta']) / smet
+    elum = X_train['eL'] / slum  
+    emass = Y_train['eM'] / smass
+    erad = Y_train['eR'] / srad
+
+    x_train = pd.concat([teff, logg, met, lum], axis=1)
+    x_train_er = pd.concat([eteff, elog, emet, elum], axis=1)
+
+    teff_test = X_test['Teff']
+    logg_test = X_test['logg']
+    met_test = X_test['Meta']
+    lum_test = X_test['L'] 
+    mass_test = Y_test['M']
+    rad_test = Y_test['R']
      
-    # teff_test = (teff_test - mteff) / steff
-    # logg_test = (logg_test - mlogg) / slogg
-    # met_test = (met_test - mmet) / smet
-    # lum_test = (lum_test- mlum) / slum
-    # mass_test = (mass_test- mtmass) / smass
-    # rad_test = (rad_test - mrad) / srad
+    teff_test = (teff_test - mteff) / steff
+    logg_test = (logg_test - mlogg) / slogg
+    met_test = (met_test - mmet) / smet
+    lum_test = (lum_test- mlum) / slum
+    mass_test = (mass_test- mtmass) / smass
+    rad_test = (rad_test - mrad) / srad
 
-    # x_test = pd.concat([teff_test, logg_test, met_test, lum_test], axis=1)
+    x_test = pd.concat([teff_test, logg_test, met_test, lum_test], axis=1)
 
-    # eteff_test = X_test['eTeff'] / steff
-    # elog_test = X_test['elogg'] / slogg
-    # emet_test = abs(X_test['eFeH']) / smet
-    # elum_test = X_test[eL] / slum 
-    # emass_test = Y_test['eM'] / smass
-    # erad_test = Y_test[eR] / srad
+    eteff_test = X_test['eTeff'] / steff
+    elog_test = X_test['elogg'] / slogg
+    emet_test = abs(X_test['eMeta']) / smet
+    elum_test = X_test['eL'] / slum 
+    emass_test = Y_test['eM'] / smass
+    erad_test = Y_test['eR'] / srad
 
-    # x_test_error = pd.concat([eteff_test, elog_test, emet_test, elum_test],
-    #                          axis=1)
+    x_test_error = pd.concat([eteff_test, elog_test, emet_test, elum_test],
+                             axis=1)
 
-    # if normalised == True:
-    #     return x_train, x_train_er, x_test, x_test_error, mass, emass, mass_test, emass_test, rad, erad, rad_test, erad_test
-
-    # if normalised == False:
-    #     return X_train, X_test, Y_train, Y_test
+    
+    if normalised == True:
+        return x_train, x_train_er, x_test, x_test_error, mass, emass, mass_test, emass_test, rad, erad, rad_test, erad_test
+    
+    if normalised == False:
+        return X_train, X_test, Y_train, Y_test
 
 def prepare_pred4(filename, logL=False, logR=False):
     """
