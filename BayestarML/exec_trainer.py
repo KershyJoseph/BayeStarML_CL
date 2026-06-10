@@ -303,8 +303,8 @@ if __name__ == '__main__':
     start_time_CPU = time.process_time()
     start_time_wall = time.perf_counter()
 
-    print("NN rad NUTPIE - RGB stars. 4_500. target_accept=0.95, TD 20.")
-    radius_train_NN(datasetRGB, 4, "Outputs5438RGB", 500, nutpie=True, sclass="RGB ")
+    print("NN mass NUTPIE - RGB stars. 4_500. target_accept=0.95, TD 20.")
+    mass_train_NN(datasetRGB, 4, "Outputs5438RGB", 500, nutpie=True, sclass="RGB ")
 
     end_time_CPU = time.process_time()
     mem1 = process.memory_info().rss / 1024**2
