@@ -300,19 +300,19 @@ if __name__ == '__main__':
     print("::::::::::::::::::::::::::::::::::::::\n")
 
     process = psutil.Process()
-    start_time_CPU = time.process_time()
-    start_time_wall = time.perf_counter()
+    # start_time_CPU = time.process_time()
+    # start_time_wall = time.perf_counter()
 
-    print("NN mass NUTPIE - RGB stars. 3_2000. target_accept=0.95, TD 20.")
-    mass_train_NN(datasetRGB, 3, "Outputs5438RGB", 2000, nutpie=True, sclass="RGB")
+    # print("NN mass NUTPIE - RGB stars. 3_2000. target_accept=0.95, TD 20.")
+    # mass_train_NN(datasetRGB, 3, "Outputs5438RGB", 2000, nutpie=True, sclass="RGB")
 
-    end_time_CPU = time.process_time()
-    mem1 = process.memory_info().rss / 1024**2
-    print(f"Peak Memory: {mem1:.2f} MB")
-    print(f"CPU time accumulated: {(end_time_CPU-start_time_CPU):.5f} s")
-    print(f"Total wall clock time: {time.perf_counter()-start_time_wall:.5f} s")
+    # end_time_CPU = time.process_time()
+    # mem1 = process.memory_info().rss / 1024**2
+    # print(f"Peak Memory: {mem1:.2f} MB")
+    # print(f"CPU time accumulated: {(end_time_CPU-start_time_CPU):.5f} s")
+    # print(f"Total wall clock time: {time.perf_counter()-start_time_wall:.5f} s")
 
-    print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
+    # print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
 
     # start_time_CPU2 = time.process_time()
     # start_time2 = time.time()
@@ -332,33 +332,33 @@ if __name__ == '__main__':
     # start_time_CPU3 = time.process_time()
     # start_time3 = time.time()
 
-    # print("GP - radius - RGB stars. 100, 30, 2000. 20TD still.")
-    # radius_train_GP(datasetRGB, 100, 30, "Outputs5438RGB", 2000, target_accept=0.95, sclass="RGB")
+    # print("GP - radius - RGB stars. 100, 30, 1000. 20TD still.")
+    # radius_train_GP(datasetRGB, 100, 30, "Outputs5438RGB", 1000, target_accept=0.95, sclass="RGB")
 
     # end_time_CPU3 = time.process_time()
 
-    # mem3 = process.memory_info().rss / 1024**2
+    mem3 = process.memory_info().rss / 1024**2
     # print(f"Peak Memory: {(mem3-mem2):.2f} MB")
     # print(f"CPU time used: {(end_time_CPU3-start_time_CPU3):.5f} s")
     # print(f"Total run time: {time.time()-start_time3:.5f} s")
 
     # print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
 
-    # start_time_CPU4 = time.process_time()
-    # start_time4 = time.time()
+    start_time_CPU4 = time.process_time()
+    start_time4 = time.time()
 
-    # print("GP - mass - RGB stars. 100, 30, 2000. 20TD still.")
-    # mass_train_GP(datasetRGB, 100, 30, "Outputs5438RGB", 2000, target_accept=0.95, sclass="RGB")
+    print("GP - mass - RGB stars. 100, 30, 2000. 20TD still.")
+    mass_train_GP(datasetRGB, 100, 30, "Outputs5438RGB", 2000, target_accept=0.95, sclass="RGB")
 
-    # end_time_CPU4 = time.process_time()
+    end_time_CPU4 = time.process_time()
 
-    # mem4 = process.memory_info().rss / 1024**2
-    # print(f"Peak Memory: {(mem4-mem3):.2f} MB")
-    # print(f"CPU time used: {(end_time_CPU4-start_time_CPU4):.5f} s")
-    # print(f"Total run time: {time.time()-start_time4:.5f} s")
+    mem4 = process.memory_info().rss / 1024**2
+    print(f"Peak Memory: {(mem4-mem3):.2f} MB")
+    print(f"CPU time used: {(end_time_CPU4-start_time_CPU4):.5f} s")
+    print(f"Total run time: {time.time()-start_time4:.5f} s")
 
-    # print("><><><><><><><><><><><><><><><><><><><><><><><><><")
-    # print("Salve Regina")
+    print("><><><><><><><><><><><><><><><><><><><><><><><><><")
+    print("Salve Regina")
 
 
 # The reason you are hitting PyMC warnings about "old GP objects" is because you've coded up a brilliant, custom implementation of a Sparse Heteroscedastic GP from scratch, rather than using PyMC's built-in pm.gp high-level classes.
