@@ -215,7 +215,6 @@ def return_train_test(df, training_fs, targets):
     MAX = pd.concat([X_max, Y_max]).to_dict()
 
 
-
 def normalise():
     x = None
     # # Standardize inputs 
