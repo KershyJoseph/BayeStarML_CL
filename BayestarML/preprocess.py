@@ -214,11 +214,10 @@ def return_train_test(df, training_fs, targets):
     MIN = pd.concat([X_min, Y_min]).to_dict()
     MAX = pd.concat([X_max, Y_max]).to_dict()
 
-    
 
 
 def normalise():
-    
+    x = None
     # # Standardize inputs 
     # teff = (teff - mteff) / steff
     # logg = (logg - mlogg) / slogg
