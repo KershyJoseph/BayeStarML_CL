@@ -70,16 +70,6 @@ def logomatic(df, var):
     df["elog"+var+"2"] = df["log"+var] - np.log10(df[var] - df["e"+var+"2"])
     return None
 
-def spreadomatic(df, var, save_path, hue=None, xlabel=None):
-    """Make a histogram for a given var (which should be one of df's keys)
-    """
-    plt.figure()
-    sns.histplot(data=df, x=var, hue=hue)
-    if xlabel:
-        plt.xlabel(xlabel)
-    plt.ylabel("Number of stars")
-    plt.savefig(save_path)
-    plt.close()
 
 df = pd.read_csv("DataExploring/datos_todos_v20261905.txt", sep="\t", comment="#")
 

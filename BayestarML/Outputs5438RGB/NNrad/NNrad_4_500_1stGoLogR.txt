@@ -1,0 +1,144 @@
+5978.0969107142855 4.205791666794643 -0.08010071428571429 0.3170239560166381 1.1475716607142856 1.4840080535714286
+831.8751676749379 0.2640866953690148 0.2058107556527279 0.6810411063280138 0.2971137557826593 0.5270303780458729
+4682.237544367816 2.63205308045977 -0.1394277471264368 1.5220611128103438 1.2364349655172413 0.9412642494058828
+190.13771783458273 0.37034151514195335 0.27140729727055274 0.3291432400982074 0.22923439810871163 0.18925022437385766
+
+::::::::::::::::::::::::::::::::::::::
+goodRGB5438
+::::::::::::::::::::::::::::::::::::::
+
+NN rad NUTPIE - RGB stars. 4_500. target_accept=0.95, TD 20.
+target_accept= 0.95
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/pymc/pytensorf.py:958: FutureWarning: compile_pymc was
+ renamed to compile. Old name will be removed in a future release of PyMC
+  warnings.warn(
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/pymc/pytensorf.py:958: FutureWarning: compile_pymc was
+ renamed to compile. Old name will be removed in a future release of PyMC
+  warnings.warn(
+______________________________________________________________________________________________________________ 5000/5000
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/diagnostics.py:596: RuntimeWarning: invali
+d value encountered in scalar divide
+  (between_chain_variance / within_chain_variance + num_samples - 1) / (num_samples)
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/diagnostics.py:991: RuntimeWarning: invali
+d value encountered in scalar divide
+  varsd = varvar / evar / 4
+AZ Stats for ESS Bulk < 400:
+act_1[752, 1]       0.289  0.299  -0.008    0.753      0.145    0.044       4.0      13.0   3.31
+act_1[735, 1]       0.331  0.268  -0.009    0.748      0.130    0.051       4.0      12.0   3.35
+act_1[498, 0]       0.410  0.380  -0.011    1.053      0.184    0.072       4.0      12.0   3.37
+act_1[486, 0]       0.071  0.119  -0.009    0.326      0.056    0.043       4.0      12.0   3.37
+act_1[461, 1]       0.182  0.212  -0.006    0.581      0.104    0.053       4.0      13.0   3.33
+...                   ...    ...     ...      ...        ...      ...       ...       ...    ...
+act_out[325]        0.548  0.049   0.455    0.634      0.002    0.001     388.0    1488.0   1.01
+ann_input[3069, 3]  2.242  0.071   2.100    2.362      0.004    0.001     388.0    1199.0   1.02
+act_out[2161]       0.066  0.037  -0.002    0.141      0.002    0.001     391.0     977.0   1.02
+act_out[2944]      -1.044  0.036  -1.109   -0.976      0.002    0.001     395.0    1756.0   1.02
+act_out[1803]      -1.465  0.031  -1.528   -1.411      0.002    0.001     396.0    1090.0   1.02
+
+[35115 rows x 9 columns]
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/diagnostics.py:596: RuntimeWarning: invali
+d value encountered in scalar divide
+  (between_chain_variance / within_chain_variance + num_samples - 1) / (num_samples)
+
+rhats:  [('Omega_cholesky-cov-packed__', 1.1651379230809455), ('X_latent', 1.2308968644917684), ('w_in_1', 3.12657749114
+62407), ('w_1_2', 3.0970384012601575), ('w_2_out', 2.8102090027017637), ('bias_1', 3.153886674694975), ('bias_2', 2.0923
+713586786925), ('bias_out', 1.7368420121290038), ('er_log__', 1.0518466116160219), ('Omega', 1.1651379230809455), ('er',
+ 1.0518466116160219), ('Omega_corr', 1.009605199421988), ('Omega_stds', 1.0093578660476945), ('ann_input', 1.23089686449
+17684), ('act_1', 3.5032155168354446), ('act_2', 2.688111341101603), ('act_out', 1.5360006257226124)]
+Computing ... ──────────────────────────────────────── 100% 0:00:00
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape
+ parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust
+model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are v
+ery different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+loo trace:  Computed from 2000 posterior samples and 4350 observations log-likelihood matrix.
+
+         Estimate       SE
+elpd_loo  5386.03    56.99
+p_loo     2415.26        -
+
+There has been a warning during the calculation. Please check the results.
+------
+
+Pareto k diagnostic values:
+                         Count   Pct.
+(-Inf, 0.70]   (good)     3983   91.6%
+   (0.70, 1]   (bad)       361    8.3%
+   (1, Inf)   (very bad)    6    0.1%
+Indices of bad points: [  14   33   38   83   90  101  106  122  128  186  198  203  209  225
+  226  253  254  255  278  295  298  299  303  306  307  317  329  338
+  360  362  385  394  396  402  409  410  437  442  443  483  488  500
+  513  517  519  530  549  551  556  568  577  580  582  593  602  609
+  616  625  643  645  678  712  714  755  758  761  774  778  785  789
+  821  871  875  885  915  941  967  970  995 1004 1007 1015 1071 1086
+ 1088 1090 1108 1112 1165 1181 1195 1204 1214 1215 1230 1232 1233 1240
+ 1245 1257 1288 1298 1319 1336 1347 1351 1355 1418 1440 1451 1475 1483
+ 1516 1519 1525 1550 1560 1568 1572 1586 1587 1603 1604 1617 1619 1633
+ 1635 1646 1657 1672 1677 1682 1694 1712 1743 1747 1750 1765 1782 1783
+ 1800 1806 1829 1830 1861 1885 1898 1914 1917 1926 1983 2014 2039 2060
+ 2061 2092 2104 2109 2111 2119 2123 2131 2133 2176 2184 2185 2189 2212
+ 2220 2236 2238 2246 2257 2268 2289 2301 2308 2322 2348 2349 2359 2360
+ 2376 2400 2402 2404 2405 2414 2425 2434 2449 2453 2486 2510 2528 2532
+ 2575 2586 2615 2619 2649 2664 2668 2669 2673 2675 2678 2699 2717 2724
+ 2736 2753 2768 2777 2821 2830 2831 2856 2859 2901 2908 2926 2929 2948
+ 2972 2985 2997 3005 3014 3015 3024 3052 3076 3086 3090 3094 3101 3112
+ 3115 3154 3183 3189 3197 3201 3206 3208 3214 3222 3240 3245 3257 3262
+ 3264 3267 3276 3280 3288 3328 3337 3339 3361 3370 3386 3390 3401 3403
+ 3411 3413 3423 3446 3450 3451 3461 3489 3503 3506 3515 3518 3535 3547
+ 3550 3554 3571 3589 3613 3625 3629 3631 3644 3647 3649 3651 3656 3673
+ 3676 3704 3706 3738 3742 3743 3746 3747 3754 3756 3770 3783 3788 3797
+ 3820 3840 3848 3854 3863 3869 3871 3885 3893 3905 3926 3933 3945 3972
+ 3977 4000 4019 4021 4026 4028 4071 4079 4105 4119 4121 4130 4132 4155
+ 4158 4171 4172 4179 4195 4216 4219 4221 4223 4244 4287 4291 4295 4297
+ 4303 4326 4337]
+
+starting parallel prediction on 32 worker(s)_
+finished chain 1/4
+finished chain 4/4
+finished chain 3/4
+finished chain 2/4
+means:  [1.03449411 0.94810667 0.6398904  ... 0.96335637 1.21669133 0.8631746 ]
+stdvs:  [0.01200937 0.00886282 0.00953465 ... 0.01666197 0.01147968 0.01299665]
+test set:  1343    0.016086
+1092   -0.022949
+4425   -0.202125
+3859    0.112391
+2885   -0.019459
+5276    0.057481
+4058   -0.055040
+2484   -0.035704
+5344   -0.101252
+5244   -0.105579
+4500   -0.142223
+3403    0.010904
+2574    0.174912
+3593    0.135626
+4375   -0.150022
+
+[...]
+
+767     0.114535
+1130   -0.025925
+2457   -0.026030
+3424    0.143336
+1524    0.042018
+1948   -0.113631
+29      0.080154
+3756   -0.029096
+4330   -0.161642
+234     0.017222
+672     0.106223
+1131   -0.003884
+807    -0.051302
+3879    0.152281
+3139   -0.086250
+1288   -0.014731
+3716    0.080509
+2857   -0.063863
+Name: logR, dtype: float64
+MAE:  0.9809321831516927
+MARD 14049.691776748241
+MRD 8613.850940868644
+Peak Memory: 4854.56 MB
+CPU time accumulated: 4645.33342 s
+Total wall clock time: 1519.26820 s
