@@ -2,7 +2,7 @@
 """
 
 import pandas as pd
-from preprocess import select_clean_data, error_filter, spreadomatic, return_train_test
+from preprocess import select_clean_data, error_filter, spreadomatic, return_train_test_edit
 
 #choose database to select data from for training
 filename = "datos_todos_v20261905.txt"
@@ -57,4 +57,4 @@ if target_lim == None:
             repeat = input(f"Continue checking {var} spread? (yes/no)\n") == "yes"
 
 #get MUs and SIGs for normalisation of each param, and write to constants.py, as well as MIN and MAX
-return_train_test(df, training_fs, targets)
+return_train_test_edit(df, training_fs, targets)

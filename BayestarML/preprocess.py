@@ -185,7 +185,7 @@ def spreadomatic(df, var, hue=None):
     plt.ylabel("Number of stars")
     plt.show()
 
-def return_train_test_edit(df, training_fs, targets):
+def return_train_test_edit(df, training_fs, targets, s_class):
     """
     """
     training_fs_errs = [f"e{f}" for f in training_fs]
@@ -214,6 +214,7 @@ def return_train_test_edit(df, training_fs, targets):
     MIN = pd.concat([X_min, Y_min]).to_dict()
     MAX = pd.concat([X_max, Y_max]).to_dict()
 
+    
 
 def normalise():
     x = None
