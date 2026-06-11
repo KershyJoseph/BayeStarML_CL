@@ -1,0 +1,116 @@
+5978.0969107142855 4.205791666794643 -0.08010071428571429 0.3170239560166381 1.1475716607142856 1.4840080535714286
+831.8751676749379 0.2640866953690148 0.2058107556527279 0.6810411063280138 0.2971137557826593 0.5270303780458729
+4682.237544367816 2.63205308045977 -0.1394277471264368 1.5220611128103438 1.2364349655172413 0.9412642494058828
+190.13771783458273 0.37034151514195335 0.27140729727055274 0.3291432400982074 0.22923439810871163 0.18925022437385766
+
+::::::::::::::::::::::::::::::::::::::
+goodRGB5438
+::::::::::::::::::::::::::::::::::::::
+
+GP - mass - RGB stars. 100, 30, 1000. 20TD still.
+target_accept= 0.95
+Initializing NUTS using jitter+adapt_diag...
+Multiprocess sampling (4 chains in 4 jobs)
+NUTS: [log_ls, log_eta, u_rotated__, log_ls_v, log_eta_v, alpha_log_var, u_rotated_log_var_f]
+
+
+  Progress                         Draws   Divergences   Step size   Grad evals   Sampling Speed   Elapsed   Remaining
+ ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  ──────────────────────────────   2500    0             0.02        255          6.79 s/draws     4:42:45   0:00:00
+  ──────────────────────────────   2500    0             0.01        511          6.40 s/draws     4:26:34   0:00:00
+  ──────────────────────────────   2500    0             0.02        255          6.47 s/draws     4:29:31   0:00:00
+  ──────────────────────────────   2500    0             0.02        255          6.00 s/draws     4:10:01   0:00:00
+
+Sampling 4 chains for 1_500 tune and 1_000 draw iterations (6_000 + 4_000 draws total) took 16978 seconds.
+The rhat statistic is larger than 1.01 for some parameters. This indicates problems during sampling. See https://arxiv.o
+rg/abs/1903.08008 for details
+The effective sample size per chain is smaller than 100 for some parameters.  A higher number is needed for reliable rha
+t and ess computation. See https://arxiv.org/abs/1903.08008 for details
+
+The effective sample size per chain is smaller than 100 for some parameters.  A higher number is needed for reliable rha
+t and ess computation. See https://arxiv.org/abs/1903.08008 for details
+AZ Stats for ESS Bulk < 400:
+                      mean     sd  hdi_3%  hdi_97%  mcse_mean  mcse_sd  ess_bulk  ess_tail  r_hat
+__f[1521]           0.318  0.031   0.264    0.379      0.003    0.003     114.0      42.0   1.02
+__f[2955]           0.330  0.035   0.268    0.400      0.004    0.004     114.0      43.0   1.02
+log_var[1794]      -2.270  0.234  -2.667   -1.808      0.028    0.032     114.0      45.0   1.02
+log_var[2955]      -2.231  0.218  -2.618   -1.822      0.027    0.032     114.0      43.0   1.02
+__f[1794]           0.324  0.037   0.258    0.397      0.004    0.003     114.0      45.0   1.02
+...                   ...    ...     ...      ...        ...      ...       ...       ...    ...
+mu_log_var_f[844]  -1.347  0.652  -2.662   -0.212      0.033    0.026     398.0     119.0   1.01
+log_var[3066]      -3.199  0.073  -3.341   -3.070      0.004    0.005     398.0     179.0   1.01
+log_var[4086]      -3.054  0.076  -3.191   -2.914      0.004    0.006     399.0     142.0   1.01
+mu_log_var_f[3905] -1.747  0.657  -3.040   -0.562      0.033    0.024     399.0     133.0   1.01
+__f[4086]           0.217  0.008   0.203    0.233      0.001    0.001     399.0     142.0   1.01
+
+[2146 rows x 9 columns]
+rhats:  [('log_ls', 1.009684103567474), ('log_eta', 1.0053736477880921), ('u_rotated__', 1.0096509225641526), ('log_ls_v
+', 1.0211457184241215), ('log_eta_v', 1.0092809062593366), ('alpha_log_var', 1.0035375826741284), ('u_rotated_log_var_f'
+, 1.019004716596563), ('ls', 1.0086059815717756), ('eta', 1.0041174912238078), ('u__', 1.005875725375306), ('mu__', 1.01
+26657784650441), ('ls_v', 1.0211457184241215), ('eta_v', 1.0092809062593366), ('u_log_var_f', 1.0118708945437376), ('mu_
+log_var_f', 1.0118707208841096), ('log_var', 1.0243040565907644), ('__f', 1.0243040565907644)]
+
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/pymc/model/fgraph.py:163: UserWarning: Detected variab
+les likely created by GP objects. Further use of these old GP objects should be avoided as it may reintroduce variables
+from the old model. See issue: https://github.com/pymc-devs/pymc/issues/6883
+  warnings.warn(
+Computing ... ──────────────────────────────────────── 100% 0:00:00
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape
+ parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust
+model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are v
+ery different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+loo trace:  Computed from 4000 posterior samples and 4350 observations log-likelihood matrix.
+
+         Estimate       SE
+elpd_loo -1285.65    82.44
+p_loo      147.44        -
+
+There has been a warning during the calculation. Please check the results.
+------
+
+Pareto k diagnostic values:
+                         Count   Pct.
+(-Inf, 0.70]   (good)     4336   99.7%
+   (0.70, 1]   (bad)        10    0.2%
+   (1, Inf)   (very bad)    4    0.1%
+
+Found 14 problematic data points.
+Indices of bad points: [ 274  316  601  616  813  896 1410 1694 1978 2041 2736 2870 2936 3541]
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape
+ parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust
+model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are v
+ery different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+Sampling: [X_new_latent, X_var_new_latent, f_mu_pred, log_var_pred_latent, y_pred]
+Sampling ... ──────────────────────────────────────── 100% 0:00:00 / 0:00:15
+(4, 1000, 1088)
+(4, 1000, 1088)
+(4, 1000, 1088)
+f range: -1.8076249431146771 4.107522737124331
+f std over test points: 0.9360390990036246
+means:  [1.21897479 1.24228066 1.00848042 ... 1.17083029 1.12566957 1.34306416]
+stdvs:  [0.07762194 0.05413653 0.07565352 ... 0.0795448  0.11502029 0.07202119]
+
+Unorm mass:  1343    1.2331
+1092    1.2393
+4425    0.9540
+3859    1.5422
+2885    1.0446
+         ...
+3879    1.2403
+3139    1.2603
+1288    1.1910
+3716    1.1112
+2857    1.3435
+Name: M, Length: 1088, dtype: float64
+
+MAE:  0.05706291292653819
+MARD 4.536158680115182
+MRD -0.3286982145562492
+
+Peak Memory: 2852.61 MB
+CPU time used: 1102.77279 s
+Total run time: 17219.04270 s
+><><><><><><><><><><><><><><><><><><><><><><><><><
+Salve Regina

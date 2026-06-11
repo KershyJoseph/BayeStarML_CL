@@ -44,22 +44,6 @@ def make_MS_sample(N):
     df_MS_sample.to_csv("DataExploring/MS_sample_"+str(len(df_MS_sample))+".txt",
                         index=False, na_rep="NA", sep="\t")
 
-def diagnostics(df, name):
-    print("Diagnostics on ", name)
-
-    print("Old stars: ", len(df[(df["database"]==1)]))
-
-    print("New (and revised) stars: ", len(df[(df["database"]!=1)]), "out of ", len(df))
-
-    print("New, new stars: ", len(df[(df["database"]==3)]), "out of ", len(df))
-
-    print("New range stars: ", len(df[(df["M"]<=0.8) | (df["M"]>=1.4)]), "out of ", len(df))
-
-    print("New stars AND new range stars: ", len(df[((df["M"]<=0.8) | (df["M"]>=1.4)) & (df["database"]!=1)]), "out of ", len(df))
-
-    print("Low mass stars: ", len(df[(df["M"]<=0.8)]), "out of ", len(df))
-
-    print("New/revised stars AND low mass stars: ", len(df[(df["M"]<=0.8) & (df["database"]!=1)]), "out of ", len(df))
 
 def logomatic(df, var):
     """Add a log(var) column to df with bounds method 

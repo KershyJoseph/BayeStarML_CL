@@ -7,69 +7,26 @@ Created on Tue Jul 15 15:45:46 2025
 """
 
 import arviz as az
-import pandas as pd
 import numpy as np
 import pymc as pm
 import matplotlib.pyplot as plt
 
-def get_dataset(data_file, star_class='MS', logL=False, logR=False):
-    """
-    ***Added logL, logR option***
-    Load and clean a stellar dataset for a given star class.
+def diagnostics(df, name):
+    print("Diagnostics on ", name)
 
-    Reads a tab-separated file of stellar parameters and their uncertainties,
-    filters rows matching the specified class, removes entries with missing
-    values, and returns the cleaned subset.
+    print("Old stars: ", len(df[(df["database"]==1)]))
 
-    Parameters
-    ----------
-    data_file : str
-        Path to the tab-separated data file.
-    star_class : str
-        Stellar class to filter by (e.g., 'MS').
+    print("New (and revised) stars: ", len(df[(df["database"]!=1)]), "out of ", len(df))
 
-    Returns
-    -------
-    pandas.DataFrame
-        Cleaned DataFrame containing stars of the given class.
-    """
-    if logL == True:
-        L = "logL"
-        eL1 = "elogL1" 
-        eL2 = "elogL2" 
-    else:
-        L = "L"
-        eL1 = "eL1"
-        eL2 = "eL2"
+    print("New, new stars: ", len(df[(df["database"]==3)]), "out of ", len(df))
 
-    if logR == True:
-        R = "logR"
-        eR1 = "elogR1" 
-        eR2 = "elogR2" 
-    else:
-        R = "R"
-        eR1 = "eR1"
-        eR2 = "eR2"
+    print("New range stars: ", len(df[(df["M"]<=0.8) | (df["M"]>=1.4)]), "out of ", len(df))
 
-    data = pd.read_table(data_file, sep="\t", comment='#')
-    # read data with errors
-    data_MS = data[data['class'] == star_class]
-    # select Main Sequence Stars
+    print("New stars AND new range stars: ", len(df[((df["M"]<=0.8) | (df["M"]>=1.4)) & (df["database"]!=1)]), "out of ", len(df))
 
-    df = data[
-        [R, eR1, eR2,
-         'M', 'eM1', 'eM2',
-         'Teff', 'eTeff1', 'eTeff2',
-         'logg', 'elogg1', 'elogg2',    
-         'FeH', 'eFeH1', 'eFeH2',
-         L, eL1, eL2]
-         ].copy()
+    print("Low mass stars: ", len(df[(df["M"]<=0.8)]), "out of ", len(df))
 
-    # clean NA values (simply remove the corresponding rows)
-    df.dropna(inplace=True, axis=0)
-    df_complete = data.loc[df.index].copy()
-
-    return df_complete
+    print("New/revised stars AND low mass stars: ", len(df[(df["M"]<=0.8) & (df["database"]!=1)]), "out of ", len(df))
 
 def find_pointwise_loo(trace):
     """

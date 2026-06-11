@@ -77,8 +77,6 @@ df_all6_RGB = df[(df["class"]=="RGB") &
 print("All 6 RGB:", len(df_all6_RGB))
 
 #add 50K systematic error in quadrature to all Sch-St Teff errs, as taken from APOGEE https://iopscience.iop.org/article/10.3847/1538-4357/ac4891
-old_Teff = df_all6_RGB.loc[df["source"]=="Schonhut-Stasik24", ["eTeff1", "eTeff2"]]
-df_all6_RGB.loc[df["source"]=="Schonhut-Stasik24", ["eTeff1", "eTeff2"]] = np.sqrt(old_Teff**2 + 50**2)
 
 #consistency checks...
 #get SB Ls and errs

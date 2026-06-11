@@ -234,34 +234,28 @@ def radius_train_NN(data: Dataset, n_hidden, outputs_folder , draw=1000, chains=
     model_pred_plotter(np.log10(data.unorm_radius), means, stds, 'Radius', 'NN', outputs_folder+'/NNrad', hyperp_str)
 
 if __name__ == '__main__':
-    #pick which function(s) to run when file is run
 
-    #load data
-    df_train_MS = get_dataset('DataExploring/good_MS.txt', logL=True)
-
-    (x_train, x_train_er, x_test, x_test_err, mass_train, emass_train,
-    mass_test, emass_test, rad_train, erad_train, rad_test, erad_test
-    ) = return_train_test(df_train_MS, logL=True)
+    x_train = pd.read_csv("data/norm_train_data_700MS")
+    x_test = pd.read_csv("data/norm_test_data_700MS")
 
     datasetMS = Dataset(
         x_train = x_train[['Teff', 'logg', 'FeH', 'logL']],
-        x_train_er = x_train_er[['eTeff', 'elogg', 'eFeH', 'elogL']],
-
+        x_train_er = x_train[['eTeff', 'elogg', 'eFeH', 'elogL']],
         x_test = x_test[['Teff', 'logg', 'FeH', 'logL']],
-        x_test_err = x_test_err[['eTeff', 'elogg', 'eFeH', 'elogL']],
+        x_test_err = x_test[['eTeff', 'elogg', 'eFeH', 'elogL']],
 
-        rad_train=rad_train,
-        erad_train=erad_train,
-        rad_test=rad_test,
-        erad_test=erad_test,
+        rad_train=x_train["R"],
+        erad_train=x_test["eR"],
+        rad_test=x_test["R"],
+        erad_test=x_test["eR"],
 
-        mass_train=mass_train,
-        emass_train=emass_train,
-        mass_test=mass_test,
-        emass_test=emass_test,
+        mass_train=x_train["M"],
+        emass_train=x_test["eM"],
+        mass_test=x_test["M"],
+        emass_test=x_test["eM"],
 
-        unorm_mass = denormalise_val(mass_test, 'Mass'),
-        unorm_radius = denormalise_val(rad_test, 'Radius')
+        unorm_mass = denormalise_val(x_test["M"], 'Mass'),
+        unorm_radius = denormalise_val(x_test["R"], 'Radius')
         )
 
     df_train_RGB = get_dataset('DataExploring/good_RGB.txt', logL=True, logR=True)
@@ -359,6 +353,18 @@ if __name__ == '__main__':
 
     # print("><><><><><><><><><><><><><><><><><><><><><><><><><")
     print("Salve Regina")
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # The reason you are hitting PyMC warnings about "old GP objects" is because you've coded up a brilliant, custom implementation of a Sparse Heteroscedastic GP from scratch, rather than using PyMC's built-in pm.gp high-level classes.
