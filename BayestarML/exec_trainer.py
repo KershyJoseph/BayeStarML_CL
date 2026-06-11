@@ -347,8 +347,8 @@ if __name__ == '__main__':
     start_time_CPU4 = time.process_time()
     start_time4 = time.time()
 
-    print("GP - mass - RGB stars. 100, 30, 2000. 20TD still.")
-    mass_train_GP(datasetRGB, 100, 30, "Outputs5438RGB", 2000, target_accept=0.95, sclass="RGB")
+    print("GP - mass - RGB stars. 100, 30, 1000. 20TD still.")
+    mass_train_GP(datasetRGB, 100, 30, "Outputs5438RGB", 1000, target_accept=0.95, sclass="RGB")
 
     end_time_CPU4 = time.process_time()
 
