@@ -10,6 +10,8 @@ import arviz as az
 import numpy as np
 import pymc as pm
 import matplotlib.pyplot as plt
+import pandas as pd
+from preprocess import denormalise_err, denormalise_val
 
 def diagnostics(df, name):
     print("Diagnostics on ", name)
@@ -100,7 +102,7 @@ def train(model, filename=False, draw=1000, chains=2,
     print("rhats: ", all_rhats)
 
     trace.extend(pm.compute_log_likelihood(trace, model=model, var_names='y'))
-    loo = az.loo(trace) 
+    loo = az.loo(trace)
     print("loo trace: ", loo)
 
     #print indices of bad pareto ks
@@ -113,7 +115,6 @@ def train(model, filename=False, draw=1000, chains=2,
         trace.to_netcdf(filename)
 
     return trace
-
 
 def mard(y_true, y_pred):
     """
@@ -153,11 +154,14 @@ def mrd(y_true, y_pred):
     relative_diff = (np.array(y_true) - np.array(y_pred)) / np.array(y_true)
     return np.mean(relative_diff) * 100  
 
-def model_pred_plotter(y_true, y_pred, y_pred_err, 
-                       target:str, model:str, save_folder:str, hyperps=""):
+def model_pred_plotter(y_true, y_pred, y_pred_err,
+                       target:str, save_folder:str,
+                       hyperp_str:str,
+                       y_true_err=None):
     """Plot predictions of a trained model against true values
     Saves a preds figure and a residuals figure
     """
+    model = hyperp_str[:2]
     plt.figure(figsize=(8, 6))
     plt.errorbar(y_true, y_pred, yerr=y_pred_err, fmt='o', label='Predictions with Uncertainty', alpha=0.7)
     plt.plot([y_true.min(), y_true.max()], [y_true.min(), y_true.max()], 'r--')
@@ -165,8 +169,38 @@ def model_pred_plotter(y_true, y_pred, y_pred_err,
     plt.ylabel('Predicted '+target)
     plt.title(model+' Predictions with Uncertainty')
     plt.legend()
-    plt.savefig(save_folder+"/"+model+target+"_preds_"+hyperps+".pdf")
+    plt.savefig(save_folder+"/preds_"+hyperp_str+".pdf")
     plt.close()
+
+    if y_true_err is not None:
+        #make another plot with 1sig err cloud from test target sigs
+        y_true, y_true_err, y_pred, y_pred_err = [
+            y.to_numpy() if isinstance(y, pd.Series) else y
+            for y in [y_true, y_true_err, y_pred, y_pred_err]
+        ]
+        sorted_indices = np.argsort(y_true)
+        if len(y_pred_err.shape)>1:
+            y_true, y_true_err, y_pred, y_pred_err[0], y_pred_err[1] = [
+                y[sorted_indices] for y in [y_true, y_true_err, y_pred, y_pred_err[0], y_pred_err[1]]
+            ]
+        else:
+            y_true, y_true_err, y_pred, y_pred_err = [
+                y[sorted_indices] for y in [y_true, y_true_err, y_pred, y_pred_err]
+            ]
+        plt.figure(figsize=(8, 6))
+        plt.errorbar(y_true, y_pred, yerr=y_pred_err, fmt='o', label='Predictions with Uncertainty', alpha=0.7)
+        plt.plot([y_true.min(), y_true.max()], [y_true.min(), y_true.max()], 'r--')
+        #1 sig err cloud ----------------
+        y_true_lower = y_true - y_true_err
+        y_true_upper = y_true + y_true_err
+        plt.fill_between(y_true, y_true_lower, y_true_upper, color="red", alpha=0.2, label="1-Sigma True "+target+" Errors")
+        #--------------------------------
+        plt.xlabel('True '+target)
+        plt.ylabel('Predicted '+target)
+        plt.title(model+' Predictions with Uncertainty')
+        plt.legend()
+        plt.savefig(save_folder+"/preds_sigCloud_"+hyperp_str+".pdf")
+        plt.close()
 
     plt.figure(figsize=(8, 6))
     plt.errorbar(y_true, y_pred - y_true, yerr=y_pred_err, fmt='o', label='Predictions with Uncertainty', alpha=0.7)
@@ -175,5 +209,5 @@ def model_pred_plotter(y_true, y_pred, y_pred_err,
     plt.ylabel('Residual '+target)
     plt.title(model+' Prediction Residuals')
     plt.legend()
-    plt.savefig(save_folder+"/"+model+target+"_res_"+hyperps+".pdf")
+    plt.savefig(save_folder+"/res_"+hyperp_str+".pdf")
     plt.close()

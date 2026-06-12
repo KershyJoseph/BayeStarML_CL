@@ -598,7 +598,7 @@ def SIMPLE_forward_pass(x_latent, w_in_1, b1, w_1_out, b_out):
 def posterior_predictive_GP(
     gp_model, mu_gp, log_var_gp, μ_trace, var_trace, trace,
     X_new_raw, X_er_new_raw, Xu, Xu_var,
-    n_param, target,
+    n_param, target, dataset_key,
     var_cols_x=(0,1),        # columns of X used in variance GP
     var_cols_xerr=(0,1),     # columns of X_err used in variance GP
     random_seed=42,
@@ -717,18 +717,18 @@ def posterior_predictive_GP(
             random_seed=random_seed,
         )
 
+    # #nutpie debugging
+    # print(ppc.predictions["f_mu_pred"].shape)
+    # print(ppc.predictions["log_var_pred"].shape)
+    # print(ppc.predictions["y_pred"].shape)
+
+    # f = ppc.predictions["f_mu_pred"].mean(("chain","draw")).values
+
+    # print("f range:", f.min(), f.max())
+    # print("f std over test points:", np.std(f))
+
     # Posterior predictive draws for y
     #y_draws = ppc.predictions["y_pred"].stack(sample=("chain", "draw")).values
-
-    #nutpie debugging
-    print(ppc.predictions["f_mu_pred"].shape)
-    print(ppc.predictions["log_var_pred"].shape)
-    print(ppc.predictions["y_pred"].shape)
-
-    f = ppc.predictions["f_mu_pred"].mean(("chain","draw")).values
-
-    print("f range:", f.min(), f.max())
-    print("f std over test points:", np.std(f))
 
     y_draws = (
             ppc.predictions["y_pred"]
@@ -737,7 +737,7 @@ def posterior_predictive_GP(
             .values
         )
 
-    return denormalise_val(y_draws, target), lpd_GP
+    return denormalise_val(y_draws, dataset_key, target), lpd_GP
 
 # def posterior_predictive_GP(
 #     gp_model, μ_gp, lg_σ_gp, trace,

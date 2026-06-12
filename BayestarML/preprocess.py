@@ -17,11 +17,21 @@ import json
 
 RANDOM_SEED = 5732 
 
-def denormalise_val(y, constants, key) -> np.ndarray:
-    return y * SIGMA[key] + MU[key]
+def denormalise_val(y, dataset_key, var, train_tar:str = "targets"):
+    """
+    """
+    with open("data/"+dataset_key+"_constants.json", "r") as f:
+        constants = json.load(f)
+    constants = constants[train_tar]
+    return y * constants["SIG"][var] + constants["MU"][var]
 
-def denormalise_err(y: np.ndarray, key: str) -> np.ndarray:
-    return y * SIGMA[key]
+def denormalise_err(y, dataset_key, var, train_tar:str = "targets"):
+    """
+    """
+    with open("data/"+dataset_key+"_constants.json", "r") as f:
+        constants = json.load(f)
+    sig = constants[train_tar]["SIG"]
+    return y * sig[var]
 
 def logomatic(df:pd.DataFrame, add_logvars:list):
     """Add a log(var) column to df with bounds method 
@@ -183,7 +193,7 @@ def spreadomatic(df, var, hue=None):
     plt.ylabel("Number of stars")
     plt.show()
 
-def return_train_test_edit(df, training_fs, targets, s_class):
+def return_train_test(df, training_fs, targets, dataset_key):
     """
     """
     training_fs_errs = [f"e{f}" for f in training_fs]
@@ -226,17 +236,17 @@ def return_train_test_edit(df, training_fs, targets, s_class):
         "targets": Y_constants
     }
 
-    with open("data/constants"+str(len(X))+s_class+".json", "w") as f:
+    with open("data/"+dataset_key+"_constants.json", "w") as f:
         json.dump(master_constants, f, indent=4)
-    print("Mu, std, min and max values for each parameter now stored in data/constants"+str(len(X))+s_class+".json")
+    print("Mu, std, min and max values for each parameter now stored in data/"+dataset_key+"_constants.json")
 
     return X_train, X_test, Y_train, Y_test
 
-def normalise(X:pd.DataFrame, Y:pd.DataFrame, constants_file:str):
+def normalise(X:pd.DataFrame, Y:pd.DataFrame, dataset_key:str):
     """
     Normalise all de data
     """
-    with open("data/"+constants_file, "r") as f:
+    with open("data/"+dataset_key+"_constants.json", "r") as f:
         constants = json.load(f)
 
     #training fs
@@ -282,69 +292,106 @@ def HRplot(df,savename:str,hue:str=None):
     plt.show()
     fig.savefig("figures/"+savename)
 
-def prepare_pred4(filename, logL=False, logR=False):
+def load_data(dataset_key, target):
     """
-    ***Added logL option***
-    Normalize input data and return DataFrames for normalized values and errors.
-
-    Parameters:
-    - teff, logg, FeH, l: Input values (can be scalars or arrays)
-    - eteff, elogg, eFeH, el: Associated errors (can be scalars or arrays)
-    - codeword: Value that indicates missing data (will be converted to NaN)
-
-    Returns:
-    - x_test: DataFrame with normalized values (columns: 'Teff', 'logg', 'FeH', 'L')
-    - x_test_error: DataFrame with normalized errors (columns: 'eTeff', 'elogg', 'eFeH', 'eL')
     """
-    if logL == True:
-        L = "logL"
-        eL = "elogL" 
-    else:
-        L = "L"
-        eL = "eL"
+    df_train = pd.read_csv("data/"+dataset_key+"_norm_train.txt")
+    df_train.set_index("ID", inplace=True)
+    df_test = pd.read_csv("data/"+dataset_key+"_norm_test.txt")
+    df_test.set_index("ID", inplace=True)
 
-    if logR == True:
-        R = "logR"
-        eR = "elogR" 
-    else:
-        R = "R"
-        eR = "eR"
+    training_fs = []
+    training_fs_errs = []
+    for col in df_train.columns:
+        if col in ["R", "eR", "M", "eM", "logR", "elogR"]:
+            continue #skip targets - assuming only possible targets are in above list...
+        if col.startswith("e"):
+            training_fs_errs.append(col)
+        else:
+            training_fs.append(col)
 
-    X = pd.read_csv(filename, sep='\t')
+    unorm_y_test = denormalise_val(df_test[target], dataset_key, target)
+    unorm_y_test_err = denormalise_err(df_test["e"+target], dataset_key, target)
 
-    # Helper function to normalize and handle missing values
-    def normalize(value, mean, std):
-        if value is None:
-            return np.nan
-        return (np.array(value) - mean) / std
-
-    # Helper function to normalize errors (absolute value)
-    def normalize_error(error, std):
-        if error is None:
-            return np.nan
-        return abs(np.array(error)) / std
-
-    # Normalize each parameter and its error
-    norm_data = {
-        'Teff': normalize(X['Teff'], MU['Teff'], SIGMA['Teff']),
-        'logg': normalize(X['logg'], MU['logg'], SIGMA['logg']),
-        'FeH': normalize(X['FeH'], MU['FeH'], SIGMA['FeH']),
-        L: normalize(X[L], MU[L], SIGMA[L])
+    data = {
+        "x_train": df_train[training_fs],
+        "x_train_err": df_train[training_fs_errs],
+        "y_train": df_train[target],
+        "y_train_err": df_train["e"+target],
+        "x_test": df_test[training_fs],
+        "x_test_err": df_test[training_fs_errs],
+        "y_test": df_test[target],
+        "y_test_err": df_test["e"+target],
+        "unorm_y_test": unorm_y_test,
+        "unorm_y_test_err": unorm_y_test_err
     }
 
-    error_data = {
-        'eTeff': normalize_error(X['eTeff'], SIGMA['Teff']),
-        'elogg': normalize_error(X['elogg'], SIGMA['logg']),
-        'eFeH': normalize_error(X['eFeH'], SIGMA['FeH']),
-        eL: normalize_error(X[eL], SIGMA[L])
-    }
+    return data, len(training_fs)
 
-    # For scalar inputs, we need to create a single-row DataFrame
-    if (not hasattr(X['Teff'], '__len__') or isinstance(X['Teff'], str)) and X['Teff'] is not None:
-        x_test = pd.DataFrame(norm_data, index=[0])
-        x_test_error = pd.DataFrame(error_data, index=[0])
-    else:
-        x_test = pd.DataFrame(norm_data)
-        x_test_error = pd.DataFrame(error_data)
 
-    return x_test, x_test_error
+# def prepare_pred4(filename, logL=False, logR=False):
+#     """
+#     ***Added logL option***
+#     Normalize input data and return DataFrames for normalized values and errors.
+
+#     Parameters:
+#     - teff, logg, FeH, l: Input values (can be scalars or arrays)
+#     - eteff, elogg, eFeH, el: Associated errors (can be scalars or arrays)
+#     - codeword: Value that indicates missing data (will be converted to NaN)
+
+#     Returns:
+#     - x_test: DataFrame with normalized values (columns: 'Teff', 'logg', 'FeH', 'L')
+#     - x_test_error: DataFrame with normalized errors (columns: 'eTeff', 'elogg', 'eFeH', 'eL')
+#     """
+#     if logL == True:
+#         L = "logL"
+#         eL = "elogL" 
+#     else:
+#         L = "L"
+#         eL = "eL"
+
+#     if logR == True:
+#         R = "logR"
+#         eR = "elogR" 
+#     else:
+#         R = "R"
+#         eR = "eR"
+
+#     X = pd.read_csv(filename, sep='\t')
+
+#     # Helper function to normalize and handle missing values
+#     def normalize(value, mean, std):
+#         if value is None:
+#             return np.nan
+#         return (np.array(value) - mean) / std
+
+#     # Helper function to normalize errors (absolute value)
+#     def normalize_error(error, std):
+#         if error is None:
+#             return np.nan
+#         return abs(np.array(error)) / std
+
+#     # Normalize each parameter and its error
+#     norm_data = {
+#         'Teff': normalize(X['Teff'], MU['Teff'], SIGMA['Teff']),
+#         'logg': normalize(X['logg'], MU['logg'], SIGMA['logg']),
+#         'FeH': normalize(X['FeH'], MU['FeH'], SIGMA['FeH']),
+#         L: normalize(X[L], MU[L], SIGMA[L])
+#     }
+
+#     error_data = {
+#         'eTeff': normalize_error(X['eTeff'], SIGMA['Teff']),
+#         'elogg': normalize_error(X['elogg'], SIGMA['logg']),
+#         'eFeH': normalize_error(X['eFeH'], SIGMA['FeH']),
+#         eL: normalize_error(X[eL], SIGMA[L])
+#     }
+
+#     # For scalar inputs, we need to create a single-row DataFrame
+#     if (not hasattr(X['Teff'], '__len__') or isinstance(X['Teff'], str)) and X['Teff'] is not None:
+#         x_test = pd.DataFrame(norm_data, index=[0])
+#         x_test_error = pd.DataFrame(error_data, index=[0])
+#     else:
+#         x_test = pd.DataFrame(norm_data)
+#         x_test_error = pd.DataFrame(error_data)
+
+#     return x_test, x_test_error

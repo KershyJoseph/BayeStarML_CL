@@ -6,322 +6,245 @@ Created on Tue Aug 12 10:50:13 2025
 @author: LamirelFamily
 """
 
-from preprocess import return_train_test, prepare_pred4, denormalise_val, prepare_pred3
-from utils import get_dataset, train, mard, mrd, model_pred_plotter
-from models import hbnn, bart, gp
+from preprocess import denormalise_val, denormalise_err, load_data
+from utils import train, mard, mrd, model_pred_plotter
+from models import hbnn, gp
 from pred_sampling import sample_post_pred_HBNN_para, posterior_predictive_GP, SIMPLE_sample_post_pred_HBNN_para
-import arviz as az
 import numpy as np
 import pymc as pm
 import pandas as pd
-import matplotlib.pyplot as plt
 from sklearn.metrics import mean_absolute_error
-
 import psutil
 import time
-from dataclasses import dataclass
 
-@dataclass
-class Dataset:
-    x_train: pd.DataFrame
-    x_train_er: pd.DataFrame
-    x_test: pd.DataFrame
-    x_test_err: pd.DataFrame
-
-    mass_train: np.ndarray
-    emass_train: np.ndarray
-    mass_test: np.ndarray
-    emass_test: np.ndarray
-
-    rad_train: np.ndarray
-    erad_train: np.ndarray
-    rad_test: np.ndarray
-    erad_test: np.ndarray
-
-    unorm_mass: np.ndarray
-    unorm_radius: np.ndarray
-
-def mass_train_GP(data: Dataset, M_mean, M_var, outputs_folder , draw=1000, advi=False,
-                  target_accept=.95, nutpie=False, sclass="MS"):
-    """Function to train GP on mass prediction
+def train_GP(dataset_key,
+             target,
+             M_mean, M_var,
+             sclass,
+             draw=1000, target_accept=.95, chains=4,
+             advi=False,
+             nutpie=False):
+    """Function to train GP
     """
-    hyperp_str = sclass+str(M_mean)+"_"+str(M_var)+"_"+str(draw)+"_"+str(target_accept)
+    hyperp_str = "GP_"+target+"_"+sclass+str(M_mean)+"_"+str(M_var)+"_"+str(draw)+"_"+str(target_accept)
+    outputs_folder_path = "Outputs"+dataset_key+"/GP_"+target
     nuts_sampler = "pymc"
     if nutpie:
         hyperp_str += "NUTPIE"
         nuts_sampler = "nutpie"
 
-    model, μ_gp, lg_σ_gp, μ_trace, var_trace, Xu, Xu_er = gp.sparse_fully_heteroscedastic_gp(data.x_train,
-                                                                        data.x_train_er,
-                                                                        data.mass_train,
-                                                                        M_mean,
-                                                                        M_var)
-
-    if advi:
-        approx = pm.fit(n=40000, method='advi', model=model, progressbar=True)
-        trace = approx.sample(1000)
-        print("ELBO:\n", approx.hist)
-        trace.extend(pm.compute_log_likelihood(trace, model=model, var_names='y'))
-        trace.to_netcdf(outputs_folder+"/Testing/GP_mass_testing/GPmass_ADVI_test"+hyperp_str+".nc")
-    else:
-        trace = train(model,
-                  outputs_folder+"/GPmass/GPmass"+hyperp_str+".nc",
-                  draw=draw, chains=4, target_accept=target_accept, nuts_sampler=nuts_sampler)
-
-    pred, lpd = posterior_predictive_GP(model, μ_gp, lg_σ_gp, μ_trace, var_trace, trace,
-                                        data.x_test, data.x_test_err, Xu, Xu_er, 4, 'Mass')
-
-    stds = pred.std(0)
-    means = pred.mean(0)
-    print("means: ", means)
-    print("stdvs: ", stds)
-    print("Unorm mass: ", data.unorm_mass)
-
-    print('MAE: ', mean_absolute_error(data.unorm_mass, means))
-    print('MARD', mard(data.unorm_mass, means))
-    print('MRD', mrd(data.unorm_mass, means))
-
-    model_pred_plotter(data.unorm_mass, means, stds, 'Mass', 'GP', outputs_folder+'/GPmass', hyperp_str)
-
-def radius_train_GP(data: Dataset, M_mean, M_var, outputs_folder , draw=1000, advi=False,
-                    target_accept=.95, nutpie=False, sclass="MS"):
-    """Function to train GP on radius prediction
-    """
-    hyperp_str = sclass+str(M_mean)+"_"+str(M_var)+"_"+str(draw)+"_"+str(target_accept)
-    nuts_sampler = "pymc"
-    if nutpie:
-        hyperp_str += "NUTPIE"
-        nuts_sampler = "nutpie"
+    data, train_dim = load_data(dataset_key, target)
 
     model, μ_gp, lg_σ_gp, μ_trace, var_trace, Xu, Xu_er = gp.sparse_fully_heteroscedastic_gp(
-        data.x_train, data.x_train_er, data.rad_train, M_mean, M_var)
+        data["x_train"],
+        data["x_train_err"],
+        data["y_train"],
+        M_mean,
+        M_var
+    )
 
     if advi:
         approx = pm.fit(n=40000, method='advi', model=model, progressbar=True)
         trace = approx.sample(1000)
         print("ELBO:\n", approx.hist)
-
         trace.extend(pm.compute_log_likelihood(trace, model=model, var_names='y'))
-        trace.to_netcdf(outputs_folder+"/Testing/GP_rad_testing/GP_ADVI_rad_"+hyperp_str+".nc")
+        #trace.to_netcdf(...)
     else:
-        trace = train(model,
-                  outputs_folder+"/GPrad/GPrad_"+hyperp_str+".nc",
-                  draw=draw, chains=4,
-                  target_accept=target_accept,
-                  nuts_sampler=nuts_sampler)
+        trace = train(model, outputs_folder_path+"/"+hyperp_str+".nc",
+                  draw=draw, chains=chains, target_accept=target_accept, nuts_sampler=nuts_sampler)
 
-    pred, lpd = posterior_predictive_GP(model, μ_gp, lg_σ_gp, μ_trace, var_trace, trace,
-                                        data.x_test, data.x_test_err, Xu, Xu_er, 4, 'Radius')
-
+    pred, _ = posterior_predictive_GP(model, μ_gp, lg_σ_gp, μ_trace, var_trace, trace,
+                                        data["x_test"], data["x_test_err"], Xu, Xu_er, train_dim, 'M', dataset_key)
     stds = pred.std(0)
     means = pred.mean(0)
+    print("\n"+target+" predictions")
     print("means: ", means)
     print("stdvs: ", stds)
-    print(np.log10(np.log10(data.unorm_radius)))
+    print("Unorm "+target+": ", data["unorm_y_test"])
 
-    print('MAE: ', mean_absolute_error(np.log10(np.log10(data.unorm_radius)), means))
-    print('MARD', mard(np.log10(np.log10(data.unorm_radius)), means))
-    print('MRD', mrd(np.log10(np.log10(data.unorm_radius)), means))
+    print("\n"+target+" accuracy stats")
+    print('MAE: ', mean_absolute_error(data["unorm_y_test"], means))
+    print('MARD: ', mard(data["unorm_y_test"], means))
+    print('MRD: ', mrd(data["unorm_y_test"], means))
 
-    model_pred_plotter(np.log10(np.log10(data.unorm_radius)), means, stds, 'Radius', 'GP', outputs_folder+'/GPrad', hyperp_str)
+    model_pred_plotter(data["unorm_y_test"], means, stds, target, outputs_folder_path, hyperp_str, y_true_err=data["unorm_y_test_err"])
 
-def mass_train_SIMPLE_NN(data: Dataset, n_hidden, outputs_folder , draw=1000, chains=4,
-                         target_accept=.95, nutpie=False, sclass="MS"):
-    """
-    ***Edit to only have one layer of 5 nodes***
-    Function to train NN on mass prediction
-    """
-    #for output info
-    hyperp_str = sclass+str(n_hidden)+"_"+str(draw)+"_"+str(chains)
-    nuts_sampler = "pymc"
-    if nutpie:
-        hyperp_str += "NUTPIE"
-        nuts_sampler = "nutpie"
+    if target.startswith("log"):
+        target = target[3:]
+        hyperp_str = "GP_"+target+hyperp_str[7:]
+        y_draws = 10**(pred)
+        y_pred = y_draws.mean(0)
+        y_pred_err = y_draws.std(0)
+        data_linear, _ = load_data(dataset_key, target)
+        y_true = data_linear["unorm_y_test"]
+        y_true_err = data_linear["unorm_y_test_err"]
 
-    model = hbnn.HBNN_M4_simpler(data.x_train, mass_train, data.x_train_er, data.emass_train, n_hidden)
-    model.debug(verbose=True)
-    trace = train(model,
-                  outputs_folder+"/NNmass/simpleNN_mass"+hyperp_str+".nc",
-                  draw=draw, chains=chains,
-                  target_accept=target_accept,
-                  nuts_sampler=nuts_sampler)
+        print("\n"+target+" predictions")
+        print("means: ", y_pred)
+        print("stdvs: ", y_pred_err)
+        print("Unorm "+target+": ", y_true)
 
-    pred, lpd = SIMPLE_sample_post_pred_HBNN_para(trace, data.x_test, data.x_test_err, n_hidden, 4, "Mass")
+        print("\n"+target+" accuracy stats")
+        print('MAE: ', mean_absolute_error(y_true, y_pred))
+        print('MARD: ', mard(y_true, y_pred))
+        print('MRD: ', mrd(y_true, y_pred))
 
-    stds = pred.std(0)
-    means = pred.mean(0)
-    print("means: ", means)
-    print("stdvs: ", stds)
-    print("test set: ", data.unorm_mass)
+        model_pred_plotter(y_true, y_pred, y_pred_err, target, outputs_folder_path, hyperp_str, y_true_err=y_true_err)
 
-    print('MAE: ', mean_absolute_error(data.unorm_mass, means))
-    print('MARD', mard(data.unorm_mass, means))
-    print('MRD', mrd(data.unorm_mass, means))
+        #Is median better?? 
+        y_p16 = np.percentile(y_draws, 16, axis=0)
+        y_p50 = np.percentile(y_draws, 50, axis=0)
+        y_p84 = np.percentile(y_draws, 84, axis=0)
 
-    model_pred_plotter(data.unorm_mass, means, stds, 'Mass', 'simpleNN', outputs_folder+'/NNmass', hyperp_str)
+        print("\n"+target+" accuracy stats on median pred")
+        print('MAE: ', mean_absolute_error(y_true, y_p50))
+        print('MARD: ', mard(y_true, means))
+        print('MRD: ', mrd(y_true, means))
 
-def mass_train_NN(data: Dataset, n_hidden, outputs_folder , draw=1000, chains=4,
-                  target_accept=.95, nutpie=False, sclass="MS"):
-    """Function to train NN on mass prediction
-    """
-    #for output info
-    hyperp_str = sclass+str(n_hidden)+"_"+str(draw)+"_"+str(target_accept)
-    nuts_sampler = "pymc"
-    if nutpie:
-        hyperp_str += "NUTPIE"
-        nuts_sampler = "nutpie"
+        model_pred_plotter(y_true, y_pred, np.array([y_p50-y_p16, y_p84-y_p50]), target, outputs_folder_path, hyperp_str+"MEDIAN", y_true_err=y_true_err)
 
-    model = hbnn.HBNN_M4(data.x_train, data.mass_train, data.x_train_er, data.emass_train, n_hidden)
-    trace = train(model,
-                  outputs_folder+"/NNmass/NNmass_"+hyperp_str+".nc",
-                  draw=draw, chains=chains, target_accept=target_accept,
-                  nuts_sampler=nuts_sampler)
+# def mass_train_SIMPLE_NN(data: Dataset, n_hidden, outputs_folder , draw=1000, chains=4,
+#                          target_accept=.95, nutpie=False, sclass="MS"):
+#     """
+#     ***Edit to only have one layer of 5 nodes***
+#     Function to train NN on mass prediction
+#     """
+#     #for output info
+#     hyperp_str = sclass+str(n_hidden)+"_"+str(draw)+"_"+str(chains)
+#     nuts_sampler = "pymc"
+#     if nutpie:
+#         hyperp_str += "NUTPIE"
+#         nuts_sampler = "nutpie"
 
-    pred, lpd = sample_post_pred_HBNN_para(trace, data.x_test, data.x_test_err, n_hidden, 4, "Mass")
+#     model = hbnn.HBNN_M4_simpler(data.x_train, mass_train, data.x_train_er, data.emass_train, n_hidden)
+#     model.debug(verbose=True)
+#     trace = train(model,
+#                   outputs_folder+"/NNmass/simpleNN_mass"+hyperp_str+".nc",
+#                   draw=draw, chains=chains,
+#                   target_accept=target_accept,
+#                   nuts_sampler=nuts_sampler)
 
-    stds = pred.std(0)
-    means = pred.mean(0)
-    print("means: ", means)
-    print("stdvs: ", stds)
-    with pd.option_context("display.max_rows", None):
-        print("test set: ", data.unorm_mass)
+#     pred, lpd = SIMPLE_sample_post_pred_HBNN_para(trace, data.x_test, data.x_test_err, n_hidden, 4, "Mass")
 
-    print('MAE: ', mean_absolute_error(data.unorm_mass, means))
-    print('MARD', mard(data.unorm_mass, means))
-    print('MRD', mrd(data.unorm_mass, means))
+#     stds = pred.std(0)
+#     means = pred.mean(0)
+#     print("means: ", means)
+#     print("stdvs: ", stds)
+#     print("test set: ", data.unorm_mass)
 
-    model_pred_plotter(data.unorm_mass, means, stds, 'Mass', 'NN', outputs_folder+'/NNmass', hyperp_str)
+#     print('MAE: ', mean_absolute_error(data.unorm_mass, means))
+#     print('MARD', mard(data.unorm_mass, means))
+#     print('MRD', mrd(data.unorm_mass, means))
 
-def radius_train_NN(data: Dataset, n_hidden, outputs_folder , draw=1000, chains=4,
-                    target_accept=.95, advi=False, nutpie=False, sclass="MS"):
-    """Function to train NN on radius prediction
-    """
-    #for output info
-    hyperp_str = sclass+str(n_hidden)+"_"+str(draw)
-    nuts_sampler = "pymc"
-    if nutpie:
-        hyperp_str += "NUTPIE"
-        nuts_sampler = "nutpie"
+#     model_pred_plotter(data.unorm_mass, means, stds, 'Mass', 'simpleNN', outputs_folder+'/NNmass', hyperp_str)
 
-    model = hbnn.HBNN_M4(data.x_train, data.rad_train, data.x_train_er, data.erad_train, n_hidden)
+# def mass_train_NN(data: Dataset, n_hidden, outputs_folder , draw=1000, chains=4,
+#                   target_accept=.95, nutpie=False, sclass="MS"):
+#     """Function to train NN on mass prediction
+#     """
+#     #for output info
+#     hyperp_str = sclass+str(n_hidden)+"_"+str(draw)+"_"+str(target_accept)
+#     nuts_sampler = "pymc"
+#     if nutpie:
+#         hyperp_str += "NUTPIE"
+#         nuts_sampler = "nutpie"
 
-    if advi:
-        approx = pm.fit(n=100000, method='advi', model=model, progressbar=True)
-        trace = approx.sample(1000)
-        print("ELBO:\n", approx.hist)
+#     model = hbnn.HBNN_M4(data.x_train, data.mass_train, data.x_train_er, data.emass_train, n_hidden)
+#     trace = train(model,
+#                   outputs_folder+"/NNmass/NNmass_"+hyperp_str+".nc",
+#                   draw=draw, chains=chains, target_accept=target_accept,
+#                   nuts_sampler=nuts_sampler)
 
-        trace.extend(pm.compute_log_likelihood(trace, model=model, var_names='y'))
-        trace.to_netcdf(outputs_folder+"/NN_rad_testing/NN_ADVI_rad_"+hyperp_str+".nc")
-    else:
-        trace = train(model,
-                outputs_folder+"/NNrad/NNrad"+hyperp_str+".nc",
-                draw=draw, chains=chains, target_accept=target_accept,
-                nuts_sampler=nuts_sampler)
+#     pred, lpd = sample_post_pred_HBNN_para(trace, data.x_test, data.x_test_err, n_hidden, 4, "Mass")
 
-    pred, lpd = sample_post_pred_HBNN_para(trace, data.x_test, data.x_test_err, n_hidden, 4, "Radius")
+#     stds = pred.std(0)
+#     means = pred.mean(0)
+#     print("means: ", means)
+#     print("stdvs: ", stds)
+#     with pd.option_context("display.max_rows", None):
+#         print("test set: ", data.unorm_mass)
 
-    stds = pred.std(0)
-    means = pred.mean(0)
-    print("means: ", means)
-    print("stdvs: ", stds)
-    with pd.option_context("display.max_rows", None):
-        print("test set: ", np.log10(data.unorm_radius))
+#     print('MAE: ', mean_absolute_error(data.unorm_mass, means))
+#     print('MARD', mard(data.unorm_mass, means))
+#     print('MRD', mrd(data.unorm_mass, means))
 
-    print('MAE: ', mean_absolute_error(np.log10(data.unorm_radius), means))
-    print('MARD', mard(np.log10(data.unorm_radius), means))
-    print('MRD', mrd(np.log10(data.unorm_radius), means))
+#     model_pred_plotter(data.unorm_mass, means, stds, 'Mass', 'NN', outputs_folder+'/NNmass', hyperp_str)
 
-    model_pred_plotter(np.log10(data.unorm_radius), means, stds, 'Radius', 'NN', outputs_folder+'/NNrad', hyperp_str)
+# def radius_train_NN(data: Dataset, n_hidden, outputs_folder , draw=1000, chains=4,
+#                     target_accept=.95, advi=False, nutpie=False, sclass="MS"):
+#     """Function to train NN on radius prediction
+#     """
+#     #for output info
+#     hyperp_str = sclass+str(n_hidden)+"_"+str(draw)
+#     nuts_sampler = "pymc"
+#     if nutpie:
+#         hyperp_str += "NUTPIE"
+#         nuts_sampler = "nutpie"
+
+#     model = hbnn.HBNN_M4(data.x_train, data.rad_train, data.x_train_er, data.erad_train, n_hidden)
+
+#     if advi:
+#         approx = pm.fit(n=100000, method='advi', model=model, progressbar=True)
+#         trace = approx.sample(1000)
+#         print("ELBO:\n", approx.hist)
+
+#         trace.extend(pm.compute_log_likelihood(trace, model=model, var_names='y'))
+#         trace.to_netcdf(outputs_folder+"/NN_rad_testing/NN_ADVI_rad_"+hyperp_str+".nc")
+#     else:
+#         trace = train(model,
+#                 outputs_folder+"/NNrad/NNrad"+hyperp_str+".nc",
+#                 draw=draw, chains=chains, target_accept=target_accept,
+#                 nuts_sampler=nuts_sampler)
+
+#     pred, lpd = sample_post_pred_HBNN_para(trace, data.x_test, data.x_test_err, n_hidden, 4, "Radius")
+
+#     stds = pred.std(0)
+#     means = pred.mean(0)
+#     print("means: ", means)
+#     print("stdvs: ", stds)
+#     with pd.option_context("display.max_rows", None):
+#         print("test set: ", np.log10(data.unorm_radius))
+
+#     print('MAE: ', mean_absolute_error(np.log10(data.unorm_radius), means))
+#     print('MARD', mard(np.log10(data.unorm_radius), means))
+#     print('MRD', mrd(np.log10(data.unorm_radius), means))
+
+#     model_pred_plotter(np.log10(data.unorm_radius), means, stds, 'Radius', 'NN', outputs_folder+'/NNrad', hyperp_str)
 
 if __name__ == '__main__':
-
-    x_train = pd.read_csv("data/norm_train_data_700MS")
-    x_test = pd.read_csv("data/norm_test_data_700MS")
-
-    datasetMS = Dataset(
-        x_train = x_train[['Teff', 'logg', 'FeH', 'logL']],
-        x_train_er = x_train[['eTeff', 'elogg', 'eFeH', 'elogL']],
-        x_test = x_test[['Teff', 'logg', 'FeH', 'logL']],
-        x_test_err = x_test[['eTeff', 'elogg', 'eFeH', 'elogL']],
-
-        rad_train=x_train["R"],
-        erad_train=x_test["eR"],
-        rad_test=x_test["R"],
-        erad_test=x_test["eR"],
-
-        mass_train=x_train["M"],
-        emass_train=x_test["eM"],
-        mass_test=x_test["M"],
-        emass_test=x_test["eM"],
-
-        unorm_mass = denormalise_val(x_test["M"], 'Mass'),
-        unorm_radius = denormalise_val(x_test["R"], 'Radius')
-        )
-
-    df_train_RGB = get_dataset('DataExploring/good_RGB.txt', logL=True, logR=True)
-
-    (x_trainRGB, x_train_erRGB, x_testRGB, x_test_errRGB, mass_trainRGB, emass_trainRGB,
-    mass_testRGB, emass_testRGB, rad_trainRGB, erad_trainRGB, rad_testRGB, erad_testRGB
-    ) = return_train_test(df_train_RGB, logL=True, logR=True)
-
-    datasetRGB = Dataset(
-        x_train = x_trainRGB[['Teff', 'logg', 'FeH', 'logL']],
-        x_train_er = x_train_erRGB[['eTeff', 'elogg', 'eFeH', 'elogL']],
-
-        x_test = x_testRGB[['Teff', 'logg', 'FeH', 'logL']],
-        x_test_err = x_test_errRGB[['eTeff', 'elogg', 'eFeH', 'elogL']],
-
-        rad_train=rad_trainRGB,
-        erad_train=erad_trainRGB,
-        rad_test=rad_testRGB,
-        erad_test=erad_testRGB,
-
-        mass_train=mass_trainRGB,
-        emass_train=emass_trainRGB,
-        mass_test=mass_testRGB,
-        emass_test=emass_testRGB,
-
-        unorm_mass = denormalise_val(mass_testRGB, 'Mass'),
-        unorm_radius = denormalise_val(rad_testRGB, 'Radius')
-        )
-
-    #HAVE YOU UPDATED CONSTANTS.PY AND CHECKED OUTPUT FILE PATHS AND LOGL
-
-    # print("''''''''''''''''''''''''\nNUTPIE GP TEST - MASS - PRIORS FROM NUTS + GP OBJS FIX\n......................")
-
     print("\n::::::::::::::::::::::::::::::::::::::")
     print("goodRGB5438")
     print("::::::::::::::::::::::::::::::::::::::\n")
 
     process = psutil.Process()
-    # start_time_CPU = time.process_time()
-    # start_time_wall = time.perf_counter()
+    start_time_CPU = time.process_time()
+    start_time_wall = time.perf_counter()
 
-    # print("NN mass NUTPIE - RGB stars. 3_2000. target_accept=0.95, TD 20.")
-    # mass_train_NN(datasetRGB, 3, "Outputs5438RGB", 2000, nutpie=True, sclass="RGB")
+    print("GP logR on RGB. 100_30_0.95")
+    train_GP("5438RGB", "logR", 100, 30, sclass="RGB")
 
-    # end_time_CPU = time.process_time()
+    end_time_CPU = time.process_time()
     mem1 = process.memory_info().rss / 1024**2
-    # print(f"Peak Memory: {mem1:.2f} MB")
-    # print(f"CPU time accumulated: {(end_time_CPU-start_time_CPU):.5f} s")
-    # print(f"Total wall clock time: {time.perf_counter()-start_time_wall:.5f} s")
-
-    # print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
-
-    start_time_CPU2 = time.process_time()
-    start_time2 = time.time()
-
-    print("NN mass - RGB stars. NUTPIE. With L in log space. 64, 1000, 4, target_accept=0.95. 20TD still.")
-    mass_train_NN(datasetRGB, 64, "Outputs5438RGB", 1000, target_accept=0.95, nutpie=True, sclass="RGB")
-
-    end_time_CPU2 = time.process_time()
-
-    mem2 = process.memory_info().rss / 1024**2
-    print(f"Peak Memory: {(mem2-mem1):.2f} MB")
-    print(f"CPU time used: {(end_time_CPU2-start_time_CPU2):.5f} s")
-    print(f"Total run time: {time.time()-start_time2:.5f} s")
+    print(f"Peak Memory: {mem1:.2f} MB")
+    print(f"CPU time accumulated: {(end_time_CPU-start_time_CPU):.5f} s")
+    print(f"Total wall clock time: {time.perf_counter()-start_time_wall:.5f} s")
 
     print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
+
+    # start_time_CPU2 = time.process_time()
+    # start_time2 = time.time()
+
+    # print("NN mass - RGB stars. NUTPIE. With L in log space. 64, 1000, 4, target_accept=0.95. 20TD still.")
+    # mass_train_NN(datasetRGB, 64, "Outputs5438RGB", 1000, target_accept=0.95, nutpie=True, sclass="RGB")
+
+    # end_time_CPU2 = time.process_time()
+
+    # mem2 = process.memory_info().rss / 1024**2
+    # print(f"Peak Memory: {(mem2-mem1):.2f} MB")
+    # print(f"CPU time used: {(end_time_CPU2-start_time_CPU2):.5f} s")
+    # print(f"Total run time: {time.time()-start_time2:.5f} s")
+
+    # print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
 
     # start_time_CPU3 = time.process_time()
     # start_time3 = time.time()
