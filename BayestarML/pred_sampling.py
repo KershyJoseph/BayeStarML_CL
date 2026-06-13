@@ -12,7 +12,7 @@ import pymc as pm
 import arviz as az
 from utils import find_pointwise_loo
 from tqdm.auto import tqdm
-from preprocess import denormalise_err, denormalise_val
+from preprocess import denormalise_val
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from functools import partial
 import os
@@ -226,7 +226,7 @@ def _SIMPLE_predict_one_chain(chain_idx,
     return draws, Y
 
 
-def sample_post_pred_HBNN_para(trace, X, X_er, n_hidden, n_param, target,
+def sample_post_pred_HBNN_para(trace, X, X_er, n_hidden, n_param, target, dataset_key,
                             n_jobs=None):
         """
         Parallel posterior predictive for HBNN with latent-input sampling.
@@ -308,10 +308,10 @@ def sample_post_pred_HBNN_para(trace, X, X_er, n_hidden, n_param, target,
                 predictions[idx_slice] = Y
                 print(f"finished chain {chain_done+1}/{n_chains}")
 
-        return denormalise_val(predictions, target), lpd_HBNN
+        return denormalise_val(predictions, dataset_key, target), lpd_HBNN
 
 
-def SIMPLE_sample_post_pred_HBNN_para(trace, X, X_er, n_hidden, n_param, target,
+def SIMPLE_sample_post_pred_HBNN_para(trace, X, X_er, n_hidden, n_param, target, dataset_key,
                           n_jobs=None):
     """
     ***Edit for 1 layer with 5 nodes***
@@ -392,7 +392,7 @@ def SIMPLE_sample_post_pred_HBNN_para(trace, X, X_er, n_hidden, n_param, target,
             predictions[idx_slice] = Y
             print(f"finished chain {chain_done+1}/{n_chains}")
 
-    return denormalise_val(predictions, target), lpd_HBNN
+    return denormalise_val(predictions, dataset_key, target), lpd_HBNN
 
 
 def forward_pass(x_latent, w_in_1, b1, w_1_2, b2, w_2_out, b_out):
@@ -843,7 +843,7 @@ def posterior_predictive_GP(
 
 #     return stats, lpd_GP
 
-def sample_pred_BART(model, X, X_er, target, draws=1000, chains=2):
+def sample_pred_BART(model, X, X_er, target, dataset_key, draws=1000, chains=2):
     """
     Generate posterior predictive samples and LOO scores for a BART model.
 
@@ -902,7 +902,7 @@ def sample_pred_BART(model, X, X_er, target, draws=1000, chains=2):
 
         y_draws = pred.predictions["y"].stack(sample=("chain", "draw")).values
 
-    return denormalise_val(y_draws, target).T, lpd_BART
+    return denormalise_val(y_draws, dataset_key, target).T, lpd_BART
 
 
 

@@ -12,8 +12,6 @@ from models import bart, gp
 from pred_sampling import sample_pred_BART, posterior_predictive_GP, sample_post_pred_HBNN_para
 from BayestarML.models.bhs import run_stack
 import arviz as az
-import numpy as np
-import pandas as pd
 # import pymc as pm
 # from sklearn.metrics import mean_absolute_error
 # from utils import find_pointwise_loo

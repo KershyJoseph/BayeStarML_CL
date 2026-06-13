@@ -11,24 +11,8 @@ import numpy as np
 import pymc as pm
 import matplotlib.pyplot as plt
 import pandas as pd
-from preprocess import denormalise_err, denormalise_val
-
-def diagnostics(df, name):
-    print("Diagnostics on ", name)
-
-    print("Old stars: ", len(df[(df["database"]==1)]))
-
-    print("New (and revised) stars: ", len(df[(df["database"]!=1)]), "out of ", len(df))
-
-    print("New, new stars: ", len(df[(df["database"]==3)]), "out of ", len(df))
-
-    print("New range stars: ", len(df[(df["M"]<=0.8) | (df["M"]>=1.4)]), "out of ", len(df))
-
-    print("New stars AND new range stars: ", len(df[((df["M"]<=0.8) | (df["M"]>=1.4)) & (df["database"]!=1)]), "out of ", len(df))
-
-    print("Low mass stars: ", len(df[(df["M"]<=0.8)]), "out of ", len(df))
-
-    print("New/revised stars AND low mass stars: ", len(df[(df["M"]<=0.8) & (df["database"]!=1)]), "out of ", len(df))
+from sklearn.metrics import mean_absolute_error
+from preprocess import load_data
 
 def find_pointwise_loo(trace):
     """
@@ -211,3 +195,54 @@ def model_pred_plotter(y_true, y_pred, y_pred_err,
     plt.legend()
     plt.savefig(save_folder+"/res_"+hyperp_str+".pdf")
     plt.close()
+
+def get_results(posterior_draws, data, outputs_folder_path, dataset_key):
+    """
+    """
+    stds = posterior_draws.std(0)
+    means = posterior_draws.mean(0)
+    print("\n"+target+" predictions")
+    print("means: ", means)
+    print("stdvs: ", stds)
+    print("Unorm "+target+": ", data["unorm_y_test"])
+
+    print("\n"+target+" accuracy stats")
+    print('MAE: ', mean_absolute_error(data["unorm_y_test"], means))
+    print('MARD: ', mard(data["unorm_y_test"], means))
+    print('MRD: ', mrd(data["unorm_y_test"], means))
+
+    model_pred_plotter(data["unorm_y_test"], means, stds, target, outputs_folder_path, hyperp_str, y_true_err=data["unorm_y_test_err"])
+
+    if target.startswith("log"):
+        target = target[3:]
+        hyperp_str = "GP_"+target+hyperp_str[7:]
+        y_draws = 10**(posterior_draws)
+        y_pred = y_draws.mean(0)
+        y_pred_err = y_draws.std(0)
+        data_linear, _ = load_data(dataset_key, target)
+        y_true = data_linear["unorm_y_test"]
+        y_true_err = data_linear["unorm_y_test_err"]
+
+        print("\n"+target+" predictions")
+        print("means: ", y_pred)
+        print("stdvs: ", y_pred_err)
+        print("Unorm "+target+": ", y_true)
+
+        print("\n"+target+" accuracy stats")
+        print('MAE: ', mean_absolute_error(y_true, y_pred))
+        print('MARD: ', mard(y_true, y_pred))
+        print('MRD: ', mrd(y_true, y_pred))
+
+        model_pred_plotter(y_true, y_pred, y_pred_err, target, outputs_folder_path, hyperp_str, y_true_err=y_true_err)
+
+        #Is median better?? 
+        y_p16 = np.percentile(y_draws, 16, axis=0)
+        y_p50 = np.percentile(y_draws, 50, axis=0)
+        y_p84 = np.percentile(y_draws, 84, axis=0)
+
+        print("\n"+target+" accuracy stats on median pred")
+        print('MAE: ', mean_absolute_error(y_true, y_p50))
+        print('MARD: ', mard(y_true, means))
+        print('MRD: ', mrd(y_true, means))
+
+        model_pred_plotter(y_true, y_pred, np.array([y_p50-y_p16, y_p84-y_p50]), target, outputs_folder_path, hyperp_str+"MEDIAN", y_true_err=y_true_err)
