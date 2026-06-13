@@ -18,12 +18,12 @@ def train_GP(dataset_key,
              target,
              M_mean, M_var,
              sclass,
-             draw=1000, target_accept=.95, chains=4,
+             draws=1000, target_accept=.95, chains=4,
              advi=False,
              nutpie=False):
     """Function to train GP
     """
-    hyperp_str = "GP_"+target+"_"+sclass+str(M_mean)+"_"+str(M_var)+"_"+str(draw)+"_"+str(target_accept)
+    hyperp_str = "GP_"+target+"_"+sclass+str(M_mean)+"_"+str(M_var)+"_"+str(draws)+"_"+str(target_accept)
     outputs_folder_path = "Outputs"+dataset_key+"/GP_"+target
     nuts_sampler = "pymc"
     if nutpie:
@@ -48,23 +48,23 @@ def train_GP(dataset_key,
         #trace.to_netcdf(...)
     else:
         trace = train(model, outputs_folder_path+"/"+hyperp_str+".nc",
-                  draw=draw, chains=chains, target_accept=target_accept, nuts_sampler=nuts_sampler)
+                  draw=draws, chains=chains, target_accept=target_accept, nuts_sampler=nuts_sampler)
 
     pred, _ = posterior_predictive_GP(model, μ_gp, lg_σ_gp, μ_trace, var_trace, trace,
                                         data["x_test"], data["x_test_err"], Xu, Xu_er, train_dim, target, dataset_key)
 
-    get_results(pred, data, outputs_folder_path, dataset_key)
+    get_results(pred, data, outputs_folder_path, dataset_key, target, hyperp_str)
 
 def train_NN_1layer(dataset_key,
              target,
              n_hidden,
              sclass,
-             draw=1000, target_accept=.95, chains=4,
+             draws=1000, target_accept=.95, chains=4,
              advi=False,
              nutpie=False):
     """Function to train HBNN
     """
-    hyperp_str = "NN_1layer_"+target+"_"+sclass+str(n_hidden)+"_"+str(draw)+"_"+str(target_accept)
+    hyperp_str = "NN_1layer_"+target+"_"+sclass+str(n_hidden)+"_"+str(draws)+"_"+str(target_accept)
     outputs_folder_path = "Outputs"+dataset_key+"/NN_"+target
     nuts_sampler = "pymc"
     if nutpie:
@@ -83,22 +83,22 @@ def train_NN_1layer(dataset_key,
         #trace.to_netcdf(...)
     else:
         trace = train(model, outputs_folder_path+"/"+hyperp_str+".nc",
-                  draw=draw, chains=chains, target_accept=target_accept, nuts_sampler=nuts_sampler)
+                  draw=draws, chains=chains, target_accept=target_accept, nuts_sampler=nuts_sampler)
 
     pred, _ = SIMPLE_sample_post_pred_HBNN_para(trace, data["x_test"], data["x_test_err"], n_hidden, train_dim, target, dataset_key)
 
-    get_results(pred, data, outputs_folder_path, dataset_key)
+    get_results(pred, data, outputs_folder_path, dataset_key, target, hyperp_str)
 
 def train_NN(dataset_key,
              target,
              n_hidden,
              sclass,
-             draw=1000, target_accept=.95, chains=4,
+             draws=1000, target_accept=.95, chains=4,
              advi=False,
              nutpie=False):
     """Function to train HBNN
     """
-    hyperp_str = "NN_"+target+"_"+sclass+str(n_hidden)+"_"+str(draw)+"_"+str(target_accept)
+    hyperp_str = "NN_"+target+"_"+sclass+str(n_hidden)+"_"+str(draws)+"_"+str(target_accept)
     outputs_folder_path = "Outputs"+dataset_key+"/NN_"+target
     nuts_sampler = "pymc"
     if nutpie:
@@ -117,11 +117,11 @@ def train_NN(dataset_key,
         #trace.to_netcdf(...)
     else:
         trace = train(model, outputs_folder_path+"/"+hyperp_str+".nc",
-                  draw=draw, chains=chains, target_accept=target_accept, nuts_sampler=nuts_sampler)
+                  draw=draws, chains=chains, target_accept=target_accept, nuts_sampler=nuts_sampler)
 
     pred, _ = sample_post_pred_HBNN_para(trace, data["x_test"], data["x_test_err"], n_hidden, train_dim, target, dataset_key)
 
-    get_results(pred, data, outputs_folder_path, dataset_key)
+    get_results(pred, data, outputs_folder_path, dataset_key, target, hyperp_str)
 
 if __name__ == '__main__':
     print("\n::::::::::::::::::::::::::::::::::::::")

@@ -323,7 +323,8 @@ def load_data(dataset_key, target):
         "y_test": df_test[target],
         "y_test_err": df_test["e"+target],
         "unorm_y_test": unorm_y_test,
-        "unorm_y_test_err": unorm_y_test_err
+        "unorm_y_test_err": unorm_y_test_err,
+        "test_stars": df_test.index
     }
 
     return data, len(training_fs)

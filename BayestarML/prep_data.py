@@ -32,6 +32,7 @@ def prep_data(filename:__path__,
     for var in add_logvars:
         for list in [training_fs, targets]:
             if var in list:
+                list.remove(var)
                 list.append("log"+var)
 
     #filter by error limits and plot error distributions
@@ -67,9 +68,10 @@ def prep_data(filename:__path__,
                 repeat = input(f"Continue checking {var} spread? (yes/no)\n") == "yes"
             df = df_copy
     print(f"{len(df)} stars left after cutting target ranges.")
+    dataset_key = str(len(df))+s_class
+    df.to_csv("data/"+dataset_key+".txt")
 
     #get MUs and SIGs for normalisation of each param, and write to constants.json, as well as MIN and MAX
-    dataset_key = str(len(df))+s_class
     X_train, X_test, Y_train, Y_test, = return_train_test(df, training_fs, targets, dataset_key)
 
     #normalise data and create final txt files for normalised training and testing datasets

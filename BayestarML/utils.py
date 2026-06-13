@@ -196,7 +196,7 @@ def model_pred_plotter(y_true, y_pred, y_pred_err,
     plt.savefig(save_folder+"/res_"+hyperp_str+".pdf")
     plt.close()
 
-def get_results(posterior_draws, data, outputs_folder_path, dataset_key):
+def get_results(posterior_draws, data, outputs_folder_path, dataset_key, target, hyperp_str):
     """
     """
     stds = posterior_draws.std(0)
@@ -219,9 +219,10 @@ def get_results(posterior_draws, data, outputs_folder_path, dataset_key):
         y_draws = 10**(posterior_draws)
         y_pred = y_draws.mean(0)
         y_pred_err = y_draws.std(0)
-        data_linear, _ = load_data(dataset_key, target)
-        y_true = data_linear["unorm_y_test"]
-        y_true_err = data_linear["unorm_y_test_err"]
+        df_physical = pd.read_csv("data/"+dataset_key+".txt")
+        df_physical.set_index("ID", inplace=True)
+        y_true = df_physical.loc[data["test_stars"], target]
+        y_true_err = df_physical.loc[data["test_stars"], "e"+target]
 
         print("\n"+target+" predictions")
         print("means: ", y_pred)
