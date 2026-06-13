@@ -130,8 +130,8 @@ if __name__ == '__main__':
     start_time_CPU = time.process_time()
     start_time_wall = time.perf_counter()
 
-    print("NN mass MS. 16_2000. NUTPIE.")
-    train_NN("700MS", "M", 16, sclass="MS", nutpie=True)
+    print("NN mass RGB. 8_1000. NUTPIE.")
+    train_NN("5438RGB", "M", 8, sclass="RGB", nutpie=True)
 
     end_time_CPU = time.process_time()
     mem1 = process.memory_info().rss / 1024**2

@@ -188,21 +188,21 @@ def HBNN_M4(X_train, Y, X_error, Y_error, n_hidden):
 
         # Weights from input to hidden layer
         weights_in_1 = pm.Normal(
-            "w_in_1", 0, sigma=0.1, shape=(n_hidden, 4) #replaced X_latent.eval().shape[1]
+            "w_in_1", 0, sigma=np.sqrt(2/4), shape=(n_hidden, 4) #replaced X_latent.eval().shape[1]
         )
 
         weights_1_2 = pm.Normal(
-            "w_1_2", 0, sigma=0.1, shape=(n_hidden,n_hidden)
+            "w_1_2", 0, sigma=np.sqrt(2/n_hidden), shape=(n_hidden,n_hidden)
         )
 
         # Weights from hidden layer to output
-        weights_2_out = pm.Normal("w_2_out", 0, sigma=0.1, shape=n_hidden)
+        weights_2_out = pm.Normal("w_2_out", 0, sigma=np.sqrt(2/n_hidden), shape=n_hidden)
 
-        bias_1 = pm.Normal("bias_1", 0, sigma=1, shape=n_hidden)
+        bias_1 = pm.Normal("bias_1", 0, sigma=0.1, shape=n_hidden)
 
-        bias_2 = pm.Normal("bias_2", 0, sigma=1, shape=n_hidden)
+        bias_2 = pm.Normal("bias_2", 0, sigma=0.1, shape=n_hidden)
 
-        bias_out = pm.Normal("bias_out", 0, sigma=1)
+        bias_out = pm.Normal("bias_out", 0, sigma=0.1)
 
         pre_act_1 = pm.math.dot(ann_input, weights_in_1.T) + bias_1
         act_1 = pm.Deterministic('act_1',
@@ -214,7 +214,7 @@ def HBNN_M4(X_train, Y, X_error, Y_error, n_hidden):
         )
         act_out = pm.Deterministic('act_out' , pm.math.dot(act_2, weights_2_out) + bias_out)
 
-        er = pm.HalfNormal('er', sigma=1)
+        er = pm.HalfNormal('er', sigma=0.2)
         #er = pm.HalfCauchy('er', beta=1)
 
         out = pm.StudentT(
