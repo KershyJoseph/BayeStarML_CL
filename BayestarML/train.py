@@ -132,8 +132,8 @@ if __name__ == '__main__':
     start_time_CPU = time.process_time()
     start_time_wall = time.perf_counter()
 
-    print("NN on RGB mass. 1 layer, 5 nodes. NUTPIE.")
-    train_NN_1layer("5438RGB", "M", 5, sclass="RGB", nutpie=True)
+    print("GP on RGB logR. 30_10. NUTPIE.")
+    train_GP("5438RGB", "logR", 30, 10, sclass="RGB", nutpie=True)
 
     end_time_CPU = time.process_time()
     mem1 = process.memory_info().rss / 1024**2
