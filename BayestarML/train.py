@@ -124,16 +124,14 @@ def train_NN(dataset_key,
     get_results(pred, data, outputs_folder_path, dataset_key, target, hyperp_str)
 
 if __name__ == '__main__':
-    print("\n::::::::::::::::::::::::::::::::::::::")
-    print("goodRGB5438")
-    print("::::::::::::::::::::::::::::::::::::::\n")
+    print("<><><><><<><<><><><>><<><<><<><<<><><><<><<><><><><>")
 
     process = psutil.Process()
     start_time_CPU = time.process_time()
     start_time_wall = time.perf_counter()
 
-    print("GP on RGB logR. 30_10. NUTPIE.")
-    train_GP("5438RGB", "logR", 30, 10, sclass="RGB")
+    print("NN mass MS. 16_2000. NUTPIE.")
+    train_NN("700MS", "M", 16, sclass="MS", nutpie=True)
 
     end_time_CPU = time.process_time()
     mem1 = process.memory_info().rss / 1024**2

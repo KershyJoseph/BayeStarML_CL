@@ -1,0 +1,109 @@
+::::::::::::::::::::::::::::::::::::::
+goodRGB5438
+::::::::::::::::::::::::::::::::::::::
+
+NN on RGB mass. 1 layer, 5 nodes. NUTPIE.
+target_accept= 0.95
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/pymc/pytensorf.py:958: FutureWarning: compile_pymc was
+ renamed to compile. Old name will be removed in a future release of PyMC
+  warnings.warn(
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/pymc/pytensorf.py:958: FutureWarning: compile_pymc was
+ renamed to compile. Old name will be removed in a future release of PyMC
+  warnings.warn(
+____________________________________________________________________________________________________________ 10000/10000
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/diagnostics.py:596: RuntimeWarning: invali
+d value encountered in scalar divide
+  (between_chain_variance / within_chain_variance + num_samples - 1) / (num_samples)
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/diagnostics.py:991: RuntimeWarning: invali
+d value encountered in scalar divide
+  varsd = varvar / evar / 4
+
+AZ Stats for ESS Bulk < 400:
+                                  mean     sd  hdi_3%  hdi_97%  mcse_mean  mcse_sd  ess_bulk  ess_tail  r_hat
+Omega_cholesky-cov-packed__[9] -4.270  0.874  -5.456   -2.756      0.429    0.175       4.0      13.0   3.63
+Omega[9]                        0.020  0.018   0.004    0.058      0.009    0.006       4.0      13.0   3.63
+act_1[3991, 4]                  0.600  0.541  -0.011    1.354      0.256    0.041       5.0      30.0   2.15
+act_1[3992, 2]                  0.305  0.324  -0.013    0.924      0.154    0.086       5.0      29.0   2.43
+act_1[3992, 4]                  0.537  0.470  -0.009    1.227      0.220    0.070       5.0      28.0   2.42
+...                               ...    ...     ...      ...        ...      ...       ...       ...    ...
+act_out[2574]                   1.813  0.154   1.516    2.096      0.008    0.002     384.0     469.0   1.02
+act_out[1797]                   0.278  0.143   0.022    0.554      0.007    0.002     387.0    3400.0   1.01
+act_out[623]                   -0.699  0.074  -0.831   -0.554      0.004    0.001     388.0    1252.0   1.01
+act_1[1039, 0]                  0.633  0.123   0.423    0.808      0.008    0.024     393.0     131.0   1.07
+act_1[3308, 1]                  0.695  0.218   0.345    1.072      0.017    0.056     397.0      52.0   1.14
+
+
+[21704 rows x 9 columns]
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/diagnostics.py:596: RuntimeWarning: invali
+d value encountered in scalar divide
+  (between_chain_variance / within_chain_variance + num_samples - 1) / (num_samples)
+rhats:  [('Omega_cholesky-cov-packed__', 3.6334912423358285), ('X_latent', 1.0190949348602645), ('w_in_1', 2.64429206182
+16004), ('w_1_out', 2.4438304730066807), ('bias_1', 2.84428467926673), ('bias_out', 1.0208862124976315), ('er_log__', 1.
+2426128435857753), ('Omega', 3.6334912423358285), ('er', 1.2426128435857753), ('Omega_corr', 1.012519021449806), ('Omega
+_stds', 1.0166729430556927), ('ann_input', 1.0190949348602645), ('act_1', 2.8538807121150387), ('act_out', 1.03017158420
+589)]
+Computing ... ──────────────────────────────────────── 100% 0:00:00
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape
+ parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust
+model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are v
+ery different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+loo trace:  Computed from 4000 posterior samples and 4350 observations log-likelihood matrix.
+
+         Estimate       SE
+elpd_loo -1556.99    66.04
+p_loo     1727.25        -
+
+There has been a warning during the calculation. Please check the results.
+------
+
+Pareto k diagnostic values:
+                         Count   Pct.
+(-Inf, 0.70]   (good)     4273   98.2%
+   (0.70, 1]   (bad)        77    1.8%
+   (1, Inf)   (very bad)    0    0.0%
+
+Found 77 problematic data points.
+Indices of bad points: [   1  116  149  360  367  369  385  437  526  556  563  634  727  732
+  788 1009 1148 1214 1215 1278 1290 1336 1367 1438 1516 1578 1688 1759
+ 1765 1873 2039 2115 2192 2257 2301 2322 2340 2341 2486 2510 2575 2661
+ 2694 2830 2836 2846 2895 2897 2929 2983 3092 3149 3208 3214 3361 3373
+ 3446 3451 3534 3615 3644 3658 3678 3687 3706 3897 3912 3934 3977 4021
+ 4072 4158 4195 4216 4228 4274 4297]
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape
+ parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust
+model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are v
+ery different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+starting parallel prediction on 32 worker(s)_
+finished chain 1/4
+finished chain 3/4
+finished chain 4/4
+finished chain 2/4
+
+M predictions
+means:  [1.21840728 1.24085355 1.02667437 ... 1.1648234  1.251751   1.32868467]
+stdvs:  [0.05561566 0.04987092 0.02743875 ... 0.0887084  0.05457189 0.08822587]
+Unorm M:  ID
+KIC3432992       1.2331
+KIC1864183       1.2393
+EPIC210683150    0.9540
+KIC9589060       1.5422
+KIC7616655       1.0446
+                  ...
+KIC9636300       1.2403
+KIC8142438       1.2603
+KIC3219744       1.1910
+KIC9290481       1.1112
+KIC7543102       1.3435
+Name: M, Length: 1088, dtype: float64
+
+M accuracy stats
+MAE:  0.059783326825985805
+MARD:  4.800788692303102
+MRD:  -0.5984419850945503
+Peak Memory: 6488.60 MB
+CPU time accumulated: 16617.62900 s
+Total wall clock time: 3500.16627 s
+><><><><><><><><><><><><><><><><><><><><><><><><><><
+Salve Regina

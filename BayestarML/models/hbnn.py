@@ -198,7 +198,7 @@ def HBNN_M4(X_train, Y, X_error, Y_error, n_hidden):
         # Weights from hidden layer to output
         weights_2_out = pm.Normal("w_2_out", 0, sigma=1, shape=n_hidden)
 
-        bias_1 = pm.Normal("bias_1", 0, sigma=1, shape=n_hidden) #all bias used to be sigma=1 for mass
+        bias_1 = pm.Normal("bias_1", 0, sigma=1, shape=n_hidden)
 
         bias_2 = pm.Normal("bias_2", 0, sigma=1, shape=n_hidden)
 
