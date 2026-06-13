@@ -220,8 +220,8 @@ if __name__ == '__main__':
     start_time_CPU = time.process_time()
     start_time_wall = time.perf_counter()
 
-    print("GP logR on RGB. 30_10_0.95_1000")
-    train_GP("5438RGB", "logR", 30, 10, sclass="RGB")
+    print("GP logR on RGB. 10_10_0.95_1000")
+    train_GP("5438RGB", "logR", 10, 10, sclass="RGB")
 
     end_time_CPU = time.process_time()
     mem1 = process.memory_info().rss / 1024**2
