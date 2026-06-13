@@ -56,7 +56,7 @@ def add_symmetric_errs(df, errs1, errs2):
     df_err.columns = [err[:-1] for err in errs2]
     return pd.concat([df, df_err], axis=1)
 
-def L_consistency_check(df, savename, logscale=True):
+def L_consistency_check(df, savename:str, logscale=True):
     """
     """
     df_L_check = df[df["L_from_SB"]==0]
@@ -99,7 +99,7 @@ def L_consistency_check(df, savename, logscale=True):
         plt.xscale("log")
         plt.yscale("log")
     plt.show()
-    plt.savefig("figures/"+savename)
+    plt.savefig("figures/L_check/"+savename)
 
     df.drop(df_bad_Ls.index, inplace=True)
     print(f"{len(df)} stars after checking L consistency with R and Teff to 3 sigma via SB law.")
@@ -180,7 +180,7 @@ def error_filter(df, savename, abs_err_lims=None, percent_err_lims=None, plot_pa
             j+=1/2
         plt.tight_layout()
         plt.show()
-        fig.savefig("figures/"+savename)
+        fig.savefig("figures/err_dists/"+savename)
 
     return df_filtered
 
@@ -289,8 +289,8 @@ def HRplot(df,savename:str,hue:str=None):
     ax.set_xlabel("log[ Teff (K) ]")
     ax.set_ylabel("log[ L (Lsol) ]")
 
-    plt.show()
-    fig.savefig("figures/"+savename)
+    fig.savefig("figures/HRdiagrams/"+savename)
+    plt.close()
 
 def load_data(dataset_key, target):
     """
@@ -327,6 +327,22 @@ def load_data(dataset_key, target):
     }
 
     return data, len(training_fs)
+
+def plot_feature_target(df:pd.DataFrame, savename:str, feature:str, target:str):
+    """Plot target as a function of feature - should be keys in df
+    """
+    plt.figure()
+    x = df[feature]
+    x_err = df["e"+feature]#+"1"]
+    y = df[target]
+    y_err = df["e"+target]
+    plt.errorbar(x, y, y_err, x_err, fmt='o', alpha=0.3)
+    # plt.plot(np.log10(1.193), 0.499, 'rx')
+    # plt.plot(np.log10(0.08), 0.566, 'rx')
+    plt.xlabel(feature)
+    plt.ylabel(target+" ("+target[0]+"sol)")
+    plt.savefig("figures/feature_target_figs/"+savename)
+    plt.close()
 
 
 # def prepare_pred4(filename, logL=False, logR=False):

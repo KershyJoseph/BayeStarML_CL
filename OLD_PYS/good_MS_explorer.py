@@ -42,7 +42,7 @@ def plot_target_spread(df, db_name, target, multiple="stack"):
     plt.savefig("DataExploring/"+target+"_spread_"+db_name+".pdf")
     plt.close()
 
-def plot_feature_target(df, feature:str, target:str):
+def plot_feature_target(df:pd.DataFrame, dataset_key:str, feature:str, target:str):
     """Plot target as a function of feature - should be keys in df
     """
     plt.figure()
@@ -51,9 +51,9 @@ def plot_feature_target(df, feature:str, target:str):
     y = df[target]
     y_err = df["e"+target]
     plt.errorbar(x, y, y_err, x_err, fmt='o', alpha=0.3)
-    plt.plot(np.log10(1.193), 0.499, 'rx')
-    plt.plot(np.log10(0.08), 0.566, 'rx')
+    # plt.plot(np.log10(1.193), 0.499, 'rx')
+    # plt.plot(np.log10(0.08), 0.566, 'rx')
     plt.xlabel(feature)
     plt.ylabel(target+" ("+target[0]+"sol)")
-    plt.savefig("DataExploring/feature_target_figs/"+feature+"_"+target+".pdf")
+    plt.savefig("figures/feature_target_figs/"+dataset_key+"_"+feature+"_"+target+".pdf")
     plt.close()

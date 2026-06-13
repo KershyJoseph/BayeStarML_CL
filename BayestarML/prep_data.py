@@ -3,17 +3,18 @@
 
 import pandas as pd
 import numpy as np
-from preprocess import select_clean_data, error_filter, spreadomatic, return_train_test, normalise, HRplot
+from preprocess import select_clean_data, error_filter, spreadomatic, return_train_test, normalise, HRplot, plot_feature_target
 from models.baselineXGB import studyrunner
 
 def prep_data(filename:__path__,
               training_fs:list, targets:list,
               s_class:str,
               add_logvars:list,
-              abs_err_lims:dict, percent_err_lims:dict,
+              abs_err_lims:dict, percent_err_lims:dict, target_lims:dict,
               L_check:bool = False,
               plot_errs:bool = False,
-              HRplot:bool = False,
+              plotHR:bool = False,
+              plot_t_f = False,
               XGBoost:bool = False):
     """
     """
@@ -50,18 +51,21 @@ def prep_data(filename:__path__,
                     percent_err_lims=percent_err_lims,
                     plot_params=plot_params)
 
-    #look at spread in target variables and decide whether or not to cut training range
-    for var in targets:
-        repeat=True
-        spreadomatic(df, var)
-        while repeat:
-            lim0 = float(input(f"What lower limit do you want to put on {var}?\n"))
-            lim1 = float(input(f"What upper limit do you want to put on {var}?\n"))
-            df_copy = df[(df[var]>=lim0) & (df[var]<=lim1)]
-            print(f"{len(df_copy)} stars left after trimming {var} range.")
-            spreadomatic(df_copy, var)
-            repeat = input(f"Continue checking {var} spread? (yes/no)\n") == "yes"
-        df = df_copy
+    if target_lims:
+        for target, lims in target_lims.items():
+            df = df[(df[target]>=lims[0]) & (df[target]<=lims[1])]
+    else: #look at spread in target variables and decide whether or not to cut training range
+        for var in targets:
+            repeat=True
+            spreadomatic(df, var)
+            while repeat:
+                lim0 = float(input(f"What lower limit do you want to put on {var}?\n"))
+                lim1 = float(input(f"What upper limit do you want to put on {var}?\n"))
+                df_copy = df[(df[var]>=lim0) & (df[var]<=lim1)]
+                print(f"{len(df_copy)} stars left after trimming {var} range.")
+                spreadomatic(df_copy, var)
+                repeat = input(f"Continue checking {var} spread? (yes/no)\n") == "yes"
+            df = df_copy
     print(f"{len(df)} stars left after cutting target ranges.")
 
     #get MUs and SIGs for normalisation of each param, and write to constants.json, as well as MIN and MAX
@@ -81,9 +85,16 @@ def prep_data(filename:__path__,
     print("Normalised training and testing sets for "+dataset_key+" now saved in data folder.")
 
     #plot HR diagram of final data set (test and training) if desired
-    if HRplot:
-        print(len(df))
+    if plotHR:
         HRplot(df, dataset_key+"_HRplot.pdf")
+        print("HRplot saved in figures")
+
+    #plot target-feature relations if desired
+    if plot_t_f:
+        for t in targets:
+            for f in training_fs:
+                savename = s_class+"/"+dataset_key+"_"+f+"_"+t+".pdf"
+                plot_feature_target(df, savename, f, t)
 
     #get XGBoost estimate on final data set if desired
     if XGBoost:
@@ -102,6 +113,10 @@ if __name__ == "__main__":
     targets = ["M", "R"]
     s_class = "RGB"
     add_logvars = ["L", "R"] #add a log column with errs for these variables
+    target_lims = { #to skip the target range cutting step if you already know the limits you want
+        "logR": [0, 1.6],
+        "M": [0.75, 2.25]
+    }
 
     abs_err_lims = {
         "elogL": 0.05,
@@ -119,8 +134,8 @@ if __name__ == "__main__":
               training_fs, targets,
               s_class,
               add_logvars,
-              abs_err_lims, percent_err_lims,
-              L_check=True, plot_errs=True, XGBoost=False)
+              abs_err_lims, percent_err_lims, target_lims,
+              L_check=True, plot_errs=True, plotHR=True, plot_t_f=True)
 
 
 # 700MS
