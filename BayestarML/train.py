@@ -130,8 +130,8 @@ if __name__ == '__main__':
     start_time_CPU = time.process_time()
     start_time_wall = time.perf_counter()
 
-    print("NN mass RGB. 8_1000. NUTPIE.")
-    train_NN("5438RGB", "M", 8, sclass="RGB", nutpie=True)
+    print("GP MS mass - 2000 draw update")
+    train_GP("700MS", "M", 50, 20, sclass="MS")
 
     end_time_CPU = time.process_time()
     mem1 = process.memory_info().rss / 1024**2
@@ -141,20 +141,20 @@ if __name__ == '__main__':
 
     print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
 
-    # start_time_CPU2 = time.process_time()
-    # start_time2 = time.time()
+    start_time_CPU2 = time.process_time()
+    start_time2 = time.time()
 
-    # print("NN mass - RGB stars. NUTPIE. With L in log space. 64, 1000, 4, target_accept=0.95. 20TD still.")
-    # mass_train_NN(datasetRGB, 64, "Outputs5438RGB", 1000, target_accept=0.95, nutpie=True, sclass="RGB")
+    print("GP MS radius - 2000 draws update")
+    train_GP("700MS", "R", 50, 20, sclass="MS")
 
-    # end_time_CPU2 = time.process_time()
+    end_time_CPU2 = time.process_time()
 
-    # mem2 = process.memory_info().rss / 1024**2
-    # print(f"Peak Memory: {(mem2-mem1):.2f} MB")
-    # print(f"CPU time used: {(end_time_CPU2-start_time_CPU2):.5f} s")
-    # print(f"Total run time: {time.time()-start_time2:.5f} s")
+    mem2 = process.memory_info().rss / 1024**2
+    print(f"Peak Memory: {(mem2-mem1):.2f} MB")
+    print(f"CPU time used: {(end_time_CPU2-start_time_CPU2):.5f} s")
+    print(f"Total run time: {time.time()-start_time2:.5f} s")
 
-    # print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
+    print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
 
     # start_time_CPU3 = time.process_time()
     # start_time3 = time.time()
