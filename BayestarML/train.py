@@ -6,13 +6,15 @@ Created on Tue Aug 12 10:50:13 2025
 @author: LamirelFamily
 """
 
+from models import gp
 from preprocess import load_data
 from utils import train, get_results
-from models import hbnn, gp
+from models import hbnn
 from pred_sampling import sample_post_pred_HBNN_para, posterior_predictive_GP, SIMPLE_sample_post_pred_HBNN_para
 import pymc as pm
 import psutil
 import time
+import pandas as pd
 
 def train_GP(dataset_key,
              target,

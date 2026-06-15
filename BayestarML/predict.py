@@ -5,10 +5,11 @@ Created on Tue Jul 15 15:52:30 2025
 
 @author: LamirelFamily
 """
-from BayestarML.src.preprocess import load_data
-from BayestarML.src.utils import mard, mrd
-from models import bart, gp
-from BayestarML.src.pred_sampling import sample_pred_BART, posterior_predictive_GP, sample_post_pred_HBNN_para
+from BayestarML.models import bart
+from BayestarML.preprocess import load_data
+from BayestarML.utils import mard, mrd
+from BayestarML.models import gp
+from BayestarML.pred_sampling import sample_pred_BART, posterior_predictive_GP, sample_post_pred_HBNN_para
 from BayestarML.models.bhs import run_stack
 import arviz as az
 
