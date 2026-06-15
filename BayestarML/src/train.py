@@ -6,10 +6,10 @@ Created on Tue Aug 12 10:50:13 2025
 @author: LamirelFamily
 """
 
-from src.preprocess import load_data
-from src.utils import train, get_results
+from preprocess import load_data
+from utils import train, get_results
 from models import hbnn, gp
-from src.pred_sampling import sample_post_pred_HBNN_para, posterior_predictive_GP, SIMPLE_sample_post_pred_HBNN_para
+from pred_sampling import sample_post_pred_HBNN_para, posterior_predictive_GP, SIMPLE_sample_post_pred_HBNN_para
 import pymc as pm
 import psutil
 import time

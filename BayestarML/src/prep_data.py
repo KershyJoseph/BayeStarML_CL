@@ -3,7 +3,7 @@
 
 import pandas as pd
 import numpy as np
-from src.preprocess import select_clean_data, error_filter, spreadomatic, return_train_test, normalise, HRplot, plot_feature_target
+from preprocess import select_clean_data, error_filter, spreadomatic, return_train_test, normalise, HRplot, plot_feature_target
 from models.baselineXGB import studyrunner
 
 def prep_data(filename:str,

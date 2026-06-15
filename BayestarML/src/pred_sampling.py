@@ -10,9 +10,8 @@ import numpy as np
 import pytensor.tensor as tt
 import pymc as pm
 import arviz as az
-from src.utils import find_pointwise_loo
-from tqdm.auto import tqdm
-from src.preprocess import denormalise_val
+from utils import find_pointwise_loo
+from preprocess import denormalise_val
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from functools import partial
 import os
