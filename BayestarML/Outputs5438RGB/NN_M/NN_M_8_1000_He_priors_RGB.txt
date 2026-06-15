@@ -1,0 +1,105 @@
+<><><><><<><<><><><>><<><<><<><<<><><><<><<><><><><>                        Sat13 [137/1827]
+NN mass RGB. 8_1000. NUTPIE.
+target_accept= 0.95
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/pymc/pytensorf.py:958: FutureWarning: compile_pymc was
+ renamed to compile. Old name will be removed in a future release of PyMC
+  warnings.warn(
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/pymc/pytensorf.py:958: FutureWarning: compile_pymc was
+ renamed to compile. Old name will be removed in a future release of PyMC
+  warnings.warn(
+____________________________________________________________________________________________________________ 10000/10000
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/diagnostics.py:596: RuntimeWarning: invali
+d value encountered in scalar divide
+  (between_chain_variance / within_chain_variance + num_samples - 1) / (num_samples)
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/diagnostics.py:991: RuntimeWarning: invali
+d value encountered in scalar divide
+  varsd = varvar / evar / 4
+AZ Stats for ESS Bulk < 400:
+                      mean     sd  hdi_3%  hdi_97%  mcse_mean  mcse_sd  ess_bulk  ess_tail  r_hat
+act_2[3297, 1]      0.686  0.840  -0.019    2.354      0.412    0.246       4.0      12.0   3.24
+act_2[3307, 1]      0.820  0.937  -0.032    2.536      0.458    0.227       4.0      14.0   3.31
+act_2[3420, 5]      1.261  1.784  -0.009    5.251      0.866    0.655       4.0      22.0   3.37
+act_2[3434, 1]      0.669  0.709  -0.030    1.928      0.344    0.149       4.0      14.0   3.35
+act_2[3551, 5]      0.533  0.759  -0.008    2.237      0.364    0.287       4.0      17.0   3.29
+...                   ...    ...     ...      ...        ...      ...       ...       ...    ...
+X_latent[1612, 3]   2.239  0.046   2.155    2.329      0.002    0.001     399.0     641.0   1.01
+X_latent[3561, 3]   0.993  0.046   0.908    1.081      0.002    0.001     399.0    1135.0   1.01
+ann_input[3928, 1] -1.179  0.061  -1.297   -1.072      0.003    0.001     399.0    1109.0   1.02
+ann_input[2236, 0] -0.308  0.119  -0.522   -0.080      0.006    0.003     399.0     926.0   1.01
+ann_input[1612, 3]  2.239  0.046   2.155    2.329      0.002    0.001     399.0     641.0   1.01
+
+[73191 rows x 9 columns]
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/diagnostics.py:596: RuntimeWarning: invali
+d value encountered in scalar divide
+  (between_chain_variance / within_chain_variance + num_samples - 1) / (num_samples)
+rhats:  [('Omega_cholesky-cov-packed__', 1.640619527273694), ('X_latent', 1.571298547287103), ('w_in_1', 4.2404886765914
+58), ('w_1_2', 3.176426154476753), ('w_2_out', 3.6287203218946695), ('bias_1', 3.06210496756123), ('bias_2', 1.937795524
+2708182), ('bias_out', 1.5597856382608146), ('er_log__', 1.3993757029020761), ('Omega', 1.640619527273694), ('er', 1.399
+3757029020761), ('Omega_corr', 1.0361712735793442), ('Omega_stds', 1.0480595650766082), ('ann_input', 1.571298547287103)
+, ('act_1', 4.076636302374731), ('act_2', 3.625643475805396), ('act_out', 1.6298222168344347)]
+Computing ... ──────────────────────────────────────── 100% 0:00:00
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:1045: RuntimeWarning: overflow en
+countered in exp
+  weights = 1 / np.exp(len_scale - len_scale[:, None]).sum(axis=1)
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape
+ parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust
+model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are v
+ery different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+loo trace:  Computed from 4000 posterior samples and 4350 observations log-likelihood matrix.
+
+         Estimate       SE
+elpd_loo -1091.64    65.52
+p_loo     4394.01        -
+
+There has been a warning during the calculation. Please check the results.
+------
+
+Pareto k diagnostic values:
+                         Count   Pct.
+(-Inf, 0.70]   (good)     1640   37.7%
+   (0.70, 1]   (bad)      2121   48.8%
+   (1, Inf)   (very bad)  589   13.5%
+
+Found 2710 problematic data points.
+Indices of bad points: [   1    4    6 ... 4346 4347 4348]
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:1045: RuntimeWarning: overflow en
+countered in exp
+  weights = 1 / np.exp(len_scale - len_scale[:, None]).sum(axis=1)
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape
+ parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust
+model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are v
+ery different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+starting parallel prediction on 32 worker(s)_
+finished chain 4/4
+finished chain 1/4
+finished chain 3/4
+finished chain 2/4
+
+M predictions
+means:  [1.21569453 1.23695759 1.03194442 ... 1.16431009 1.1343369  1.33496665]
+stdvs:  [0.0644387  0.05812895 0.03511991 ... 0.09023459 0.10766554 0.10032946]
+Unorm M:  ID
+KIC3432992       1.2331
+KIC1864183       1.2393
+EPIC210683150    0.9540
+KIC9589060       1.5422
+KIC7616655       1.0446
+                  ...
+KIC9636300       1.2403
+KIC8142438       1.2603
+KIC3219744       1.1910
+KIC9290481       1.1112
+KIC7543102       1.3435
+Name: M, Length: 1088, dtype: float64
+
+M accuracy stats
+MAE:  0.05605142886331886
+MARD:  4.51184757510168
+MRD:  -0.7199244179928692
+Peak Memory: 5055.04 MB
+CPU time accumulated: 38127.58876 s
+Total wall clock time: 7914.79173 s
+><><><><><><><><><><><><><><><><><><><><><><><><><><
+Salve Regina
