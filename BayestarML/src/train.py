@@ -6,10 +6,10 @@ Created on Tue Aug 12 10:50:13 2025
 @author: LamirelFamily
 """
 
-from preprocess import load_data
-from utils import train, get_results
+from src.preprocess import load_data
+from src.utils import train, get_results
 from models import hbnn, gp
-from pred_sampling import sample_post_pred_HBNN_para, posterior_predictive_GP, SIMPLE_sample_post_pred_HBNN_para
+from src.pred_sampling import sample_post_pred_HBNN_para, posterior_predictive_GP, SIMPLE_sample_post_pred_HBNN_para
 import pymc as pm
 import psutil
 import time
@@ -130,8 +130,8 @@ if __name__ == '__main__':
     start_time_CPU = time.process_time()
     start_time_wall = time.perf_counter()
 
-    print("GP RGB logR - 1000 and 0.9 TA")
-    train_GP("5438RGB", "logR", 33, 10, sclass="RGB", target_accept=0.9)
+    print("HBNN RGB logR - 3_1400, 0.1*He priors and 0.1 er. 0.9 TA. NUTPIE")
+    train_NN_1layer("5438RGB", "logR", 3, sclass="RGB", draws=1400, target_accept=0.9, nutpie=True)
 
     end_time_CPU = time.process_time()
     mem1 = process.memory_info().rss / 1024**2

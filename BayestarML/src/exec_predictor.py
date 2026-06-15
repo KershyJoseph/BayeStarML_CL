@@ -6,9 +6,9 @@ Created on Wed Nov  5 18:53:33 2025
 @author: LamirelFamily
 """
 
-from preprocess import prepare_pred4, return_train_test
-from predict import predict3, predict4
-from utils import mard, mrd, model_pred_plotter
+from BayestarML.src.preprocess import prepare_pred4, return_train_test
+from BayestarML.src.predict import predict3, predict4
+from BayestarML.src.utils import mard, mrd, model_pred_plotter
 from sklearn.metrics import mean_absolute_error
 import pandas as pd
 import matplotlib.pyplot as plt

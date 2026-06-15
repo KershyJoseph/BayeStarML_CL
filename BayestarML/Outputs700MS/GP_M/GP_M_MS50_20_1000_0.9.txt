@@ -1,0 +1,132 @@
+GP MS mass - 2000 draw update (actually 1000!)
+target_accept= 0.95
+Initializing NUTS using jitter+adapt_diag...
+Multiprocess sampling (4 chains in 4 jobs)
+NUTS: [log_ls, log_eta, u_rotated__, log_ls_v, log_eta_v, alpha_log_var, u_rotated_log_var_f]
+
+  Progress                         Draws   Divergences   Step size   Grad evals   Sampling Speed   Elapsed   Remaining
+ ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  ──────────────────────────────   2500    4             0.01        511          1.05 draws/s     0:39:50   0:00:00
+  ──────────────────────────────   2500    3             0.01        511          1.04 draws/s     0:40:06   0:00:00
+  ──────────────────────────────   2500    3             0.01        511          1.05 draws/s     0:39:29   0:00:00
+  ──────────────────────────────   2500    0             0.01        511          1.06 draws/s     0:39:07   0:00:00
+
+Sampling 4 chains for 1_500 tune and 1_000 draw iterations (6_000 + 4_000 draws total) took 2418 seconds.
+There were 10 divergences after tuning. Increase `target_accept` or reparameterize.
+AZ Stats for ESS Bulk < 400:
+ Empty DataFrame
+Columns: [mean, sd, hdi_3%, hdi_97%, mcse_mean, mcse_sd, ess_bulk, ess_tail, r_hat]
+Index: []
+rhats:  [('log_ls', 1.0028226118033468), ('log_eta', 1.002216222888739), ('u_rotated__', 1.0048154360933705), ('log_ls_v
+', 1.0018726008836927), ('log_eta_v', 1.001183602849241), ('alpha_log_var', 1.0000416902382245), ('u_rotated_log_var_f',
+ 1.0046737695545862), ('ls', 1.0028226118033468), ('eta', 1.002216222888739), ('u__', 1.0021322032435462), ('mu__', 1.00
+23511949351338), ('ls_v', 1.0018726008836927), ('eta_v', 1.001183602849241), ('u_log_var_f', 1.004535868582784), ('mu_lo
+g_var_f', 1.002533507159495), ('log_var', 1.002733817789223), ('__f', 1.002733817789223)]
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/pymc/model/fgraph.py:163: UserWarning: Detected variab
+les likely created by GP objects. Further use of these old GP objects should be avoided as it may reintroduce variables
+from the old model. See issue: https://github.com/pymc-devs/pymc/issues/6883
+  warnings.warn(
+Computing ... ──────────────────────────────────────── 100% 0:00:00
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape
+ parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust
+model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are v
+ery different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+loo trace:  Computed from 4000 posterior samples and 560 observations log-likelihood matrix.
+
+         Estimate       SE
+elpd_loo     7.28    32.59
+p_loo       87.22        -
+
+There has been a warning during the calculation. Please check the results.
+------
+
+Pareto k diagnostic values:
+                         Count   Pct.
+(-Inf, 0.70]   (good)      545   97.3%
+   (0.70, 1]   (bad)        10    1.8%
+   (1, Inf)   (very bad)    5    0.9%
+
+Found 15 problematic data points.
+Indices of bad points: [ 11  34  42  64 143 191 248 330 376 405 440 445 504 505 557]
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape
+ parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust
+model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are v
+ery different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+Sampling: [X_new_latent, X_var_new_latent, f_mu_pred, log_var_pred_latent, y_pred]
+Sampling ... ──────────────────────────────────────── 100% 0:00:00 / 0:00:02
+
+M predictions
+means:  [1.75651725 1.43679273 1.42762395 1.41509691 0.94335537 1.24701141
+ 1.22140443 1.1497906  1.19369552 1.10648152 1.3818228  1.17768149
+ 1.33264198 1.40984761 0.22525482 1.37628059 1.40820814 1.12872327
+ 1.0470633  1.45920235 1.24761475 1.14633163 1.18214246 1.49403846
+ 1.42310365 1.03327392 0.56151223 1.63698353 1.16641103 1.08986472
+ 1.32910676 1.19976086 1.52983257 0.6896935  1.19312269 1.05205294
+ 1.36010424 0.97802629 1.19609183 0.97006348 1.30530039 1.13969688
+ 1.17265739 1.63330434 1.49024119 1.20617531 1.11677398 1.10735378
+ 1.41518036 1.26380424 1.46082113 1.25816654 1.44102389 1.25528292
+ 0.90933552 0.84780899 1.35334637 1.01810783 1.45923994 1.12345977
+ 1.42878809 1.24214073 1.28527861 1.11140003 1.32229035 1.07995283
+ 1.17594472 1.31548934 1.32908922 1.21404328 1.39253366 0.88213492
+ 1.41475689 1.16355077 0.93442871 1.18106993 1.33471209 1.30434874
+ 1.36561185 1.52068135 0.86531823 1.15953299 1.16462453 1.42069139
+ 0.95971277 1.43250231 1.16310581 1.21047944 1.37759751 1.41240917
+ 0.98660705 1.3025763  1.67045352 1.06778025 1.26615174 1.48702016
+ 1.33844459 1.64762861 1.13567795 0.9511607  0.86152166 1.35669185
+ 1.28028614 1.43150684 1.31699638 1.27228621 1.27220243 0.19701784
+ 1.53710133 0.32436541 1.17563999 0.94603334 1.25849818 1.31161885
+ 1.06294407 0.98455843 1.43666029 1.3570405  1.15644397 1.34879116
+ 1.38014859 1.12544503 1.06512073 1.30398093 0.97759068 1.16348846
+ 1.08668095 1.25710307 1.14158223 1.32796844 0.8521011  0.91202011
+ 1.13226407 1.2606538  0.40089015 1.13765175 0.91210966 0.23530369
+ 1.45423185 1.52022759]
+
+stdvs:  [0.32058002 0.08595922 0.06845243 0.08779796 0.06754042 0.04475123
+ 0.08213711 0.06370815 0.05838911 0.13288697 0.07250052 0.05932641
+ 0.07509101 0.19163966 0.07722205 0.0797708  0.07384026 0.06482023
+ 0.05968892 0.08736754 0.06916849 0.08866477 0.0707163  0.07042323
+ 0.07076395 0.07850001 0.48138806 0.44418664 0.08613485 0.04141548
+ 0.07659195 0.43328614 0.06620767 0.1231842  0.06875383 0.08005945
+ 0.08210472 0.05999448 0.07038493 0.06982253 0.06412915 0.06277671
+ 0.06128325 0.33157283 0.08756938 0.08694591 0.07468362 0.51713969
+ 0.06723465 0.08401261 0.06428783 0.08383058 0.05814653 0.07213303
+ 0.0558578  0.13896493 0.08566717 0.07924692 0.07249349 0.05105885
+ 0.0851929  0.04016122 0.07914839 0.05425558 0.08301019 0.06001999
+ 0.0759291  0.07075632 0.46392622 0.08029267 0.07088645 0.06612811
+ 0.06910744 0.11056165 0.6118224  0.08585131 0.06178934 0.06463354
+ 0.09357613 0.07863389 0.13904344 0.07509619 0.06010426 0.06352581
+ 0.04797793 0.07661961 0.07981905 0.07592246 0.0815112  0.05669922
+ 0.29132502 0.09163639 0.24159059 0.06901435 0.06056055 0.07821876
+ 0.0772256  0.10753203 0.0700889  0.06462309 0.04466318 0.39175984
+ 0.098802   0.07379687 0.06018595 0.08013741 0.07183585 0.03106219
+ 0.08387974 0.03047854 0.09255128 0.08894815 0.08212322 0.06211334
+ 0.10418966 0.04586106 0.08381936 0.06809016 0.08564038 0.07926454
+ 0.58934686 0.07642289 0.05609666 0.12191574 0.04773716 0.05626002
+ 0.08947824 0.09048875 0.06206224 0.08112347 0.06950517 0.09713362
+ 0.13807386 0.06436807 0.04601732 0.21876333 0.08955999 0.04310137
+ 0.07214569 0.07093606]
+
+Unorm M:  ID
+KIC3230227_A             1.84000
+KIC8579578               1.53800
+KIC8241455               1.38300
+KIC5431016               1.33600
+ASAS_J065134-2211.5_A    0.95600
+                          ...
+KIC10025841              1.12100
+KIC4143755               0.91800
+KOI-126_B                0.23529
+KIC4638884               1.52200
+KIC8360349               1.72700
+Name: M, Length: 140, dtype: float64
+
+M accuracy stats
+MAE:  0.05506707676811061
+MARD:  4.902938554754199
+MRD:  -1.0561218737660767
+Peak Memory: 767.55 MB
+CPU time accumulated: 151.07137 s
+Total wall clock time: 2456.09852 s
+><><><><><><><><><><><><><><><><><><><><><><><><><><

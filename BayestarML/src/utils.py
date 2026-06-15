@@ -12,7 +12,6 @@ import pymc as pm
 import matplotlib.pyplot as plt
 import pandas as pd
 from sklearn.metrics import mean_absolute_error
-from preprocess import load_data
 
 def find_pointwise_loo(trace):
     """

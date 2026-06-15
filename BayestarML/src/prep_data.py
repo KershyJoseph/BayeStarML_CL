@@ -3,14 +3,14 @@
 
 import pandas as pd
 import numpy as np
-from preprocess import select_clean_data, error_filter, spreadomatic, return_train_test, normalise, HRplot, plot_feature_target
+from src.preprocess import select_clean_data, error_filter, spreadomatic, return_train_test, normalise, HRplot, plot_feature_target
 from models.baselineXGB import studyrunner
 
-def prep_data(filename:__path__,
+def prep_data(filename:str,
               training_fs:list, targets:list,
               s_class:str,
               add_logvars:list,
-              abs_err_lims:dict, percent_err_lims:dict, target_lims:dict,
+              abs_err_lims:dict, percent_err_lims:dict, target_lims:dict = None,
               L_check:bool = False,
               plot_errs:bool = False,
               plotHR:bool = False,
@@ -137,7 +137,7 @@ if __name__ == "__main__":
               s_class,
               add_logvars,
               abs_err_lims, percent_err_lims, target_lims,
-              L_check=True, plot_errs=True, plotHR=True, plot_t_f=True)
+              L_check=True, XGBoost=True)
 
 
 # 700MS
