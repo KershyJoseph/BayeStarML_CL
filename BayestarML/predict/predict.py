@@ -5,10 +5,9 @@ Created on Tue Jul 15 15:52:30 2025
 
 @author: LamirelFamily
 """
-from BayestarML.src.models import bart
-from BayestarML.src.train_utils import load_data
-from BayestarML.src.train_utils import mard, mrd
-from BayestarML.src.models import gp
+from BayestarML.src.models import bart, gp
+from BayestarML.src.train_utils import load_data, mard, mrd, get_results
+from BayestarML.src.data_processing_utils import prepare_pred_data
 from BayestarML.src.pred_sampling import sample_pred_bart, posterior_predictive_GP, sample_post_pred_HBNN_para
 from BayestarML.src.models.bhs import run_stack
 import arviz as az
@@ -78,13 +77,17 @@ def predict(x, x_er, target,
         print('MARD BHS:', mard_BHS)
         print('MRD BHS:', mrd_BHS)
 
-    return [bart4_pred, gp4_pred, hbnn4_pred], bhs_pred, bhs_w#, x, x_er, data["unorm_y_test"]
+        hyperp_str = training_dataset_key+"_"+str(bart_m)+"_"+str(m_mean)+"_"+str(m_var)+"_"+str(nn_nodes)
+        get_results(pred, data, "BayestarML/predict/outputs_bhs", training_dataset_key, target, hyperp_str)
+
+    return [bart4_pred, gp4_pred, hbnn4_pred], bhs_pred, bhs_w
 
 if __name__ == "__main__":
 
-    predict(x=None, x_er=None,
-            target="M", training_dataset_key="700ms",
-            gp_trace_path= "train_gp_hbnn/",
-            nn_trace_path= "train_gp_hbnn/",
-            bart_m=200, m_mean=50, m_var=20, nn_nodes=16,
-            test=True)
+    _, pred, _, data = predict(x=None, x_er=None,
+                        target="M", training_dataset_key="700ms",
+                        gp_trace_path= "BayestarML/Outputs700MS/GP_M/GP_M_MS50_20_1000_0.95.nc",
+                        nn_trace_path= "BayestarML/Outputs700MS/NN_M/NN_M_MS16_1000_0.95NUTPIE.nc",
+                        bart_m=200, m_mean=50, m_var=20, nn_nodes=16,
+                        test=True)
+
