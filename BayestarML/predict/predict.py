@@ -80,7 +80,7 @@ def predict(x, x_er, target,
         print('MARD BHS:', mard_BHS)
         print('MRD BHS:', mrd_BHS)
 
-        get_results(pred, data, outputs_folder, training_dataset_key, target, hyperp_str)
+        get_results(bhs_pred, data, outputs_folder, training_dataset_key, target, hyperp_str)
 
     return [bart4_pred, gp4_pred, hbnn4_pred], bhs_pred, bhs_w
 
