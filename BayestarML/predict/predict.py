@@ -86,7 +86,7 @@ def predict(x, x_er, target,
 
 if __name__ == "__main__":
 
-    _, pred, _, data = predict(x=None, x_er=None,
+    _, pred, _ = predict(x=None, x_er=None,
                         target="M", training_dataset_key="700ms",
                         gp_trace_path= "BayestarML/Outputs700MS/GP_M/GP_M_MS50_20_1000_0.95.nc",
                         nn_trace_path= "BayestarML/Outputs700MS/NN_M/NN_M_MS16_1000_0.95NUTPIE.nc",
