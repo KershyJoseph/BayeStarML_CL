@@ -400,7 +400,7 @@ def prepare_pred_data(
             (x[f] >= MIN + 0.025 * RANGE) & (x[f] <= MAX - 0.025 * RANGE)
         ]  # keep middle 95%
         if len(x) != len(x_new):
-            print(f"Stars outside middle 95% of {f} training range:\n",
+            print(f"Star(s) outside middle 95% of {f} training range:\n",
                   pd.concat([x, x_new]).drop_duplicates(keep=False))
         if extrapolate:
             continue # don't update x and thus remove extrapolating points

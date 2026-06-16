@@ -98,4 +98,4 @@ if __name__ == "__main__":
                         nn_trace_path= "BayestarML/Outputs700MS/NNrad/NNradMS16_2000NUTPIE.nc",
                         bart_m=250, m_mean=50, m_var=20, nn_nodes=16)
 
-    print("M BHS predictions:\n", pred.mean(0), pred.std(0))
+    print("R BHS predictions:\n", pred.mean(0), pred.std(0))

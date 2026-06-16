@@ -265,7 +265,12 @@ def HBNN_M4_simpler(X_train, Y, X_error, Y_error, n_hidden=5):
 
         # X_data = pm.MutableData('X_data', X_train.values)  # Ensure numpy array
         # sig_X = pm.MutableData('X_data_er', X_error.values)
-        
+
+        #Joseph edit: ensure np.arrays
+        X_clean = np.asarray(X_train)
+        Y_clean = np.asarray(Y).flatten()
+        X_err_clean = np.asarray(X_error)
+
         # Fixed LKJCholeskyCov specification
         chol, corr, sigmas = pm.LKJCholeskyCov(
             'Omega', 
@@ -281,33 +286,33 @@ def HBNN_M4_simpler(X_train, Y, X_error, Y_error, n_hidden=5):
             'X_latent', 
             mu=np.zeros(4),
             chol=chol,
-            shape=(X_train.shape[0], 4)
+            shape=(X_clean.shape[0], 4)
         )
         
         # Observation model
         pm.Normal(
             "X_obs",
             mu=X_latent,
-            sigma=X_error,
-            observed=X_train
+            sigma=X_err_clean,
+            observed=X_clean
         )
 
         ann_input = pm.Deterministic('ann_input', X_latent)
 
-        ann_output = pm.Data("ann_output" , Y) #, dims="obs_id")
+        ann_output = pm.Data("ann_output" , Y_clean) #, dims="obs_id")
 
         # Weights from input to hidden layer
         weights_in_1 = pm.Normal(
-            "w_in_1", 0, sigma=0.1, shape=(n_hidden, 4) #X_latent.eval().shape[1])
+            "w_in_1", 0, sigma=np.sqrt(2/4)*0.1, shape=(n_hidden, 4) #X_latent.eval().shape[1])
         )
 
         # Weights from hidden layer to output
-        weights_1_out = pm.Normal("w_1_out", 0, sigma=0.1, shape=(n_hidden))
+        weights_1_out = pm.Normal("w_1_out", 0, sigma=np.sqrt(2/n_hidden)*0.1, shape=(n_hidden))
 
         
-        bias_1 = pm.Normal("bias_1", 0, sigma=1, shape=n_hidden)
+        bias_1 = pm.Normal("bias_1", 0, sigma=0.1, shape=n_hidden)
 
-        bias_out = pm.Normal("bias_out", 0, sigma=1)
+        bias_out = pm.Normal("bias_out", 0, sigma=0.1)
 
 
         act_1 = pm.Deterministic('act_1', 
@@ -318,7 +323,7 @@ def HBNN_M4_simpler(X_train, Y, X_error, Y_error, n_hidden=5):
 
         act_out = pm.Deterministic('act_out' , pm.math.dot(act_1, weights_1_out) + bias_out)
 
-        er = pm.HalfNormal('er', sigma=1)
+        er = pm.HalfNormal('er', sigma=0.1)
         #er = pm.HalfCauchy('er', beta=1)
 
         out = pm.StudentT(
@@ -327,7 +332,7 @@ def HBNN_M4_simpler(X_train, Y, X_error, Y_error, n_hidden=5):
             mu=act_out,
             sigma=er,
             observed=ann_output,
-            shape=X_train.shape[0], 
+            shape=X_clean.shape[0], 
         )
 
     return neural_network

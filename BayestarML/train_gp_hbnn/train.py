@@ -231,9 +231,9 @@ if __name__ == "__main__":
     start_time_CPU = time.process_time()
     start_time_wall = time.perf_counter()
 
-    print("HBNN RGB logR - 3_1400, 0.1*He priors and 0.1 er. 0.9 TA. NUTPIE")
+    print("HBNN RGB logR - 3_1400, 0.1*He priors and 0.1 bias and er. 0.95 TA. NUTPIE")
     train_NN_1layer(
-        "5438RGB", "logR", 3, sclass="RGB", draws=1400, target_accept=0.9, nutpie=True
+        "5438rgb", "logR", 3, sclass="rgb", draws=1400, target_accept=0.95, nutpie=True
     )
 
     end_time_CPU = time.process_time()
