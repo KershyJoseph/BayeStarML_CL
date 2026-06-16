@@ -123,7 +123,7 @@ def L_consistency_check(df, savename: str, logscale=True):
         plt.xscale("log")
         plt.yscale("log")
     plt.show()
-    plt.savefig("figures/L_check/" + savename)
+    plt.savefig("BayestarML/data/figures/L_check/" + savename)
 
     df.drop(df_bad_Ls.index, inplace=True)
     print(
@@ -167,12 +167,12 @@ def select_clean_data(
 
     # make any vars log10 scale
     if add_logvars:
-        df_allps_log = logomatic(df_allps, add_logvars)
+        df_allps = logomatic(df_allps, add_logvars)
         errs1 += [f"elog{var}1" for var in add_logvars]
         errs2 += [f"elog{var}2" for var in add_logvars]
 
     # make an avg symmetric err col for all vars, log or not
-    df_final = add_symmetric_errs(df_allps_log, errs1, errs2)
+    df_final = add_symmetric_errs(df_allps, errs1, errs2)
 
     return df_final
 
@@ -224,7 +224,7 @@ def error_filter(
             j += 1 / 2
         plt.tight_layout()
         plt.show()
-        fig.savefig("figures/err_dists/" + savename)
+        fig.savefig("BayestarML/data/figures/err_dists/" + savename)
 
     return df_filtered
 
@@ -341,7 +341,7 @@ def HRplot(df, savename: str, hue: str = None):
     ax.set_xlabel("log[ Teff (K) ]")
     ax.set_ylabel("log[ L (Lsol) ]")
 
-    fig.savefig("figures/HRdiagrams/" + savename)
+    fig.savefig("BayestarML/data/figures/HRdiagrams/" + savename)
     plt.close()
 
 
@@ -357,12 +357,12 @@ def plot_feature_target(df: pd.DataFrame, savename: str, feature: str, target: s
     # plt.plot(np.log10(0.08), 0.566, 'rx')
     plt.xlabel(feature)
     plt.ylabel(target + " (" + target[0] + "sol)")
-    plt.savefig("figures/feature_target_figs/" + savename)
+    plt.savefig("BayestarML/data/figures/feature_target_figs/" + savename)
     plt.close()
 
 
 def prepare_pred_data(
-    filename: str, training_dataset_key: str, features: list, add_log_vars: list = None
+    filename: str, training_dataset_key: str, features: list, add_log_vars: list = None, extrapolate=False
 ):
     """
     Normalize input data and return DataFrames for normalized values and errors.
@@ -376,12 +376,12 @@ def prepare_pred_data(
     - x_test: DataFrame with normalized values (columns: 'Teff', 'logg', 'FeH', 'L')
     - x_test_error: DataFrame with normalized errors (columns: 'eTeff', 'elogg', 'eFeH', 'eL')
     """
-    x = pd.read_csv("BayestarML/data/predict_data/" + filename, sep="\t")
+    x = pd.read_csv("BayestarML/predict/prediction_datasets/" + filename, sep="\t")
     # filter to stars with all training features present with err. Add symmetric err column and log vars if needed.
     x = select_clean_data(
         x,
         features,
-        targets="",
+        targets=[],
         add_logvars=add_log_vars,
         check_detached=False,
         L_check=False,
@@ -396,14 +396,18 @@ def prepare_pred_data(
         MIN = x_constants["MIN"][f]
         MAX = x_constants["MAX"][f]
         RANGE = MAX - MIN
-        len_before = len(x)
-        x[f] = x[
+        x_new = x[
             (x[f] >= MIN + 0.025 * RANGE) & (x[f] <= MAX - 0.025 * RANGE)
         ]  # keep middle 95%
-        len_after = len(x)
+        if len(x) != len(x_new):
+            print(f"Stars outside middle 95% of {f} training range:\n",
+                  pd.concat([x, x_new]).drop_duplicates(keep=False))
+        if extrapolate:
+            continue # don't update x and thus remove extrapolating points
         print(
-            f"Removed {len_before - len_after} stars checking {f} inputs within middle 95% {f} training range."
+            f"Removing {len(x) - len(x_new)} stars with {f} inputs outside middle 95% of {f} training range."
         )
+        x = x_new
 
     # normalise input data
     x_norm = normalise(x, None, training_dataset_key, x_only=True)

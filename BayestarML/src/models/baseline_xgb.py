@@ -10,7 +10,7 @@ import json
 import numpy as np
 import optuna
 from sklearn.model_selection import RepeatedKFold
-from xgboost import xgbRegressor
+from xgboost import XGBRegressor
 
 
 # bayesian optimisation
@@ -43,7 +43,7 @@ class Objective:
             X_train, X_test = self.X.iloc[train_idxs], self.X.iloc[test_idxs]
             y_train, y_test = self.y.iloc[train_idxs], self.y.iloc[test_idxs]
 
-            model = xgbRegressor(**params, random_state=99)
+            model = XGBRegressor(**params, random_state=99)
             model.fit(X_train, y_train)
 
             preds = model.predict(X_test)

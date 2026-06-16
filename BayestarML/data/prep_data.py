@@ -35,7 +35,7 @@ def prep_data(
     df.set_index("ID", inplace=True)
 
     # if RGB, fix Teff errs: add 50K systematic error in quadrature to all Sch-St Teff errs, as were taken straight from APOGEE https://iopscience.iop.org/article/10.3847/1538-4357/ac4891
-    if s_class == "RGB":
+    if s_class == "rgb":
         old_Teff = df.loc[df["source"] == "Schonhut-Stasik24", ["eTeff1", "eTeff2"]]
         df.loc[df["source"] == "Schonhut-Stasik24", ["eTeff1", "eTeff2"]] = np.sqrt(
             old_Teff**2 + 50**2
@@ -88,7 +88,7 @@ def prep_data(
             df = df_copy
     print(f"{len(df)} stars left after cutting target ranges.")
     dataset_key = str(len(df)) + s_class
-    df.to_csv("BayestarML/training_data/processed_data/" + dataset_key + ".txt")
+    df.to_csv("BayestarML/data/" + dataset_key + ".txt")
 
     # get MUs and SIGs for normalisation of each param, and write to constants.json, as well as MIN and MAX
     (
@@ -148,15 +148,25 @@ if __name__ == "__main__":
 
     training_fs = ["Teff", "logg", "FeH", "L"]
     targets = ["M", "R"]
-    s_class = "rgb"
-    add_logvars = ["L", "R"]  # add a log column with errs for these variables
-    target_lims = {  # to skip the target range cutting step if you already know the limits you want
-        "logR": [0, 1.6],
-        "M": [0.75, 2.25],
+    s_class = "ms"
+    add_logvars = ["L"]  # add a log column with errs for these variables
+    # target_lims = {  # to skip the target range cutting step if you already know the limits you want
+    #     "logR": [0, 1.6],
+    #     "M": [0.75, 2.25],
+    # }
+
+    # 700ms
+    abs_err_lims = {
+        "elogL": 0.5
+    }
+    percent_err_lims = {
+        "eM": 100,
+        "eR": 100
     }
 
-    abs_err_lims = {"elogL": 0.05, "eTeff": 100, "elogg": 0.05, "eFeH": 0.1}
-    percent_err_lims = {"eM": 7, "eR": 7}
+    # 5438rgb
+    # abs_err_lims = {"elogL": 0.05, "eTeff": 100, "elogg": 0.05, "eFeH": 0.1}
+    # percent_err_lims = {"eM": 7, "eR": 7}
 
     # prepare data
     prep_data(
@@ -167,16 +177,7 @@ if __name__ == "__main__":
         add_logvars,
         abs_err_lims,
         percent_err_lims,
-        target_lims,
-        L_check=True,
-        xgboost=True,
+        #target_lims,
+        L_check=False,
+        xgboost=False,
     )
-
-# 700ms
-# abs_err_lims = {
-#     "elogL": 0.5
-# }
-# percent_err_lims = {
-#     "eM": 100,
-#     "eR": 100
-# }

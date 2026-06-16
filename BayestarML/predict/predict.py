@@ -88,7 +88,7 @@ def predict(x, x_er, target,
 if __name__ == "__main__":
 
     features = ["Teff", "FeH", "logL", "logg"]
-    x, x_er = prepare_pred_data("estrellas_anfitrionas.txt", "700ms", features)
+    x, x_er = prepare_pred_data("estrellas_anfitrionas.txt", "700ms", features, extrapolate=True)
 
     _, pred, _ = predict(x=x, x_er=x_er,
                         target="M", training_dataset_key="700ms",
