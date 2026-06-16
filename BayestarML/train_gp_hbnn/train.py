@@ -1,23 +1,15 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Aug 12 10:50:13 2025
-
-@author: LamirelFamily
+"""Executable to train HBNN or GP
 """
 
 import time
-
 import psutil
 import pymc as pm
-from pred_sampling import (
+from BayestarML.src.pred_sampling import (
     SIMPLE_sample_post_pred_HBNN_para,
     posterior_predictive_GP,
     sample_post_pred_HBNN_para,
 )
-from preprocess import load_data
-from utils import get_results, train
-
+from BayestarML.src.train_utils import get_results, train, load_data
 from BayestarML.src.models import gp, hbnn
 
 

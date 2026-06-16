@@ -10,9 +10,9 @@ Created on Tue Jul 15 15:27:50 2025
 import pymc as pm
 import pymc_bart as pmb
 
-def BART_M(X, X_er, Y, Y_er, m=250):
+def BART_M(x, x_er, y, y_er, m=250):
     """
-    Build a BART model for predicting Y with input uncertainty in X.
+    Build a BART model for predicting y with input uncertainty in X.
 
     Constructs a PyMC model using Bayesian Additive Regression Trees (BART),
     where each input variable is treated as a normal random variable with
@@ -25,10 +25,10 @@ def BART_M(X, X_er, Y, Y_er, m=250):
         Input features.
     X_er : array-like
         Measurement errors for each input feature.
-    Y : array-like
+    y : array-like
         Observed target values.
-    Y_er : array-like
-        Measurement errors for Y (not used directly in the model).
+    y_er : array-like
+        Measurement errors for y (not used directly in the model).
     m : int, optional
         Number of trees in the BART ensemble. Default is 250.
 
@@ -40,16 +40,16 @@ def BART_M(X, X_er, Y, Y_er, m=250):
     
     with pm.Model() as model_BART:
         
-        X_in = pm.Data('X', X)
-        X_in_er = pm.Data('X_er', X_er)
+        x_in = pm.Data('x', x)
+        x_in_er = pm.Data('x_er', x_er)
         
-        X_normal = pm.Normal('X_dist', mu=X_in, sigma=X_in_er, shape=X_in.shape)
+        x_normal = pm.Normal('x_dist', mu=x_in, sigma=x_in_er, shape=x_in.shape)
         
-        mu = pmb.BART('mu', X_normal, Y.values, m=m)
+        mu = pmb.BART('mu', x_normal, y.values, m=m)
              
         sig = pm.HalfCauchy('sig', beta=0.05)
         
-        y = pm.Normal("y", mu=mu, sigma=sig, shape=X_in.shape[0], observed=Y)
+        y = pm.Normal("y", mu=mu, sigma=sig, shape=x_in.shape[0], observed=y)
         
     return model_BART
 

@@ -31,7 +31,7 @@ def predict(x, x_er, target,
     bart4_model = bart.BART_M(data["x_train"], data["x_train_err"], data["y_train"], data["y_train_err"], m=bart_m)
     bart4_pred, lpd_BART4 = sample_pred_bart(bart4_model,
                                     x,
-                                    x_er, target,
+                                    x_er, target, training_dataset_key,
                                     1000, 2)
 
     print("-------Start GP buisness----------")
@@ -39,14 +39,15 @@ def predict(x, x_er, target,
     gp4_trace = az.from_netcdf(gp_trace_path)
     gp4_pred, lpd_GP4 = posterior_predictive_GP(
         gp4_model, μ_gp4, lg_σ_gp4, μ_trace4, var_trace4, gp4_trace,
-        x, x_er, xu4, xu_er4, training_dim, target)
+        x, x_er, xu4, xu_er4, training_dim, target, training_dataset_key)
 
     print("-------Start HBNN buisness----------")
     hbnn4_trace = az.from_netcdf(nn_trace_path)
     hbnn4_pred, lpd_HBNN4 = sample_post_pred_HBNN_para(hbnn4_trace,  
                                                     x,
                                                     x_er,
-                                                    nn_nodes, training_dim, target)
+                                                    nn_nodes, training_dim, target,
+                                                    training_dataset_key)
 
     print("-------Start BHS buisness----------")
     (bhs_trace, bhs_pred, bhs_w) = run_stack(bart4_pred, hbnn4_pred, gp4_pred,
@@ -89,5 +90,5 @@ if __name__ == "__main__":
                         target="M", training_dataset_key="700ms",
                         gp_trace_path= "BayestarML/Outputs700MS/GP_M/GP_M_MS50_20_1000_0.95.nc",
                         nn_trace_path= "BayestarML/Outputs700MS/NN_M/NN_M_MS16_1000_0.95NUTPIE.nc",
-                        bart_m=200, m_mean=50, m_var=20, nn_nodes=16,
+                        bart_m=250, m_mean=50, m_var=20, nn_nodes=16,
                         test=True)
