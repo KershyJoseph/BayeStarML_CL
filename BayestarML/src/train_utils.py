@@ -13,7 +13,7 @@ import pandas as pd
 import pymc as pm
 from sklearn.metrics import mean_absolute_error
 
-from BayestarML.src.data_processing_utils import denormalise_err, denormalise_val
+from BayestarML.src.data_utils import denormalise_err, denormalise_val
 
 
 def load_data(dataset_key, target):

@@ -376,7 +376,7 @@ def prepare_pred_data(
     - x_test: DataFrame with normalized values (columns: 'Teff', 'logg', 'FeH', 'L')
     - x_test_error: DataFrame with normalized errors (columns: 'eTeff', 'elogg', 'eFeH', 'eL')
     """
-    x = pd.read_csv("predict_BayestarML/data/" + filename, sep="\t")
+    x = pd.read_csv("BayestarML/data/predict_data/" + filename, sep="\t")
     # filter to stars with all training features present with err. Add symmetric err column and log vars if needed.
     x = select_clean_data(
         x,
@@ -408,4 +408,4 @@ def prepare_pred_data(
     # normalise input data
     x_norm = normalise(x, None, training_dataset_key, x_only=True)
 
-    return x_norm  # might need modifying for scalar inputs?
+    return x_norm[features], x_norm[[f"e{f}" for f in features]]  # might need modifying for scalar inputs?

@@ -3,7 +3,7 @@
 
 import numpy as np
 import pandas as pd
-from BayestarML.src.data_processing_utils import (
+from BayestarML.src.data_utils import (
     HRplot,
     error_filter,
     normalise,
@@ -88,7 +88,7 @@ def prep_data(
             df = df_copy
     print(f"{len(df)} stars left after cutting target ranges.")
     dataset_key = str(len(df)) + s_class
-    df.to_csv("BayestarML/data/" + dataset_key + ".txt")
+    df.to_csv("BayestarML/training_data/processed_data/" + dataset_key + ".txt")
 
     # get MUs and SIGs for normalisation of each param, and write to constants.json, as well as MIN and MAX
     (

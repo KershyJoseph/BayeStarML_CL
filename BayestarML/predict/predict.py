@@ -7,7 +7,7 @@ Created on Tue Jul 15 15:52:30 2025
 """
 from BayestarML.src.models import bart, gp
 from BayestarML.src.train_utils import load_data, mard, mrd, get_results
-from BayestarML.src.data_processing_utils import prepare_pred_data
+from BayestarML.src.data_utils import prepare_pred_data
 from BayestarML.src.pred_sampling import sample_pred_bart, posterior_predictive_GP, sample_post_pred_HBNN_para
 from BayestarML.src.models.bhs import run_stack
 import arviz as az
@@ -15,13 +15,13 @@ import arviz as az
 def predict(x, x_er, target,
             training_dataset_key, gp_trace_path, nn_trace_path,
             bart_m, m_mean, m_var, nn_nodes,
-            test=False):
+            test=False, savename=""):
     """Train BART and BHS and then make some predictions
     """
 
     data, training_dim = load_data(training_dataset_key, target)
     outputs_folder = "BayestarML/predict/outputs_bhs"
-    hyperp_str = training_dataset_key+"_"+target+"_"+str(bart_m)+"_"+str(m_mean)+"_"+str(m_var)+"_"+str(nn_nodes)
+    hyperp_str = savename+"_"+training_dataset_key+"_"+target+"_"+str(bart_m)+"_"+str(m_mean)+"_"+str(m_var)+"_"+str(nn_nodes)
 
     if test:
         x = data["x_test"]
@@ -53,9 +53,10 @@ def predict(x, x_er, target,
     (bhs_trace, bhs_pred, bhs_w) = run_stack(bart4_pred, hbnn4_pred, gp4_pred,
                                         data["x_train"], x, lpd_BART4, lpd_HBNN4,
                                         lpd_GP4)
-    bhs_trace.to_netcdf(outputs_folder+"/"+hyperp_str+".nc")
 
     if test:
+        bhs_trace.to_netcdf(outputs_folder+"/"+hyperp_str+".nc")
+
         mard_BART = mard(data["unorm_y_test"], bart4_pred.mean(0))
         mrd_BART = mrd(data["unorm_y_test"], bart4_pred.mean(0))
 
@@ -86,9 +87,13 @@ def predict(x, x_er, target,
 
 if __name__ == "__main__":
 
-    _, pred, _ = predict(x=None, x_er=None,
+    features = ["Teff", "FeH", "logL", "logg"]
+    x, x_er = prepare_pred_data("estrellas_anfitrionas.txt", "700ms", features)
+
+    _, pred, _ = predict(x=x, x_er=x_er,
                         target="M", training_dataset_key="700ms",
                         gp_trace_path= "BayestarML/Outputs700MS/GP_M/GP_M_MS50_20_1000_0.95.nc",
                         nn_trace_path= "BayestarML/Outputs700MS/NN_M/NN_M_MS16_1000_0.95NUTPIE.nc",
-                        bart_m=250, m_mean=50, m_var=20, nn_nodes=16,
-                        test=True)
+                        bart_m=250, m_mean=50, m_var=20, nn_nodes=16)
+
+    print("M BHS predictions:\n", pred.mean(0), pred.std(0))

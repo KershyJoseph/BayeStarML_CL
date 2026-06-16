@@ -6,7 +6,7 @@ import pytensor.tensor as tt
 import pymc as pm
 import arviz as az
 from BayestarML.src.train_utils import find_pointwise_loo
-from BayestarML.src.data_processing_utils import denormalise_val
+from BayestarML.src.data_utils import denormalise_val
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from functools import partial
 import os
