@@ -1,17 +1,12 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Jul 14 15:20:01 2025
-
-@author: LamirelFamily
+"""Module with functions to extract posterior samples for BART, HBNN, and GP
 """
 
 import numpy as np
 import pytensor.tensor as tt
 import pymc as pm
 import arviz as az
-from utils import find_pointwise_loo
-from preprocess import denormalise_val
+from BayestarML.src.train_utils import find_pointwise_loo
+from BayestarML.src.data_processing_utils import denormalise_val
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from functools import partial
 import os
@@ -842,7 +837,7 @@ def posterior_predictive_GP(
 
 #     return stats, lpd_GP
 
-def sample_pred_BART(model, X, X_er, target, dataset_key, draws=1000, chains=2):
+def sample_pred_bart(model, X, X_er, target, dataset_key, draws=1000, chains=2):
     """
     Generate posterior predictive samples and LOO scores for a BART model.
 

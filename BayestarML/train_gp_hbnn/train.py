@@ -6,27 +6,48 @@ Created on Tue Aug 12 10:50:13 2025
 @author: LamirelFamily
 """
 
-from models import gp
-from preprocess import load_data
-from utils import train, get_results
-from models import hbnn
-from pred_sampling import sample_post_pred_HBNN_para, posterior_predictive_GP, SIMPLE_sample_post_pred_HBNN_para
-import pymc as pm
-import psutil
 import time
-import pandas as pd
 
-def train_GP(dataset_key,
-             target,
-             M_mean, M_var,
-             sclass,
-             draws=1000, target_accept=.95, chains=4,
-             advi=False,
-             nutpie=False):
-    """Function to train GP
-    """
-    hyperp_str = "GP_"+target+"_"+sclass+str(M_mean)+"_"+str(M_var)+"_"+str(draws)+"_"+str(target_accept)
-    outputs_folder_path = "Outputs"+dataset_key+"/GP_"+target
+import psutil
+import pymc as pm
+from pred_sampling import (
+    SIMPLE_sample_post_pred_HBNN_para,
+    posterior_predictive_GP,
+    sample_post_pred_HBNN_para,
+)
+from preprocess import load_data
+from utils import get_results, train
+
+from BayestarML.src.models import gp, hbnn
+
+
+def train_GP(
+    dataset_key,
+    target,
+    M_mean,
+    M_var,
+    sclass,
+    draws=1000,
+    target_accept=0.95,
+    chains=4,
+    advi=False,
+    nutpie=False,
+):
+    """Function to train GP"""
+    hyperp_str = (
+        "GP_"
+        + target
+        + "_"
+        + sclass
+        + str(M_mean)
+        + "_"
+        + str(M_var)
+        + "_"
+        + str(draws)
+        + "_"
+        + str(target_accept)
+    )
+    outputs_folder_path = "Outputs" + dataset_key + "/GP_" + target
     nuts_sampler = "pymc"
     if nutpie:
         hyperp_str += "NUTPIE"
@@ -34,40 +55,71 @@ def train_GP(dataset_key,
 
     data, train_dim = load_data(dataset_key, target)
 
-    model, μ_gp, lg_σ_gp, μ_trace, var_trace, Xu, Xu_er = gp.sparse_fully_heteroscedastic_gp(
-        data["x_train"],
-        data["x_train_err"],
-        data["y_train"],
-        M_mean,
-        M_var
+    model, μ_gp, lg_σ_gp, μ_trace, var_trace, Xu, Xu_er = (
+        gp.sparse_fully_heteroscedastic_gp(
+            data["x_train"], data["x_train_err"], data["y_train"], M_mean, M_var
+        )
     )
 
     if advi:
-        approx = pm.fit(n=40000, method='advi', model=model, progressbar=True)
+        approx = pm.fit(n=40000, method="advi", model=model, progressbar=True)
         trace = approx.sample(1000)
         print("ELBO:\n", approx.hist)
-        trace.extend(pm.compute_log_likelihood(trace, model=model, var_names='y'))
-        #trace.to_netcdf(...)
+        trace.extend(pm.compute_log_likelihood(trace, model=model, var_names="y"))
+        # trace.to_netcdf(...)
     else:
-        trace = train(model, outputs_folder_path+"/"+hyperp_str+".nc",
-                  draw=draws, chains=chains, target_accept=target_accept, nuts_sampler=nuts_sampler)
+        trace = train(
+            model,
+            outputs_folder_path + "/" + hyperp_str + ".nc",
+            draw=draws,
+            chains=chains,
+            target_accept=target_accept,
+            nuts_sampler=nuts_sampler,
+        )
 
-    pred, _ = posterior_predictive_GP(model, μ_gp, lg_σ_gp, μ_trace, var_trace, trace,
-                                        data["x_test"], data["x_test_err"], Xu, Xu_er, train_dim, target, dataset_key)
+    pred, _ = posterior_predictive_GP(
+        model,
+        μ_gp,
+        lg_σ_gp,
+        μ_trace,
+        var_trace,
+        trace,
+        data["x_test"],
+        data["x_test_err"],
+        Xu,
+        Xu_er,
+        train_dim,
+        target,
+        dataset_key,
+    )
 
     get_results(pred, data, outputs_folder_path, dataset_key, target, hyperp_str)
 
-def train_NN_1layer(dataset_key,
-             target,
-             n_hidden,
-             sclass,
-             draws=1000, target_accept=.95, chains=4,
-             advi=False,
-             nutpie=False):
-    """Function to train HBNN
-    """
-    hyperp_str = "NN_1layer_"+target+"_"+sclass+str(n_hidden)+"_"+str(draws)+"_"+str(target_accept)
-    outputs_folder_path = "Outputs"+dataset_key+"/NN_"+target
+
+def train_NN_1layer(
+    dataset_key,
+    target,
+    n_hidden,
+    sclass,
+    draws=1000,
+    target_accept=0.95,
+    chains=4,
+    advi=False,
+    nutpie=False,
+):
+    """Function to train HBNN"""
+    hyperp_str = (
+        "NN_1layer_"
+        + target
+        + "_"
+        + sclass
+        + str(n_hidden)
+        + "_"
+        + str(draws)
+        + "_"
+        + str(target_accept)
+    )
+    outputs_folder_path = "Outputs" + dataset_key + "/NN_" + target
     nuts_sampler = "pymc"
     if nutpie:
         hyperp_str += "NUTPIE"
@@ -75,33 +127,67 @@ def train_NN_1layer(dataset_key,
 
     data, train_dim = load_data(dataset_key, target)
 
-    model = hbnn.HBNN_M4_simpler(data["x_train"], data["y_train"], data["x_train_err"], data["y_train_err"], n_hidden)
+    model = hbnn.HBNN_M4_simpler(
+        data["x_train"],
+        data["y_train"],
+        data["x_train_err"],
+        data["y_train_err"],
+        n_hidden,
+    )
 
     if advi:
-        approx = pm.fit(n=100000, method='advi', model=model, progressbar=True)
+        approx = pm.fit(n=100000, method="advi", model=model, progressbar=True)
         trace = approx.sample(1000)
         print("ELBO:\n", approx.hist)
-        trace.extend(pm.compute_log_likelihood(trace, model=model, var_names='y'))
-        #trace.to_netcdf(...)
+        trace.extend(pm.compute_log_likelihood(trace, model=model, var_names="y"))
+        # trace.to_netcdf(...)
     else:
-        trace = train(model, outputs_folder_path+"/"+hyperp_str+".nc",
-                  draw=draws, chains=chains, target_accept=target_accept, nuts_sampler=nuts_sampler)
+        trace = train(
+            model,
+            outputs_folder_path + "/" + hyperp_str + ".nc",
+            draw=draws,
+            chains=chains,
+            target_accept=target_accept,
+            nuts_sampler=nuts_sampler,
+        )
 
-    pred, _ = SIMPLE_sample_post_pred_HBNN_para(trace, data["x_test"], data["x_test_err"], n_hidden, train_dim, target, dataset_key)
+    pred, _ = SIMPLE_sample_post_pred_HBNN_para(
+        trace,
+        data["x_test"],
+        data["x_test_err"],
+        n_hidden,
+        train_dim,
+        target,
+        dataset_key,
+    )
 
     get_results(pred, data, outputs_folder_path, dataset_key, target, hyperp_str)
 
-def train_NN(dataset_key,
-             target,
-             n_hidden,
-             sclass,
-             draws=1000, target_accept=.95, chains=4,
-             advi=False,
-             nutpie=False):
-    """Function to train HBNN
-    """
-    hyperp_str = "NN_"+target+"_"+sclass+str(n_hidden)+"_"+str(draws)+"_"+str(target_accept)
-    outputs_folder_path = "Outputs"+dataset_key+"/NN_"+target
+
+def train_NN(
+    dataset_key,
+    target,
+    n_hidden,
+    sclass,
+    draws=1000,
+    target_accept=0.95,
+    chains=4,
+    advi=False,
+    nutpie=False,
+):
+    """Function to train HBNN"""
+    hyperp_str = (
+        "NN_"
+        + target
+        + "_"
+        + sclass
+        + str(n_hidden)
+        + "_"
+        + str(draws)
+        + "_"
+        + str(target_accept)
+    )
+    outputs_folder_path = "Outputs" + dataset_key + "/NN_" + target
     nuts_sampler = "pymc"
     if nutpie:
         hyperp_str += "NUTPIE"
@@ -109,23 +195,44 @@ def train_NN(dataset_key,
 
     data, train_dim = load_data(dataset_key, target)
 
-    model = hbnn.HBNN_M4(data["x_train"], data["y_train"], data["x_train_err"], data["y_train_err"], n_hidden)
+    model = hbnn.HBNN_M4(
+        data["x_train"],
+        data["y_train"],
+        data["x_train_err"],
+        data["y_train_err"],
+        n_hidden,
+    )
 
     if advi:
-        approx = pm.fit(n=100000, method='advi', model=model, progressbar=True)
+        approx = pm.fit(n=100000, method="advi", model=model, progressbar=True)
         trace = approx.sample(1000)
         print("ELBO:\n", approx.hist)
-        trace.extend(pm.compute_log_likelihood(trace, model=model, var_names='y'))
-        #trace.to_netcdf(...)
+        trace.extend(pm.compute_log_likelihood(trace, model=model, var_names="y"))
+        # trace.to_netcdf(...)
     else:
-        trace = train(model, outputs_folder_path+"/"+hyperp_str+".nc",
-                  draw=draws, chains=chains, target_accept=target_accept, nuts_sampler=nuts_sampler)
+        trace = train(
+            model,
+            outputs_folder_path + "/" + hyperp_str + ".nc",
+            draw=draws,
+            chains=chains,
+            target_accept=target_accept,
+            nuts_sampler=nuts_sampler,
+        )
 
-    pred, _ = sample_post_pred_HBNN_para(trace, data["x_test"], data["x_test_err"], n_hidden, train_dim, target, dataset_key)
+    pred, _ = sample_post_pred_HBNN_para(
+        trace,
+        data["x_test"],
+        data["x_test_err"],
+        n_hidden,
+        train_dim,
+        target,
+        dataset_key,
+    )
 
     get_results(pred, data, outputs_folder_path, dataset_key, target, hyperp_str)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     print("<><><><><<><<><><><>><<><<><<><<<><><><<><<><><><><>")
 
     process = psutil.Process()
@@ -133,13 +240,15 @@ if __name__ == '__main__':
     start_time_wall = time.perf_counter()
 
     print("HBNN RGB logR - 3_1400, 0.1*He priors and 0.1 er. 0.9 TA. NUTPIE")
-    train_NN_1layer("5438RGB", "logR", 3, sclass="RGB", draws=1400, target_accept=0.9, nutpie=True)
+    train_NN_1layer(
+        "5438RGB", "logR", 3, sclass="RGB", draws=1400, target_accept=0.9, nutpie=True
+    )
 
     end_time_CPU = time.process_time()
     mem1 = process.memory_info().rss / 1024**2
     print(f"Peak Memory: {mem1:.2f} MB")
-    print(f"CPU time accumulated: {(end_time_CPU-start_time_CPU):.5f} s")
-    print(f"Total wall clock time: {time.perf_counter()-start_time_wall:.5f} s")
+    print(f"CPU time accumulated: {(end_time_CPU - start_time_CPU):.5f} s")
+    print(f"Total wall clock time: {time.perf_counter() - start_time_wall:.5f} s")
 
     print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
 
@@ -147,7 +256,7 @@ if __name__ == '__main__':
     # start_time2 = time.time()
 
     # print("GP MS radius - 2000 draws update")
-    # train_GP("700MS", "R", 50, 20, sclass="MS")
+    # train_GP("700ms", "R", 50, 20, sclass="MS")
 
     # end_time_CPU2 = time.process_time()
 
@@ -162,7 +271,7 @@ if __name__ == '__main__':
     # start_time3 = time.time()
 
     # print("GP - radius - RGB stars. 100, 30, 1000. 20TD still.")
-    # radius_train_GP(datasetRGB, 100, 30, "Outputs5438RGB", 1000, target_accept=0.95, sclass="RGB")
+    # radius_train_GP(datasetRGB, 100, 30, "outputs5438rgb", 1000, target_accept=0.95, sclass="RGB")
 
     # end_time_CPU3 = time.process_time()
 
@@ -177,7 +286,7 @@ if __name__ == '__main__':
     # start_time4 = time.time()
 
     # print("GP - mass - RGB stars. 100, 30, 1000. 20TD still.")
-    # mass_train_GP(datasetRGB, 100, 30, "Outputs5438RGB", 1000, target_accept=0.95, sclass="RGB")
+    # mass_train_GP(datasetRGB, 100, 30, "outputs5438rgb", 1000, target_accept=0.95, sclass="RGB")
 
     # end_time_CPU4 = time.process_time()
 
@@ -188,18 +297,6 @@ if __name__ == '__main__':
 
     # print("><><><><><><><><><><><><><><><><><><><><><><><><><")
     print("Salve Regina")
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 # The reason you are hitting PyMC warnings about "old GP objects" is because you've coded up a brilliant, custom implementation of a Sparse Heteroscedastic GP from scratch, rather than using PyMC's built-in pm.gp high-level classes.
@@ -224,8 +321,8 @@ if __name__ == '__main__':
 #     gp_model, mu_gp, log_var_gp, μ_trace, var_trace, trace,
 #     X_new_raw, X_er_new_raw, Xu, Xu_var,
 #     n_param, target,
-#     var_cols_x=(0,1),         
-#     var_cols_xerr=(0,1),     
+#     var_cols_x=(0,1),
+#     var_cols_xerr=(0,1),
 #     random_seed=42,
 # ):
 #     lpd_GP = find_pointwise_loo(trace)
@@ -255,32 +352,32 @@ if __name__ == '__main__':
 #         log_var_pred_latent = log_var_gp.conditional_marginal(
 #             "log_var_pred_latent", X_var_new, Xu_var, gp_trace=var_trace
 #         )
-        
+
 #         # Pull parameters safely via the original model graph names
 #         log_var_pred = gp_model["alpha_log_var"] + log_var_pred_latent
 #         sigma_pred = pm.math.exp(0.5 * log_var_pred)
 
-#     # 2. Compile an explicit PyTensor function. 
+#     # 2. Compile an explicit PyTensor function.
 #     # This takes your posterior sample inputs and maps them directly to your outputs.
 #     # We find all free parameters required by the graph (ls, eta, alpha_log_var, etc.)
 #     input_rvs = [v for v in pred_model.free_RVs if v not in [X_mu_latent, X_var_latent]]
 #     # Add the parent variables from your training model that are required
-#     input_rvs.extend([gp_model["alpha_log_var"]]) 
+#     input_rvs.extend([gp_model["alpha_log_var"]])
 
 #     # Compile the mathematical graph directly
 #     print("Compiling predictive math graph...")
 #     predict_fn = pytensor.function(inputs=input_rvs, outputs=[f_mu_pred, sigma_pred])
 
-#     # 3. Vectorized Evaluation over the Trace 
+#     # 3. Vectorized Evaluation over the Trace
 #     # Instead of calling sample_posterior_predictive, loop or map over your posteriors safely
 #     posterior_samples = trace.posterior.stack(sample=("chain", "draw"))
-    
+
 #     y_draws_list = []
 #     rng = np.random.default_rng(random_seed)
 
 #     for i in range(len(posterior_samples.sample)):
 #         sample = posterior_samples.isel(sample=i)
-        
+
 #         # Extract values from trace to pass to the compiled graph
 #         feed_dict = {}
 #         for r_var in input_rvs:
@@ -288,7 +385,7 @@ if __name__ == '__main__':
 
 #         # Compute mu and sigma for this specific posterior draw
 #         mu_val, sigma_val = predict_fn(**feed_dict)
-        
+
 #         # Sample your final observed y analytically
 #         y_sample = rng.normal(loc=mu_val, scale=sigma_val)
 #         y_draws_list.append(y_sample)
