@@ -1,18 +1,18 @@
-"""Executable to prepare a given database file for training on the BHS model"""
+"""Executable to prepare a given database file for training on the BHS model
+"""
 
 import numpy as np
 import pandas as pd
-from preprocess import (
+from BayestarML.src.data_processing_utils import (
     HRplot,
     error_filter,
     normalise,
     plot_feature_target,
     return_train_test,
     select_clean_data,
-    spreadomatic,
+    spreadomatic
 )
-
-from BayestarML.src.models.baselinexgb import studyrunner
+from BayestarML.src.models.baseline_xgb import studyrunner
 
 
 def prep_data(
@@ -171,7 +171,6 @@ if __name__ == "__main__":
         L_check=True,
         xgboost=True,
     )
-
 
 # 700ms
 # abs_err_lims = {

@@ -288,7 +288,8 @@ def model_pred_plotter(
 def get_results(
     posterior_draws, data, outputs_folder_path, dataset_key, target, hyperp_str
 ):
-    """ """
+    """
+    """
     stds = posterior_draws.std(0)
     means = posterior_draws.mean(0)
     print("\n" + target + " predictions")
