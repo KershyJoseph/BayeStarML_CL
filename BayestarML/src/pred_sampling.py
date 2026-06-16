@@ -837,7 +837,7 @@ def posterior_predictive_GP(
 
 #     return stats, lpd_GP
 
-def sample_pred_bart(model, X, X_er, target, dataset_key, draws=1000, chains=2):
+def sample_pred_bart(model, x, x_er, target, dataset_key, draws=1000, chains=2):
     """
     Generate posterior predictive samples and LOO scores for a BART model.
 
@@ -889,8 +889,8 @@ def sample_pred_bart(model, X, X_er, target, dataset_key, draws=1000, chains=2):
     print("LOO\n", az.loo(trace))
 
     with model:
-        pm.set_data({'X': X,
-                     'X_er': X_er
+        pm.set_data({'x': x,
+                     'x_er': x_er
             })
         pred = pm.sample_posterior_predictive(trace, predictions=True)
 
