@@ -91,9 +91,11 @@ if __name__ == "__main__":
     x, x_er = prepare_pred_data("estrellas_anfitrionas.txt", "700ms", features, extrapolate=True)
 
     _, pred, _ = predict(x=x, x_er=x_er,
-                        target="M", training_dataset_key="700ms",
-                        gp_trace_path= "BayestarML/Outputs700MS/GP_M/GP_M_MS50_20_1000_0.95.nc",
-                        nn_trace_path= "BayestarML/Outputs700MS/NN_M/NN_M_MS16_1000_0.95NUTPIE.nc",
+                        target="R", training_dataset_key="700ms",
+                        # gp_trace_path= "BayestarML/Outputs700MS/GP_M/GP_M_MS50_20_1000_0.95.nc",
+                        # nn_trace_path= "BayestarML/Outputs700MS/NN_M/NN_M_MS16_1000_0.95NUTPIE.nc",
+                        gp_trace_path= "BayestarML/Outputs700MS/GP_R/GP_R_MS50_20_1000_0.95.nc",
+                        nn_trace_path= "BayestarML/Outputs700MS/NNrad/NNradMS16_2000NUTPIE.nc",
                         bart_m=250, m_mean=50, m_var=20, nn_nodes=16)
 
     print("M BHS predictions:\n", pred.mean(0), pred.std(0))
