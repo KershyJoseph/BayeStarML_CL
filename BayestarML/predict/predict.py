@@ -20,6 +20,8 @@ def predict(x, x_er, target,
     """
 
     data, training_dim = load_data(training_dataset_key, target)
+    outputs_folder = "BayestarML/predict/outputs_bhs"
+    hyperp_str = training_dataset_key+"_"+target+"_"+str(bart_m)+"_"+str(m_mean)+"_"+str(m_var)+"_"+str(nn_nodes)
 
     if test:
         x = data["x_test"]
@@ -50,7 +52,7 @@ def predict(x, x_er, target,
     (bhs_trace, bhs_pred, bhs_w) = run_stack(bart4_pred, hbnn4_pred, gp4_pred,
                                         data["x_train"], x, lpd_BART4, lpd_HBNN4,
                                         lpd_GP4)
-    bhs_trace.to_netcdf("/BHStrace_Mass_"+str(bart_m)+"_"+str(m_mean)+"_"+str(m_var)+"_"+str(nn_nodes)+".nc")
+    bhs_trace.to_netcdf(outputs_folder+"/"+hyperp_str+".nc")
 
     if test:
         mard_BART = mard(data["unorm_y_test"], bart4_pred.mean(0))
@@ -77,8 +79,7 @@ def predict(x, x_er, target,
         print('MARD BHS:', mard_BHS)
         print('MRD BHS:', mrd_BHS)
 
-        hyperp_str = training_dataset_key+"_"+str(bart_m)+"_"+str(m_mean)+"_"+str(m_var)+"_"+str(nn_nodes)
-        get_results(pred, data, "BayestarML/predict/outputs_bhs", training_dataset_key, target, hyperp_str)
+        get_results(pred, data, outputs_folder, training_dataset_key, target, hyperp_str)
 
     return [bart4_pred, gp4_pred, hbnn4_pred], bhs_pred, bhs_w
 
@@ -90,4 +91,3 @@ if __name__ == "__main__":
                         nn_trace_path= "BayestarML/Outputs700MS/NN_M/NN_M_MS16_1000_0.95NUTPIE.nc",
                         bart_m=200, m_mean=50, m_var=20, nn_nodes=16,
                         test=True)
-
