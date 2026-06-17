@@ -60,37 +60,37 @@ def add_symmetric_errs(df, errs1, errs2):
 def L_consistency_check(df, savename: str, logscale=True):
     """ """
     df = df.copy()
-    df_L_check = df[df["L_from_SB"] == 0]
-    df_L_check["L_SB"] = df_L_check["R"] ** 2 * (df_L_check["Teff"] / 5772) ** 4
-    R = df_L_check["R"]
-    Teff = df_L_check["Teff"]
-    df_L_check["L_SB_+err"] = np.sqrt(
-        (R**2 * ((Teff + df_L_check["eTeff1"]) / 5772) ** 4 - df_L_check["L_SB"]) ** 2
-        + ((R + df_L_check["eR1"]) ** 2 * (Teff / 5772) ** 4 - df_L_check["L_SB"]) ** 2
+    df_lum_check = df[df["L_from_SB"] == 0]
+    df_lum_check["L_SB"] = df_lum_check["R"] ** 2 * (df_lum_check["Teff"] / 5772) ** 4
+    R = df_lum_check["R"]
+    Teff = df_lum_check["Teff"]
+    df_lum_check["L_SB_+err"] = np.sqrt(
+        (R**2 * ((Teff + df_lum_check["eTeff1"]) / 5772) ** 4 - df_lum_check["L_SB"]) ** 2
+        + ((R + df_lum_check["eR1"]) ** 2 * (Teff / 5772) ** 4 - df_lum_check["L_SB"]) ** 2
     )
-    df_L_check["L_SB_-err"] = np.sqrt(
-        (R**2 * ((Teff - df_L_check["eTeff2"]) / 5772) ** 4 - df_L_check["L_SB"]) ** 2
-        + ((R - df_L_check["eR2"]) ** 2 * (Teff / 5772) ** 4 - df_L_check["L_SB"]) ** 2
+    df_lum_check["L_SB_-err"] = np.sqrt(
+        (R**2 * ((Teff - df_lum_check["eTeff2"]) / 5772) ** 4 - df_lum_check["L_SB"]) ** 2
+        + ((R - df_lum_check["eR2"]) ** 2 * (Teff / 5772) ** 4 - df_lum_check["L_SB"]) ** 2
     )
 
     # compute distance from recorded Ls
-    df_L_check["L_SB_avg_err"] = (df_L_check["L_SB_+err"] + df_L_check["L_SB_-err"]) / 2
-    df_L_check["total_L_err"] = np.sqrt(
-        df_L_check["L_SB_avg_err"] ** 2 + df_L_check["eL1"] ** 2
+    df_lum_check["L_SB_avg_err"] = (df_lum_check["L_SB_+err"] + df_lum_check["L_SB_-err"]) / 2
+    df_lum_check["total_L_err"] = np.sqrt(
+        df_lum_check["L_SB_avg_err"] ** 2 + df_lum_check["eL1"] ** 2
     )
-    df_L_check["L_dist"] = df_L_check["L_SB"] - df_L_check["L"]
-    df_L_check["L_sig_distance"] = (
-        np.abs(df_L_check["L_dist"]) / df_L_check["total_L_err"]
+    df_lum_check["L_dist"] = df_lum_check["L_SB"] - df_lum_check["L"]
+    df_lum_check["L_sig_distance"] = (
+        np.abs(df_lum_check["L_dist"]) / df_lum_check["total_L_err"]
     )
-    df_bad_Ls = df_L_check[df_L_check["L_sig_distance"] > 3]
+    df_bad_Ls = df_lum_check[df_lum_check["L_sig_distance"] > 3]
 
     plt.close()
     plt.figure()
-    yerr = np.array([df_L_check["L_SB_-err"], df_L_check["L_SB_+err"]])
-    xerr = np.array([df_L_check["eL2"], df_L_check["eL1"]])
+    yerr = np.array([df_lum_check["L_SB_-err"], df_lum_check["L_SB_+err"]])
+    xerr = np.array([df_lum_check["eL2"], df_lum_check["eL1"]])
     plt.errorbar(
-        df_L_check["L"],
-        df_L_check["L_SB"],  # x,y,yerr,xerr
+        df_lum_check["L"],
+        df_lum_check["L_SB"],  # x,y,yerr,xerr
         yerr=yerr,
         xerr=xerr,
         fmt="go",
@@ -114,8 +114,8 @@ def L_consistency_check(df, savename: str, logscale=True):
     plt.xlabel("L")
     plt.ylabel("L from SB")
     plt.plot(
-        [0, df_L_check["L"].max()],
-        [0, df_L_check["L"].max()],
+        [0, df_lum_check["L"].max()],
+        [0, df_lum_check["L"].max()],
         linestyle="--",
         color="r",
     )
@@ -123,7 +123,7 @@ def L_consistency_check(df, savename: str, logscale=True):
         plt.xscale("log")
         plt.yscale("log")
     plt.show()
-    plt.savefig("BayestarML/data/figures/L_check/" + savename)
+    plt.savefig("BayestarML/data/figures/lum_check/" + savename)
 
     df.drop(df_bad_Ls.index, inplace=True)
     print(
@@ -139,7 +139,7 @@ def select_clean_data(
     s_class: str = None,
     add_logvars: list = None,
     check_detached=True,
-    L_check=True,
+    lum_check=True,
 ):
     """ """
     df = df.copy()
@@ -162,7 +162,7 @@ def select_clean_data(
         f"{len(df_allps)} stars left after checking all training features and targets present with err>0 for each."
     )
 
-    if L_check:
+    if lum_check:
         df_allps = L_consistency_check(df_allps, s_class + "_Lcheck.pdf")
 
     # make any vars log10 scale
@@ -318,7 +318,7 @@ def normalise(x: pd.DataFrame, y: pd.DataFrame, dataset_key: str, x_only: bool =
     return x, y
 
 
-def HRplot(df, savename: str, hue: str = None):
+def hr_plot(df, savename: str, hue: str = None):
     """Plot logTeff (higher Teff to the left) against logL for stars in df"""
     df = logomatic(df, ["Teff"])
 
@@ -341,7 +341,7 @@ def HRplot(df, savename: str, hue: str = None):
     ax.set_xlabel("log[ Teff (K) ]")
     ax.set_ylabel("log[ L (Lsol) ]")
 
-    fig.savefig("BayestarML/data/figures/HRdiagrams/" + savename)
+    fig.savefig("BayestarML/data/figures/hr_diagrams/" + savename)
     plt.close()
 
 
@@ -384,7 +384,7 @@ def prepare_pred_data(
         targets=[],
         add_logvars=add_log_vars,
         check_detached=False,
-        L_check=False,
+        lum_check=False,
     )
 
     with open("BayestarML/data/" + training_dataset_key + "_constants.json", "r") as f:

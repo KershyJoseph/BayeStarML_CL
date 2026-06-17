@@ -4,7 +4,7 @@
 import numpy as np
 import pandas as pd
 from BayestarML.src.data_utils import (
-    HRplot,
+    hr_plot,
     error_filter,
     normalise,
     plot_feature_target,
@@ -20,18 +20,19 @@ def prep_data(
     training_fs: list,
     targets: list,
     s_class: str,
-    add_logvars: list,
-    abs_err_lims: dict,
-    percent_err_lims: dict,
+    add_logvars: list = None,
+    abs_err_lims: dict = None,
+    percent_err_lims: dict = None,
     target_lims: dict = None,
-    L_check: bool = False,
+    check_detached:bool = True,
+    lum_check: bool = False,
     plot_errs: bool = False,
-    plotHR: bool = False,
+    plot_hr: bool = False,
     plot_t_f=False,
     xgboost: bool = False,
 ):
     """ """
-    df = pd.read_csv("BayestarML/data/" + filename, sep="\t", comment="#")
+    df = pd.read_csv("BayestarML/data/training_databases/" + filename, sep="\t", comment="#")
     df.set_index("ID", inplace=True)
 
     # if RGB, fix Teff errs: add 50K systematic error in quadrature to all Sch-St Teff errs, as were taken straight from APOGEE https://iopscience.iop.org/article/10.3847/1538-4357/ac4891
@@ -43,14 +44,15 @@ def prep_data(
 
     # select desired params and create avg symmetric err cols
     df = select_clean_data(
-        df, training_fs, targets, s_class, add_logvars, L_check=L_check
+        df, training_fs, targets, s_class, add_logvars, check_detached=check_detached, lum_check=lum_check
     )
     # update training and targets in case of log switch
-    for var in add_logvars:
-        for list in [training_fs, targets]:
-            if var in list:
-                list.remove(var)
-                list.append("log" + var)
+    if add_logvars:
+        for var in add_logvars:
+            for list in [training_fs, targets]:
+                if var in list:
+                    list.remove(var)
+                    list.append("log" + var)
 
     # filter by error limits and plot error distributions
     plot_params = None
@@ -61,11 +63,11 @@ def prep_data(
             "logL": [0.05, "dex"],
             "Teff": [100, "K"],
             "logg": [0.05, "dex"],
-            "FeH": [0.1, "dex"],  # 0.1 for RGB
+            "FeH": [0.15, "dex"],  # 0.1 for RGB
         }
     df = error_filter(
         df,
-        savename=s_class + "_err_dist.pdf",
+        savename=s_class + "2018_err_dist.pdf",
         abs_err_lims=abs_err_lims,
         percent_err_lims=percent_err_lims,
         plot_params=plot_params,
@@ -115,9 +117,9 @@ def prep_data(
     )
 
     # plot HR diagram of final data set (test and training) if desired
-    if plotHR:
-        HRplot(df, dataset_key + "_HRplot.pdf")
-        print("HRplot saved in figures")
+    if plot_hr:
+        hr_plot(df, dataset_key + "_hr_plot.pdf")
+        print("HR plot saved in figures")
 
     # plot target-feature relations if desired
     if plot_t_f:
@@ -143,17 +145,19 @@ def prep_data(
 
 if __name__ == "__main__":
     # choose database to select data from for training
-    filename = "datos_todos_v20261905.txt"
+    filename = "all6_2018_data.txt"
     # col headings should be 'col' for value and 'ecol1', 'ecol2' for corresponding errors
 
-    training_fs = ["Teff", "logg", "FeH", "L"]
+    training_fs = ["Teff", "logg", "FeH", "logL"]
     targets = ["M", "R"]
     s_class = "ms"
-    add_logvars = ["L"]  # add a log column with errs for these variables
-    # target_lims = {  # to skip the target range cutting step if you already know the limits you want
-    #     "logR": [0, 1.6],
-    #     "M": [0.75, 2.25],
-    # }
+    add_logvars = None  # add a log column with errs for these variables
+
+    #skip the target range cutting step if you already know the limits you want
+    target_lims = {
+        "R": [0,100], #rgb [0, 1.6],
+        "M": [0,100]#rgb [0.75, 2.25],
+    }
 
     # 700ms
     abs_err_lims = {
@@ -174,10 +178,13 @@ if __name__ == "__main__":
         training_fs,
         targets,
         s_class,
-        add_logvars,
-        abs_err_lims,
-        percent_err_lims,
-        #target_lims,
-        L_check=False,
-        xgboost=False,
+        # add_logvars,
+        # abs_err_lims,
+        # percent_err_lims,
+        target_lims=target_lims,
+        check_detached=False,
+        # lum_check=False,
+        xgboost=True,
+        # plot_hr=True,
+        # plot_t_f=True
     )

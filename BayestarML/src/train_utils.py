@@ -194,12 +194,12 @@ def mrd(y_true, y_pred):
 
 def model_pred_plotter(
     y_true,
+    y_true_err,
     y_pred,
     y_pred_err,
     target: str,
     save_folder: str,
-    hyperp_str: str,
-    y_true_err=None,
+    hyperp_str: str
 ):
     """Plot predictions of a trained model against true values
     Saves a preds figure and a residuals figure
@@ -210,11 +210,14 @@ def model_pred_plotter(
         y_true,
         y_pred,
         yerr=y_pred_err,
-        fmt="o",
+        xerr=y_true_err,
+        fmt="bo",
         label="Predictions with Uncertainty",
-        alpha=0.7,
+        alpha=0.5,
+        ecolor='blue',
+        capsize=0.1
     )
-    plt.plot([y_true.min(), y_true.max()], [y_true.min(), y_true.max()], "r--")
+    plt.plot([y_true.min(), y_true.max()], [y_true.min(), y_true.max()], linestyle="--", color='gray')
     plt.xlabel("True " + target)
     plt.ylabel("Predicted " + target)
     plt.title(model + " Predictions with Uncertainty")
@@ -222,61 +225,63 @@ def model_pred_plotter(
     plt.savefig(save_folder + "/preds_" + hyperp_str + ".pdf")
     plt.close()
 
-    if y_true_err is not None:
-        # make another plot with 1sig err cloud from test target sigs
-        y_true, y_true_err, y_pred, y_pred_err = [
-            y.to_numpy() if isinstance(y, pd.Series) else y
-            for y in [y_true, y_true_err, y_pred, y_pred_err]
-        ]
-        sorted_indices = np.argsort(y_true)
-        if len(y_pred_err.shape) > 1:
-            y_true, y_true_err, y_pred, y_pred_err[0], y_pred_err[1] = [
-                y[sorted_indices]
-                for y in [y_true, y_true_err, y_pred, y_pred_err[0], y_pred_err[1]]
-            ]
-        else:
-            y_true, y_true_err, y_pred, y_pred_err = [
-                y[sorted_indices] for y in [y_true, y_true_err, y_pred, y_pred_err]
-            ]
-        plt.figure(figsize=(8, 6))
-        plt.errorbar(
-            y_true,
-            y_pred,
-            yerr=y_pred_err,
-            fmt="o",
-            label="Predictions with Uncertainty",
-            alpha=0.7,
-        )
-        plt.plot([y_true.min(), y_true.max()], [y_true.min(), y_true.max()], "r--")
-        # 1 sig err cloud ----------------
-        y_true_lower = y_true - y_true_err
-        y_true_upper = y_true + y_true_err
-        plt.fill_between(
-            y_true,
-            y_true_lower,
-            y_true_upper,
-            color="red",
-            alpha=0.2,
-            label="1-Sigma True " + target + " Errors",
-        )
-        # --------------------------------
-        plt.xlabel("True " + target)
-        plt.ylabel("Predicted " + target)
-        plt.title(model + " Predictions with Uncertainty")
-        plt.legend()
-        plt.savefig(save_folder + "/preds_sigCloud_" + hyperp_str + ".pdf")
-        plt.close()
+    # # make another plot with 1sig err cloud from test target sigs
+    # y_true, y_true_err, y_pred, y_pred_err = [
+    #     y.to_numpy() if isinstance(y, pd.Series) else y
+    #     for y in [y_true, y_true_err, y_pred, y_pred_err]
+    # ]
+    # sorted_indices = np.argsort(y_true)
+    # if len(y_pred_err.shape) > 1:
+    #     y_true, y_true_err, y_pred, y_pred_err[0], y_pred_err[1] = [
+    #         y[sorted_indices]
+    #         for y in [y_true, y_true_err, y_pred, y_pred_err[0], y_pred_err[1]]
+    #     ]
+    # else:
+    #     y_true, y_true_err, y_pred, y_pred_err = [
+    #         y[sorted_indices] for y in [y_true, y_true_err, y_pred, y_pred_err]
+    #     ]
+    # plt.figure(figsize=(8, 6))
+    # plt.errorbar(
+    #     y_true,
+    #     y_pred,
+    #     yerr=y_pred_err,
+    #     fmt="o",
+    #     label="Predictions with Uncertainty",
+    #     alpha=0.7,
+    # )
+    # plt.plot([y_true.min(), y_true.max()], [y_true.min(), y_true.max()], "r--")
+    # # 1 sig err cloud ----------------
+    # y_true_lower = y_true - y_true_err
+    # y_true_upper = y_true + y_true_err
+    # plt.fill_between(
+    #     y_true,
+    #     y_true_lower,
+    #     y_true_upper,
+    #     color="red",
+    #     alpha=0.2,
+    #     label="1-Sigma True " + target + " Errors",
+    # )
+    # # --------------------------------
+    # plt.xlabel("True " + target)
+    # plt.ylabel("Predicted " + target)
+    # plt.title(model + " Predictions with Uncertainty")
+    # plt.legend()
+    # plt.savefig(save_folder + "/preds_sigCloud_" + hyperp_str + ".pdf")
+    # plt.close()
 
     plt.figure(figsize=(8, 6))
     plt.errorbar(
         y_true,
         y_pred - y_true,
         yerr=y_pred_err,
-        fmt="o",
-        label="Predictions with Uncertainty",
-        alpha=0.7,
+        xerr=y_true_err,
+        fmt="go",
+        label="Residuals with Value Uncertainty",
+        alpha=0.5,
+        ecolor='green',
+        capsize=0.1
     )
-    plt.hlines(0, y_true.min(), y_true.max(), "r", linestyle="--")
+    plt.hlines(0, y_true.min(), y_true.max(), color='gray', linestyle="--")
     plt.xlabel("True " + target)
     plt.ylabel("Residual " + target)
     plt.title(model + " Prediction Residuals")
@@ -304,12 +309,12 @@ def get_results(
 
     model_pred_plotter(
         data["unorm_y_test"],
+        data["unorm_y_test_err"],
         means,
         stds,
         target,
         outputs_folder_path,
-        hyperp_str,
-        y_true_err=data["unorm_y_test_err"],
+        hyperp_str
     )
 
     if target.startswith("log"):
@@ -335,12 +340,12 @@ def get_results(
 
         model_pred_plotter(
             y_true,
+            y_true_err,
             y_pred,
             y_pred_err,
             target,
             outputs_folder_path,
-            hyperp_str,
-            y_true_err=y_true_err,
+            hyperp_str
         )
 
         # Is median better??
@@ -355,10 +360,10 @@ def get_results(
 
         model_pred_plotter(
             y_true,
+            y_true_err,
             y_pred,
             np.array([y_p50 - y_p16, y_p84 - y_p50]),
             target,
             outputs_folder_path,
-            hyperp_str + "MEDIAN",
-            y_true_err=y_true_err,
+            hyperp_str + "MEDIAN"
         )

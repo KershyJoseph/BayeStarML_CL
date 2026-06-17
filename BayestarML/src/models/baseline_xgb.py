@@ -67,7 +67,7 @@ def studyrunner(X, y, savefile=None):
     results = {"best_mard": study.best_value, "best_params": study.best_params}
     print("\n\n", results)
     if savefile:
-        with open("xgb_results/" + savefile, "w") as f:
+        with open("BayestarML/data/xgb_results/" + savefile, "w") as f:
             json.dump(results, f, indent=4)
 
 

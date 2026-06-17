@@ -18,7 +18,6 @@ def train_GP(
     target,
     M_mean,
     M_var,
-    sclass,
     draws=1000,
     target_accept=0.95,
     chains=4,
@@ -30,7 +29,8 @@ def train_GP(
         "GP_"
         + target
         + "_"
-        + sclass
+        + dataset_key
+        + "_"
         + str(M_mean)
         + "_"
         + str(M_var)
@@ -92,7 +92,6 @@ def train_NN_1layer(
     dataset_key,
     target,
     n_hidden,
-    sclass,
     draws=1000,
     target_accept=0.95,
     chains=4,
@@ -104,7 +103,8 @@ def train_NN_1layer(
         "NN_1layer_"
         + target
         + "_"
-        + sclass
+        + dataset_key
+        + "_"
         + str(n_hidden)
         + "_"
         + str(draws)
@@ -160,7 +160,6 @@ def train_NN(
     dataset_key,
     target,
     n_hidden,
-    sclass,
     draws=1000,
     target_accept=0.95,
     chains=4,
@@ -172,7 +171,8 @@ def train_NN(
         "NN_"
         + target
         + "_"
-        + sclass
+        + dataset_key
+        + "_"
         + str(n_hidden)
         + "_"
         + str(draws)
@@ -231,9 +231,9 @@ if __name__ == "__main__":
     start_time_CPU = time.process_time()
     start_time_wall = time.perf_counter()
 
-    print("HBNN RGB logR - 3_1400, 0.1*He priors and 0.1 bias and er. 0.95 TA. NUTPIE")
-    train_NN_1layer(
-        "5438rgb", "logR", 3, sclass="rgb", draws=1400, target_accept=0.95, nutpie=True
+    print("2018 data mass GP. 20_10_1000_0.95")
+    train_GP(
+        "488ms", "M", 20, 10
     )
 
     end_time_CPU = time.process_time()
