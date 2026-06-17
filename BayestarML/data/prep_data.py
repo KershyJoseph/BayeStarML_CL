@@ -54,25 +54,7 @@ def prep_data(
                     list.remove(var)
                     list.append("log" + var)
 
-    # filter by error limits and plot error distributions
-    plot_params = None
-    if plot_errs:
-        plot_params = {
-            "M": [7, "%"],
-            "R": [7, "%"],
-            "logL": [0.05, "dex"],
-            "Teff": [100, "K"],
-            "logg": [0.05, "dex"],
-            "FeH": [0.15, "dex"],  # 0.1 for RGB
-        }
-    df = error_filter(
-        df,
-        savename=s_class + "2018_err_dist.pdf",
-        abs_err_lims=abs_err_lims,
-        percent_err_lims=percent_err_lims,
-        plot_params=plot_params,
-    )
-
+    #cut outliers in target ranges
     if target_lims:
         for target, lims in target_lims.items():
             df = df[(df[target] >= lims[0]) & (df[target] <= lims[1])]
@@ -89,24 +71,43 @@ def prep_data(
                 repeat = input(f"Continue checking {var} spread? (yes/no)\n") == "yes"
             df = df_copy
     print(f"{len(df)} stars left after cutting target ranges.")
+
+    # filter by error limits and plot error distributions
+    plot_params = None
+    if plot_errs:
+        plot_params = {
+            "M": [7, "%"],
+            "R": [7, "%"],
+            "logL": [0.05, "dex"],
+            "Teff": [100, "K"],
+            "logg": [0.05, "dex"],
+            "FeH": [0.15, "dex"],  # 0.1 for RGB
+        }
+    df = error_filter(
+        df,
+        savename=s_class + "_err_dist.pdf",
+        abs_err_lims=abs_err_lims,
+        percent_err_lims=percent_err_lims,
+        plot_params=plot_params,
+    )
     dataset_key = str(len(df)) + s_class
     df.to_csv("BayestarML/data/" + dataset_key + ".txt")
 
     # get MUs and SIGs for normalisation of each param, and write to constants.json, as well as MIN and MAX
     (
-        X_train,
-        X_test,
-        Y_train,
-        Y_test
+        x_train,
+        x_test,
+        y_train,
+        y_test
     ) = return_train_test(df, training_fs, targets, dataset_key)
 
     # normalise data and create final txt files for normalised training and testing datasets
-    X_train_norm, Y_train_norm = normalise(X_train, Y_train, dataset_key)
-    X_test_norm, Y_test_norm = normalise(X_test, Y_test, dataset_key)
+    x_train_norm, y_train_norm = normalise(x_train, y_train, dataset_key)
+    x_test_norm, y_test_norm = normalise(x_test, y_test, dataset_key)
 
     # save files
-    normalised_train_data = pd.concat([X_train_norm, Y_train_norm], axis=1)
-    normalised_test_data = pd.concat([X_test_norm, Y_test_norm], axis=1)
+    normalised_train_data = pd.concat([x_train_norm, y_train_norm], axis=1)
+    normalised_test_data = pd.concat([x_test_norm, y_test_norm], axis=1)
     normalised_train_data.to_csv("BayestarML/data/" + dataset_key + "_norm_train.txt")
     normalised_test_data.to_csv("BayestarML/data/" + dataset_key + "_norm_test.txt")
 
@@ -138,25 +139,25 @@ def prep_data(
                 + t
                 + "\n"
             )
-            X, y = df[training_fs], df[t]
-            studyrunner(X, y, "xgb_" + dataset_key + "_" + t + ".json")
+            x, y = df[training_fs], df[t]
+            studyrunner(x, y, "xgb_" + dataset_key + "_" + t + ".json")
             print("For target " + t + "\n")
 
 
 if __name__ == "__main__":
     # choose database to select data from for training
-    filename = "all6_2018_data.txt"
+    filename = "datos_todos_v20261905.txt"
     # col headings should be 'col' for value and 'ecol1', 'ecol2' for corresponding errors
 
-    training_fs = ["Teff", "logg", "FeH", "logL"]
+    training_fs = ["Teff", "logg", "FeH", "L"]
     targets = ["M", "R"]
     s_class = "ms"
-    add_logvars = None  # add a log column with errs for these variables
+    add_logvars = ["L"]  # add a log column with errs for these variables
 
     #skip the target range cutting step if you already know the limits you want
     target_lims = {
         "R": [0,100], #rgb [0, 1.6],
-        "M": [0,100]#rgb [0.75, 2.25],
+        "M": [0,2] #rgb [0.75, 2.25],
     }
 
     # 700ms
@@ -178,13 +179,14 @@ if __name__ == "__main__":
         training_fs,
         targets,
         s_class,
-        # add_logvars,
-        # abs_err_lims,
-        # percent_err_lims,
+        add_logvars,
+        abs_err_lims,
+        percent_err_lims,
         target_lims=target_lims,
-        check_detached=False,
-        # lum_check=False,
+        # check_detached=False,
+        # lum_check=True,
+        plot_errs=True,
         xgboost=True,
-        # plot_hr=True,
-        # plot_t_f=True
+        plot_hr=True,
+        plot_t_f=True
     )

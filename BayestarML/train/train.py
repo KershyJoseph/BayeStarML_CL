@@ -10,6 +10,7 @@ from BayestarML.src.pred_sampling import (
     sample_post_pred_HBNN_para,
 )
 from BayestarML.src.train_utils import get_results, train, load_data
+from BayestarML.src.predict_utils import check_feature_extrapolation
 from BayestarML.src.models import gp, hbnn
 
 
@@ -85,7 +86,8 @@ def train_GP(
         dataset_key,
     )
 
-    get_results(pred, data, outputs_folder_path, dataset_key, target, hyperp_str)
+    interp_mask = check_feature_extrapolation(data["x_train"], data["x_test"])
+    get_results(pred, data, interp_mask, outputs_folder_path, dataset_key, target, hyperp_str)
 
 
 def train_NN_1layer(
@@ -153,7 +155,8 @@ def train_NN_1layer(
         dataset_key,
     )
 
-    get_results(pred, data, outputs_folder_path, dataset_key, target, hyperp_str)
+    interp_mask = check_feature_extrapolation(data["x_train"], data["x_test"])
+    get_results(pred, data, interp_mask, outputs_folder_path, dataset_key, target, hyperp_str)
 
 
 def train_NN(
@@ -221,7 +224,8 @@ def train_NN(
         dataset_key,
     )
 
-    get_results(pred, data, outputs_folder_path, dataset_key, target, hyperp_str)
+    interp_mask = check_feature_extrapolation(data["x_train"], data["x_test"])
+    get_results(pred, data, interp_mask, outputs_folder_path, dataset_key, target, hyperp_str)
 
 
 if __name__ == "__main__":

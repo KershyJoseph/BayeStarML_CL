@@ -147,7 +147,7 @@ def select_clean_data(
         df = df[(df["class"] == s_class)]
         print(f"Working with {len(df)} " + s_class + " stars.")
     if check_detached:
-        df = df[(df["well_detached"] is not False)]
+        df = df[df["well_detached"].ne(False)]
         print(
             f"{len(df)} stars left after filtering those not from well-detached binaries."
         )

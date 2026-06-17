@@ -166,3 +166,15 @@ M accuracy stats
 MAE:  0.05587940155231957
 MARD:  5.045385069147808
 MRD:  -1.1862193712563562
+
+Same thing but with extrapolation detector added
+M accuracy stats
+MAE:  0.05589227511696992
+MARD:  5.0536435740589
+MRD:  -1.2175186019939144
+
+Stars marked as feature extrapolation:
+Index(['KIC3230227_A', 'EPIC204506926', 'HD24465_B', 'UCAC4_665-061158_B',
+       'UCAC4_570-022931_B', 'KIC3761840', 'HW_CMa B', 'KIC4756112',
+       'KIC10202294', 'KIC7019341', 'ASAS_J085002+1752.5_B'],
+      dtype='object', name='ID')
