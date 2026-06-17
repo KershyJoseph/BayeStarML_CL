@@ -226,20 +226,20 @@ def model_pred_plotter(
             group["y_pred"],
             yerr=group["y_pred_err"],
             xerr=group["y_true_err"],
-            fmt="bo",
+            fmt="o",
             label=status,
             alpha=0.5,
             color=colors[status],
             ecolor=colors[status],
-            capsize=0.1
+            capsize=1
         )
-    plt.plot([y_true.min(), y_true.max()], [y_true.min(), y_true.max()], linestyle="--", color='gray')
-    plt.xlabel("True " + target)
-    plt.ylabel("Predicted " + target)
-    plt.title(model + " Predictions with Uncertainty")
-    plt.legend()
-    plt.savefig(save_folder + "/preds_" + hyperp_str + ".pdf")
-    plt.close()
+    ax.plot([y_true.min(), y_true.max()], [y_true.min(), y_true.max()], linestyle="--", color='gray')
+    ax.set_xlabel("True " + target)
+    ax.set_ylabel("Predicted " + target)
+    ax.set_title(model + " Predictions with Uncertainty")
+    ax.legend()
+    fig.savefig(save_folder + "/preds_" + hyperp_str + ".pdf")
+    plt.close(fig)
 
     # # make another plot with 1sig err cloud from test target sigs
     # y_true, y_true_err, y_pred, y_pred_err = [
@@ -292,20 +292,20 @@ def model_pred_plotter(
             group["y_pred"] - group["y_true"],
             yerr=group["y_pred_err"],
             xerr=group["y_true_err"],
-            fmt="go",
+            fmt="o",
             label=status,
             alpha=0.5,
             color=colors[status],
             ecolor=colors[status],
-            capsize=0.1
+            capsize=1
         )
-    plt.hlines(0, y_true.min(), y_true.max(), color='gray', linestyle="--")
-    plt.xlabel("True " + target)
-    plt.ylabel("Residual " + target)
-    plt.title(model + " Prediction Residuals with Value Uncertainty")
-    plt.legend()
-    plt.savefig(save_folder + "/res_" + hyperp_str + ".pdf")
-    plt.close()
+    ax.hlines(0, y_true.min(), y_true.max(), color='gray', linestyle="--")
+    ax.set_xlabel("True " + target)
+    ax.set_ylabel("Residual " + target)
+    ax.set_title(model + " Prediction Residuals with Value Uncertainty")
+    ax.legend()
+    fig.savefig(save_folder + "/res_" + hyperp_str + ".pdf")
+    plt.close(fig)
 
 
 def get_results(

@@ -39,7 +39,7 @@ def train_GP(
         + "_"
         + str(target_accept)
     )
-    outputs_folder_path = "Outputs" + dataset_key + "/GP_" + target
+    outputs_folder_path = "BayestarML/train/outputs" + dataset_key + "/GP_" + target
     nuts_sampler = "pymc"
     if nutpie:
         hyperp_str += "NUTPIE"
@@ -111,7 +111,7 @@ def train_NN_1layer(
         + "_"
         + str(target_accept)
     )
-    outputs_folder_path = "Outputs" + dataset_key + "/NN_" + target
+    outputs_folder_path = "BayestarML/train/outputs" + dataset_key + "/NN_" + target
     nuts_sampler = "pymc"
     if nutpie:
         hyperp_str += "NUTPIE"
@@ -179,7 +179,7 @@ def train_NN(
         + "_"
         + str(target_accept)
     )
-    outputs_folder_path = "Outputs" + dataset_key + "/NN_" + target
+    outputs_folder_path = "BayestarML/train/outputs" + dataset_key + "/NN_" + target
     nuts_sampler = "pymc"
     if nutpie:
         hyperp_str += "NUTPIE"
