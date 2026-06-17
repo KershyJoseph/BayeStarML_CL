@@ -147,7 +147,7 @@ def select_clean_data(
         df = df[(df["class"] == s_class)]
         print(f"Working with {len(df)} " + s_class + " stars.")
     if check_detached:
-        df = df[(df["well_detached"] != False)]
+        df = df[(df["well_detached"] is not False)]
         print(
             f"{len(df)} stars left after filtering those not from well-detached binaries."
         )
@@ -359,57 +359,3 @@ def plot_feature_target(df: pd.DataFrame, savename: str, feature: str, target: s
     plt.ylabel(target + " (" + target[0] + "sol)")
     plt.savefig("BayestarML/data/figures/feature_target_figs/" + savename)
     plt.close()
-
-
-def prepare_pred_data(
-    filename: str, training_dataset_key: str, features: list, add_log_vars: list = None, extrapolate=False
-):
-    """
-    Normalize input data and return DataFrames for normalized values and errors.
-    Check all input data within training ranges.
-
-    Parameters:
-    - teff, logg, FeH, l: Input values (can be scalars or arrays)
-    - eteff, elogg, eFeH, el: Associated errors (can be scalars or arrays)
-
-    Returns:
-    - x_test: DataFrame with normalized values (columns: 'Teff', 'logg', 'FeH', 'L')
-    - x_test_error: DataFrame with normalized errors (columns: 'eTeff', 'elogg', 'eFeH', 'eL')
-    """
-    x = pd.read_csv("BayestarML/predict/prediction_datasets/" + filename, sep="\t")
-    # filter to stars with all training features present with err. Add symmetric err column and log vars if needed.
-    x = select_clean_data(
-        x,
-        features,
-        targets=[],
-        add_logvars=add_log_vars,
-        check_detached=False,
-        lum_check=False,
-    )
-
-    with open("BayestarML/data/" + training_dataset_key + "_constants.json", "r") as f:
-        constants = json.load(f)
-        x_constants = constants["training_fs"]
-
-    # check predicting within feature training ranges
-    for f in features:
-        MIN = x_constants["MIN"][f]
-        MAX = x_constants["MAX"][f]
-        RANGE = MAX - MIN
-        x_new = x[
-            (x[f] >= MIN + 0.025 * RANGE) & (x[f] <= MAX - 0.025 * RANGE)
-        ]  # keep middle 95%
-        if len(x) != len(x_new):
-            print(f"Star(s) outside middle 95% of {f} training range:\n",
-                  pd.concat([x, x_new]).drop_duplicates(keep=False))
-        if extrapolate:
-            continue # don't update x and thus remove extrapolating points
-        print(
-            f"Removing {len(x) - len(x_new)} stars with {f} inputs outside middle 95% of {f} training range."
-        )
-        x = x_new
-
-    # normalise input data
-    x_norm = normalise(x, None, training_dataset_key, x_only=True)
-
-    return x_norm[features], x_norm[[f"e{f}" for f in features]]  # might need modifying for scalar inputs?

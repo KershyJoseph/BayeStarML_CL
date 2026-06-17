@@ -47,7 +47,7 @@ def load_data(dataset_key, target):
         "y_test_err": df_test["e" + target],
         "unorm_y_test": unorm_y_test,
         "unorm_y_test_err": unorm_y_test_err,
-        "test_stars": df_test.index,
+        "test_ID": df_test.index,
     }
 
     return data, len(training_fs)
@@ -197,6 +197,7 @@ def model_pred_plotter(
     y_true_err,
     y_pred,
     y_pred_err,
+    interp_mask,
     target: str,
     save_folder: str,
     hyperp_str: str
@@ -205,18 +206,33 @@ def model_pred_plotter(
     Saves a preds figure and a residuals figure
     """
     model = hyperp_str[:2]
-    plt.figure(figsize=(8, 6))
-    plt.errorbar(
-        y_true,
-        y_pred,
-        yerr=y_pred_err,
-        xerr=y_true_err,
-        fmt="bo",
-        label="Predictions with Uncertainty",
-        alpha=0.5,
-        ecolor='blue',
-        capsize=0.1
+    df_all = pd.DataFrame({'y_true': y_true,
+                           'y_true_err': y_true_err,
+                           'y_pred': y_pred,
+                           'y_pred_err': y_pred_err})
+    df_all["pred_type"] = np.where(
+        interp_mask,
+        "interpolation",
+        "extrapolation"
     )
+    colors ={
+        "interpolation": 'blue',
+        "extrapolation": 'red'
+    }
+    fig, ax = plt.figure(figsize=(8, 6))
+    for status, group in df_all.groupby("pred_type"):
+        ax.errorbar(
+            group["y_true"],
+            group["y_pred"],
+            yerr=group["y_pred_err"],
+            xerr=group["y_true_err"],
+            fmt="bo",
+            label=status,
+            alpha=0.5,
+            color=colors[status],
+            ecolor=colors[status],
+            capsize=0.1
+        )
     plt.plot([y_true.min(), y_true.max()], [y_true.min(), y_true.max()], linestyle="--", color='gray')
     plt.xlabel("True " + target)
     plt.ylabel("Predicted " + target)
@@ -269,29 +285,31 @@ def model_pred_plotter(
     # plt.savefig(save_folder + "/preds_sigCloud_" + hyperp_str + ".pdf")
     # plt.close()
 
-    plt.figure(figsize=(8, 6))
-    plt.errorbar(
-        y_true,
-        y_pred - y_true,
-        yerr=y_pred_err,
-        xerr=y_true_err,
-        fmt="go",
-        label="Residuals with Value Uncertainty",
-        alpha=0.5,
-        ecolor='green',
-        capsize=0.1
-    )
+    fig, ax = plt.figure(figsize=(8, 6))
+    for status, group in df_all.groupby("pred_type"):
+        ax.errorbar(
+            group["y_true"],
+            group["y_pred"] - group["y_true"],
+            yerr=group["y_pred_err"],
+            xerr=group["y_true_err"],
+            fmt="go",
+            label=status,
+            alpha=0.5,
+            color=colors[status],
+            ecolor=colors[status],
+            capsize=0.1
+        )
     plt.hlines(0, y_true.min(), y_true.max(), color='gray', linestyle="--")
     plt.xlabel("True " + target)
     plt.ylabel("Residual " + target)
-    plt.title(model + " Prediction Residuals")
+    plt.title(model + " Prediction Residuals with Value Uncertainty")
     plt.legend()
     plt.savefig(save_folder + "/res_" + hyperp_str + ".pdf")
     plt.close()
 
 
 def get_results(
-    posterior_draws, data, outputs_folder_path, dataset_key, target, hyperp_str
+    posterior_draws, data, interp_mask, outputs_folder_path, dataset_key, target, hyperp_str
 ):
     """
     """
@@ -307,11 +325,15 @@ def get_results(
     print("MARD: ", mard(data["unorm_y_test"], means))
     print("MRD: ", mrd(data["unorm_y_test"], means))
 
+    print("\n" + "Stars marked as feature extrapolation:")
+    print(data["test_ID"][~interp_mask])
+
     model_pred_plotter(
         data["unorm_y_test"],
         data["unorm_y_test_err"],
         means,
         stds,
+        interp_mask,
         target,
         outputs_folder_path,
         hyperp_str
