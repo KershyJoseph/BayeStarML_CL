@@ -219,7 +219,7 @@ def model_pred_plotter(
         "interpolation": 'blue',
         "extrapolation": 'red'
     }
-    fig, ax = plt.figure(figsize=(8, 6))
+    fig, ax = plt.subplots(figsize=(8, 6))
     for status, group in df_all.groupby("pred_type"):
         ax.errorbar(
             group["y_true"],
@@ -285,7 +285,7 @@ def model_pred_plotter(
     # plt.savefig(save_folder + "/preds_sigCloud_" + hyperp_str + ".pdf")
     # plt.close()
 
-    fig, ax = plt.figure(figsize=(8, 6))
+    fig, ax = plt.subplots(figsize=(8, 6))
     for status, group in df_all.groupby("pred_type"):
         ax.errorbar(
             group["y_true"],
