@@ -95,7 +95,7 @@ def prep_data(
         X_train,
         X_test,
         Y_train,
-        Y_test,
+        Y_test
     ) = return_train_test(df, training_fs, targets, dataset_key)
 
     # normalise data and create final txt files for normalised training and testing datasets
