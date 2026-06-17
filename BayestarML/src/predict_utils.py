@@ -27,7 +27,7 @@ def check_feature_extrapolation(x_train, x_pred, k=10, percentile=95):
     distances, _ = nn_p.kneighbors(x_pred) #distances shape (n_pred, k)
     avg_dists_p = np.mean(distances, axis=1) #shape (n_pred,)
 
-    interpolation_mask = is_inside and (avg_dists_p < dist_threshold)
+    interpolation_mask = is_inside & (avg_dists_p < dist_threshold)
 
     return interpolation_mask
 
