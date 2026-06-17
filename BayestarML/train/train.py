@@ -235,9 +235,9 @@ if __name__ == "__main__":
     start_time_CPU = time.process_time()
     start_time_wall = time.perf_counter()
 
-    print("2018 data mass NN. 3_1400_0.95")
-    train_NN_1layer(
-        "5438rgb", "M", 3, draws=1400, nutpie=True
+    print("RGB mass NN. 0.01He priors. 8_1400_0.95")
+    train_NN(
+        "5438rgb", "M", 8, draws=1400, nutpie=True
     )
 
     end_time_CPU = time.process_time()
@@ -248,20 +248,20 @@ if __name__ == "__main__":
 
     print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
 
-    # start_time_CPU2 = time.process_time()
-    # start_time2 = time.time()
+    start_time_CPU2 = time.process_time()
+    start_time2 = time.time()
 
-    # print("2018 data mass NN. 16_1000_0.95")
-    # train_NN(
-    #     "488ms", "M", 16
-    # )
+    print("RGB logR NN. 0.01He priors. 8_1400_0.95")
+    train_NN(
+        "5438rgb", "logR", 8, draws=1400, nutpie=True
+    )
 
-    # end_time_CPU2 = time.process_time()
+    end_time_CPU2 = time.process_time()
 
-    # mem2 = process.memory_info().rss / 1024**2
-    # print(f"Peak Memory: {(mem2-mem1):.2f} MB")
-    # print(f"CPU time used: {(end_time_CPU2-start_time_CPU2):.5f} s")
-    # print(f"Total run time: {time.time()-start_time2:.5f} s")
+    mem2 = process.memory_info().rss / 1024**2
+    print(f"Peak Memory: {(mem2-mem1):.2f} MB")
+    print(f"CPU time used: {(end_time_CPU2-start_time_CPU2):.5f} s")
+    print(f"Total run time: {time.time()-start_time2:.5f} s")
 
     # print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
 
