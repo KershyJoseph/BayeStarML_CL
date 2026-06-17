@@ -1,0 +1,125 @@
+<><><><><<><<><><><>><<><<><<><<<><><><<><<><><><><>
+2018 data mass GP. 20_10_1000_0.95
+target_accept= 0.95
+Initializing NUTS using jitter+adapt_diag...
+Multiprocess sampling (4 chains in 4 jobs)
+NUTS: [log_ls, log_eta, u_rotated__, log_ls_v, log_eta_v, alpha_log_var, u_rotated_log_var_f]
+
+
+
+  Progress                                   Draws   Divergences   Step size   Grad evals   Sampling Speed   Elapsed   Remaining
+ ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  ────────────────────────────────────────   2500    0             0.01        255          3.16 draws/s     0:13:11   0:00:00
+  ────────────────────────────────────────   2500    0             0.01        511          3.19 draws/s     0:13:02   0:00:00
+  ────────────────────────────────────────   2500    1             0.01        255          3.24 draws/s     0:12:50   0:00:00
+  ────────────────────────────────────────   2500    0             0.01        511          3.10 draws/s     0:13:26   0:00:00
+
+Sampling 4 chains for 1_500 tune and 1_000 draw iterations (6_000 + 4_000 draws total) took 817 seconds.
+There were 1 divergences after tuning. Increase `target_accept` or reparameterize.
+The rhat statistic is larger than 1.01 for some parameters. This indicates problems during sampling. See https://arxiv.org/abs/1903.0
+8008 for details
+The effective sample size per chain is smaller than 100 for some parameters.  A higher number is needed for reliable rhat and ess com
+putation. See https://arxiv.org/abs/1903.08008 for details
+AZ Stats for ESS Bulk < 400:
+             mean     sd  hdi_3%  hdi_97%  mcse_mean  mcse_sd  ess_bulk  ess_tail  r_hat
+ls[2]      4.318  1.545   1.651    6.816      0.088    0.044     294.0     732.0   1.02
+log_ls[2]  1.396  0.376   0.611    1.968      0.023    0.011     294.0     732.0   1.02
+rhats:  [('log_ls', 1.0193282655195093), ('log_eta', 1.0014376303348491), ('u_rotated__', 1.0139076053433296), ('log_ls_v', 1.0070831
+982330744), ('log_eta_v', 1.0008599514808163), ('alpha_log_var', 1.0036016374123784), ('u_rotated_log_var_f', 1.005329428796987), ('l
+s', 1.0193282655195093), ('eta', 1.0012425388049047), ('u__', 1.0046424851422733), ('mu__', 1.0111365110388917), ('ls_v', 1.007083198
+2330744), ('eta_v', 1.0008599514808163), ('u_log_var_f', 1.0054039572396463), ('mu_log_var_f', 1.0071695710027284), ('log_var', 1.007
+9491326599883), ('__f', 1.0088567315558095)]
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/pymc/model/fgraph.py:163: UserWarning: Detected variables likely cr
+eated by GP objects. Further use of these old GP objects should be avoided as it may reintroduce variables from the old model. See is
+sue: https://github.com/pymc-devs/pymc/issues/6883
+  warnings.warn(
+Computing ... ──────────────────────────────────────── 100% 0:00:00
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape parameter of
+ Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust model, this is because imp
+ortance sampling is less likely to work well if the marginal posterior and LOO posterior are very different. This is more likely to h
+appen with a non-robust model and highly influential observations.
+  warnings.warn(
+loo trace:  Computed from 4000 posterior samples and 390 observations log-likelihood matrix.
+
+         Estimate       SE
+elpd_loo   -62.97    24.93
+p_loo       38.93        -
+
+There has been a warning during the calculation. Please check the results.
+------
+
+Pareto k diagnostic values:
+                         Count   Pct.
+(-Inf, 0.70]   (good)      383   98.2%
+   (0.70, 1]   (bad)         6    1.5%
+   (1, Inf)   (very bad)    1    0.3%
+
+Found 7 problematic data points.
+Indices of bad points: [ 14  24  87  97 209 338 346]
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape parameter of
+ Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust model, this is because imp
+ortance sampling is less likely to work well if the marginal posterior and LOO posterior are very different. This is more likely to h
+appen with a non-robust model and highly influential observations.
+  warnings.warn(
+Sampling: [X_new_latent, X_var_new_latent, f_mu_pred, log_var_pred_latent, y_pred]
+Sampling ... ──────────────────────────────────────── 100% 0:00:00 / 0:00:01
+
+M predictions
+means:  [1.15542028 1.34440048 1.24797351 1.33382324 1.19960715 1.3254615
+ 1.3916597  1.47933944 1.38758274 1.27189611 1.11513347 1.23514828
+ 1.3186154  1.34939601 1.34185496 1.18968894 1.23029725 1.33134842
+ 1.18762276 1.4604214  1.358296   1.26207087 1.45162822 1.35136652
+ 1.0029323  1.19503206 0.7334849  1.26620067 1.35740076 1.25152729
+ 1.26363037 1.26563965 1.1416899  0.83282569 0.82169958 1.22164996
+ 1.08063439 1.36726616 1.3880115  1.47482109 1.2353981  1.14863939
+ 1.41572026 1.18351801 1.12274997 1.2893492  1.47762997 0.74582997
+ 1.19234221 1.13279088 1.15729488 1.12053206 1.08178869 1.40153681
+ 1.15238596 1.39081448 0.90520236 1.49362291 1.29637475 1.14817501
+ 1.30526797 1.533041   1.16792543 1.08166332 1.04040036 1.37168727
+ 1.09864596 1.04031527 1.42099059 0.74423308 1.34063789 1.13574306
+ 0.98465389 1.33298451 1.33771206 1.04403349 1.42677103 1.27831018
+ 1.12042588 0.87476339 1.16817529 1.40456974 1.13558445 1.32221149
+ 1.16735205 1.37814509 1.49388517 1.12070966 1.20663624 1.29962044
+ 1.25924267 1.28236506 1.16413384 1.1170834  1.48950787 1.2843297
+ 1.8172611  1.47378239]
+stdvs:  [0.04659045 0.06808395 0.0537959  0.06342264 0.0587651  0.05397165
+ 0.07483286 0.07940264 0.07248155 0.06901786 0.04822477 0.03936383
+ 0.05158606 0.07667628 0.04593979 0.08841184 0.04399971 0.0803496
+ 0.06147306 0.07479749 0.04445492 0.06316054 0.06546306 0.06646853
+ 0.05556769 0.05915862 0.06824052 0.04088335 0.04322269 0.05922926
+ 0.05960052 0.05373745 0.05635411 0.07135681 0.06530291 0.04947165
+ 0.05693544 0.0745312  0.07335606 0.05837074 0.04790618 0.05619474
+ 0.07228919 0.05970544 0.05646651 0.04138221 0.07497865 0.06875628
+ 0.05092494 0.06176869 0.05214289 0.06893094 0.05594901 0.04693554
+ 0.05265841 0.04794614 0.06645463 0.07461809 0.06334609 0.05201222
+ 0.05728214 0.07989029 0.06959189 0.05191317 0.05650456 0.05795971
+ 0.05719615 0.05947544 0.06977748 0.06432867 0.07563885 0.07400362
+ 0.06971048 0.07773052 0.04381432 0.05057483 0.08195789 0.04628986
+ 0.05092702 0.07218059 0.04798196 0.06967258 0.06598137 0.06728563
+ 0.05590735 0.07529691 0.07484196 0.05857282 0.06138609 0.04662888
+ 0.06230911 0.0761831  0.05822183 0.06180572 0.06385303 0.0417978
+ 0.08639455 0.07882598]
+
+Unorm M:  ID
+KIC10794845    1.142
+KIC4841753     1.314
+KIC7910848     1.274
+V1130_Tau A    1.392
+KIC8027956     1.178
+               ...
+KIC7870112     1.151
+KIC8956017     1.497
+KIC5516982     1.263
+RS_Cha B       1.871
+KIC5468089     1.560
+Name: M, Length: 98, dtype: float64
+
+M accuracy stats
+MAE:  0.048127397170103205
+MARD:  3.933185048083385
+MRD:  0.17991113095830302
+
+Stars marked as feature extrapolation:
+Index(['KIC5530375', 'KIC5683538', 'V636_Cen B', 'KIC7871531', 'KIC9512063',
+       'Kepler-35B', 'V432_Aur B', 'KIC4143755', 'KIC7870112', 'RS_Cha B'],
+      dtype='object', name='ID')
