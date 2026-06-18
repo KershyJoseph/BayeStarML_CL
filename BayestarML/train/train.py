@@ -235,9 +235,9 @@ if __name__ == "__main__":
     start_time_CPU = time.process_time()
     start_time_wall = time.perf_counter()
 
-    print("2018 mass NN. He priors like before. NUTPIE this time. 16_1000")
+    print("700ms mass NN. He priors. NUTPIE with init_means. 16_2000")
     train_NN(
-        "488ms", "M", 16, nutpie=True
+        "700ms", "M", 16, draws=2000, nutpie=True
     )
 
     end_time_CPU = time.process_time()
