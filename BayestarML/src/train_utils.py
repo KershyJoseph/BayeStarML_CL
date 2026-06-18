@@ -341,14 +341,14 @@ def get_results(
 
     if target.startswith("log"):
         target = target[3:]
-        hyperp_str = "GP_" + target + hyperp_str[7:]
+        hyperp_str = "GP_" + target + hyperp_str[8:]
         y_draws = 10 ** (posterior_draws)
         y_pred = y_draws.mean(0)
         y_pred_err = y_draws.std(0)
         df_physical = pd.read_csv("BayestarML/data/" + dataset_key + ".txt")
         df_physical.set_index("ID", inplace=True)
-        y_true = df_physical.loc[data["test_stars"], target]
-        y_true_err = df_physical.loc[data["test_stars"], "e" + target]
+        y_true = df_physical.loc[data["test_ID"], target]
+        y_true_err = df_physical.loc[data["test_ID"], "e" + target]
 
         print("\n" + target + " predictions")
         print("means: ", y_pred)
