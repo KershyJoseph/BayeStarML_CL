@@ -171,7 +171,7 @@ def train_NN(
 ):
     """Function to train HBNN"""
     hyperp_str = (
-        "NN_0.5He_"
+        "NN_"
         + target
         + "_"
         + dataset_key
@@ -235,9 +235,9 @@ if __name__ == "__main__":
     start_time_CPU = time.process_time()
     start_time_wall = time.perf_counter()
 
-    print("700ms R NN. He priors with first 0.2. 0.01 non-centred er prior. 0.15, .15, .3 bias priors. NUTPIE with init_means. 8_2000")
+    print("700ms R NN. 0.5He priors. 0.1 non-centred er prior. 0.3 bias priors. Normal pymc nuts. 4_2000")
     train_NN(
-        "700ms", "R", 8, draws=2000, nutpie=True
+        "700ms", "R", 4, draws=2000
     )
 
     end_time_CPU = time.process_time()
