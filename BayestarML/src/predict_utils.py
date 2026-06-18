@@ -80,7 +80,7 @@ def get_bhs_weights(w_draws, y_draws):
     hbnn_ws = mean_ws[:,1]
     gp_ws = mean_ws[:,2]
 
-    preds = 
+    #preds = 
 
 
 # with open("BayestarML/data/" + training_dataset_key + "_constants.json", "r") as f:
