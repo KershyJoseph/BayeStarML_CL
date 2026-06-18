@@ -31,6 +31,7 @@ def check_feature_extrapolation(x_train, x_pred, k=10, percentile=95):
 
     return interpolation_mask
 
+
 def prepare_pred_data(
     filename: str, training_dataset_key: str, features: list, add_log_vars: list = None, extrapolate=False
 ):
@@ -71,8 +72,9 @@ def prepare_pred_data(
 
     return x, x_er, interp_mask
 
-def get_bhs_weights(w_draws, y_draws):
-    """Save a df of the weights BHS assigns to each model for each test value
+
+def get_bhs_weights(w_draws, test_id):
+    """Save a df of the weights BHS assigns to each model for each test star
     """
     mean_ws = w_draws.mean(0) #shape (N_test, K)
 
@@ -80,7 +82,14 @@ def get_bhs_weights(w_draws, y_draws):
     hbnn_ws = mean_ws[:,1]
     gp_ws = mean_ws[:,2]
 
-    #preds = 
+    df_weights = pd.DataFrame({
+        "Test_star_ID": test_id,
+        "BART_weight": bart_ws,
+        "HBNN_weight": hbnn_ws,
+        "GP_weight": gp_ws
+    })
+
+    return df_weights
 
 
 # with open("BayestarML/data/" + training_dataset_key + "_constants.json", "r") as f:

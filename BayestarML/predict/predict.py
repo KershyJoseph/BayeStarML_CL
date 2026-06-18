@@ -7,7 +7,7 @@ Created on Tue Jul 15 15:52:30 2025
 """
 from BayestarML.src.models import bart, gp
 from BayestarML.src.train_utils import load_data, mard, mrd, get_results
-from BayestarML.src.predict_utils import prepare_pred_data, check_feature_extrapolation
+from BayestarML.src.predict_utils import prepare_pred_data, check_feature_extrapolation, get_bhs_weights
 from BayestarML.src.pred_sampling import sample_pred_bart, posterior_predictive_GP, sample_post_pred_HBNN_para
 from BayestarML.src.models.bhs import run_stack
 import arviz as az
@@ -84,14 +84,18 @@ def predict(x, x_er, interp_mask, target,
 
         get_results(bhs_pred, data, interp_mask, outputs_folder, training_dataset_key, target, hyperp_str)
 
-    return [bart4_pred, gp4_pred, hbnn4_pred], bhs_pred, bhs_w
+        return [bart4_pred, gp4_pred, hbnn4_pred], bhs_pred, bhs_w, data["test_ID"]
+
+    else:
+        return [bart4_pred, gp4_pred, hbnn4_pred], bhs_pred, bhs_w
+
 
 if __name__ == "__main__":
 
     # features = ["Teff", "FeH", "logL", "logg"]
     # x, x_er, interp_mask = prepare_pred_data("estrellas_anfitrionas.txt", "700ms", features, extrapolate=True)
 
-    _, pred, ws = predict(x=None, x_er=None, interp_mask=None,
+    _, pred, ws, test_id = predict(x=None, x_er=None, interp_mask=None,
                         target="M", training_dataset_key="700ms",
                         gp_trace_path= "BayestarML/Outputs700MS/GP_M/GP_M_MS50_20_1000_0.95.nc",
                         nn_trace_path= "BayestarML/train/outputs700ms/NN_M/NN_M_700ms_8_2000_0.95NUTPIE_init_mean.nc",
@@ -102,5 +106,8 @@ if __name__ == "__main__":
                         bart_m=250, m_mean=20, m_var=10, nn_nodes=16,
                         test=True)
 
-    print(ws)
+    df_weights = get_bhs_weights(ws, test_id)
+    print(df_weights)
+    df_weights.to_csv("BayestarML/predict/bhs_outputs/700ms_test_bhs_ws.txt", index=None)
+
     # print("M BHS predictions:\n", pred.mean(0), pred.std(0))
