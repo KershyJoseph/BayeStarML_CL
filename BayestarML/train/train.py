@@ -185,7 +185,7 @@ def train_NN(
     outputs_folder_path = "BayestarML/train/outputs" + dataset_key + "/NN_" + target
     nuts_sampler = "pymc"
     if nutpie:
-        hyperp_str += "NUTPIE"
+        hyperp_str += "NUTPIE_init_mean"
         nuts_sampler = "nutpie"
 
     data, train_dim = load_data(dataset_key, target)

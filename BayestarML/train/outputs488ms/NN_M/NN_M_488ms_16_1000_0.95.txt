@@ -164,3 +164,49 @@ Peak Memory: 2696.02 MB
 CPU time accumulated: 486.36935 s
 Total wall clock time: 8330.57527 s
 ><><><><><><><><><><><><><><><><><><><><><><><><><><
+
+
+Same thing but NUTPIE
+
+rhats:  [('Omega_cholesky-cov-packed__', 1.2369125229483344), ('X_latent_raw', 1.3675438300668383), ('w_in_1', 1.380676203269581),
+ ('w_1_2', 1.235052912235032), ('w_2_out', 1.517633459772339), ('bias_1', 1.1590240492158725), ('bias_2', 1.247743955753879), ('bi
+as_out', 1.0271454342181394), ('er_log__', 1.6601982386141958), ('Omega', 1.2369125229483344), ('er', 1.6601982386141958), ('Omega
+_corr', 1.321029432841511), ('Omega_stds', 1.2196688700534422), ('X_latent', 1.1301886225787332), ('ann_input', 1.1301886225787332
+), ('act_1', 1.5742137341432068), ('act_2', 1.3969409841681861), ('act_out', 1.2773938388815238)]
+
+loo trace:  Computed from 4000 posterior samples and 390 observations log-likelihood matrix.
+
+         Estimate       SE
+elpd_loo    98.56    20.53
+p_loo      658.98        -
+
+
+Pareto k diagnostic values:
+                         Count   Pct.
+(-Inf, 0.70]   (good)       16    4.1%
+   (0.70, 1]   (bad)       258   66.2%
+   (1, Inf)   (very bad)  116   29.7%
+
+
+KIC7870112     1.151
+KIC8956017     1.497
+KIC5516982     1.263
+RS_Cha B       1.871
+KIC5468089     1.560
+Name: M, Length: 98, dtype: float64
+
+M accuracy stats
+MAE:  0.045117042441806574
+MARD:  3.6300915464831296
+MRD:  -0.3440779715887054
+
+Stars marked as feature extrapolation:
+Index(['KIC5530375', 'KIC5683538', 'V636_Cen B', 'KIC7871531', 'KIC9512063',
+       'Kepler-35B', 'V432_Aur B', 'KIC4143755', 'KIC7870112', 'RS_Cha B'],
+      dtype='object', name='ID')
+2026-06-18 12:35:03.504 python[8081:493903] XType: Using static font registry.
+Peak Memory: 3921.91 MB
+CPU time accumulated: 2056.86307 s
+Total wall clock time: 779.44559 s
+><><><><><><><><><><><><><><><><><><><><><><><><><><
+Salve Regina
