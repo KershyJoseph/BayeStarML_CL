@@ -103,7 +103,7 @@ if __name__ == "__main__":
                         # nn_trace_path= "BayestarML/Outputs700MS/NNrad/NNradMS16_2000NUTPIE.nc",
                         # gp_trace_path= "BayestarML/train/outputs488ms/GP_M/GP_M_488ms_20_10_1000_0.95.nc",
                         # nn_trace_path= "BayestarML/train/outputs488ms/NN_M/NN_M_488ms_16_1000_0.95.nc",
-                        bart_m=250, m_mean=20, m_var=10, nn_nodes=16,
+                        bart_m=300, m_mean=50, m_var=20, nn_nodes=8,
                         test=True)
 
     df_weights = get_bhs_weights(ws, test_id)
