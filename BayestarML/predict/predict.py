@@ -11,6 +11,7 @@ from BayestarML.src.predict_utils import prepare_pred_data, check_feature_extrap
 from BayestarML.src.pred_sampling import sample_pred_bart, posterior_predictive_GP, sample_post_pred_HBNN_para
 from BayestarML.src.models.bhs import run_stack
 import arviz as az
+import pandas as pd
 
 def predict(x, x_er, interp_mask, target,
             training_dataset_key, gp_trace_path, nn_trace_path,
@@ -108,6 +109,6 @@ if __name__ == "__main__":
 
     df_weights = get_bhs_weights(ws, test_id)
     print(df_weights)
-    df_weights.to_csv("BayestarML/predict/bhs_outputs/700ms_test_bhs_ws.txt", index=None)
+    df_weights.to_csv("BayestarML/predict/outputs_bhs/700ms_test_bhs_ws.txt", index=None)
 
     # print("M BHS predictions:\n", pred.mean(0), pred.std(0))

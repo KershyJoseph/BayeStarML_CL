@@ -192,21 +192,21 @@ def HBNN_M4(X_train, Y, X_error, Y_error, n_hidden):
 
         # Weights from input to hidden layer
         weights_in_1 = pm.Normal(
-            "w_in_1", 0, sigma=0.1*np.sqrt(2/4), shape=(n_hidden, 4) #replaced X_latent.eval().shape[1]
+            "w_in_1", 0, sigma=0.2*np.sqrt(2/4), shape=(n_hidden, 4) #replaced X_latent.eval().shape[1] #.1-.2
         )
 
         weights_1_2 = pm.Normal(
-            "w_1_2", 0, sigma=0.1*np.sqrt(2/n_hidden), shape=(n_hidden,n_hidden)
-        )
+            "w_1_2", 0, sigma=np.sqrt(2/n_hidden), shape=(n_hidden,n_hidden)
+        ) #.12
 
         # Weights from hidden layer to output
-        weights_2_out = pm.Normal("w_2_out", 0, sigma=0.1*np.sqrt(2/n_hidden), shape=n_hidden)
+        weights_2_out = pm.Normal("w_2_out", 0, sigma=np.sqrt(2/n_hidden), shape=n_hidden) #.3
 
-        bias_1 = pm.Normal("bias_1", 0, sigma=0.01, shape=n_hidden)
+        bias_1 = pm.Normal("bias_1", 0, sigma=0.15, shape=n_hidden)
 
-        bias_2 = pm.Normal("bias_2", 0, sigma=0.01, shape=n_hidden)
+        bias_2 = pm.Normal("bias_2", 0, sigma=0.15, shape=n_hidden)
 
-        bias_out = pm.Normal("bias_out", 0, sigma=0.01)
+        bias_out = pm.Normal("bias_out", 0, sigma=0.3)
 
         pre_act_1 = pm.math.dot(ann_input, weights_in_1.T) + bias_1
         act_1 = pm.Deterministic('act_1',
@@ -219,7 +219,7 @@ def HBNN_M4(X_train, Y, X_error, Y_error, n_hidden):
         act_out = pm.Deterministic('act_out' , pm.math.dot(act_2, weights_2_out) + bias_out)
 
         er_raw = pm.HalfNormal('er_raw', sigma=1.0)
-        er = pm.Deterministic('er', 0.1 * er_raw)
+        er = pm.Deterministic('er', 0.01 * er_raw)
         #er = pm.HalfCauchy('er', beta=1)
 
         out = pm.StudentT(
