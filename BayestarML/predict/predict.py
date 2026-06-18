@@ -92,13 +92,13 @@ if __name__ == "__main__":
     # x, x_er, interp_mask = prepare_pred_data("estrellas_anfitrionas.txt", "700ms", features, extrapolate=True)
 
     _, pred, ws = predict(x=None, x_er=None, interp_mask=None,
-                        target="M", training_dataset_key="488ms",
-                        # gp_trace_path= "BayestarML/Outputs700MS/GP_M/GP_M_MS50_20_1000_0.95.nc",
-                        # nn_trace_path= "BayestarML/Outputs700MS/NN_M/NN_M_MS16_1000_0.95NUTPIE.nc",
+                        target="M", training_dataset_key="700ms",
+                        gp_trace_path= "BayestarML/Outputs700MS/GP_M/GP_M_MS50_20_1000_0.95.nc",
+                        nn_trace_path= "BayestarML/train/outputs700ms/NN_M/NN_M_700ms_8_2000_0.95NUTPIE_init_mean.nc",
                         # gp_trace_path= "BayestarML/Outputs700MS/GP_R/GP_R_MS50_20_1000_0.95.nc",
                         # nn_trace_path= "BayestarML/Outputs700MS/NNrad/NNradMS16_2000NUTPIE.nc",
-                        gp_trace_path= "BayestarML/train/outputs488ms/GP_M/GP_M_488ms_20_10_1000_0.95.nc",
-                        nn_trace_path= "BayestarML/train/outputs488ms/NN_M/NN_M_488ms_16_1000_0.95.nc",
+                        # gp_trace_path= "BayestarML/train/outputs488ms/GP_M/GP_M_488ms_20_10_1000_0.95.nc",
+                        # nn_trace_path= "BayestarML/train/outputs488ms/NN_M/NN_M_488ms_16_1000_0.95.nc",
                         bart_m=250, m_mean=20, m_var=10, nn_nodes=16,
                         test=True)
 

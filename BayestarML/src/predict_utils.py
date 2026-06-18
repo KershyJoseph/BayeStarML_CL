@@ -71,6 +71,17 @@ def prepare_pred_data(
 
     return x, x_er, interp_mask
 
+def get_bhs_weights(w_draws, y_draws):
+    """Save a df of the weights BHS assigns to each model for each test value
+    """
+    mean_ws = w_draws.mean(0) #shape (N_test, K)
+
+    bart_ws = mean_ws[:,0]
+    hbnn_ws = mean_ws[:,1]
+    gp_ws = mean_ws[:,2]
+
+    preds = 
+
 
 # with open("BayestarML/data/" + training_dataset_key + "_constants.json", "r") as f:
 #         constants = json.load(f)
