@@ -104,7 +104,7 @@ def train(
         Posterior samples with computed log-likelihoods.
     """
     init_point = model.initial_point(random_seed=42)
-    init_vector = np.concatenate([np.atleast_1d(v) for v in init_point.values()]).astype(np.float64)
+    init_vector = np.concatenate([np.ravel(v) for v in init_point.values()]).astype(np.float64)
 
     print("target_accept=", target_accept)
     trace = pm.sample(
