@@ -334,12 +334,6 @@ def sparse_fully_heteroscedastic_gp(
         cov_var = eta_v**2 * pm.gp.cov.ExpQuad(input_dim=D_var, ls=ls_v) \
                   + pm.gp.cov.WhiteNoise(sigma=1e-5)
 
-        μ_gp = SparseLatent(cov_mean)
-        μ_f, μ_trace = μ_gp.prior("μ", X_mu, Xu)
-
-        X_var_data = pm.Data("X_var", X_var)
-        D_var = X_var.shape[1]
-
         alpha_log_var = pm.Normal("alpha_log_var", mu=0.0, sigma=1.0)
         log_var_gp = SparseLatent(cov_var)
         log_var_latent, var_trace  = log_var_gp.prior("log_var_f", X_var_data, Xu_var)
