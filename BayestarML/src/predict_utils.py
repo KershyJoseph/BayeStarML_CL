@@ -3,6 +3,7 @@ import pandas as pd
 from scipy.spatial import Delaunay
 from sklearn.neighbors import NearestNeighbors
 from BayestarML.src.data_utils import select_clean_data, normalise
+from BayestarML.src.train_utils import load_data
 
 
 def check_feature_extrapolation(x_train, x_pred, k=10, percentile=95):
@@ -33,47 +34,41 @@ def check_feature_extrapolation(x_train, x_pred, k=10, percentile=95):
 
 
 def prepare_pred_data(
-    filename: str, training_dataset_key: str, features: list, add_log_vars: list = None, extrapolate=False
+    filename: str, training_dataset_key: str, features: list, target: str, add_log_vars: list = None
 ):
     """
-    Normalize input data and return DataFrames for normalized values and errors.
-    Check all input data within training ranges.
-
-    Parameters:
-    - teff, logg, FeH, l: Input values (can be scalars or arrays)
-    - eteff, elogg, eFeH, el: Associated errors (can be scalars or arrays)
-
-    Returns:
-    - x_test: DataFrame with normalized values (columns: 'Teff', 'logg', 'FeH', 'L')
-    - x_test_error: DataFrame with normalized errors (columns: 'eTeff', 'elogg', 'eFeH', 'eL')
     """
-    df = pd.read_csv("BayestarML/predict/prediction_datasets/" + filename, sep="\t")
-    # filter to stars with all training features present with err. Add symmetric err column and log vars if needed.
-    df_clean = select_clean_data(
-        df,
-        features,
-        targets=[],
-        add_logvars=add_log_vars,
-        check_detached=False,
-        lum_check=False,
-    )
+    if filename == "test_set": #prepare test set for prediction
+        data, _ = load_data(training_dataset_key, target)
+        x = data["x_test"]
+        x_er = data["x_test_err"]
+        star_id = data["test_ID"]
 
-    # normalise input data
-    df_norm = normalise(df_clean, None, training_dataset_key, x_only=True)
+    else: #prepare new data for prediction
+        df = pd.read_csv("BayestarML/predict/prediction_datasets/" + filename, sep="\t")
+        # filter to stars with all training features present with err. Add symmetric err column and log vars if needed.
+        df_clean = select_clean_data(
+            df,
+            features,
+            targets=[],
+            add_logvars=add_log_vars,
+            check_detached=False,
+            lum_check=False,
+        )
 
-    x, x_er = df_norm[features], df_norm[[f"e{f}" for f in features]]  # might need modifying for scalar inputs?
+        # normalise input data
+        x_norm = normalise(df_clean, None, training_dataset_key, x_only=True)
+        x, x_er = x_norm[features], x_norm[[f"e{f}" for f in features]]  # might need modifying for scalar inputs?
+        star_id = x_norm.index
 
     #check extrapolation
-    interp_mask = check_feature_extrapolation(
-        x_train=pd.read_csv("BayestarML/data/"+training_dataset_key+"_norm_train.txt"),
-        x_pred=x
-    )
+    interp_mask = check_feature_extrapolation(data["x_train"], x)
     print(f"{len(x[~interp_mask])} stars marked as extrapolating from training database.")
 
-    return x, x_er, interp_mask
+    return star_id, x, x_er, interp_mask
 
 
-def get_bhs_weights(w_draws, test_id):
+def get_bhs_weights(w_draws, star_id, savename:str):
     """Save a df of the weights BHS assigns to each model for each test star
     """
     mean_ws = w_draws.mean(0) #shape (N_test, K)
@@ -83,11 +78,13 @@ def get_bhs_weights(w_draws, test_id):
     gp_ws = mean_ws[:,2]
 
     df_weights = pd.DataFrame({
-        "Test_star_ID": test_id,
+        "star_ID": star_id,
         "BART_weight": bart_ws,
         "HBNN_weight": hbnn_ws,
         "GP_weight": gp_ws
     })
+
+    df_weights.to_csv("BayestarML/predict/outputs_bhs/"+savename, index=None)
 
     return df_weights
 

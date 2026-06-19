@@ -235,8 +235,8 @@ if __name__ == "__main__":
     start_time_CPU = time.process_time()
     start_time_wall = time.perf_counter()
 
-    print("RGB M NN. 0.1 priors, normal sampler. 4_2000_0.95")
-    train_NN(
+    print("RGB M NN. 1 layer. 0.05bias, 0.1er, 0.05He w_in_1, 0.1He w_1_out, normal sampler. 4_2000")
+    train_NN_1layer(
         "5438rgb", "M", 4, draws=2000
     )
 

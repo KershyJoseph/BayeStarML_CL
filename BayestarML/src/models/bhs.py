@@ -254,7 +254,6 @@ def run_stack(
     model = stacking_continuous(X1, X2, lpd_point, tau_mu, tau_sigma)
 
     # Sample BHS posterior to get weight draws
-    print("-------------Start BHS Sampling---------------")
     with model:
         trace = pm.sample(
             draws=draws,
