@@ -1,0 +1,171 @@
+-------Start BART buisness----------
+-----------Start BART Sampling------------
+Multiprocess sampling (2 chains in 2 jobs)
+CompoundStep
+>NUTS: [x_dist, sig]
+>PGBART: [mu]
+
+  Progress                                   Draws   Divergences   Step size   Grad evals   Sampling Speed   Elapsed   R
+emaining
+ ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+─────────
+  ────────────────────────────────────────   3000    0             0.32        15           12.20 draws/s    0:04:05   0
+:00:00
+  ────────────────────────────────────────   3000    0             0.32        15           12.12 draws/s    0:04:07   0
+:00:00
+
+Sampling 2 chains for 2_000 tune and 1_000 draw iterations (4_000 + 2_000 draws total) took 253 seconds.
+We recommend running at least 4 chains for robust computation of convergence diagnostics
+The rhat statistic is larger than 1.01 for some parameters. This indicates problems during sampling. See https://arxiv.o
+rg/abs/1903.08008 for details
+The effective sample size per chain is smaller than 100 for some parameters.  A higher number is needed for reliable rha
+t and ess computation. See https://arxiv.org/abs/1903.08008 for details
+Computing ... ──────────────────────────────────────── 100% 0:00:00
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape
+ parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust
+model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are v
+ery different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+
+Rhats
+ [('x_dist', 1.0183235069275058), ('mu', 1.061194983941997), ('sig', 1.0046355569063097)]
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape
+ parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust
+model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are v
+ery different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+LOO
+ Computed from 2000 posterior samples and 390 observations log-likelihood matrix.
+
+         Estimate       SE
+elpd_loo  -170.63    23.02
+p_loo       51.03        -
+
+There has been a warning during the calculation. Please check the results.
+------
+
+Pareto k diagnostic values:
+                         Count   Pct.
+(-Inf, 0.70]   (good)      386   99.0%
+   (0.70, 1]   (bad)         2    0.5%
+   (1, Inf)   (very bad)    2    0.5%
+
+Sampling: [mu, x_dist, y]
+Sampling ... ──────────────────────────────────────── 100% 0:00:00 / 0:01:05
+
+-------Start GP buisness----------
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape
+ parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust
+model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are v
+ery different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+Sampling: [X_new_latent, X_var_new_latent, f_mu_pred, log_var_pred_latent, y_pred]
+Sampling ... ──────────────────────────────────────── 100% 0:00:00 / 0:00:01
+-------Start HBNN buisness----------
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape
+ parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust
+model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are v
+ery different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+starting parallel prediction on 32 worker(s)_
+finished chain 1/4
+finished chain 2/4
+finished chain 3/4
+finished chain 4/4
+
+-------Start BHS buisness----------
+-------------Start BHS Sampling---------------
+Initializing NUTS using jitter+adapt_diag...
+Multiprocess sampling (4 chains in 4 jobs)
+NUTS: [mu, sigma, beta_con]
+
+
+  Progress                                   Draws   Divergences   Step size   Grad evals   Sampling Speed   Elapsed   R
+emaining
+ ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+─────────
+  ────────────────────────────────────────   2500    0             0.20        31           244.06 draws/s   0:00:10   0
+:00:00
+  ────────────────────────────────────────   2500    0             0.17        31           238.32 draws/s   0:00:10   0
+:00:00
+  ────────────────────────────────────────   2500    0             0.15        31           222.39 draws/s   0:00:11   0
+:00:00
+  ────────────────────────────────────────   2500    0             0.20        15           190.74 draws/s   0:00:13   0
+:00:00
+
+Sampling 4 chains for 1_500 tune and 1_000 draw iterations (6_000 + 4_000 draws total) took 24 seconds.
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/diagnostics.py:596: RuntimeWarning: invali
+d value encountered in scalar divide
+  (between_chain_variance / within_chain_variance + num_samples - 1) / (num_samples)
+Rhats
+ [('mu', 1.0020082134790695), ('beta_con', 1.003171877241176), ('sigma', 1.0010860557641856), ('beta', 1.002634176367709
+8), ('f', 1.0027492771135382), ('w', 1.0041819290418812), ('f_test', 1.0024973492531666), ('w_test', 1.0038656957150127)
+]
+MARD BART: 3.8243700954449587
+MRD BART: -0.42278333001901586
+MARD GP: 3.933185048083385
+MRD GP: 0.17991113095830302
+MARD HBNN: 3.6436429921315976
+MRD HBNN: -0.38421126322974103
+MARD BHS: 3.640090128384161
+MRD BHS: -0.40256021574398154
+
+M predictions
+means:  [1.1546605  1.33828728 1.25860466 1.33833216 1.17744769 1.31384826
+ 1.3868964  1.45823799 1.37315569 1.30613494 1.11086021 1.2502806
+ 1.31292891 1.40004808 1.33632843 1.19882709 1.22756516 1.33523904
+ 1.1897577  1.48995314 1.35799679 1.24663388 1.45355606 1.33110474
+ 1.01006753 1.1738868  0.76954948 1.26409841 1.35692432 1.23849591
+ 1.26392684 1.26716014 1.13048006 0.90589356 0.87296918 1.21963574
+ 1.07848667 1.36201146 1.36311646 1.47177845 1.25108709 1.15112285
+ 1.42072636 1.23358126 1.11600706 1.29885327 1.43728798 0.82308225
+ 1.21932278 1.15302869 1.19438827 1.149836   1.07762098 1.3891747
+ 1.14193565 1.41700821 0.94417946 1.51750183 1.30192764 1.15396895
+ 1.3074987  1.54760288 1.16565511 1.07510344 1.05004405 1.37613551
+ 1.11488632 1.04551475 1.42880307 0.79403857 1.32909558 1.17440368
+ 1.04630463 1.28000008 1.34961205 1.06060311 1.38864943 1.28561509
+ 1.13810056 0.91342118 1.17632935 1.41967437 1.13497315 1.3121668
+ 1.14854822 1.38918371 1.46894323 1.13805304 1.19115447 1.29499942
+ 1.24280207 1.27486804 1.17094082 1.14866325 1.47059595 1.29088992
+ 1.80920539 1.38046055]
+stdvs:  [0.03809664 0.05974902 0.04532775 0.04590133 0.03798365 0.03454301
+ 0.07709439 0.0689997  0.06813935 0.06552924 0.0380295  0.02746146
+ 0.03183042 0.05843885 0.03100521 0.04803397 0.02873771 0.0753168
+ 0.03961542 0.06084198 0.03908595 0.0442648  0.04808911 0.06786657
+ 0.04019487 0.03257813 0.03757758 0.0272365  0.02962198 0.04092219
+ 0.05256377 0.04091805 0.05129194 0.0530311  0.03460782 0.02573085
+ 0.03388688 0.07566023 0.063122   0.04257437 0.03279973 0.03646222
+ 0.07920458 0.047985   0.02932612 0.0282204  0.06591492 0.04861098
+ 0.03080301 0.03551818 0.04275045 0.04209628 0.03170978 0.04055836
+ 0.04457913 0.03197056 0.04617962 0.0569027  0.04817252 0.031688
+ 0.04338946 0.1023748  0.03897487 0.03693477 0.03985205 0.04054279
+ 0.03996258 0.04721518 0.05572721 0.04653627 0.05046167 0.05766897
+ 0.04299309 0.05880437 0.03055231 0.04191467 0.05548741 0.02870818
+ 0.03461722 0.03672645 0.02853637 0.09404629 0.03789745 0.05233416
+ 0.0349024  0.07965865 0.05587734 0.04298789 0.04002727 0.02871738
+ 0.04840698 0.04806069 0.04491515 0.05286228 0.04384601 0.02742646
+ 0.04518455 0.07250326]
+
+Unorm M:  ID
+KIC10794845    1.142
+KIC4841753     1.314
+KIC7910848     1.274
+V1130_Tau A    1.392
+KIC8027956     1.178
+               ...
+KIC7870112     1.151
+KIC8956017     1.497
+KIC5516982     1.263
+RS_Cha B       1.871
+KIC5468089     1.560
+Name: M, Length: 98, dtype: float64
+
+M accuracy stats
+MAE:  0.04518785141920906
+MARD:  3.640090128384161
+MRD:  -0.40256021574398154
+
+Stars marked as feature extrapolation:
+Index(['KIC5530375', 'KIC5683538', 'V636_Cen B', 'KIC7871531', 'KIC9512063',
+       'Kepler-35B', 'V432_Aur B', 'KIC4143755', 'KIC7870112', 'RS_Cha B'],
+      dtype='object', name='ID')
