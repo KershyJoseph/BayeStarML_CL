@@ -327,13 +327,35 @@ def sparse_fully_heteroscedastic_gp(
         # ls_v_mu_vec = np.array(ls_v_mu_list)
         # ls_v_sd_vec = np.array(ls_v_sd_list)
 
-        # ls_v  = pm.InverseGamma("ls_var", mu=ls_v_mu_vec, sigma=ls_v_sd_vec, shape=D_var)
-        log_ls_v = pm.Normal("log_ls_v", mu=0.0, sigma=0.5, shape=D_var)
+        log_ls = pm.Normal("log_ls", mu=0.6, sigma=0.5, shape=D)
+        ls = pm.Deterministic("ls", pm.math.exp(log_ls))
+        #eta = pm.Gamma("eta", alpha=2, beta=1)
+        log_eta = pm.Normal("log_eta", mu=0.5, sigma=0.4)
+        eta = pm.Deterministic("eta", pm.math.exp(log_eta))
+
+        cov_mean = eta**2 * pm.gp.cov.ExpQuad(input_dim=D, ls=ls) \
+                   + pm.gp.cov.WhiteNoise(sigma=1e-5)
+
+        μ_gp = SparseLatent(cov_mean)
+        μ_f, μ_trace = μ_gp.prior("μ", X_mu, Xu)
+
+        X_var_data = pm.Data("X_var", X_var)
+        D_var = X_var.shape[1]
+
+        # Priors for ARD lengthscales over concatenated space
+        # ls_v_mu_list, ls_v_sd_list = [], []
+        # for d in range(D_var):
+        #     μ_d, σ_d = get_ℓ_prior(X_var[:, d])
+        #     ls_v_mu_list.append(μ_d)
+        #     ls_v_sd_list.append(σ_d)
+
+        # ls_v_mu_vec = np.array(ls_v_mu_list)
+        # ls_v_sd_vec = np.array(ls_v_sd_list)
+
+        # ls_v = pm.InverseGamma("ls_var", mu=ls_v_mu_vec, sigma=ls_v_sd_vec, shape=D_var)
+        log_ls_v = pm.Normal("log_ls_v", mu=-0.8, sigma=0.4, shape=D_var)
         ls_v = pm.Deterministic("ls_v", pm.math.exp(log_ls_v))
-        # eta_v = pm.LogNormal("eta_var", mu=np.log(0.2), sigma=0.35)
-        #eta_v = pm.Gamma("eta_var", alpha=2, beta=1)
-        #eta_v = pm.HalfNormal("eta_var", sigma=0.5) #try regulating noise fluctuation a bit more
-        log_eta_v = pm.Normal("log_eta_v", mu=-0.8, sigma=0.4)
+        log_eta_v = pm.Normal("log_eta_v", mu=0.0, sigma=0.5)
         eta_v = pm.Deterministic("eta_v", pm.math.exp(log_eta_v))
 
         cov_var = eta_v**2 * pm.gp.cov.ExpQuad(input_dim=D_var, ls=ls_v) \

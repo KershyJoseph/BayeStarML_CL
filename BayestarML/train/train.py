@@ -235,9 +235,9 @@ if __name__ == "__main__":
     start_time_CPU = time.process_time()
     start_time_wall = time.perf_counter()
 
-    print("700ms R NN. 0.1 priors with first two ws and bs at 0.05. Normal pymc nuts. 8_2000")
-    train_NN(
-        "700ms", "R", 8, draws=2000
+    print("700ms R GP. 30_10_2000")
+    train_GP(
+        "700ms", "R", 30, 10, draws=2000
     )
 
     end_time_CPU = time.process_time()
