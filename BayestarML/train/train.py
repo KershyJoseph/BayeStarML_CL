@@ -237,9 +237,9 @@ if __name__ == "__main__":
     start_time_CPU = time.process_time()
     start_time_wall = time.perf_counter()
 
-    print("700ms R GP, linear kernel on mean gp with sig=0.5. 10_10_1000")
-    train_GP(
-        "700ms", "R", 10, 10, draws=1000, linear_kernel=True
+    print("RGB M NN. 0.05, 0.04, 0.08 ws and bias priors. mu_X introduced with sigma=0.2. Using pm.MvNormal. -0.7, 0.3 log_er. 6_2000")
+    train_NN(
+        "5438rgb", "M", 6, draws=2000
     )
 
     end_time_CPU = time.process_time()
@@ -253,9 +253,9 @@ if __name__ == "__main__":
     # start_time_CPU2 = time.process_time()
     # start_time2 = time.time()
 
-    #print("RGB M NN. 1 layer. 0.05bias, 0.1er, 0.05He w_in_1, 0.1He w_1_out, normal sampler. 4_2000")
-    # train_NN_1layer(
-    #     "5438rgb", "M", 4, draws=2000
+    # print("700ms R GP, linear kernel on mean gp with sig=0.5. 10_10_1000")
+    # train_GP(
+    #     "700ms", "R", 10, 10, draws=1000, linear_kernel=True
     # )
 
     # end_time_CPU2 = time.process_time()
