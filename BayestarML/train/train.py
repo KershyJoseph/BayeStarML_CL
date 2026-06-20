@@ -237,9 +237,9 @@ if __name__ == "__main__":
     start_time_CPU = time.process_time()
     start_time_wall = time.perf_counter()
 
-    print("700ms R GP, linear kernel on mean gp with sig=1.0. 20_10_2000")
+    print("700ms R GP, linear kernel on mean gp with sig=1.0. 10_10_2000")
     train_GP(
-        "700ms", "R", 20, 10, draws=2000, linear_kernel=True
+        "700ms", "R", 10, 10, draws=1000, linear_kernel=True
     )
 
     end_time_CPU = time.process_time()

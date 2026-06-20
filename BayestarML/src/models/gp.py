@@ -310,12 +310,10 @@ def sparse_fully_heteroscedastic_gp(
 
         k_sq_exp = eta**2 * pm.gp.cov.ExpQuad(input_dim=D, ls=ls)
         cov_mean = k_sq_exp + pm.gp.cov.WhiteNoise(sigma=1e-5)
-        print("About to activate linear kernel")
         if linear_kernel:
-            print("Linear kernel activated!")
             grad_var = pm.HalfNormal("grad_var", sigma=1.0, shape=D)
             k_linear = pm.gp.cov.Linear(input_dim=D, c=grad_var)
-            cov_mean += k_linear
+            cov_mean = cov_mean + k_linear
 
         μ_gp = SparseLatent(cov_mean)
         μ_f, μ_trace = μ_gp.prior("μ", X_mu, Xu)
