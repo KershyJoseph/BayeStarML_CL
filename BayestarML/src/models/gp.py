@@ -311,6 +311,7 @@ def sparse_fully_heteroscedastic_gp(
         k_sq_exp = eta**2 * pm.gp.cov.ExpQuad(input_dim=D, ls=ls)
         cov_mean = k_sq_exp + pm.gp.cov.WhiteNoise(sigma=1e-5)
         if linear_kernel:
+            print("Linear kernel activated!")
             grad_var = pm.HalfNormal("grad_var", sigma=1.0, shape=D)
             k_linear = pm.gp.cov.Linear(input_dim=D, c=grad_var)
             cov_mean += k_linear
