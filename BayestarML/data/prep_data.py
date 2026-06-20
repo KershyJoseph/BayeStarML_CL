@@ -81,7 +81,7 @@ def prep_data(
             "logL": [0.05, "dex"],
             "Teff": [100, "K"],
             "logg": [0.05, "dex"],
-            "FeH": [0.15, "dex"],  # 0.1 for RGB
+            "FeH": [0.1, "dex"],  # 0.1 for RGB
         }
     df = error_filter(
         df,

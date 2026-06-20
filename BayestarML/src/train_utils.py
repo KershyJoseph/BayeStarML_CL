@@ -147,6 +147,15 @@ def train(
     loo = az.loo(trace)
     print("loo trace: ", loo)
 
+    #GEMINI
+    # Print each parameter group and its shape
+    for rv in model.free_RVs:
+        print(f"{rv.name}: {rv.shape}")
+
+    # To get the absolute total count of scalar parameters:
+    total_params = sum(rv.size for rv in model.free_RVs)
+    print(f"Total parameters: {total_params}")
+
     # print indices of bad pareto ks
     pareto_k_values = loo.pareto_k.values
     bad_indices = np.where(pareto_k_values > 0.7)[0]

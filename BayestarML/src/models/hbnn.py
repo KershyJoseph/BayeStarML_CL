@@ -281,7 +281,7 @@ def HBNN_M4_simpler(X_train, Y, X_error, Y_error, n_hidden=5):
             compute_corr=True,
             #initval=Low_tri
         )
-        
+
         # Latent variables
         X_latent = pm.MvNormal(
             'X_latent', 
@@ -304,14 +304,14 @@ def HBNN_M4_simpler(X_train, Y, X_error, Y_error, n_hidden=5):
 
         # Weights from input to hidden layer
         weights_in_1 = pm.Normal(
-            "w_in_1", 0, sigma=0.05, shape=(n_hidden, 4)
+            "w_in_1", 0, sigma=0.02, shape=(n_hidden, 4)
         )
 
         # Weights from hidden layer to output
-        weights_1_out = pm.Normal("w_1_out", 0, sigma=0.1, shape=(n_hidden))
+        weights_1_out = pm.Normal("w_1_out", 0, sigma=0.05, shape=(n_hidden))
 
         
-        bias_1 = pm.Normal("bias_1", 0, sigma=0.2, shape=n_hidden)
+        bias_1 = pm.Normal("bias_1", 0, sigma=0.1, shape=n_hidden)
 
         bias_out = pm.Normal("bias_out", 0, sigma=0.2)
 
@@ -378,7 +378,7 @@ def HBNN_R4(X_train, Y, X_error, Y_error, n_hidden):
             compute_corr=True,
             #initval=Low_tri
         )
-        
+
         # Latent variables
         X_latent = pm.MvNormal(
             'X_latent', 
