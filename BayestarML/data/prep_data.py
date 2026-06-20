@@ -151,27 +151,22 @@ if __name__ == "__main__":
 
     training_fs = ["Teff", "logg", "FeH", "L"]
     targets = ["M", "R"]
-    s_class = "ms"
-    add_logvars = ["L"]  # add a log column with errs for these variables
+    s_class = "rgb"
+    add_logvars = ["L", "R"]  # add a log column with errs for these variables
 
     #skip the target range cutting step if you already know the limits you want
     target_lims = {
-        "R": [0,100], #rgb [0, 1.6],
-        "M": [0,2] #rgb [0.75, 2.25],
+        "logR": [0, 1.6],
+        "M": [0.75, 2.25],
     }
 
-    # 700ms
-    abs_err_lims = {
-        "elogL": 0.5
-    }
-    percent_err_lims = {
-        "eM": 100,
-        "eR": 100
-    }
+    # # 700ms
+    # abs_err_lims = {"elogL": 0.5}
+    # percent_err_lims = {"eM": 100, "eR": 100}
 
-    # 5438rgb
-    # abs_err_lims = {"elogL": 0.05, "eTeff": 100, "elogg": 0.05, "eFeH": 0.1}
-    # percent_err_lims = {"eM": 7, "eR": 7}
+    # 5436rgb
+    abs_err_lims = {"elogL": 0.05, "eTeff": 100, "elogg": 0.05, "eFeH": 0.1}
+    percent_err_lims = {"eM": 7, "eR": 7}
 
     # prepare data
     prep_data(
@@ -183,8 +178,8 @@ if __name__ == "__main__":
         abs_err_lims,
         percent_err_lims,
         target_lims=target_lims,
-        # check_detached=False,
-        # lum_check=True,
+        check_detached=True,
+        lum_check=True,
         plot_errs=True,
         xgboost=True,
         plot_hr=True,

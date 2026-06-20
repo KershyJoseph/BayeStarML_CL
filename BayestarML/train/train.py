@@ -237,9 +237,9 @@ if __name__ == "__main__":
     start_time_CPU = time.process_time()
     start_time_wall = time.perf_counter()
 
-    print("700ms R NN, 0.04/0.08 weight, 0.15/0.25 bias. 8_2000")
-    train_NN_1layer(
-        "700ms", "R", 8, draws=2000
+    print("5438rgb M NN, 0.03/0.02/0.05 weight and bias priors. 6_2000")
+    train_NN(
+        "5438rgb", "M", 6, draws=2000
     )
 
     end_time_CPU = time.process_time()
