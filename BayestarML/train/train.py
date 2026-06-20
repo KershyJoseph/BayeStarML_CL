@@ -237,9 +237,9 @@ if __name__ == "__main__":
     start_time_CPU = time.process_time()
     start_time_wall = time.perf_counter()
 
-    print("5438rgb M NN, 0.03/0.02/0.05 weight and bias priors. 6_2000")
-    train_NN(
-        "5438rgb", "M", 6, draws=2000
+    print("700ms R GP, linear kernel on mean gp with sig=1.0. 20_10_2000")
+    train_GP(
+        "700ms", "R", 20, 10, draws=2000, linear_kernel=True
     )
 
     end_time_CPU = time.process_time()
