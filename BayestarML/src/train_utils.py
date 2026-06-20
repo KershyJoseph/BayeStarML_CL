@@ -150,10 +150,10 @@ def train(
     #GEMINI
     # Print each parameter group and its shape
     for rv in model.free_RVs:
-        print(f"{rv.name}: {rv.shape}")
+        print(f"{rv.name}: {rv.shape.eval()}")
 
     # To get the absolute total count of scalar parameters:
-    total_params = sum(rv.size for rv in model.free_RVs)
+    total_params = sum(rv.size.eval() for rv in model.free_RVs)
     print(f"Total parameters: {total_params}")
 
     # print indices of bad pareto ks

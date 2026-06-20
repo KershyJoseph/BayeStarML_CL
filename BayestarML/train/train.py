@@ -104,7 +104,7 @@ def train_NN_1layer(
 ):
     """Function to train HBNN"""
     hyperp_str = (
-        "NN_1layer_"
+        "NN_1layer_04081525"
         + target
         + "_"
         + dataset_key
@@ -237,9 +237,9 @@ if __name__ == "__main__":
     start_time_CPU = time.process_time()
     start_time_wall = time.perf_counter()
 
-    print("700ms R GP, linear kernel on mean gp with sig=1.0. 20_10_2000")
-    train_GP(
-        "700ms", "R", 20, 10, draws=2000, linear_kernel=True
+    print("700ms R NN, 0.04/0.08 weight, 0.15/0.25 bias. 8_2000")
+    train_NN_1layer(
+        "700ms", "R", 8, draws=2000
     )
 
     end_time_CPU = time.process_time()
