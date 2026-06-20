@@ -250,9 +250,10 @@ def make_Xu_er(X_er, M=60, method="kmeans", add_bounds=True, standardise=True, s
 
 def sparse_fully_heteroscedastic_gp(
     X, X_err, y,
-    M_mean=60,
-    M_var=60,
+    M_mean=10,
+    M_var=10,
     seed=0,
+    linear_kernel=False
 ):
     """
     X      : (N, D) inputs
@@ -307,8 +308,12 @@ def sparse_fully_heteroscedastic_gp(
         log_eta = pm.Normal("log_eta", mu=0.5, sigma=0.4)
         eta = pm.Deterministic("eta", pm.math.exp(log_eta))
 
-        cov_mean = eta**2 * pm.gp.cov.ExpQuad(input_dim=D, ls=ls) \
-                   + pm.gp.cov.WhiteNoise(sigma=1e-5)
+        k_sq_exp = eta**2 * pm.gp.cov.ExpQuad(input_dim=D, ls=ls)
+        cov_mean = k_sq_exp + pm.gp.cov.WhiteNoise(sigma=1e-5)
+        if linear_kernel:
+            grad_var = pm.HalfNormal("grad_var", sigma=1.0, shape=D)
+            k_linear = pm.gp.cov.Linear(input_dim=D, c=grad_var)
+            cov_mean += k_linear
 
         μ_gp = SparseLatent(cov_mean)
         μ_f, μ_trace = μ_gp.prior("μ", X_mu, Xu)
@@ -327,7 +332,7 @@ def sparse_fully_heteroscedastic_gp(
         # ls_v_sd_vec = np.array(ls_v_sd_list)
         # ls_v = pm.InverseGamma("ls_v", mu=np.log(ls_v_mu_vec), sigma=ls_v_sd_vec, shape=D_err)
 
-        log_ls_v = pm.Normal("log_ls_v", mu=0.0, sigma=0.3, shape=D_var)
+        log_ls_v = pm.Normal("log_ls_v", mu=0.0, sigma=0.2, shape=D_var)
         ls_v = pm.Deterministic("ls_v", pm.math.exp(log_ls_v))
         log_eta_v = pm.Normal("log_eta_v", mu=-0.5, sigma=0.3)
         eta_v = pm.Deterministic("eta_v", pm.math.exp(log_eta_v))

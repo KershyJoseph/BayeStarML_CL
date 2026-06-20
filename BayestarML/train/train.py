@@ -24,6 +24,7 @@ def train_GP(
     chains=4,
     advi=False,
     nutpie=False,
+    linear_kernel=False
 ):
     """Function to train GP"""
     hyperp_str = (
@@ -50,7 +51,8 @@ def train_GP(
 
     model, μ_gp, lg_σ_gp, μ_trace, var_trace, Xu, Xu_er = (
         gp.sparse_fully_heteroscedastic_gp(
-            data["x_train"], data["x_train_err"], data["y_train"], M_mean, M_var
+            data["x_train"], data["x_train_err"], data["y_train"], M_mean, M_var,
+            linear_kernel=linear_kernel
         )
     )
 
@@ -235,9 +237,9 @@ if __name__ == "__main__":
     start_time_CPU = time.process_time()
     start_time_wall = time.perf_counter()
 
-    print("700ms R NN, 1 layer. 0.05, 0.1 ws and 0.2, 0.3 bias. log_er -1.5, 0.5. 8_2000")
-    train_NN_1layer(
-        "700ms", "R", 8, draws=2000
+    print("700ms R GP, linear kernel on mean gp with sig=1.0. 20_10_2000")
+    train_GP(
+        "700ms", "R", 20, 10, draws=2000, linear_kernel=True
     )
 
     end_time_CPU = time.process_time()
