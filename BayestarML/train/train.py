@@ -237,7 +237,7 @@ if __name__ == "__main__":
     start_time_CPU = time.process_time()
     start_time_wall = time.perf_counter()
 
-    print("RGB M NN. 0.03, 0.03, 0.07 ws and bias priors. eta=3 on omega. mu_X introduced with sigma=0.2. Using pm.MvNormal. -0.7, 0.3 log_er. 8_2000")
+    print("RGB M NN. 0.04, 0.04, 0.08 ws and bias priors. eta=2 and sd_dist LogNormal -0.2, 0.2 on omega. mu_X introduced with sigma=0.2. Using pm.MvNormal. -0.7, 0.3 log_er. 8_2000")
     train_NN(
         "5438rgb", "M", 8, draws=2000
     )

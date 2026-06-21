@@ -160,8 +160,8 @@ def HBNN_M4(X_train, Y, X_error, Y_error, n_hidden):
         chol, corr, sigmas = pm.LKJCholeskyCov(
             'Omega', 
             n=4,
-            eta=3,
-            sd_dist=pm.HalfNormal.dist(1),  # Simpler prior
+            eta=2,
+            sd_dist=pm.LogNormal.dist(mu=-0.2, sigma=0.2),  # changed from HalfNormal
             compute_corr=True,
             #initval=Low_tri
         )
@@ -195,21 +195,21 @@ def HBNN_M4(X_train, Y, X_error, Y_error, n_hidden):
 
         # Weights from input to hidden layer
         weights_in_1 = pm.Normal(
-            "w_in_1", 0, sigma=0.03, shape=(n_hidden, 4) #replaced X_latent.eval().shape[1] #.1-.2
+            "w_in_1", 0, sigma=0.04, shape=(n_hidden, 4) #replaced X_latent.eval().shape[1] #.1-.2
         )
 
         weights_1_2 = pm.Normal(
-            "w_1_2", 0, sigma=0.03, shape=(n_hidden,n_hidden)
+            "w_1_2", 0, sigma=0.04, shape=(n_hidden,n_hidden)
         ) #.12
 
         # Weights from hidden layer to output
-        weights_2_out = pm.Normal("w_2_out", 0, sigma=0.07, shape=n_hidden)
+        weights_2_out = pm.Normal("w_2_out", 0, sigma=0.08, shape=n_hidden)
 
-        bias_1 = pm.Normal("bias_1", 0, sigma=0.03, shape=n_hidden)
+        bias_1 = pm.Normal("bias_1", 0, sigma=0.04, shape=n_hidden)
 
-        bias_2 = pm.Normal("bias_2", 0, sigma=0.03, shape=n_hidden)
+        bias_2 = pm.Normal("bias_2", 0, sigma=0.04, shape=n_hidden)
 
-        bias_out = pm.Normal("bias_out", 0, sigma=0.07)
+        bias_out = pm.Normal("bias_out", 0, sigma=0.08)
 
         pre_act_1 = pm.math.dot(ann_input, weights_in_1.T) + bias_1
         act_1 = pm.Deterministic('act_1',
