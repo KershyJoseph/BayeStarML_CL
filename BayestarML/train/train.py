@@ -24,7 +24,7 @@ def train_GP(
     chains=4,
     advi=False,
     nutpie=False,
-    linear_kernel=False
+    linear_mean_f=False
 ):
     """Function to train GP"""
     hyperp_str = (
@@ -52,7 +52,7 @@ def train_GP(
     model, μ_gp, lg_σ_gp, μ_trace, var_trace, Xu, Xu_er = (
         gp.sparse_fully_heteroscedastic_gp(
             data["x_train"], data["x_train_err"], data["y_train"], M_mean, M_var,
-            linear_kernel=linear_kernel
+            linear_mean_f=linear_mean_f
         )
     )
 
@@ -237,9 +237,9 @@ if __name__ == "__main__":
     start_time_CPU = time.process_time()
     start_time_wall = time.perf_counter()
 
-    print("RGB M NN. 0.04, 0.04, 0.08 ws and bias priors. eta=2 and sd_dist LogNormal -0.2, 0.2 on omega. mu_X introduced with sigma=0.2. Using pm.MvNormal. -0.7, 0.3 log_er. 8_2000")
-    train_NN(
-        "5438rgb", "M", 8, draws=2000
+    print("700ms R GP, linear fn on mean gp mean fn with beta sigs=0.5. 50_15_1000")
+    train_GP(
+        "700ms", "R", 50, 15, draws=1000, linear_mean_f=True
     )
 
     end_time_CPU = time.process_time()
@@ -253,13 +253,12 @@ if __name__ == "__main__":
     # start_time_CPU2 = time.process_time()
     # start_time2 = time.time()
 
-    # print("700ms R GP, linear kernel on mean gp with sig=0.7. 10_10_1000")
-    # train_GP(
-    #     "700ms", "R", 50, 50, draws=1000, linear_kernel=True
+    #print("RGB M NN. 0.04, 0.04, 0.08 ws and bias priors. eta=2 and sd_dist LogNormal -0.2, 0.2 on omega. mu_X introduced with sigma=0.2. Using pm.MvNormal. -0.7, 0.3 log_er. 8_2000")
+    # train_NN(
+    #     "5438rgb", "M", 8, draws=2000
     # )
 
     # end_time_CPU2 = time.process_time()
-
     # mem2 = process.memory_info().rss / 1024**2
     # print(f"Peak Memory: {(mem2-mem1):.2f} MB")
     # print(f"CPU time used: {(end_time_CPU2-start_time_CPU2):.5f} s")
@@ -274,7 +273,6 @@ if __name__ == "__main__":
     # radius_train_GP(datasetRGB, 100, 30, "outputs5438rgb", 1000, target_accept=0.95, sclass="RGB")
 
     # end_time_CPU3 = time.process_time()
-
     # mem3 = process.memory_info().rss / 1024**2
     # print(f"Peak Memory: {(mem3-mem2):.2f} MB")
     # print(f"CPU time used: {(end_time_CPU3-start_time_CPU3):.5f} s")
@@ -289,7 +287,6 @@ if __name__ == "__main__":
     # mass_train_GP(datasetRGB, 100, 30, "outputs5438rgb", 1000, target_accept=0.95, sclass="RGB")
 
     # end_time_CPU4 = time.process_time()
-
     # mem4 = process.memory_info().rss / 1024**2
     # print(f"Peak Memory: {(mem4-mem3):.2f} MB")
     # print(f"CPU time used: {(end_time_CPU4-start_time_CPU4):.5f} s")

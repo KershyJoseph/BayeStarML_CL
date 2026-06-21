@@ -253,7 +253,7 @@ def sparse_fully_heteroscedastic_gp(
     M_mean=10,
     M_var=10,
     seed=0,
-    linear_kernel=False
+    linear_mean_f=False
 ):
     """
     X      : (N, D) inputs
@@ -310,13 +310,17 @@ def sparse_fully_heteroscedastic_gp(
 
         k_sq_exp = eta**2 * pm.gp.cov.ExpQuad(input_dim=D, ls=ls)
         cov_mean = k_sq_exp + pm.gp.cov.WhiteNoise(sigma=1e-5)
-        if linear_kernel:
-            grad_var = pm.HalfNormal("grad_var", sigma=0.7, shape=D)
-            k_linear = pm.gp.cov.Linear(input_dim=D, c=grad_var)
-            cov_mean = cov_mean + k_linear
 
         μ_gp = SparseLatent(cov_mean)
-        μ_f, μ_trace = μ_gp.prior("μ", X_mu, Xu)
+        μ_f_latent, μ_trace = μ_gp.prior("μ", X_mu, Xu)
+
+        if linear_mean_f:
+            beta0 = pm.Normal("beta0", mu=0.0, sigma=0.5)
+            beta = pm.Normal("beta", mu=0.0, sigma=0.5, shape=D)
+            linear_background = beta0 + pm.math.dot(X_mu, beta)
+            μ_f = pm.Deterministic("μ_f", μ_f_latent + linear_background)
+        else:
+            μ_f = pm.Deterministic("μ_f", μ_f_latent)
 
         X_var_data = pm.Data("X_var", X_var)
         D_var = X_var.shape[1]
