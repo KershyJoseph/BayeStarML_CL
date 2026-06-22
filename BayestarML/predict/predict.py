@@ -96,10 +96,10 @@ if __name__ == "__main__":
     _, pred, ws = predict(x, x_er, interp_mask, target, dataset_key,
         gp_trace_path= "BayestarML/Outputs5438RGB/GPmass/GPmassRGB100_30_1000_0.95.nc",
         nn_trace_path= "BayestarML/train/outputs5438rgb/NN_M/NN_M_5438rgb_8_2000_0.95.nc",
-        bart_m=600, m_mean=100, m_var=30, nn_nodes=8,
+        bart_m=500, m_mean=100, m_var=30, nn_nodes=8,
         y_compare="test_set", savename="BHS")
 
-    df_weights = get_bhs_weights(ws, star_id)
+    df_weights = get_bhs_weights(ws, star_id, "bhs_"+dataset_key+"_"+target+"_ws.txt")
 
     plot_bhs_weights(df_weights, "M", "BayestarML/data/5438rgb.txt", "5438rgb_bhs_ws_plot.pdf")
 
