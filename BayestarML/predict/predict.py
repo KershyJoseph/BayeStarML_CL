@@ -7,7 +7,7 @@ Created on Tue Jul 15 15:52:30 2025
 """
 from BayestarML.src.models import bart, gp
 from BayestarML.src.train_utils import load_data, mard, mrd, get_results
-from BayestarML.src.predict_utils import prepare_pred_data, get_bhs_weights
+from BayestarML.src.predict_utils import prepare_pred_data, get_bhs_weights, plot_bhs_weights
 from BayestarML.src.pred_sampling import sample_pred_bart, posterior_predictive_GP, sample_post_pred_HBNN_para
 from BayestarML.src.models.bhs import run_stack
 import arviz as az
@@ -89,17 +89,19 @@ def predict(x, x_er, interp_mask,
 if __name__ == "__main__":
 
     features = ["Teff", "FeH", "logL", "logg"]
-    target = "R"
-    dataset_key = "700ms"
+    target = "M"
+    dataset_key = "5438rgb"
     star_id, x, x_er, interp_mask = prepare_pred_data("test_set", dataset_key, features, target)
 
     _, pred, ws, test_id = predict(x, x_er, interp_mask, target, dataset_key,
-                        gp_trace_path= "BayestarML/Outputs700MS/GP_R/GP_R_MS50_20_1000_0.95.nc",
-                        nn_trace_path= "BayestarML/Outputs700MS/NNrad/NNradMS16_2000NUTPIE.nc",
-                        bart_m=300, m_mean=50, m_var=20, nn_nodes=8,
+                        gp_trace_path= "BayestarML/Outputs5438RGB/GPmass/GPmassRGB100_30_1000_0.95.nc",
+                        nn_trace_path= "BayestarML/train/outputs5438rgb/NN_M/NN_M_5438rgb_8_2000_0.95.nc",
+                        bart_m=300, m_mean=100, m_var=30, nn_nodes=8,
                         y_compare="test_set", savename="BHS")
 
     df_weights = get_bhs_weights(ws, test_id)
+
+    plot_bhs_weights(df_weights, "M", "BayestarML/data/5438rgb.txt", "5438rgb_bhs_ws_plot.pdf")
 
     # print("M BHS predictions:\n", pred.mean(0), pred.std(0))
 

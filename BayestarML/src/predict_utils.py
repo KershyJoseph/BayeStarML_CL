@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 from scipy.spatial import Delaunay
 from sklearn.neighbors import NearestNeighbors
 from BayestarML.src.data_utils import select_clean_data, normalise
@@ -87,6 +88,26 @@ def get_bhs_weights(w_draws, star_id, savename:str):
     df_weights.to_csv("BayestarML/predict/outputs_bhs/"+savename, index=None)
 
     return df_weights
+
+
+def plot_bhs_weights(ws, target, compare_file, savename):
+    """
+    """
+    ws.set_index("test_star_ID", inplace=True)
+    all_masses = pd.read_csv(compare_file, usecols=[target, "ID"])
+    all_masses.set_index("ID", inplace=True)
+    masses = all_masses.loc[ws.index]
+
+    df_plot = pd.concat([ws, masses], axis=1)
+    df_plot.sort_values(target, inplace=True)
+
+    fig, ax = plt.subplots(figsize=(8,6))
+    for w in ["BART_weight", "HBNN_weight", "GP_weight"]:
+        ax.plot(df_plot[target], df_plot[w], label=w)
+    ax.set_xlabel(target+" ("+target+"sol)")
+    ax.set_ylabel("BHS base model weight")
+    ax.legend()
+    fig.savefig("BayestarML/predict/outputs_bhs/"+savename)
 
 
 # with open("BayestarML/data/" + training_dataset_key + "_constants.json", "r") as f:
