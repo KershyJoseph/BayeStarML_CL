@@ -108,7 +108,7 @@ if __name__ == "__main__":
 
     df_weights = get_bhs_weights(ws, star_id, dataset_key+"_bhs_"+target+"_ws.txt")
 
-    plot_bhs_weights(df_weights, target, "BayestarML/data/5438rgb.txt", dataset_key+"_bhs_"+target+"_ws_plot.pdf")
+    plot_bhs_weights(df_weights, target, "BayestarML/data/"+dataset_key+".txt", dataset_key+"_bhs_"+target+"_ws_plot.pdf")
 
     # print("M BHS predictions:\n", pred.mean(0), pred.std(0))
 
