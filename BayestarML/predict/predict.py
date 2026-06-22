@@ -103,7 +103,7 @@ if __name__ == "__main__":
     _, pred, ws = predict(x, x_er, interp_mask, target, dataset_key,
         gp_trace_path= "BayestarML/train/outputs700ms/GP_R/GP_R_700ms_50_15_2000_0.95.nc",
         nn_trace_path= "BayestarML/train/outputs700ms/NN_R/NN_1layer_R_700ms_8_2000_0.95.nc",
-        bart_m=300, m_mean=50, m_var=15, nn_nodes=8,
+        bart_m=500, m_mean=50, m_var=15, nn_nodes=8,
         y_compare="test_set", savename="BHS", NN_1layer=True)
 
     df_weights = get_bhs_weights(ws, star_id, dataset_key+"_bhs_"+target+"_ws.txt")
