@@ -93,13 +93,13 @@ if __name__ == "__main__":
     dataset_key = "5438rgb"
     star_id, x, x_er, interp_mask = prepare_pred_data("test_set", dataset_key, features, target)
 
-    _, pred, ws, test_id = predict(x, x_er, interp_mask, target, dataset_key,
-                        gp_trace_path= "BayestarML/Outputs5438RGB/GPmass/GPmassRGB100_30_1000_0.95.nc",
-                        nn_trace_path= "BayestarML/train/outputs5438rgb/NN_M/NN_M_5438rgb_8_2000_0.95.nc",
-                        bart_m=300, m_mean=100, m_var=30, nn_nodes=8,
-                        y_compare="test_set", savename="BHS")
+    _, pred, ws = predict(x, x_er, interp_mask, target, dataset_key,
+        gp_trace_path= "BayestarML/Outputs5438RGB/GPmass/GPmassRGB100_30_1000_0.95.nc",
+        nn_trace_path= "BayestarML/train/outputs5438rgb/NN_M/NN_M_5438rgb_8_2000_0.95.nc",
+        bart_m=600, m_mean=100, m_var=30, nn_nodes=8,
+        y_compare="test_set", savename="BHS")
 
-    df_weights = get_bhs_weights(ws, test_id)
+    df_weights = get_bhs_weights(ws, star_id)
 
     plot_bhs_weights(df_weights, "M", "BayestarML/data/5438rgb.txt", "5438rgb_bhs_ws_plot.pdf")
 

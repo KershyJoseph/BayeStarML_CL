@@ -37,20 +37,20 @@ def BART_M(x, x_er, y, y_er, m=250):
     pm.Model
         PyMC model defining the BART regression with learned noise parameter.
     """
-    
+
     with pm.Model() as model_BART:
-        
+
         x_in = pm.Data('x', x)
         x_in_er = pm.Data('x_er', x_er)
-        
+
         x_normal = pm.Normal('x_dist', mu=x_in, sigma=x_in_er, shape=x_in.shape)
-        
+
         mu = pmb.BART('mu', x_normal, y.values, m=m)
              
         sig = pm.HalfCauchy('sig', beta=0.05)
-        
+
         y = pm.Normal("y", mu=mu, sigma=sig, shape=x_in.shape[0], observed=y)
-        
+
     return model_BART
 
 
@@ -81,17 +81,17 @@ def BART_R(X, X_er, Y, Y_er, m=250):
     """
     
     with pm.Model() as model_BART:
-        
+
         X_in = pm.Data('X', X)
         X_in_er = pm.Data('X_er', X_er)
-        
+
         X_normal = pm.Normal('X_dist', mu=X_in, sigma=X_in_er, shape=X_in.shape)
         
         mu = pmb.BART('mu', X_normal, Y.values, m=m)
 
         sig = 0.3
-        
+
         y = pm.Normal("y", mu=mu, sigma=sig, shape=X_in.shape[0], observed=Y)
-        
+
     return model_BART
 
