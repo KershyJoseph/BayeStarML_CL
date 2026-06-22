@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 from sklearn.model_selection import train_test_split
+from scipy.stats import gaussian_kde
 
 RANDOM_SEED = 5732
 
@@ -318,7 +319,7 @@ def normalise(x: pd.DataFrame, y: pd.DataFrame, dataset_key: str, x_only: bool =
     return x, y
 
 
-def hr_plot(df, savename: str, hue: str = None):
+def hr_plot(df, savename: str, hue: str = None, density_plot: bool = False):
     """Plot logTeff (higher Teff to the left) against logL for stars in df"""
     df = logomatic(df, ["Teff"])
 
@@ -335,6 +336,15 @@ def hr_plot(df, savename: str, hue: str = None):
         sns.scatterplot(
             data=df, x="logTeff", y="logL", hue=hue, ax=ax, zorder=3, alpha=0.8
         )
+        fmt = "none"
+    if density_plot:
+        stack = np.vstack([x, y])
+        density = gaussian_kde(stack)(stack)
+        idx = np.argsort(density)
+        x, y, density = x[idx], y[idx], density[idx]
+
+        scatter = ax.scatter(x, y, c=density, cmap='viridis', s=20, zorder=3)
+        fig.colorbar(scatter, ax=ax, label="Density")
         fmt = "none"
     ax.errorbar(x, y, y_err, x_err, fmt=fmt, ecolor="grey", alpha=0.5, zorder=2)
     ax.xaxis.set_inverted(True)

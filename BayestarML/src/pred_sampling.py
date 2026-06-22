@@ -305,10 +305,9 @@ def sample_post_pred_HBNN_para(trace, X, X_er, n_hidden, n_param, target, datase
         return denormalise_val(predictions, dataset_key, target), lpd_HBNN
 
 
-def SIMPLE_sample_post_pred_HBNN_para(trace, X, X_er, n_hidden, n_param, target, dataset_key,
-                          n_jobs=None):
+def SIMPLE_sample_post_pred_HBNN_para(trace, X, X_er, n_hidden, n_param, target, dataset_key, n_jobs=None):
     """
-    ***Edit for 1 layer with 5 nodes***
+    ***Edit for 1 layer***
 
     Parallel posterior predictive for HBNN with latent-input sampling.
 

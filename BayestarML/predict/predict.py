@@ -8,7 +8,7 @@ Created on Tue Jul 15 15:52:30 2025
 from BayestarML.src.models import bart, gp
 from BayestarML.src.train_utils import load_data, mard, mrd, get_results
 from BayestarML.src.predict_utils import prepare_pred_data, get_bhs_weights, plot_bhs_weights
-from BayestarML.src.pred_sampling import sample_pred_bart, posterior_predictive_GP, sample_post_pred_HBNN_para
+from BayestarML.src.pred_sampling import sample_pred_bart, posterior_predictive_GP, sample_post_pred_HBNN_para, SIMPLE_sample_post_pred_HBNN_para
 from BayestarML.src.models.bhs import run_stack
 import arviz as az
 
@@ -16,7 +16,7 @@ def predict(x, x_er, interp_mask,
             target, training_dataset_key, 
             gp_trace_path, nn_trace_path,
             bart_m, m_mean, m_var, nn_nodes,
-            y_compare=None, savename=""):
+            y_compare=None, savename="", NN_1layer=False):
     """Train BART and BHS and then make some predictions
     """
     data, training_dim = load_data(training_dataset_key, target)
@@ -39,11 +39,18 @@ def predict(x, x_er, interp_mask,
 
     print("-------Start HBNN----------")
     hbnn4_trace = az.from_netcdf(nn_trace_path)
-    hbnn4_pred, lpd_HBNN4 = sample_post_pred_HBNN_para(hbnn4_trace,  
-                                                    x,
-                                                    x_er,
-                                                    nn_nodes, training_dim, target,
-                                                    training_dataset_key)
+    if NN_1layer:
+        hbnn4_pred, lpd_HBNN4 = SIMPLE_sample_post_pred_HBNN_para(hbnn4_trace,  
+                                                        x,
+                                                        x_er,
+                                                        nn_nodes, training_dim, target,
+                                                        training_dataset_key)
+    else:
+        hbnn4_pred, lpd_HBNN4 = sample_post_pred_HBNN_para(hbnn4_trace,  
+                                                        x,
+                                                        x_er,
+                                                        nn_nodes, training_dim, target,
+                                                        training_dataset_key)
 
     print("-------Start BHS----------")
     (bhs_trace, bhs_pred, bhs_w) = run_stack(bart4_pred, hbnn4_pred, gp4_pred,
@@ -89,19 +96,19 @@ def predict(x, x_er, interp_mask,
 if __name__ == "__main__":
 
     features = ["Teff", "FeH", "logL", "logg"]
-    target = "M"
-    dataset_key = "5438rgb"
+    target = "R"
+    dataset_key = "700ms"
     star_id, x, x_er, interp_mask = prepare_pred_data("test_set", dataset_key, features, target)
 
     _, pred, ws = predict(x, x_er, interp_mask, target, dataset_key,
-        gp_trace_path= "BayestarML/Outputs5438RGB/GPmass/GPmassRGB100_30_1000_0.95.nc",
-        nn_trace_path= "BayestarML/train/outputs5438rgb/NN_M/NN_M_5438rgb_8_2000_0.95.nc",
-        bart_m=700, m_mean=100, m_var=30, nn_nodes=8,
-        y_compare="test_set", savename="BHS")
+        gp_trace_path= "BayestarML/train/outputs700ms/GP_R/GP_R_700ms_50_15_2000_0.95.nc",
+        nn_trace_path= "BayestarML/train/outputs700ms/NN_R/NN_1layer_R_700ms_8_2000_0.95.nc",
+        bart_m=300, m_mean=50, m_var=15, nn_nodes=8,
+        y_compare="test_set", savename="BHS", NN_1layer=True)
 
     df_weights = get_bhs_weights(ws, star_id, dataset_key+"_bhs_"+target+"_ws.txt")
 
-    plot_bhs_weights(df_weights, "M", "BayestarML/data/5438rgb.txt", "5438rgb_bhs_ws_plot.pdf")
+    plot_bhs_weights(df_weights, target, "BayestarML/data/5438rgb.txt", dataset_key+"_bhs_"+target+"_ws_plot.pdf")
 
     # print("M BHS predictions:\n", pred.mean(0), pred.std(0))
 
@@ -137,3 +144,7 @@ if __name__ == "__main__":
 #488MS MASS
 # gp_trace_path= "BayestarML/train/outputs488ms/GP_M/GP_M_488ms_20_10_1000_0.95.nc",
 # nn_trace_path= "BayestarML/train/outputs488ms/NN_M/NN_M_488ms_16_1000_0.95.nc",
+
+#5438RGB MASS
+# gp_trace_path= "BayestarML/Outputs5438RGB/GPmass/GPmassRGB100_30_1000_0.95.nc",
+# nn_trace_path= "BayestarML/train/outputs5438rgb/NN_M/NN_M_5438rgb_8_2000_0.95.nc"

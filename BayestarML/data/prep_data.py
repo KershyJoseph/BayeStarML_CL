@@ -168,20 +168,27 @@ if __name__ == "__main__":
     abs_err_lims = {"elogL": 0.05, "eTeff": 100, "elogg": 0.05, "eFeH": 0.1}
     percent_err_lims = {"eM": 7, "eR": 7}
 
-    # prepare data
-    prep_data(
-        filename,
-        training_fs,
-        targets,
-        s_class,
-        add_logvars,
-        abs_err_lims,
-        percent_err_lims,
-        target_lims=target_lims,
-        check_detached=True,
-        lum_check=True,
-        plot_errs=True,
-        xgboost=True,
-        plot_hr=True,
-        plot_t_f=True
-    )
+    # # prepare data
+    # prep_data(
+    #     filename,
+    #     training_fs,
+    #     targets,
+    #     s_class,
+    #     add_logvars,
+    #     abs_err_lims,
+    #     percent_err_lims,
+    #     target_lims=target_lims,
+    #     check_detached=True,
+    #     lum_check=True,
+    #     plot_errs=True,
+    #     xgboost=True,
+    #     plot_hr=True,
+    #     plot_t_f=True
+    # )
+
+    df_ms = pd.read_csv("BayestarML/data/700ms.txt")
+    df_rgb = pd.read_csv("BayestarML/data/5438rgb.txt")
+    df_all = pd.concat([df_ms, df_rgb], axis=0)
+    print(df_all)
+
+    hr_plot(df_rgb, "5438rgb_density_hr_plot.pdf", density_plot=True)
