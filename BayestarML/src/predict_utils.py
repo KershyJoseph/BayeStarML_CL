@@ -79,7 +79,7 @@ def get_bhs_weights(w_draws, star_id, savename:str):
     gp_ws = mean_ws[:,2]
 
     df_weights = pd.DataFrame({
-        "star_ID": star_id,
+        "ID": star_id,
         "BART_weight": bart_ws,
         "HBNN_weight": hbnn_ws,
         "GP_weight": gp_ws
@@ -93,7 +93,7 @@ def get_bhs_weights(w_draws, star_id, savename:str):
 def plot_bhs_weights(ws, target, compare_file, savename):
     """
     """
-    ws.set_index("test_star_ID", inplace=True)
+    ws.set_index("ID", inplace=True)
     all_masses = pd.read_csv(compare_file, usecols=[target, "ID"])
     all_masses.set_index("ID", inplace=True)
     masses = all_masses.loc[ws.index]

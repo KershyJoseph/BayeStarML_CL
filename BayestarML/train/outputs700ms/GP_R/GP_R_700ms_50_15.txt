@@ -1,0 +1,208 @@
+<><><><><<><<><><><>><<><<><<><<<><><><<><<><><><><>
+700ms R GP, 50_15_2000
+
+Priors:
+        log_ls = pm.Normal("log_ls", mu=-0.8, sigma=0.2, shape=D)
+        ls = pm.Deterministic("ls", pm.math.exp(log_ls))
+        log_eta = pm.Normal("log_eta", mu=-0.5, sigma=0.3)
+        eta = pm.Deterministic("eta", pm.math.exp(log_eta))
+
+        k_sq_exp = eta**2 * pm.gp.cov.ExpQuad(input_dim=D, ls=ls)
+        cov_mean = k_sq_exp + pm.gp.cov.WhiteNoise(sigma=1e-5)
+
+        μ_gp = SparseLatent(cov_mean)
+        μ_f_latent, μ_trace = μ_gp.prior("μ", X_mu, Xu)
+
+        if linear_mean_f:
+            beta0 = pm.Normal("beta0", mu=0.0, sigma=0.5)
+            beta = pm.Normal("beta", mu=0.0, sigma=0.5, shape=D)
+            linear_background = beta0 + pm.math.dot(X_mu, beta)
+            μ_f = pm.Deterministic("μ_f", μ_f_latent + linear_background)
+        else:
+            μ_f = pm.Deterministic("μ_f", μ_f_latent)
+
+        X_var_data = pm.Data("X_var", X_var)
+        D_var = X_var.shape[1]
+
+        log_ls_v = pm.Normal("log_ls_v", mu=0.0, sigma=0.2, shape=D_var)
+        ls_v = pm.Deterministic("ls_v", pm.math.exp(log_ls_v))
+        log_eta_v = pm.Normal("log_eta_v", mu=-0.9, sigma=0.2)
+        eta_v = pm.Deterministic("eta_v", pm.math.exp(log_eta_v))
+
+        cov_var = eta_v**2 * pm.gp.cov.ExpQuad(input_dim=D_var, ls=ls_v) \
+                  + pm.gp.cov.WhiteNoise(sigma=1e-5)
+
+        alpha_log_var = pm.Normal("alpha_log_var", mu=0.0, sigma=1.0)
+        log_var_gp = SparseLatent(cov_var)
+        log_var_latent, var_trace  = log_var_gp.prior("log_var_f", X_var_data, Xu_var)
+        log_var = pm.Deterministic("log_var", alpha_log_var + log_var_latent)
+        σ_f     = pm.Deterministic("σ_f", pm.math.exp(0.5 * log_var))
+
+
+target_accept= 0.95
+Initializing NUTS using jitter+adapt_diag...
+Multiprocess sampling (4 chains in 4 jobs)
+NUTS: [log_ls, log_eta, u_rotated__, log_ls_v, log_eta_v, alpha_log_var, u_rotated_log_var_f]
+
+  Progress                         Draws   Divergences   Step size   Grad evals   Sampling Speed   Elapsed   Remaining
+ ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  ──────────────────────────────   5000    0             0.01        511          1.15 draws/s     1:12:34   0:00:00
+  ──────────────────────────────   5000    0             0.01        511          1.11 draws/s     1:14:52   0:00:00
+  ──────────────────────────────   5000    0             0.02        255          1.18 draws/s     1:10:53   0:00:00
+  ──────────────────────────────   5000    0             0.01        511          1.18 draws/s     1:10:43   0:00:00
+
+Sampling 4 chains for 3_000 tune and 2_000 draw iterations (12_000 + 8_000 draws total) took 4503 seconds.
+AZ Stats for ESS Bulk < 400:
+ Empty DataFrame
+Columns: [mean, sd, hdi_3%, hdi_97%, mcse_mean, mcse_sd, ess_bulk, ess_tail, r_hat]
+Index: []
+
+rhats:  [('log_ls', 1.001723248959158), ('log_eta', 1.0012562810937293), ('u_rotated__', 1.0024231597635886), ('log_ls_v
+', 1.000531198223883), ('log_eta_v', 1.0007156360179323), ('alpha_log_var', 1.0001245439828794), ('u_rotated_log_var_f',
+ 1.0011024941307753), ('ls', 1.001723248959158), ('eta', 1.0012562810937293), ('u__', 1.0012291435881693), ('mu__', 1.00
+18845288269078), ('__f', 1.0018845288269078), ('ls_v', 1.0004259191253397), ('eta_v', 1.0006271596091492), ('u_log_var_f
+', 1.001235964424739), ('mu_log_var_f', 1.001235964424739), ('log_var', 1.001581730398232), ('__f', 1.0017106537364495)]
+
+Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/pymc/model/fgraph.py:163: UserWarning: Detected variab
+les likely created by GP objects. Further use of these old GP objects should be avoided as it may reintroduce variables
+from the old model. See issue: https://github.com/pymc-devs/pymc/issues/6883
+  warnings.warn(
+Computing ... ──────────────────────────────────────── 100% 0:00:00
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape
+ parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust
+model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are v
+ery different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+loo trace:  Computed from 8000 posterior samples and 560 observations log-likelihood matrix.
+
+         Estimate       SE
+elpd_loo   478.37    47.35
+p_loo      107.02        -
+
+There has been a warning during the calculation. Please check the results.
+------
+
+Pareto k diagnostic values:
+                         Count   Pct.
+(-Inf, 0.70]   (good)      537   95.9%
+   (0.70, 1]   (bad)        16    2.9%
+   (1, Inf)   (very bad)    7    1.2%
+
+log_ls: [4]
+log_eta: []
+u_rotated__: [52]
+log_ls_v: [4]
+log_eta_v: []
+alpha_log_var: []
+u_rotated_log_var_f: [17]
+Total parameters: 80
+Found 23 problematic data points.
+Indices of bad points: [ 34  52  82 143 164 219 228 258 260 280 312 330 333 347 350 374 451 504
+ 505 509 547 548 557]
+
+ /Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape
+ parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust
+model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are v
+ery different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+Sampling: [X_new_latent, X_var_new_latent, f_mu_pred, log_var_pred_latent, y_pred]
+Sampling ... ──────────────────────────────────────── 100% 0:00:00 / 0:00:05
+
+R predictions
+means:  [1.96327278 2.17528572 2.48232267 2.19507145 0.98683922 1.99096563
+ 1.45357358 1.45869429 1.93866775 1.62320376 2.21579234 1.52924537
+ 1.91095408 1.58453929 0.28478992 2.15328063 1.77866041 1.15285849
+ 1.03786705 2.37516538 1.70153085 1.45276504 1.31225325 2.61046491
+ 1.88036565 1.03496614 0.72201418 2.04461751 1.65224495 1.20747464
+ 1.65364997 0.91007664 2.74520892 0.60469099 1.49779281 1.3201379
+ 1.6605499  1.16736943 1.68551676 1.43704364 1.82981346 1.49715306
+ 1.84630848 1.63097734 2.1120388  1.62544078 1.74880358 1.30056294
+ 1.70120146 1.76743768 2.75071046 1.54185273 2.62639242 1.68654088
+ 0.98898716 0.77270599 1.56055892 1.26893915 1.98912082 1.5283688
+ 2.38661119 1.83478066 2.01286647 2.02912309 1.97680717 1.18749399
+ 1.36532264 1.77186791 2.19705387 1.32295728 2.63439577 0.9036919
+ 2.08221893 1.61205033 1.13860373 1.96632536 1.45801941 2.12979811
+ 2.15094102 2.41086326 0.78760463 1.53364209 2.02525845 2.45765713
+ 0.94679934 2.02279237 1.94417421 1.33315157 2.067652   1.61167797
+ 1.56368723 1.74536237 2.55514057 1.50107165 1.42416239 2.58301034
+ 2.38583474 2.47123272 1.5467595  1.47851051 1.17369813 1.83964637
+ 1.95578846 1.9886475  1.51641096 1.53386293 1.64162123 0.21040314
+ 2.35665736 0.30526431 2.10648713 1.21698613 1.65462708 1.95699697
+ 1.05491245 1.42598719 2.13425814 1.5804512  1.48999013 1.29452995
+ 2.74519809 1.398319   1.29288012 1.89782848 1.47452853 1.39856534
+ 1.5855908  1.75503982 1.46067923 1.75973785 0.89321389 1.00783398
+ 1.85090947 2.35117772 0.41099963 1.59865693 1.43318862 0.25005408
+ 1.89503625 2.49509872]
+stdvs:  [0.23401207 0.07997282 0.08321863 0.0888255  0.05178887 0.06053961
+ 0.05103714 0.08980046 0.07180026 0.10924856 0.07779927 0.07994302
+ 0.07841447 0.0345788  0.15740749 0.0677518  0.0345384  0.03044221
+ 0.04400176 0.08366662 0.04141225 0.06498733 0.04888022 0.09976815
+ 0.05390815 0.02726866 0.14033082 0.06911659 0.06631637 0.09125764
+ 0.04829193 0.15746085 0.10840539 0.0584875  0.05224182 0.04427542
+ 0.05675511 0.03077048 0.08057061 0.10132398 0.04766882 0.07160707
+ 0.06348087 0.07574033 0.0762805  0.06259543 0.08148364 0.06673947
+ 0.05261876 0.08377306 0.1133628  0.04891217 0.08559933 0.03965817
+ 0.05196238 0.0272382  0.05069714 0.05071076 0.05460889 0.09230832
+ 0.09343564 0.07194991 0.07689984 0.07599526 0.06799518 0.03881583
+ 0.03747608 0.06016014 0.17386128 0.0509749  0.10733365 0.01439876
+ 0.05727406 0.08074926 0.12146599 0.07461153 0.03006188 0.05883703
+ 0.080273   0.08417401 0.01868956 0.08772187 0.07516393 0.07166956
+ 0.03733781 0.06348432 0.06747881 0.03421705 0.074362   0.02812847
+ 0.19784538 0.0556333  0.17012419 0.0519875  0.02853789 0.10118367
+ 0.0897433  0.10985262 0.07107498 0.05803737 0.05726096 0.11766015
+ 0.09207586 0.06495226 0.0520417  0.06616541 0.06835302 0.06439518
+ 0.08509469 0.05699124 0.06840653 0.0658571  0.0805794  0.0601021
+ 0.02583227 0.07742957 0.06677166 0.04869184 0.09419892 0.03325743
+ 0.14939571 0.0664969  0.09636062 0.08213279 0.07718351 0.06706337
+ 0.10152661 0.07159704 0.09599142 0.05755794 0.01323966 0.02968602
+ 0.06254691 0.0857744  0.04097832 0.05562331 0.08075164 0.08002514
+ 0.0601813  0.08690213]
+
+ Unorm R:  ID
+KIC3230227_A             2.010
+KIC8579578               2.218
+KIC8241455               2.429
+KIC5431016               2.142
+ASAS_J065134-2211.5_A    0.997
+                         ...
+KIC10025841              1.521
+KIC4143755               1.414
+KOI-126_B                0.255
+KIC4638884               1.928
+KIC8360349               2.656
+Name: R, Length: 140, dtype: float64
+
+R accuracy stats
+MAE:  0.04432354968997765
+MARD:  2.711535743898093
+MRD:  -0.40697836482148164
+
+Stars marked as feature extrapolation:
+Index(['KIC3230227_A', 'EPIC204506926', 'HD24465_B', 'UCAC4_665-061158_B',
+       'UCAC4_570-022931_B', 'KIC3761840', 'HW_CMa B', 'KIC4756112',
+       'KIC10202294', 'KIC7019341', 'ASAS_J085002+1752.5_B'],
+      dtype='object', name='ID')
+2026-06-22 13:22:37.078 python[34948:1467503] XType: Using static font registry.
+Peak Memory: 1240.71 MB
+CPU time accumulated: 285.64246 s
+Total wall clock time: 4569.62101 s
+><><><><><><><><><><><><><><><><><><><><><><><><><><
+Salve Regina
+
+
+>>> import arviz as az
+>>> idata = az.from_netcdf("GP_R_700ms_50_15_2000_0.95.nc")
+>>> df = az.summary(idata, var_names=["ls", "eta", "ls_v", "eta_v"])
+>>> df
+          mean     sd  hdi_3%  hdi_97%  mcse_mean  mcse_sd  ess_bulk  ess_tail  r_hat
+ls[0]    2.132  0.192   1.791    2.508      0.003    0.002    4711.0    4712.0    1.0
+ls[1]    1.671  0.148   1.401    1.937      0.003    0.002    3385.0    4696.0    1.0
+ls[2]    4.213  0.416   3.480    5.011      0.008    0.005    3079.0    4792.0    1.0
+ls[3]    1.315  0.113   1.110    1.526      0.002    0.002    3677.0    4633.0    1.0
+eta      1.012  0.113   0.804    1.223      0.003    0.002    1331.0    2373.0    1.0
+ls_v[0]  1.608  0.286   1.144    2.163      0.004    0.003    4751.0    5501.0    1.0
+ls_v[1]  1.303  0.174   0.986    1.626      0.002    0.002    5018.0    6115.0    1.0
+ls_v[2]  0.357  0.082   0.230    0.512      0.001    0.001    5200.0    5995.0    1.0
+ls_v[3]  0.575  0.149   0.352    0.851      0.002    0.002    3838.0    6359.0    1.0
+eta_v    1.690  0.238   1.251    2.129      0.004    0.002    3978.0    5351.0    1.0
+>>>
