@@ -250,8 +250,8 @@ def model_pred_plotter(
             capsize=1
         )
     ax.plot([y_true.min(), y_true.max()], [y_true.min(), y_true.max()], linestyle="--", color='gray')
-    ax.set_xlabel("True " + target)
-    ax.set_ylabel("Predicted " + target)
+    ax.set_xlabel("True " + target + " ("+ target+ "sol)")
+    ax.set_ylabel("Predicted " + target + " ("+ target+ "sol)")
     ax.set_title(model + " Predictions with Uncertainty")
     ax.legend()
     fig.savefig(save_folder + "/preds_" + hyperp_str + ".pdf")
@@ -316,8 +316,8 @@ def model_pred_plotter(
             capsize=1
         )
     ax.hlines(0, y_true.min(), y_true.max(), color='gray', linestyle="--")
-    ax.set_xlabel("True " + target)
-    ax.set_ylabel("Residual " + target)
+    ax.set_xlabel("True " + target + " ("+ target+ "sol)")
+    ax.set_ylabel("Residual " + target + " ("+ target+ "sol)")
     ax.set_title(model + " Prediction Residuals with Value Uncertainty")
     ax.legend()
     fig.savefig(save_folder + "/res_" + hyperp_str + ".pdf")

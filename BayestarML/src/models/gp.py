@@ -336,9 +336,9 @@ def sparse_fully_heteroscedastic_gp(
         # ls_v_sd_vec = np.array(ls_v_sd_list)
         # ls_v = pm.InverseGamma("ls_v", mu=np.log(ls_v_mu_vec), sigma=ls_v_sd_vec, shape=D_err)
 
-        log_ls_v = pm.Normal("log_ls_v", mu=-0.2, sigma=0.2, shape=D_var)
+        log_ls_v = pm.Normal("log_ls_v", mu=0.0, sigma=0.2, shape=D_var)
         ls_v = pm.Deterministic("ls_v", pm.math.exp(log_ls_v))
-        log_eta_v = pm.Normal("log_eta_v", mu=-0.8, sigma=0.2)
+        log_eta_v = pm.Normal("log_eta_v", mu=-0.9, sigma=0.2)
         eta_v = pm.Deterministic("eta_v", pm.math.exp(log_eta_v))
 
         cov_var = eta_v**2 * pm.gp.cov.ExpQuad(input_dim=D_var, ls=ls_v) \
