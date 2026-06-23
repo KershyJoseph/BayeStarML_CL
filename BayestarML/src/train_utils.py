@@ -216,7 +216,8 @@ def model_pred_plotter(
     interp_mask,
     target: str,
     save_folder: str,
-    hyperp_str: str
+    hyperp_str: str,
+    plot_density: bool = False
 ):
     """Plot predictions of a trained model against true values
     Saves a preds figure and a residuals figure
@@ -256,6 +257,29 @@ def model_pred_plotter(
     ax.legend()
     fig.savefig(save_folder + "/preds_" + hyperp_str + ".pdf")
     plt.close(fig)
+
+    fig, ax = plt.subplots(figsize=(8, 6))
+    for status, group in df_all.groupby("pred_type"):
+        ax.errorbar(
+            group["y_true"],
+            group["y_pred"] - group["y_true"],
+            yerr=group["y_pred_err"],
+            xerr=group["y_true_err"],
+            fmt="o",
+            label=status,
+            alpha=0.5,
+            color=colors[status],
+            ecolor=colors[status],
+            capsize=1
+        )
+    ax.hlines(0, y_true.min(), y_true.max(), color='gray', linestyle="--")
+    ax.set_xlabel("True " + target + " ("+ target+ "sol)")
+    ax.set_ylabel("Residual " + target + " ("+ target+ "sol)")
+    ax.set_title(model + " Prediction Residuals with Value Uncertainty")
+    ax.legend()
+    fig.savefig(save_folder + "/res_" + hyperp_str + ".pdf")
+    plt.close(fig)
+
 
     # # make another plot with 1sig err cloud from test target sigs
     # y_true, y_true_err, y_pred, y_pred_err = [
@@ -301,27 +325,126 @@ def model_pred_plotter(
     # plt.savefig(save_folder + "/preds_sigCloud_" + hyperp_str + ".pdf")
     # plt.close()
 
-    fig, ax = plt.subplots(figsize=(8, 6))
+
+def new_model_pred_plotter(
+    y_true,
+    y_true_err,
+    y_pred,
+    y_pred_err,
+    interp_mask,
+    target: str,
+    save_folder: str,
+    hyperp_str: str,
+    plot_density: bool = False
+):
+    """Plot predictions of a trained model against true values
+    Saves a combined preds and residuals figure
+    """
+    if target=="R":
+        target = "Radius"
+    if target=="M":
+        target = "Mass"
+    else:
+        raise Exception("Not sure how to do that yet...")
+
+    df_all = pd.DataFrame({'y_true': y_true,
+                           'y_true_err': y_true_err,
+                           'y_pred': y_pred,
+                           'y_pred_err': y_pred_err})
+    df_all["pred_type"] = np.where(
+        interp_mask,
+        "Interpolation",
+        "Extrapolation"
+    )
+    colors ={
+        "Interpolation": 'blue',
+        "Extrapolation": 'magenta'
+    }
+
+    # do density calculations if wanted - credit GEMINI
+    if plot_density:
+        df_interp = df_all[df_all["pred_type"]=="Interpolation"]
+
+        # 1. Define the grid resolution (e.g., 30x30 bins)
+        bins = [100, 100]
+
+        # 2. Get the 2D histogram counts for the blue points
+        counts, xedges, yedges = np.histogram2d(df_interp["y_true"], df_interp["y_pred"], bins=bins)
+
+        # 3. Find which bin each individual point belongs to
+        x_indices = np.clip(np.digitize(df_interp["y_true"], xedges) - 1, 0, bins[0] - 1)
+        y_indices = np.clip(np.digitize(df_interp["y_pred"], yedges) - 1, 0, bins[1] - 1)
+
+        # 4. Extract the physical count for each point
+        point_counts = counts[x_indices, y_indices]
+
+    # make fig and ax
+    fig, (ax_preds, ax_res) = plt.subplots(
+        nrows=2, 
+        ncols=1, 
+        figsize=(6, 6), 
+        sharex=True, 
+        gridspec_kw={'height_ratios': [3, 1]}
+    )
+    plt.subplots_adjust(hspace=0.05)
+
+    # top panel - predictions
     for status, group in df_all.groupby("pred_type"):
-        ax.errorbar(
+        fmt = 'o'
+
+        if status == "Interpolation" and plot_density:
+            # 5. Plot using the raw counts to drive transparency or color depth
+            sc_preds = ax_preds.scatter(group["y_true"], group["y_pred"], c=point_counts, cmap='Blues', alpha=0.7, zorder=2)
+            fmt = 'none'
+
+        ax_preds.errorbar(
             group["y_true"],
-            group["y_pred"] - group["y_true"],
+            group["y_pred"],
             yerr=group["y_pred_err"],
             xerr=group["y_true_err"],
-            fmt="o",
+            fmt=fmt,
             label=status,
             alpha=0.5,
             color=colors[status],
             ecolor=colors[status],
-            capsize=1
+            capsize=1.5,
+            zorder=1
         )
-    ax.hlines(0, y_true.min(), y_true.max(), color='gray', linestyle="--")
-    ax.set_xlabel("True " + target + " ("+ target+ "sol)")
-    ax.set_ylabel("Residual " + target + " ("+ target+ "sol)")
-    ax.set_title(model + " Prediction Residuals with Value Uncertainty")
-    ax.legend()
-    fig.savefig(save_folder + "/res_" + hyperp_str + ".pdf")
-    plt.close(fig)
+    frame_width = ax_res.spines["bottom"].get_linewidth()
+    ax_preds.plot([y_true.min()-0.1, y_true.max()+0.1], [y_true.min()-0.1, y_true.max()+0.1], linestyle="--", color='k', linewidth=frame_width)
+    ax_preds.set_ylabel(fr"Predicted {target} ($\mathrm{{{target[0]}}}_{{\odot}}$)")
+    ax_preds.legend()
+    ax_preds.grid(True, alpha=0.3)
+
+    # bottom panel - residuals
+    for status, group in df_all.groupby("pred_type"):
+        if status=="Interpolation" and plot_density:
+            ax_res.scatter(group["y_true"], group["y_pred"] - group["y_true"], c=point_counts, cmap='Blues', alpha=0.7, zorder=2)
+
+        ax_res.errorbar(
+            group["y_true"],
+            group["y_pred"] - group["y_true"],
+            yerr=group["y_pred_err"],
+            xerr=group["y_true_err"],
+            fmt=fmt,
+            label=status,
+            alpha=0.5,
+            color=colors[status],
+            ecolor=colors[status],
+            capsize=1.5,
+            zorder=1
+        )
+    ax_res.axhline(0, color='k', linewidth=frame_width)
+    ax_res.set_xlabel(fr"True {target} ($\mathrm{{{target[0]}}}_{{\odot}}$)")
+    ax_res.set_ylabel(fr"Residual ($\mathrm{{{target[0]}}}_{{\odot}}$)")
+    ax_res.grid(True, alpha=0.3)
+
+    if plot_density:
+        cbar = fig.colorbar(sc_preds, ax=[ax_preds, ax_res], location='right', fraction=0.05, pad=0.04)
+        cbar.set_label('Number of Stars')
+    fig.align_ylabels()
+    plt.show()
+    #fig.savefig(save_folder + "/predsres_" + hyperp_str + ".pdf")
 
 
 def get_results(
@@ -405,3 +528,13 @@ def get_results(
             outputs_folder_path,
             hyperp_str + "MEDIAN"
         )
+
+
+# x_data = np.random.normal(1.2, 0.2, 200)
+# y_data = x_data + np.random.normal(0, 0.05, 200)
+# x_err = np.random.uniform(0.01, 0.05, 200)
+# y_err = np.random.uniform(0.01, 0.05, 200)
+# import random
+# interp_mask = random.choices([True, False], weights=[0.9, 0.1], k=200)
+
+# model_pred_plotter(x_data, x_err, y_data, y_err, interp_mask, "M", None, None, plot_density=True)

@@ -161,7 +161,7 @@ def HBNN_M4(X_train, Y, X_error, Y_error, n_hidden):
             'Omega', 
             n=4,
             eta=2,
-            sd_dist=pm.LogNormal.dist(mu=-0.2, sigma=0.2),  # changed from HalfNormal
+            sd_dist=pm.Exponential.dist(lam=1.0),  # changed from HalfNormal
             compute_corr=True,
             #initval=Low_tri
         )

@@ -4,6 +4,7 @@
 import time
 import psutil
 import pymc as pm
+import arviz as az
 from BayestarML.src.pred_sampling import (
     SIMPLE_sample_post_pred_HBNN_para,
     posterior_predictive_GP,
@@ -170,6 +171,7 @@ def train_NN(
     chains=4,
     advi=False,
     nutpie=False,
+    trace_path=None
 ):
     """Function to train HBNN"""
     hyperp_str = (
@@ -206,6 +208,8 @@ def train_NN(
         print("ELBO:\n", approx.hist)
         trace.extend(pm.compute_log_likelihood(trace, model=model, var_names="y"))
         # trace.to_netcdf(...)
+    if trace_path:
+        trace = az.from_netcdf(trace_path)
     else:
         trace = train(
             model,
@@ -237,9 +241,9 @@ if __name__ == "__main__":
     start_time_CPU = time.process_time()
     start_time_wall = time.perf_counter()
 
-    print("700ms R GP, 50_15_2000")
-    train_GP(
-        "700ms", "R", 50, 15, draws=2000
+    print("5336rgb M NN, 8_2000, priors are .04, .04, .08 and exp on omega. mu_X with sigma=0.2. Using pm.MvNormal. -0.7, 0.3 log_er")
+    train_NN(
+        "5336rgb", "M", 8, draws=2000
     )
 
     end_time_CPU = time.process_time()
@@ -250,21 +254,22 @@ if __name__ == "__main__":
 
     print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
 
-    # start_time_CPU2 = time.process_time()
-    # start_time2 = time.time()
+    start_time_CPU2 = time.process_time()
+    start_time2 = time.time()
 
-    #print("RGB M NN. 0.04, 0.04, 0.08 ws and bias priors. eta=2 and sd_dist LogNormal -0.2, 0.2 on omega. mu_X introduced with sigma=0.2. Using pm.MvNormal. -0.7, 0.3 log_er. 8_2000")
-    # train_NN(
-    #     "5438rgb", "M", 8, draws=2000
-    # )
+    print("RGB M GP. 2000")
+    print("5336rgb M NN, 100_30_2000")
+    train_GP(
+        "5336rgb", "M", 100, 30, draws=2000
+    )
 
-    # end_time_CPU2 = time.process_time()
-    # mem2 = process.memory_info().rss / 1024**2
-    # print(f"Peak Memory: {(mem2-mem1):.2f} MB")
-    # print(f"CPU time used: {(end_time_CPU2-start_time_CPU2):.5f} s")
-    # print(f"Total run time: {time.time()-start_time2:.5f} s")
+    end_time_CPU2 = time.process_time()
+    mem2 = process.memory_info().rss / 1024**2
+    print(f"Peak Memory: {(mem2-mem1):.2f} MB")
+    print(f"CPU time used: {(end_time_CPU2-start_time_CPU2):.5f} s")
+    print(f"Total run time: {time.time()-start_time2:.5f} s")
 
-    # print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
+    print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
 
     # start_time_CPU3 = time.process_time()
     # start_time3 = time.time()
