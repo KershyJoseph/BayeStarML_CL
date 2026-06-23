@@ -1,0 +1,12 @@
+{
+    "best_mard": 3.5297863445050646,
+    "best_params": {
+        "learning_rate": 0.013018564769091046,
+        "n_estimators": 724,
+        "max_depth": 6,
+        "min_child_weight": 1,
+        "reg_lambda": 0.028710378070393887,
+        "reg_alpha": 0.0016412938101710102,
+        "subsample": 0.5547991418903101
+    }
+}

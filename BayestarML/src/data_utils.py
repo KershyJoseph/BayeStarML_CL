@@ -58,78 +58,127 @@ def add_symmetric_errs(df, errs1, errs2):
     return pd.concat([df, df_err], axis=1)
 
 
-def L_consistency_check(df, savename: str, logscale=True):
-    """ """
-    df = df.copy()
-    df_lum_check = df[df["L_from_SB"] == 0]
-    df_lum_check["L_SB"] = df_lum_check["R"] ** 2 * (df_lum_check["Teff"] / 5772) ** 4
-    R = df_lum_check["R"]
-    Teff = df_lum_check["Teff"]
-    df_lum_check["L_SB_+err"] = np.sqrt(
-        (R**2 * ((Teff + df_lum_check["eTeff1"]) / 5772) ** 4 - df_lum_check["L_SB"]) ** 2
-        + ((R + df_lum_check["eR1"]) ** 2 * (Teff / 5772) ** 4 - df_lum_check["L_SB"]) ** 2
-    )
-    df_lum_check["L_SB_-err"] = np.sqrt(
-        (R**2 * ((Teff - df_lum_check["eTeff2"]) / 5772) ** 4 - df_lum_check["L_SB"]) ** 2
-        + ((R - df_lum_check["eR2"]) ** 2 * (Teff / 5772) ** 4 - df_lum_check["L_SB"]) ** 2
-    )
+def consistency_check(df, param, flag_col, savename: str, logscale=True):
+    """
+    """
+    df_check = df.copy()
+    if flag_col:
+        df_check = df_check[df_check[flag_col] == 0]
+    
+    if param == "logg":
+        x_col, y_col = "logg", "logg_from_M,R"
+        x_label = "Recorded log(g) (dex)"
+        y_label = "Calculated log(g) from M and R (dex)"
+        x = df_check[x_col]
+        xerr_up = df_check["elogg1"]
+        xerr_down = df_check["elogg2"]
+        print(f"Checking {len(df_check)} stars for logg consistency")
 
-    # compute distance from recorded Ls
-    df_lum_check["L_SB_avg_err"] = (df_lum_check["L_SB_+err"] + df_lum_check["L_SB_-err"]) / 2
-    df_lum_check["total_L_err"] = np.sqrt(
-        df_lum_check["L_SB_avg_err"] ** 2 + df_lum_check["eL1"] ** 2
-    )
-    df_lum_check["L_dist"] = df_lum_check["L_SB"] - df_lum_check["L"]
-    df_lum_check["L_sig_distance"] = (
-        np.abs(df_lum_check["L_dist"]) / df_lum_check["total_L_err"]
-    )
-    df_bad_Ls = df_lum_check[df_lum_check["L_sig_distance"] > 3]
+        R = df_check["R"]
+        eR1 = df_check["eR1"]
+        eR2 = df_check["eR2"]
+        M = df_check["M"]
+        eM1 = df_check["eM1"]
+        eM2 = df_check["eM2"]
+        GMsol = 1.3271244e26 # Andrej Prsa 2016 - adjusted to be cm**3/s**2!
+        Rsol = 6.957e10 #cm
+
+        y = np.log10((GMsol * M)/(R * Rsol)**2)
+        df_check[y_col] = y
+        yerr_up = np.sqrt(
+            (np.log10((GMsol * (M + eM1))/(R * Rsol)**2) - y)**2
+            +
+            (np.log10((GMsol * M)/((R-eR1) * Rsol)**2) - y)**2
+        )
+        yerr_down = np.sqrt(
+            (np.log10((GMsol * (M - eM2))/(R * Rsol)**2) - y)**2
+            +
+            (np.log10((GMsol * M)/((R+eR2) * Rsol)**2) - y)**2
+        )
+
+        y_err_avg = (yerr_up + yerr_down)/2
+        x_err_avg = (xerr_up + xerr_down)/2
+        total_sig = np.sqrt(y_err_avg**2 + x_err_avg**2)
+        sig_discrepancy = np.abs(y - x)/total_sig 
+
+        consistency_col = "log(g) consistent with M and R"
+        df_check[consistency_col] = np.where(sig_discrepancy > 3, "deviation > 3 sigma", "within 3 sigma")
+
+        yerr = np.array([yerr_down, yerr_up])
+        xerr = np.array([xerr_down, xerr_up])
+
+        logscale=False
+
+    elif param == "L":
+        x_col, y_col = "L", "L_from_SB"
+        x_label = "Recorded L (Lsol)"
+        y_label = "Calculated L from SB Law (Lsol)"
+        x = df_check[x_col]
+        print(f"Checking {len(df_check)} stars for L consistency")
+
+        R = df_check["R"]
+        Teff = df_check["Teff"]
+        y = R ** 2 * (Teff / 5772) ** 4
+        df_check[y_col] = y
+        df_check["L_SB_+err"] = np.sqrt(
+            (R**2 * ((Teff + df_check["eTeff1"]) / 5772) ** 4 - y) ** 2
+            + ((R + df_check["eR1"]) ** 2 * (Teff / 5772) ** 4 - y) ** 2
+        )
+        df_check["L_SB_-err"] = np.sqrt(
+            (R**2 * ((Teff - df_check["eTeff2"]) / 5772) ** 4 - y) ** 2
+            + ((R - df_check["eR2"]) ** 2 * (Teff / 5772) ** 4 - y) ** 2
+        )
+
+        # compute distance from recorded Ls
+        df_check["L_SB_avg_err"] = (df_check["L_SB_+err"] + df_check["L_SB_-err"]) / 2
+        df_check["total_L_err"] = np.sqrt(
+            df_check["L_SB_avg_err"] ** 2 + df_check["eL1"] ** 2
+        )
+        df_check["L_dist"] = y - x
+        df_check["L_sig_distance"] = (
+            np.abs(df_check["L_dist"]) / df_check["total_L_err"]
+        )
+
+        consistency_col = "L consistent with SB law"
+        df_check[consistency_col] = np.where(df_check["L_sig_distance"] > 3, "deviation > 3 sigma", "within 3 sigma")
+        yerr = np.array([df_check["L_SB_-err"], df_check["L_SB_+err"]])
+        xerr = np.array([df_check["eL2"], df_check["eL1"]])
 
     plt.close()
     plt.figure()
-    yerr = np.array([df_lum_check["L_SB_-err"], df_lum_check["L_SB_+err"]])
-    xerr = np.array([df_lum_check["eL2"], df_lum_check["eL1"]])
     plt.errorbar(
-        df_lum_check["L"],
-        df_lum_check["L_SB"],  # x,y,yerr,xerr
+        x, y,
         yerr=yerr,
         xerr=xerr,
-        fmt="go",
+        fmt='none',
         ecolor="gray",
-        alpha=0.4,
-        zorder=1,
-    )
-    yerr2 = np.array([df_bad_Ls["L_SB_-err"], df_bad_Ls["L_SB_+err"]])
-    xerr2 = np.array([df_bad_Ls["eL2"], df_bad_Ls["eL1"]])
-    plt.errorbar(
-        df_bad_Ls["L"],
-        df_bad_Ls["L_SB"],
-        yerr=yerr2,
-        xerr=xerr2,
-        fmt="none",
-        ecolor="red",
         alpha=0.5,
         zorder=2,
     )
-    sns.scatterplot(data=df_bad_Ls, x="L", y="L_SB", hue="source", alpha=0.5, zorder=3)
-    plt.xlabel("L")
-    plt.ylabel("L from SB")
+    sns.scatterplot(data=df_check, x=x_col, y=y_col, hue=consistency_col, alpha=0.5, zorder=3)
+    plt.xlabel(x_label)
+    plt.ylabel(y_label)
     plt.plot(
-        [0, df_lum_check["L"].max()],
-        [0, df_lum_check["L"].max()],
+        [x.min(), x.max()],
+        [x.min(), x.max()],
         linestyle="--",
-        color="r",
+        color="gray",
+        zorder=1
     )
     if logscale:
         plt.xscale("log")
         plt.yscale("log")
-    plt.show()
     plt.savefig("BayestarML/data/figures/lum_check/" + savename)
+    plt.show()
 
-    df.drop(df_bad_Ls.index, inplace=True)
+    df_bad_stars = df_check[df_check[consistency_col]=='deviation > 3 sigma']
     print(
-        f"{len(df)} stars after checking L consistency with R and Teff to 3 sigma via SB law."
+        f"Removing {len(df_bad_stars)} stars that do not have {consistency_col} to 3 sigma:\n{df_bad_stars}"
     )
+    print(len(df))
+    df.drop(df_bad_stars.index, inplace=True)
+    print(len(df))
+
     return df
 
 
@@ -140,7 +189,7 @@ def select_clean_data(
     s_class: str = None,
     add_logvars: list = None,
     check_detached=True,
-    lum_check=True,
+    check_consistency=True,
 ):
     """ """
     df = df.copy()
@@ -163,8 +212,9 @@ def select_clean_data(
         f"{len(df_allps)} stars left after checking all training features and targets present with err>0 for each."
     )
 
-    if lum_check:
-        df_allps = L_consistency_check(df_allps, s_class + "_Lcheck.pdf")
+    if check_consistency:
+        df_allps = consistency_check(df_allps, "logg", "logg_from_M,R", s_class + "_logg_check.pdf")
+        df_allps = consistency_check(df_allps, "L", "L_from_SB", s_class + "_lum_check.pdf")
 
     # make any vars log10 scale
     if add_logvars:
@@ -319,9 +369,13 @@ def normalise(x: pd.DataFrame, y: pd.DataFrame, dataset_key: str, x_only: bool =
     return x, y
 
 
-def hr_plot(df, savename: str, hue: str = None, density_plot: bool = False):
-    """Plot logTeff (higher Teff to the left) against logL for stars in df"""
-    df = logomatic(df, ["Teff"])
+def hr_plot(df, savename: str, hue: str = None, density_plot: bool = False, mass_plot: bool = False):
+    """Plot logTeff (higher Teff to the left) against logL for stars in df
+    """
+    if "logTeff" not in df.columns:
+        df = logomatic(df, ["Teff"])
+    if "logL" not in df.columns:
+        df = logomatic(df, ["L"])
 
     x = df["logTeff"]
     x_err = [df["elogTeff2"], df["elogTeff1"]]
@@ -342,10 +396,14 @@ def hr_plot(df, savename: str, hue: str = None, density_plot: bool = False):
         density = gaussian_kde(stack)(stack)
         idx = np.argsort(density)
         x, y, density = x[idx], y[idx], density[idx]
-
-        scatter = ax.scatter(x, y, c=density, cmap='viridis', s=20, zorder=3)
-        fig.colorbar(scatter, ax=ax, label="Density")
         fmt = "none"
+        scatter = ax.scatter(x, y, c=density, cmap='plasma', s=5, zorder=3)
+        fig.colorbar(scatter, ax=ax, label="Density of Stars")
+    elif mass_plot:
+        fmt = "none"
+        scatter = ax.scatter(x, y, c=df["M"], cmap='plasma', s=5, zorder=3)
+        fig.colorbar(scatter, ax=ax, label="Mass (Msol)")
+
     ax.errorbar(x, y, y_err, x_err, fmt=fmt, ecolor="grey", alpha=0.5, zorder=2)
     ax.xaxis.set_inverted(True)
     ax.set_xlabel("log[ Teff (K) ]")
@@ -355,17 +413,28 @@ def hr_plot(df, savename: str, hue: str = None, density_plot: bool = False):
     plt.close()
 
 
-def plot_feature_target(df: pd.DataFrame, savename: str, feature: str, target: str):
-    """Plot target as a function of feature - should be keys in df"""
-    plt.figure()
+def plot_feature_target(df: pd.DataFrame, savename: str, feature: str, target: str, density_plot: bool = False):
+    """Plot target as a function of feature - should be keys in df
+    """
     x = df[feature]
-    x_err = df["e" + feature]  # +"1"]
+    x_err = df["e" + feature]
     y = df[target]
     y_err = df["e" + target]
-    plt.errorbar(x, y, y_err, x_err, fmt="o", alpha=0.3)
+    fmt="o"
+    fig, ax = plt.subplots(figsize=(8,6))
+    if density_plot:
+        stack = np.vstack([x, y])
+        density = gaussian_kde(stack)(stack)
+        idx = np.argsort(density)
+        x, y, density = x[idx], y[idx], density[idx]
+
+        scatter = ax.scatter(x, y, c=density, cmap='plasma', s=10, zorder=3)
+        fig.colorbar(scatter, ax=ax, label="Density")
+        fmt = "none"
+    ax.errorbar(x, y, y_err, x_err, fmt=fmt, alpha=0.5, zorder=2)
     # plt.plot(np.log10(1.193), 0.499, 'rx')
     # plt.plot(np.log10(0.08), 0.566, 'rx')
-    plt.xlabel(feature)
-    plt.ylabel(target + " (" + target[0] + "sol)")
-    plt.savefig("BayestarML/data/figures/feature_target_figs/" + savename)
+    ax.set_xlabel(feature)
+    ax.set_ylabel(target + " (" + target[0] + "sol)")
+    fig.savefig("BayestarML/data/figures/feature_target_figs/" + savename)
     plt.close()

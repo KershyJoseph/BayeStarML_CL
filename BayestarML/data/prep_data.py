@@ -12,7 +12,7 @@ from BayestarML.src.data_utils import (
     select_clean_data,
     spreadomatic
 )
-from BayestarML.src.models.baseline_xgb import studyrunner
+from BayestarML.src.models.xgboost import studyrunner
 
 
 def prep_data(
@@ -24,11 +24,11 @@ def prep_data(
     abs_err_lims: dict = None,
     percent_err_lims: dict = None,
     target_lims: dict = None,
-    check_detached:bool = True,
-    lum_check: bool = False,
+    check_detached: bool = True,
+    check_consistency: bool = False,
     plot_errs: bool = False,
     plot_hr: bool = False,
-    plot_t_f=False,
+    plot_t_f: bool = False,
     xgboost: bool = False,
 ):
     """ """
@@ -44,7 +44,7 @@ def prep_data(
 
     # select desired params and create avg symmetric err cols
     df = select_clean_data(
-        df, training_fs, targets, s_class, add_logvars, check_detached=check_detached, lum_check=lum_check
+        df, training_fs, targets, s_class, add_logvars, check_detached=check_detached, check_consistency=check_consistency
     )
     # update training and targets in case of log switch
     if add_logvars:
@@ -78,7 +78,7 @@ def prep_data(
         plot_params = {
             "M": [7, "%"],
             "R": [7, "%"],
-            "logL": [0.05, "dex"],
+            "logL": [0.1, "dex"],
             "Teff": [100, "K"],
             "logg": [0.05, "dex"],
             "FeH": [0.1, "dex"],  # 0.1 for RGB
@@ -154,41 +154,33 @@ if __name__ == "__main__":
     s_class = "rgb"
     add_logvars = ["L", "R"]  # add a log column with errs for these variables
 
-    #skip the target range cutting step if you already know the limits you want
+    # 700ms 
+    # abs_err_lims = {"elogL": 0.5}
+    # percent_err_lims = {"eM": 100, "eR": 100}
+    # target_lims = {"M": [0, 2]} #skip the target range cutting step if you already know the limits you want
+
+    # 5436rgb
+    abs_err_lims = {"elogL": 0.05, "eTeff": 100, "elogg": 0.05, "eFeH": 0.1}
+    percent_err_lims = {"eM": 7, "eR": 7}
     target_lims = {
         "logR": [0, 1.6],
         "M": [0.75, 2.25],
     }
 
-    # # 700ms
-    # abs_err_lims = {"elogL": 0.5}
-    # percent_err_lims = {"eM": 100, "eR": 100}
-
-    # 5436rgb
-    abs_err_lims = {"elogL": 0.05, "eTeff": 100, "elogg": 0.05, "eFeH": 0.1}
-    percent_err_lims = {"eM": 7, "eR": 7}
-
-    # # prepare data
-    # prep_data(
-    #     filename,
-    #     training_fs,
-    #     targets,
-    #     s_class,
-    #     add_logvars,
-    #     abs_err_lims,
-    #     percent_err_lims,
-    #     target_lims=target_lims,
-    #     check_detached=True,
-    #     lum_check=True,
-    #     plot_errs=True,
-    #     xgboost=True,
-    #     plot_hr=True,
-    #     plot_t_f=True
-    # )
-
-    df_ms = pd.read_csv("BayestarML/data/700ms.txt")
-    df_rgb = pd.read_csv("BayestarML/data/5438rgb.txt")
-    df_all = pd.concat([df_ms, df_rgb], axis=0)
-    print(df_all)
-
-    hr_plot(df_rgb, "5438rgb_density_hr_plot.pdf", density_plot=True)
+    # prepare data
+    prep_data(
+        filename,
+        training_fs,
+        targets,
+        s_class,
+        add_logvars,
+        abs_err_lims=abs_err_lims,
+        percent_err_lims=percent_err_lims,
+        target_lims=target_lims,
+        #check_detached=False,
+        check_consistency=True,
+        plot_errs=True,
+        xgboost=True,
+        plot_hr=True,
+        plot_t_f=True
+    )

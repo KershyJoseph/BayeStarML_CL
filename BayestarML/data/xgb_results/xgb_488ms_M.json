@@ -1,12 +1,12 @@
 {
-    "best_mard": 3.9566189593524905,
+    "best_mard": 3.952513709495327,
     "best_params": {
-        "learning_rate": 0.01569706060226549,
-        "n_estimators": 719,
-        "max_depth": 6,
-        "min_child_weight": 4,
-        "reg_lambda": 8.841553580345025,
-        "reg_alpha": 0.001481623202893158,
-        "subsample": 0.6175106358044649
+        "learning_rate": 0.01093745923549896,
+        "n_estimators": 599,
+        "max_depth": 4,
+        "min_child_weight": 3,
+        "reg_lambda": 0.002523815142584216,
+        "reg_alpha": 0.0018320729589393007,
+        "subsample": 0.5010017677291091
     }
 }
