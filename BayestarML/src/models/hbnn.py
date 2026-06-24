@@ -280,15 +280,18 @@ def HBNN_M4_simpler(X_train, Y, X_error, Y_error, n_hidden=5):
             'Omega', 
             n=4, 
             eta=2,  
-            sd_dist=pm.HalfNormal.dist(1),  # Simpler prior
+            sd_dist=pm.Exponential.dist(1),  # Simpler prior
             compute_corr=True,
             #initval=Low_tri
         )
 
+        #try flexible latent mean anchor
+        mu_X = pm.Normal("mu_X", mu=0.0, sigma=0.2, shape=4)
+
         # Latent variables
         X_latent = pm.MvNormal(
             'X_latent', 
-            mu=np.zeros(4),
+            mu=mu_X,
             chol=chol,
             shape=(X_clean.shape[0], 4)
         )
@@ -307,11 +310,11 @@ def HBNN_M4_simpler(X_train, Y, X_error, Y_error, n_hidden=5):
 
         # Weights from input to hidden layer
         weights_in_1 = pm.Normal(
-            "w_in_1", 0, sigma=0.04, shape=(n_hidden, 4)
+            "w_in_1", 0, sigma=0.06*np.sqrt(2/4), shape=(n_hidden, 4)
         )
 
         # Weights from hidden layer to output
-        weights_1_out = pm.Normal("w_1_out", 0, sigma=0.08, shape=(n_hidden))
+        weights_1_out = pm.Normal("w_1_out", 0, sigma=0.16*np.sqrt(2/n_hidden), shape=(n_hidden))
 
         
         bias_1 = pm.Normal("bias_1", 0, sigma=0.15, shape=n_hidden)
@@ -327,7 +330,7 @@ def HBNN_M4_simpler(X_train, Y, X_error, Y_error, n_hidden=5):
 
         act_out = pm.Deterministic('act_out' , pm.math.dot(act_1, weights_1_out) + bias_out)
 
-        log_er = pm.Normal('log_er', mu=-1.5, sigma=0.5) #for ~0.2er
+        log_er = pm.Normal('log_er', mu=-1.2, sigma=0.3) #for ~0.2er
         er = pm.Deterministic('er', pm.math.exp(log_er))
         #er = pm.HalfCauchy('er', beta=1)
 
