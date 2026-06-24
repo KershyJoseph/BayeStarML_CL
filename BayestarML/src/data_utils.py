@@ -441,15 +441,15 @@ def plot_feature_target(df: pd.DataFrame, savename: str, feature: str, target: s
     fig.savefig("BayestarML/data/figures/feature_target_figs/" + savename)
     plt.close()
 
-df = pd.read_csv("BayestarML/data/693ms.txt")
-training_fs = ["Teff", "logg", "FeH", "logL"]
-targets = ["M", "R"]
-dataset_key = "693ms"
-print(len(df))
-print(len(df)*0.8)
-(x_train, x_test, y_train, y_test) = return_train_test(df, training_fs, targets, dataset_key)
-df_train = pd.concat([x_train, y_train], axis=1)
-print(df_train)
+# df = pd.read_csv("BayestarML/data/693ms.txt")
+# training_fs = ["Teff", "logg", "FeH", "logL"]
+# targets = ["M", "R"]
+# dataset_key = "693ms"
+# print(len(df))
+# print(len(df)*0.8)
+# (x_train, x_test, y_train, y_test) = return_train_test(df, training_fs, targets, dataset_key)
+# df_train = pd.concat([x_train, y_train], axis=1)
+# print(df_train)
 
-for f in training_fs:
-    plot_feature_target(df_train, "bad_paretos/paretos_GP_M_"+f+"_693ms.pdf", f, "M", bad_paretos=[57, 75, 139, 187, 216, 268, 275, 282, 323, 343, 349, 362, 430, 446, 499])
+# for f in training_fs:
+#     plot_feature_target(df_train, "bad_paretos/paretos_GP_M_"+f+"_693ms.pdf", f, "M", bad_paretos=[57, 75, 139, 187, 216, 268, 275, 282, 323, 343, 349, 362, 430, 446, 499])
