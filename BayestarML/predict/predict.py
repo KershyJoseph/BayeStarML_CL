@@ -16,11 +16,12 @@ def predict(x, x_er, interp_mask,
             target, training_dataset_key, 
             gp_trace_path, nn_trace_path,
             bart_m, m_mean, m_var, nn_nodes,
-            y_compare=None, savename="", NN_1layer=False):
+            y_compare=None, savename="", NN_1layer=False,
+            bhs_trace=None):
     """Train BART and BHS and then make some predictions
     """
-    data, training_dim = load_data(training_dataset_key, target)
     outputs_folder = "BayestarML/predict/outputs_bhs"
+    data, training_dim = load_data(training_dataset_key, target)
     hyperp_str = savename+"_"+training_dataset_key+"_"+target+"_"+str(bart_m)+"_"+str(m_mean)+"_"+str(m_var)+"_"+str(nn_nodes)
 
     print("-------Start BART----------")
