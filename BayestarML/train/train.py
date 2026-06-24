@@ -241,9 +241,9 @@ if __name__ == "__main__":
     start_time_CPU = time.process_time()
     start_time_wall = time.perf_counter()
 
-    print("5336rgb M NN, 8_2000, priors are .04, .04, .08 and exp on omega. mu_X with sigma=0.2. Using pm.MvNormal. -0.7, 0.3 log_er")
+    print("693ms M NN, 8_2000, NUTPIE, priors are .035, .045, .045 and exp lam=1 on omega. mu_X with sigma=0.2. Using pm.MvNormal. -1.2, 0.3 log_er")
     train_NN(
-        "5336rgb", "M", 8, draws=2000
+        "693ms", "M", 8, draws=2000, nutpie=True
     )
 
     end_time_CPU = time.process_time()
@@ -257,10 +257,22 @@ if __name__ == "__main__":
     start_time_CPU2 = time.process_time()
     start_time2 = time.time()
 
-    print("RGB M GP. 2000")
-    print("5336rgb M NN, 100_30_2000")
+    print("""
+    693ms M GP. 50_15_2000
+
+            log_ls = pm.Normal("log_ls", mu=0.4, sigma=0.4, shape=D)
+            ls = pm.Deterministic("ls", pm.math.exp(log_ls))
+            log_eta = pm.Normal("log_eta", mu=-0.1, sigma=0.3)
+            eta = pm.Deterministic("eta", pm.math.exp(log_eta))
+
+            log_ls_v = pm.Normal("log_ls_v", mu=-1, sigma=0.3, shape=D_var)
+            ls_v = pm.Deterministic("ls_v", pm.math.exp(log_ls_v))
+            log_eta_v = pm.Normal("log_eta_v", mu=-0.9, sigma=0.3)
+            eta_v = pm.Deterministic("eta_v", pm.math.exp(log_eta_v))
+
+    """)
     train_GP(
-        "5336rgb", "M", 100, 30, draws=2000
+        "693ms", "M", 50, 15, draws=2000
     )
 
     end_time_CPU2 = time.process_time()
