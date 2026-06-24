@@ -102,7 +102,7 @@ if __name__ == "__main__":
     star_id, x, x_er, interp_mask = prepare_pred_data("test_set", dataset_key, features, target)
 
     _, pred, ws = predict(x, x_er, interp_mask, target, dataset_key,
-        gp_trace_path = "BayestarML/train/outputs5438rgb/GP_M/GP_M_5336rgb_100_30_2000_0.95.nc",
+        gp_trace_path = "BayestarML/train/outputs5336rgb/GP_M/GP_M_5336rgb_100_30_2000_0.95.nc",
         nn_trace_path = "BayestarML/train/outputs5336rgb/NN_M/NN_M_5336rgb_8_2000_0.95.nc",
         bart_m=700, m_mean=100, m_var=30, nn_nodes=8,
         y_compare="test_set", savename="BHS", plot_density=True)
