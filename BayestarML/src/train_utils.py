@@ -162,9 +162,11 @@ def train(
 
     # print indices of bad pareto ks
     pareto_k_values = loo.pareto_k.values
-    bad_indices = np.where(pareto_k_values > 0.7)[0]
-    print(f"Found {len(bad_indices)} problematic data points.")
+    bad_indices = np.where((pareto_k_values > 0.7) & (pareto_k_values < 1))[0]
+    very_bad_indices = np.where(pareto_k_values > 1)[0]
+    print(f"Found {len(bad_indices)+len(very_bad_indices)} problematic data points.")
     print("Indices of bad points:", bad_indices)
+    print("Indices of very bad points:", very_bad_indices)
 
     if filename:
         trace.to_netcdf(filename)
@@ -346,7 +348,7 @@ def model_pred_plotter(
     """
     if target=="R":
         target = "Radius"
-    if target=="M":
+    elif target=="M":
         target = "Mass"
     else:
         raise Exception("Not sure how to do that yet...")
@@ -582,7 +584,7 @@ def get_results(
 
     if target.startswith("log"):
         target = target[3:]
-        hyperp_str = "GP_" + target + hyperp_str[8:]
+        hyperp_str = target + hyperp_str[8:]
         y_draws = 10 ** (posterior_draws)
         y_pred = y_draws.mean(0)
         y_pred_err = y_draws.std(0)
