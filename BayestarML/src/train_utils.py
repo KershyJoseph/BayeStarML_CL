@@ -12,6 +12,10 @@ import numpy as np
 import pandas as pd
 import pymc as pm
 from sklearn.metrics import mean_absolute_error
+from matplotlib.ticker import MaxNLocator
+from matplotlib.lines import Line2D
+from matplotlib.colors import LogNorm
+from matplotlib.colors import LinearSegmentedColormap
 
 from BayestarML.src.data_utils import denormalise_err, denormalise_val
 
@@ -208,125 +212,125 @@ def mrd(y_true, y_pred):
     return np.mean(relative_diff) * 100
 
 
+# def model_pred_plotter(
+#     y_true,
+#     y_true_err,
+#     y_pred,
+#     y_pred_err,
+#     interp_mask,
+#     target: str,
+#     save_folder: str,
+#     hyperp_str: str,
+#     plot_density: bool = False
+# ):
+#     """Plot predictions of a trained model against true values
+#     Saves a preds figure and a residuals figure
+#     """
+#     model = hyperp_str[:2]
+#     df_all = pd.DataFrame({'y_true': y_true,
+#                            'y_true_err': y_true_err,
+#                            'y_pred': y_pred,
+#                            'y_pred_err': y_pred_err})
+#     df_all["pred_type"] = np.where(
+#         interp_mask,
+#         "interpolation",
+#         "extrapolation"
+#     )
+#     colors ={
+#         "interpolation": 'blue',
+#         "extrapolation": 'red'
+#     }
+#     fig, ax = plt.subplots(figsize=(8, 6))
+#     for status, group in df_all.groupby("pred_type"):
+#         ax.errorbar(
+#             group["y_true"],
+#             group["y_pred"],
+#             yerr=group["y_pred_err"],
+#             xerr=group["y_true_err"],
+#             fmt="o",
+#             label=status,
+#             alpha=0.5,
+#             color=colors[status],
+#             ecolor=colors[status],
+#             capsize=1
+#         )
+#     ax.plot([y_true.min(), y_true.max()], [y_true.min(), y_true.max()], linestyle="--", color='gray')
+#     ax.set_xlabel("True " + target + " ("+ target+ "sol)")
+#     ax.set_ylabel("Predicted " + target + " ("+ target+ "sol)")
+#     ax.set_title(model + " Predictions with Uncertainty")
+#     ax.legend()
+#     fig.savefig(save_folder + "/preds_" + hyperp_str + ".pdf")
+#     plt.close(fig)
+
+#     fig, ax = plt.subplots(figsize=(8, 6))
+#     for status, group in df_all.groupby("pred_type"):
+#         ax.errorbar(
+#             group["y_true"],
+#             group["y_pred"] - group["y_true"],
+#             yerr=group["y_pred_err"],
+#             xerr=group["y_true_err"],
+#             fmt="o",
+#             label=status,
+#             alpha=0.5,
+#             color=colors[status],
+#             ecolor=colors[status],
+#             capsize=1
+#         )
+#     ax.hlines(0, y_true.min(), y_true.max(), color='gray', linestyle="--")
+#     ax.set_xlabel("True " + target + " ("+ target+ "sol)")
+#     ax.set_ylabel("Residual " + target + " ("+ target+ "sol)")
+#     ax.set_title(model + " Prediction Residuals with Value Uncertainty")
+#     ax.legend()
+#     fig.savefig(save_folder + "/res_" + hyperp_str + ".pdf")
+#     plt.close(fig)
+
+
+#     # # make another plot with 1sig err cloud from test target sigs
+#     # y_true, y_true_err, y_pred, y_pred_err = [
+#     #     y.to_numpy() if isinstance(y, pd.Series) else y
+#     #     for y in [y_true, y_true_err, y_pred, y_pred_err]
+#     # ]
+#     # sorted_indices = np.argsort(y_true)
+#     # if len(y_pred_err.shape) > 1:
+#     #     y_true, y_true_err, y_pred, y_pred_err[0], y_pred_err[1] = [
+#     #         y[sorted_indices]
+#     #         for y in [y_true, y_true_err, y_pred, y_pred_err[0], y_pred_err[1]]
+#     #     ]
+#     # else:
+#     #     y_true, y_true_err, y_pred, y_pred_err = [
+#     #         y[sorted_indices] for y in [y_true, y_true_err, y_pred, y_pred_err]
+#     #     ]
+#     # plt.figure(figsize=(8, 6))
+#     # plt.errorbar(
+#     #     y_true,
+#     #     y_pred,
+#     #     yerr=y_pred_err,
+#     #     fmt="o",
+#     #     label="Predictions with Uncertainty",
+#     #     alpha=0.7,
+#     # )
+#     # plt.plot([y_true.min(), y_true.max()], [y_true.min(), y_true.max()], "r--")
+#     # # 1 sig err cloud ----------------
+#     # y_true_lower = y_true - y_true_err
+#     # y_true_upper = y_true + y_true_err
+#     # plt.fill_between(
+#     #     y_true,
+#     #     y_true_lower,
+#     #     y_true_upper,
+#     #     color="red",
+#     #     alpha=0.2,
+#     #     label="1-Sigma True " + target + " Errors",
+#     # )
+#     # # --------------------------------
+#     # plt.xlabel("True " + target)
+#     # plt.ylabel("Predicted " + target)
+#     # plt.title(model + " Predictions with Uncertainty")
+#     # plt.legend()
+#     # plt.savefig(save_folder + "/preds_sigCloud_" + hyperp_str + ".pdf")
+#     # plt.close()
+
+
 def model_pred_plotter(
-    y_true,
-    y_true_err,
-    y_pred,
-    y_pred_err,
-    interp_mask,
-    target: str,
-    save_folder: str,
-    hyperp_str: str,
-    plot_density: bool = False
-):
-    """Plot predictions of a trained model against true values
-    Saves a preds figure and a residuals figure
-    """
-    model = hyperp_str[:2]
-    df_all = pd.DataFrame({'y_true': y_true,
-                           'y_true_err': y_true_err,
-                           'y_pred': y_pred,
-                           'y_pred_err': y_pred_err})
-    df_all["pred_type"] = np.where(
-        interp_mask,
-        "interpolation",
-        "extrapolation"
-    )
-    colors ={
-        "interpolation": 'blue',
-        "extrapolation": 'red'
-    }
-    fig, ax = plt.subplots(figsize=(8, 6))
-    for status, group in df_all.groupby("pred_type"):
-        ax.errorbar(
-            group["y_true"],
-            group["y_pred"],
-            yerr=group["y_pred_err"],
-            xerr=group["y_true_err"],
-            fmt="o",
-            label=status,
-            alpha=0.5,
-            color=colors[status],
-            ecolor=colors[status],
-            capsize=1
-        )
-    ax.plot([y_true.min(), y_true.max()], [y_true.min(), y_true.max()], linestyle="--", color='gray')
-    ax.set_xlabel("True " + target + " ("+ target+ "sol)")
-    ax.set_ylabel("Predicted " + target + " ("+ target+ "sol)")
-    ax.set_title(model + " Predictions with Uncertainty")
-    ax.legend()
-    fig.savefig(save_folder + "/preds_" + hyperp_str + ".pdf")
-    plt.close(fig)
-
-    fig, ax = plt.subplots(figsize=(8, 6))
-    for status, group in df_all.groupby("pred_type"):
-        ax.errorbar(
-            group["y_true"],
-            group["y_pred"] - group["y_true"],
-            yerr=group["y_pred_err"],
-            xerr=group["y_true_err"],
-            fmt="o",
-            label=status,
-            alpha=0.5,
-            color=colors[status],
-            ecolor=colors[status],
-            capsize=1
-        )
-    ax.hlines(0, y_true.min(), y_true.max(), color='gray', linestyle="--")
-    ax.set_xlabel("True " + target + " ("+ target+ "sol)")
-    ax.set_ylabel("Residual " + target + " ("+ target+ "sol)")
-    ax.set_title(model + " Prediction Residuals with Value Uncertainty")
-    ax.legend()
-    fig.savefig(save_folder + "/res_" + hyperp_str + ".pdf")
-    plt.close(fig)
-
-
-    # # make another plot with 1sig err cloud from test target sigs
-    # y_true, y_true_err, y_pred, y_pred_err = [
-    #     y.to_numpy() if isinstance(y, pd.Series) else y
-    #     for y in [y_true, y_true_err, y_pred, y_pred_err]
-    # ]
-    # sorted_indices = np.argsort(y_true)
-    # if len(y_pred_err.shape) > 1:
-    #     y_true, y_true_err, y_pred, y_pred_err[0], y_pred_err[1] = [
-    #         y[sorted_indices]
-    #         for y in [y_true, y_true_err, y_pred, y_pred_err[0], y_pred_err[1]]
-    #     ]
-    # else:
-    #     y_true, y_true_err, y_pred, y_pred_err = [
-    #         y[sorted_indices] for y in [y_true, y_true_err, y_pred, y_pred_err]
-    #     ]
-    # plt.figure(figsize=(8, 6))
-    # plt.errorbar(
-    #     y_true,
-    #     y_pred,
-    #     yerr=y_pred_err,
-    #     fmt="o",
-    #     label="Predictions with Uncertainty",
-    #     alpha=0.7,
-    # )
-    # plt.plot([y_true.min(), y_true.max()], [y_true.min(), y_true.max()], "r--")
-    # # 1 sig err cloud ----------------
-    # y_true_lower = y_true - y_true_err
-    # y_true_upper = y_true + y_true_err
-    # plt.fill_between(
-    #     y_true,
-    #     y_true_lower,
-    #     y_true_upper,
-    #     color="red",
-    #     alpha=0.2,
-    #     label="1-Sigma True " + target + " Errors",
-    # )
-    # # --------------------------------
-    # plt.xlabel("True " + target)
-    # plt.ylabel("Predicted " + target)
-    # plt.title(model + " Predictions with Uncertainty")
-    # plt.legend()
-    # plt.savefig(save_folder + "/preds_sigCloud_" + hyperp_str + ".pdf")
-    # plt.close()
-
-
-def new_model_pred_plotter(
     y_true,
     y_true_err,
     y_pred,
@@ -356,9 +360,14 @@ def new_model_pred_plotter(
         "Interpolation",
         "Extrapolation"
     )
-    colors ={
+    colors = {
         "Interpolation": 'blue',
         "Extrapolation": 'magenta'
+    }
+
+    alphas = {
+        "Interpolation": 0.5,
+        "Extrapolation": 0.7
     }
 
     # do density calculations if wanted - credit GEMINI
@@ -366,7 +375,7 @@ def new_model_pred_plotter(
         df_interp = df_all[df_all["pred_type"]=="Interpolation"]
 
         # 1. Define the grid resolution (e.g., 30x30 bins)
-        bins = [100, 100]
+        bins = [50, 50]
 
         # 2. Get the 2D histogram counts for the blue points
         counts, xedges, yedges = np.histogram2d(df_interp["y_true"], df_interp["y_pred"], bins=bins)
@@ -378,6 +387,19 @@ def new_model_pred_plotter(
         # 4. Extract the physical count for each point
         point_counts = counts[x_indices, y_indices]
 
+        #make custom blues scale
+        new_blues = LinearSegmentedColormap.from_list(
+            "new_blues",
+            plt.cm.Blues(np.linspace(0.25, 1, 256))
+        )
+        point_colors = new_blues(point_counts)
+
+        #log scale color bar potentially
+        # norm = LogNorm(
+        #     vmin=1,
+        #     vmax=point_counts.max()
+        # )
+
     # make fig and ax
     fig, (ax_preds, ax_res) = plt.subplots(
         nrows=2, 
@@ -388,52 +410,129 @@ def new_model_pred_plotter(
     )
     plt.subplots_adjust(hspace=0.05)
 
+    # make legend - ChatGPT
+    legend_handles = [
+        Line2D(
+            [0], [0],
+            marker='o',
+            linestyle='',
+            color='blue',
+            label='Interpolation',
+            markersize=5
+        ),
+        Line2D(
+            [0], [0],
+            marker='o',
+            linestyle='',
+            color='magenta',
+            label='Extrapolation',
+            markersize=5
+        )
+    ]
+
     # top panel - predictions
     for status, group in df_all.groupby("pred_type"):
         fmt = 'o'
 
-        if status == "Interpolation" and plot_density:
-            # 5. Plot using the raw counts to drive transparency or color depth
-            sc_preds = ax_preds.scatter(group["y_true"], group["y_pred"], c=point_counts, cmap='Blues', alpha=0.7, zorder=2)
-            fmt = 'none'
+        if plot_density:
+            if status == "Interpolation":
+                # 5. Plot using the raw counts to drive transparency or color depth
+                sc_preds = ax_preds.scatter(group["y_true"], group["y_pred"], c=point_counts, cmap=new_blues, alpha=0.7, zorder=2, s=10)
+                fmt = 'none'
 
-        ax_preds.errorbar(
-            group["y_true"],
-            group["y_pred"],
-            yerr=group["y_pred_err"],
-            xerr=group["y_true_err"],
-            fmt=fmt,
-            label=status,
-            alpha=0.5,
-            color=colors[status],
-            ecolor=colors[status],
-            capsize=1.5,
-            zorder=1
-        )
+            for x, y, xe, ye, col in zip(
+                group["y_true"],
+                group["y_pred"],
+                group["y_true_err"],
+                group["y_pred_err"],
+                point_colors):
+
+                zorder=1
+                if status == "Extrapolation":
+                    col = colors[status]
+                    zorder=1
+
+                ax_preds.errorbar(
+                    x,
+                    y,
+                    xerr=xe,
+                    yerr=ye,
+                    fmt=fmt,
+                    ecolor=col,
+                    color=colors[status],
+                    alpha=alphas[status],
+                    capsize=1.5,
+                    zorder=zorder,
+                    ms=3.16
+                )
+
+        else:
+            ax_preds.errorbar(
+                group["y_true"],
+                group["y_pred"],
+                yerr=group["y_pred_err"],
+                xerr=group["y_true_err"],
+                fmt="o",
+                alpha=alphas[status],
+                color=colors[status],
+                ecolor=colors[status],
+                capsize=1
+            )
+
     frame_width = ax_res.spines["bottom"].get_linewidth()
     ax_preds.plot([y_true.min()-0.1, y_true.max()+0.1], [y_true.min()-0.1, y_true.max()+0.1], linestyle="--", color='k', linewidth=frame_width)
     ax_preds.set_ylabel(fr"Predicted {target} ($\mathrm{{{target[0]}}}_{{\odot}}$)")
-    ax_preds.legend()
+    ax_preds.legend(handles=legend_handles)
     ax_preds.grid(True, alpha=0.3)
 
     # bottom panel - residuals
     for status, group in df_all.groupby("pred_type"):
-        if status=="Interpolation" and plot_density:
-            ax_res.scatter(group["y_true"], group["y_pred"] - group["y_true"], c=point_counts, cmap='Blues', alpha=0.7, zorder=2)
+        fmt='o'
 
-        ax_res.errorbar(
-            group["y_true"],
-            group["y_pred"] - group["y_true"],
-            yerr=group["y_pred_err"],
-            xerr=group["y_true_err"],
-            fmt=fmt,
-            label=status,
-            alpha=0.5,
-            color=colors[status],
-            ecolor=colors[status],
-            capsize=1.5,
-            zorder=1
-        )
+        if plot_density: 
+            if status=="Interpolation":
+                ax_res.scatter(group["y_true"], group["y_pred"] - group["y_true"], c=point_counts, cmap=new_blues, alpha=0.7, zorder=2, s=10)
+                fmt = 'none'
+
+            for x, y, xe, ye, col in zip(
+                group["y_true"],
+                group["y_pred"]-group["y_true"],
+                group["y_true_err"],
+                group["y_pred_err"],
+                point_colors):
+
+                zorder=1
+                if status == "Extrapolation":
+                    col = colors[status]
+                    zorder=1
+
+                ax_res.errorbar(
+                    x,
+                    y,
+                    xerr=xe,
+                    yerr=ye,
+                    fmt=fmt,
+                    ecolor=col,
+                    color=colors[status],
+                    alpha=alphas[status],
+                    capsize=1.5,
+                    zorder=zorder,
+                    ms=3.16
+                )
+
+        else:
+            ax_res.errorbar(
+                group["y_true"],
+                group["y_pred"] - group["y_true"],
+                yerr=group["y_pred_err"],
+                xerr=group["y_true_err"],
+                fmt="o",
+                alpha=alphas[status],
+                color=colors[status],
+                ecolor=colors[status],
+                capsize=1
+            )
+
     ax_res.axhline(0, color='k', linewidth=frame_width)
     ax_res.set_xlabel(fr"True {target} ($\mathrm{{{target[0]}}}_{{\odot}}$)")
     ax_res.set_ylabel(fr"Residual ($\mathrm{{{target[0]}}}_{{\odot}}$)")
@@ -442,13 +541,15 @@ def new_model_pred_plotter(
     if plot_density:
         cbar = fig.colorbar(sc_preds, ax=[ax_preds, ax_res], location='right', fraction=0.05, pad=0.04)
         cbar.set_label('Number of Stars')
+        cbar.locator = MaxNLocator(integer=True)
+        cbar.update_ticks()
     fig.align_ylabels()
-    plt.show()
-    #fig.savefig(save_folder + "/predsres_" + hyperp_str + ".pdf")
+    fig.savefig(save_folder + "/predsres_" + hyperp_str + ".pdf")
+    plt.close()
 
 
 def get_results(
-    posterior_draws, data, interp_mask, outputs_folder_path, dataset_key, target, hyperp_str
+    posterior_draws, data, interp_mask, outputs_folder_path, dataset_key, target, hyperp_str, plot_density=False
 ):
     """
     """
@@ -475,7 +576,8 @@ def get_results(
         interp_mask,
         target,
         outputs_folder_path,
-        hyperp_str
+        hyperp_str,
+        plot_density
     )
 
     if target.startswith("log"):
@@ -530,11 +632,12 @@ def get_results(
         )
 
 
-# x_data = np.random.normal(1.2, 0.2, 200)
-# y_data = x_data + np.random.normal(0, 0.05, 200)
-# x_err = np.random.uniform(0.01, 0.05, 200)
-# y_err = np.random.uniform(0.01, 0.05, 200)
+# n = 1000
+# x_data = np.random.normal(1.2, 0.2, n)
+# y_data = x_data + np.random.normal(0, 0.05, n)
+# x_err = np.random.uniform(0.01, 0.05, n)
+# y_err = np.random.uniform(0.01, 0.05, n)
 # import random
-# interp_mask = random.choices([True, False], weights=[0.9, 0.1], k=200)
+# interp_mask = random.choices([True, False], weights=[0.9, 0.1], k=n)
 
-# model_pred_plotter(x_data, x_err, y_data, y_err, interp_mask, "M", None, None, plot_density=True)
+# new_model_pred_plotter(x_data, x_err, y_data, y_err, interp_mask, "M", None, None, plot_density=False)

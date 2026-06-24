@@ -25,7 +25,8 @@ def train_GP(
     chains=4,
     advi=False,
     nutpie=False,
-    linear_mean_f=False
+    linear_mean_f=False,
+    plot_density=False
 ):
     """Function to train GP"""
     hyperp_str = (
@@ -90,7 +91,7 @@ def train_GP(
     )
 
     interp_mask = check_feature_extrapolation(data["x_train"], data["x_test"])
-    get_results(pred, data, interp_mask, outputs_folder_path, dataset_key, target, hyperp_str)
+    get_results(pred, data, interp_mask, outputs_folder_path, dataset_key, target, hyperp_str, plot_density)
 
 
 def train_NN_1layer(
@@ -102,6 +103,7 @@ def train_NN_1layer(
     chains=4,
     advi=False,
     nutpie=False,
+    plot_density=False
 ):
     """Function to train HBNN"""
     hyperp_str = (
@@ -159,7 +161,7 @@ def train_NN_1layer(
     )
 
     interp_mask = check_feature_extrapolation(data["x_train"], data["x_test"])
-    get_results(pred, data, interp_mask, outputs_folder_path, dataset_key, target, hyperp_str)
+    get_results(pred, data, interp_mask, outputs_folder_path, dataset_key, target, hyperp_str, plot_density)
 
 
 def train_NN(
@@ -171,7 +173,8 @@ def train_NN(
     chains=4,
     advi=False,
     nutpie=False,
-    trace_path=None
+    trace_path=None,
+    plot_density=False
 ):
     """Function to train HBNN"""
     hyperp_str = (
@@ -231,7 +234,7 @@ def train_NN(
     )
 
     interp_mask = check_feature_extrapolation(data["x_train"], data["x_test"])
-    get_results(pred, data, interp_mask, outputs_folder_path, dataset_key, target, hyperp_str)
+    get_results(pred, data, interp_mask, outputs_folder_path, dataset_key, target, hyperp_str, plot_density)
 
 
 if __name__ == "__main__":
@@ -241,7 +244,7 @@ if __name__ == "__main__":
     start_time_CPU = time.process_time()
     start_time_wall = time.perf_counter()
 
-    print("693ms M NN, 8_2000, NUTPIE, priors are .035, .045, .045 and exp lam=1 on omega. mu_X with sigma=0.2. Using pm.MvNormal. -1.2, 0.3 log_er")
+    print("693ms R NN, 8_2000, NUTPIE, priors are .035, .045, .045 and exp lam=1 on omega. mu_X with sigma=0.2. Using pm.MvNormal. -1.2, 0.3 log_er")
     train_NN(
         "693ms", "M", 8, draws=2000, nutpie=True
     )
