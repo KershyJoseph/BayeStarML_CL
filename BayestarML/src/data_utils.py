@@ -413,7 +413,7 @@ def hr_plot(df, savename: str, hue: str = None, density_plot: bool = False, mass
     plt.close()
 
 
-def plot_feature_target(df: pd.DataFrame, savename: str, feature: str, target: str, density_plot: bool = False):
+def plot_feature_target(df: pd.DataFrame, savename: str, feature: str, target: str, density_plot: bool = False, bad_paretos=None):
     """Plot target as a function of feature - should be keys in df
     """
     x = df[feature]
@@ -432,9 +432,24 @@ def plot_feature_target(df: pd.DataFrame, savename: str, feature: str, target: s
         fig.colorbar(scatter, ax=ax, label="Density")
         fmt = "none"
     ax.errorbar(x, y, y_err, x_err, fmt=fmt, alpha=0.5, zorder=2)
-    # plt.plot(np.log10(1.193), 0.499, 'rx')
-    # plt.plot(np.log10(0.08), 0.566, 'rx')
+    if bad_paretos:
+        df_bad = df.iloc[bad_paretos]
+        plt.plot(df_bad[feature], df_bad[target], 'rx', zorder=4)
+        print(df_bad[[feature, "e"+feature]])
     ax.set_xlabel(feature)
     ax.set_ylabel(target + " (" + target[0] + "sol)")
     fig.savefig("BayestarML/data/figures/feature_target_figs/" + savename)
     plt.close()
+
+df = pd.read_csv("BayestarML/data/693ms.txt")
+training_fs = ["Teff", "logg", "FeH", "logL"]
+targets = ["M", "R"]
+dataset_key = "693ms"
+print(len(df))
+print(len(df)*0.8)
+(x_train, x_test, y_train, y_test) = return_train_test(df, training_fs, targets, dataset_key)
+df_train = pd.concat([x_train, y_train], axis=1)
+print(df_train)
+
+for f in training_fs:
+    plot_feature_target(df_train, "bad_paretos/paretos_GP_M_"+f+"_693ms.pdf", f, "M", bad_paretos=[57, 75, 139, 187, 216, 268, 275, 282, 323, 343, 349, 362, 430, 446, 499])
