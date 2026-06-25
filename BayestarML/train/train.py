@@ -244,9 +244,9 @@ if __name__ == "__main__":
     start_time_CPU = time.process_time()
     start_time_wall = time.perf_counter()
 
-    print("693ms R NN, 8_2000, NUTPIE, priors are 0.04/0.14 He weight, 0.1/0.25 bias and exp lam=1 on omega. mu_X with sigma=0.2. Using pm.MvNormal. -1.2, 0.3 log_er")
+    print("693ms R NN, 8_2000, NUTPIE, priors are 0.05/0.15 He weight, 0.1/0.25 bias and exp lam=1 on omega. mu_X with sigma=0.2. Using pm.MvNormal. -1.2, 0.3 log_er")
     train_NN_1layer(
-        "693ms", "R", 8, draws=2000, nutpie=True
+        "693ms", "R", 8, draws=2000
     )
 
     end_time_CPU = time.process_time()
@@ -262,7 +262,7 @@ if __name__ == "__main__":
 
     print("693ms M NN, 8_2000, NUTPIE, priors are 0.2/0.45/0.3 He weight, 0.02/0.04/0.045 bias and exp lam=1 on omega. mu_X with sigma=0.2. Using pm.MvNormal. -1.2, 0.3 log_er")
     train_NN(
-        "693ms", "M", 8, draws=2000, nutpie=True
+        "693ms", "M", 8, draws=2000
     )
 
     end_time_CPU2 = time.process_time()
