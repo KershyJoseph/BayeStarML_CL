@@ -351,6 +351,6 @@ def sparse_fully_heteroscedastic_gp(
         σ_f     = pm.Deterministic("σ_f", pm.math.exp(0.5 * log_var))
 
         # -------- likelihood --------
-        y_obs = pm.StudentT("y", mu=μ_f, sigma=σ_f, observed=y) #for outlier robustness
+        y_obs = pm.Normal("y", mu=μ_f, sigma=σ_f, observed=y) #for outlier robustness
 
     return model, μ_gp, log_var_gp, μ_trace, var_trace, Xu, Xu_var
