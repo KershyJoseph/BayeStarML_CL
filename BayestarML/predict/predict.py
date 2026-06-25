@@ -98,14 +98,14 @@ if __name__ == "__main__":
 
     features = ["Teff", "FeH", "logL", "logg"]
     target = "M"
-    dataset_key = "5336rgb"
+    dataset_key = "693ms"
     star_id, x, x_er, interp_mask = prepare_pred_data("test_set", dataset_key, features, target)
 
     _, pred, ws = predict(x, x_er, interp_mask, target, dataset_key,
-        gp_trace_path = "BayestarML/train/outputs5336rgb/GP_M/GP_M_5336rgb_100_30_2000_0.95.nc",
-        nn_trace_path = "BayestarML/train/outputs5336rgb/NN_M/NN_M_5336rgb_8_2000_0.95.nc",
-        bart_m=700, m_mean=100, m_var=30, nn_nodes=8,
-        y_compare="test_set", savename="BHS", plot_density=True)
+        gp_trace_path = "BayestarML/train/outputs693ms/GP_M/GP_M_693ms_50_15_2000_0.95.nc",
+        nn_trace_path = "BayestarML/train/outputs693ms/NN_M/NN_M_693ms_8_2000_0.95.nc ",
+        bart_m=400, m_mean=50, m_var=15, nn_nodes=8,
+        y_compare="test_set", savename="BHS")#, plot_density=True)
 
     df_weights = get_bhs_weights(ws, star_id, dataset_key+"_bhs_"+target+"_ws.txt")
 
@@ -153,3 +153,7 @@ if __name__ == "__main__":
 #5336 RGB MASS 
 # gp_trace_path = "BayestarML/train/outputs5438rgb/GP_M/GP_M_5336rgb_100_30_2000_0.95.nc",
 # nn_trace_path = "BayestarML/train/outputs5336rgb/NN_M/NN_M_5336rgb_8_2000_0.95.nc",
+
+#693MS MASS 
+# gp_trace_path = "BayestarML/train/outputs693ms/GP_M/GP_M_693ms_50_15_2000_0.95.nc",
+# nn_trace_path = "BayestarML/train/outputs693ms/NN_M/NN_M_693ms_8_2000_0.95.nc ",

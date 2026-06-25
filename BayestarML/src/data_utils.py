@@ -383,31 +383,43 @@ def hr_plot(df, savename: str, hue: str = None, density_plot: bool = False, mass
     y_err = [df["elogL2"], df["elogL1"]]
 
     plt.close()
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(8,6))
 
-    fmt = "o"
+    colors = {
+        "NASA Exoplanet Archive": "lightsteelblue",
+        "Lamirel et al. (2026)": "mediumblue",
+        "Expansion in this work": "red"
+    }
+
+    zorders = {
+        "NASA Exoplanet Archive": 2,
+        "Lamirel et al. (2026)": 4,
+        "Expansion in this work": 4
+    }
+
     if hue:
-        sns.scatterplot(
-            data=df, x="logTeff", y="logL", hue=hue, ax=ax, zorder=3, alpha=0.8
-        )
-        fmt = "none"
+        for catalogue, group in df.groupby(hue):
+            x = group["logTeff"]
+            x_err = [group["elogTeff2"], group["elogTeff1"]]
+            y = group["logL"]
+            y_err = [group["elogL2"], group["elogL1"]]
+            ax.errorbar(x, y, y_err, x_err, fmt='o', ms=5, capsize=1.5, alpha=0.5, ecolor='gray', color=colors[catalogue], mec='gray', label=catalogue, zorder=zorders[catalogue])
     if density_plot:
         stack = np.vstack([x, y])
         density = gaussian_kde(stack)(stack)
         idx = np.argsort(density)
         x, y, density = x[idx], y[idx], density[idx]
-        fmt = "none"
         scatter = ax.scatter(x, y, c=density, cmap='plasma', s=5, zorder=3)
         fig.colorbar(scatter, ax=ax, label="Density of Stars")
     elif mass_plot:
-        fmt = "none"
         scatter = ax.scatter(x, y, c=df["M"], cmap='plasma', s=5, zorder=3)
         fig.colorbar(scatter, ax=ax, label="Mass (Msol)")
 
-    ax.errorbar(x, y, y_err, x_err, fmt=fmt, ecolor="grey", alpha=0.5, zorder=2)
     ax.xaxis.set_inverted(True)
-    ax.set_xlabel("log[ Teff (K) ]")
-    ax.set_ylabel("log[ L (Lsol) ]")
+    ax.set_xlabel(r"log($\mathrm{T_{eff}}$) [K]")
+    ax.set_ylabel(r"log(L) [$\mathrm{L_{\odot}}$]")
+    ax.grid(True, alpha=0.3)
+    ax.legend()
 
     fig.savefig("BayestarML/data/figures/hr_diagrams/" + savename)
     plt.close()
@@ -453,3 +465,17 @@ def plot_feature_target(df: pd.DataFrame, savename: str, feature: str, target: s
 
 # for f in training_fs:
 #     plot_feature_target(df_train, "bad_paretos/paretos_GP_M_"+f+"_693ms.pdf", f, "M", bad_paretos=[57, 75, 139, 187, 216, 268, 275, 282, 323, 343, 349, 362, 430, 446, 499])
+
+df_2018 = pd.read_csv("BayestarML/data/training_databases/all6_2018_data.txt", sep='\t')
+df_2018 = df_2018[df_2018["class"]=="ms"]
+df_nasa = pd.read_csv("BayestarML/predict/prediction_datasets/NASAexop_archive_stars.txt", sep='\t')
+df_new = pd.read_csv("BayestarML/data/693ms.txt")
+df_new = logomatic(df_new, ["Teff"])
+df_all = pd.concat([df_nasa, df_2018, 
+                    df_new], 
+                    keys=["NASA Exoplanet Archive", "Lamirel et al. (2026)", 
+                          "Expansion in this work"],
+                    names=["Catalogue", None])
+df_all.reset_index()
+
+hr_plot(df_all, "max_nasa_new_hr_plot.pdf", hue="Catalogue")
