@@ -244,7 +244,7 @@ if __name__ == "__main__":
     start_time_CPU = time.process_time()
     start_time_wall = time.perf_counter()
 
-    print("693ms R NN, 8_2000, NUTPIE, priors are 0.04/0.12 He weight, 0.1/0.25 bias and exp lam=1 on omega. mu_X with sigma=0.2. Using pm.MvNormal. -1.2, 0.3 log_er")
+    print("693ms R NN, 8_2000, NUTPIE, priors are 0.04/0.14 He weight, 0.1/0.25 bias and exp lam=1 on omega. mu_X with sigma=0.2. Using pm.MvNormal. -1.2, 0.3 log_er")
     train_NN_1layer(
         "693ms", "R", 8, draws=2000, nutpie=True
     )
@@ -260,52 +260,9 @@ if __name__ == "__main__":
     start_time_CPU2 = time.process_time()
     start_time2 = time.time()
 
-    print("""
-    693ms M GP. 50_15_2000. Priors below. StudentT.
-
-        log_ls = pm.Normal("log_ls", mu=0.4, sigma=0.4, shape=D)
-        ls = pm.Deterministic("ls", pm.math.exp(log_ls))
-        log_eta = pm.Normal("log_eta", mu=-0.1, sigma=0.3)
-        eta = pm.Deterministic("eta", pm.math.exp(log_eta))
-
-        k_sq_exp = eta**2 * pm.gp.cov.ExpQuad(input_dim=D, ls=ls)
-        cov_mean = k_sq_exp + pm.gp.cov.WhiteNoise(sigma=1e-5)
-
-        μ_gp = SparseLatent(cov_mean)
-        μ_f_latent, μ_trace = μ_gp.prior("μ", X_mu, Xu)
-
-        if linear_mean_f:
-            beta0 = pm.Normal("beta0", mu=0.0, sigma=0.5)
-            beta = pm.Normal("beta", mu=0.0, sigma=0.5, shape=D)
-            linear_background = beta0 + pm.math.dot(X_mu, beta)
-            μ_f = pm.Deterministic("μ_f", μ_f_latent + linear_background)
-        else:
-            μ_f = pm.Deterministic("μ_f", μ_f_latent)
-
-        X_var_data = pm.Data("X_var", X_var)
-        D_var = X_var.shape[1]
-
-        log_ls_v = pm.Normal("log_ls_v", mu=-1, sigma=0.3, shape=D_var)
-        ls_v = pm.Deterministic("ls_v", pm.math.exp(log_ls_v))
-        log_eta_v = pm.Normal("log_eta_v", mu=-0.9, sigma=0.3)
-        eta_v = pm.Deterministic("eta_v", pm.math.exp(log_eta_v))
-
-        cov_var = eta_v**2 * pm.gp.cov.ExpQuad(input_dim=D_var, ls=ls_v) \
-                  + pm.gp.cov.WhiteNoise(sigma=1e-5)
-
-        alpha_log_var = pm.Normal("alpha_log_var", mu=0.0, sigma=1.0)
-        log_var_gp = SparseLatent(cov_var)
-        log_var_latent, var_trace  = log_var_gp.prior("log_var_f", X_var_data, Xu_var)
-        log_var = pm.Deterministic("log_var", alpha_log_var + log_var_latent)
-        σ_f     = pm.Deterministic("σ_f", pm.math.exp(0.5 * log_var))
-
-        # -------- likelihood --------
-        nu = pm.Gamma("nu", alpha=2, beta=0.1)
-        y_obs = pm.StudentT("y", nu=nu, mu=μ_f, sigma=σ_f, observed=y) #for outlier robustness
-
-    """)
-    train_GP(
-        "693ms", "M", 50, 15, draws=2000
+    print("693ms M NN, 8_2000, NUTPIE, priors are 0.2/0.45/0.3 He weight, 0.02/0.04/0.045 bias and exp lam=1 on omega. mu_X with sigma=0.2. Using pm.MvNormal. -1.2, 0.3 log_er")
+    train_NN(
+        "693ms", "M", 8, draws=2000, nutpie=True
     )
 
     end_time_CPU2 = time.process_time()
@@ -316,21 +273,21 @@ if __name__ == "__main__":
 
     print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
 
-    start_time_CPU3 = time.process_time()
-    start_time3 = time.time()
+    # start_time_CPU3 = time.process_time()
+    # start_time3 = time.time()
 
-    print("693ms M NN, 8_2000, NUTPIE, priors are 0.25/0.45/0.35 He weight, 0.03/0.04/0.045 bias and exp lam=1 on omega. mu_X with sigma=0.2. Using pm.MvNormal. -1.2, 0.3 log_er")
-    train_NN(
-        "693ms", "M", 8, draws=2000, nutpie=True
-    )
+    # print("693ms M NN, 8_2000, NUTPIE, priors are 0.2/0.45/0.3 He weight, 0.02/0.04/0.045 bias and exp lam=1 on omega. mu_X with sigma=0.2. Using pm.MvNormal. -1.2, 0.3 log_er")
+    # train_NN(
+    #     "693ms", "M", 8, draws=2000, nutpie=True
+    # )
 
-    end_time_CPU3 = time.process_time()
-    mem3 = process.memory_info().rss / 1024**2
-    print(f"Peak Memory: {(mem3-mem2):.2f} MB")
-    print(f"CPU time used: {(end_time_CPU3-start_time_CPU3):.5f} s")
-    print(f"Total run time: {time.time()-start_time3:.5f} s")
+    # end_time_CPU3 = time.process_time()
+    # mem3 = process.memory_info().rss / 1024**2
+    # print(f"Peak Memory: {(mem3-mem2):.2f} MB")
+    # print(f"CPU time used: {(end_time_CPU3-start_time_CPU3):.5f} s")
+    # print(f"Total run time: {time.time()-start_time3:.5f} s")
 
-    print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
+    # print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
 
     # start_time_CPU4 = time.process_time()
     # start_time4 = time.time()
