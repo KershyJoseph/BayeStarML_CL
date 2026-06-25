@@ -700,7 +700,8 @@ def posterior_predictive_GP(
             gp_model["alpha_log_var"] + log_var_pred_latent
         )
 
-        y = pm.StudentT("y_pred", nu=gp_model["nu"], mu=f_mu_pred, sigma=pm.math.exp(0.5 * log_var_pred), shape=N_new)
+        nu_param = gp_model["nu"]
+        y = pm.StudentT("y_pred", nu=nu_param, mu=f_mu_pred, sigma=pm.math.exp(0.5 * log_var_pred), shape=N_new)
 
         # Draw posterior predictive samples
         ppc = pm.sample_posterior_predictive(

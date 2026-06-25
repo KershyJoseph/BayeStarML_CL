@@ -348,7 +348,7 @@ def sparse_fully_heteroscedastic_gp(
         log_var_gp = SparseLatent(cov_var)
         log_var_latent, var_trace  = log_var_gp.prior("log_var_f", X_var_data, Xu_var)
         log_var = pm.Deterministic("log_var", alpha_log_var + log_var_latent)
-        σ_f     = pm.Deterministic("__f", pm.math.exp(0.5 * log_var))
+        σ_f     = pm.Deterministic("σ_f", pm.math.exp(0.5 * log_var))
 
         # -------- likelihood --------
         nu = pm.Gamma("nu", alpha=2, beta=0.1)
