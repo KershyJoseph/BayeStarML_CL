@@ -425,7 +425,7 @@ def hr_plot(df, savename: str, hue: str = None, density_plot: bool = False, mass
     plt.close()
 
 
-def plot_feature_target(df: pd.DataFrame, savename: str, feature: str, target: str, density_plot: bool = False, bad_paretos=None):
+def plot_feature_target(df: pd.DataFrame, savename: str, feature: str, target: str, density_plot: bool = False, mass_plot = False, bad_paretos=None):
     """Plot target as a function of feature - should be keys in df
     """
     x = df[feature]
@@ -443,6 +443,9 @@ def plot_feature_target(df: pd.DataFrame, savename: str, feature: str, target: s
         scatter = ax.scatter(x, y, c=density, cmap='plasma', s=10, zorder=3)
         fig.colorbar(scatter, ax=ax, label="Density")
         fmt = "none"
+    elif mass_plot:
+        scatter = ax.scatter(x, y, c=df["M"], cmap='plasma', s=5, zorder=3)
+        fig.colorbar(scatter, ax=ax, label="Mass (Msol)")
     ax.errorbar(x, y, y_err, x_err, fmt=fmt, alpha=0.5, zorder=2)
     if bad_paretos:
         df_bad = df.iloc[bad_paretos]
@@ -457,11 +460,8 @@ def plot_feature_target(df: pd.DataFrame, savename: str, feature: str, target: s
 # training_fs = ["Teff", "logg", "FeH", "logL"]
 # targets = ["M", "R"]
 # dataset_key = "693ms"
-# print(len(df))
-# print(len(df)*0.8)
 # (x_train, x_test, y_train, y_test) = return_train_test(df, training_fs, targets, dataset_key)
 # df_train = pd.concat([x_train, y_train], axis=1)
-# print(df_train)
 
 # for f in training_fs:
 #     plot_feature_target(df_train, "bad_paretos/paretos_GP_M_"+f+"_693ms.pdf", f, "M", bad_paretos=[57, 75, 139, 187, 216, 268, 275, 282, 323, 343, 349, 362, 430, 446, 499])
