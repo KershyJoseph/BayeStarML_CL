@@ -466,16 +466,19 @@ def plot_feature_target(df: pd.DataFrame, savename: str, feature: str, target: s
 # for f in training_fs:
 #     plot_feature_target(df_train, "bad_paretos/paretos_GP_M_"+f+"_693ms.pdf", f, "M", bad_paretos=[57, 75, 139, 187, 216, 268, 275, 282, 323, 343, 349, 362, 430, 446, 499])
 
-df_2018 = pd.read_csv("BayestarML/data/training_databases/all6_2018_data.txt", sep='\t')
-df_2018 = df_2018[df_2018["class"]=="ms"]
-df_nasa = pd.read_csv("BayestarML/predict/prediction_datasets/NASAexop_archive_stars.txt", sep='\t')
-df_new = pd.read_csv("BayestarML/data/693ms.txt")
-df_new = logomatic(df_new, ["Teff"])
-df_all = pd.concat([df_nasa, df_2018, 
-                    df_new], 
-                    keys=["NASA Exoplanet Archive", "Lamirel et al. (2026)", 
-                          "Expansion in this work"],
-                    names=["Catalogue", None])
-df_all.reset_index()
 
-hr_plot(df_all, "max_nasa_new_hr_plot.pdf", hue="Catalogue")
+#HR PLOTTING
+
+# df_2018 = pd.read_csv("BayestarML/data/training_databases/all6_2018_data.txt", sep='\t')
+# df_2018 = df_2018[df_2018["class"]=="ms"]
+# df_nasa = pd.read_csv("BayestarML/predict/prediction_datasets/NASAexop_archive_stars.txt", sep='\t')
+# df_new = pd.read_csv("BayestarML/data/693ms.txt")
+# df_new = logomatic(df_new, ["Teff"])
+# df_all = pd.concat([df_nasa, df_2018, 
+#                     df_new], 
+#                     keys=["NASA Exoplanet Archive", "Lamirel et al. (2026)", 
+#                           "Expansion in this work"],
+#                     names=["Catalogue", None])
+# df_all.reset_index()
+
+# hr_plot(df_all, "max_nasa_new_hr_plot.pdf", hue="Catalogue")
