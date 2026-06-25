@@ -303,16 +303,16 @@ def sparse_fully_heteroscedastic_gp(
         # ls = pm.InverseGamma("ls", mu=np.log(ls_mu_vec), sigma=ls_sd_vec, shape=D)
 
         #Try not having data-driven priors on lengthscale. Also LogNormal instead of InverseGamma. 
-        log_ls = pm.Normal("log_ls", mu=-0.8, sigma=0.2, shape=D)
+        log_ls = pm.Normal("log_ls", mu=0.4, sigma=0.4, shape=D)
         ls = pm.Deterministic("ls", pm.math.exp(log_ls))
-        log_eta = pm.Normal("log_eta", mu=-0.5, sigma=0.3)
+        log_eta = pm.Normal("log_eta", mu=-0.1, sigma=0.3)
         eta = pm.Deterministic("eta", pm.math.exp(log_eta))
 
         k_sq_exp = eta**2 * pm.gp.cov.ExpQuad(input_dim=D, ls=ls)
         cov_mean = k_sq_exp + pm.gp.cov.WhiteNoise(sigma=1e-5)
 
         μ_gp = SparseLatent(cov_mean)
-        μ_f_latent, μ_trace = μ_gp.prior("_", X_mu, Xu)
+        μ_f_latent, μ_trace = μ_gp.prior("μ", X_mu, Xu)
 
         if linear_mean_f:
             beta0 = pm.Normal("beta0", mu=0.0, sigma=0.5)
@@ -336,9 +336,9 @@ def sparse_fully_heteroscedastic_gp(
         # ls_v_sd_vec = np.array(ls_v_sd_list)
         # ls_v = pm.InverseGamma("ls_v", mu=np.log(ls_v_mu_vec), sigma=ls_v_sd_vec, shape=D_err)
 
-        log_ls_v = pm.Normal("log_ls_v", mu=0.0, sigma=0.2, shape=D_var)
+        log_ls_v = pm.Normal("log_ls_v", mu=-1, sigma=0.3, shape=D_var)
         ls_v = pm.Deterministic("ls_v", pm.math.exp(log_ls_v))
-        log_eta_v = pm.Normal("log_eta_v", mu=-0.9, sigma=0.2)
+        log_eta_v = pm.Normal("log_eta_v", mu=-0.9, sigma=0.3)
         eta_v = pm.Deterministic("eta_v", pm.math.exp(log_eta_v))
 
         cov_var = eta_v**2 * pm.gp.cov.ExpQuad(input_dim=D_var, ls=ls_v) \
@@ -351,7 +351,6 @@ def sparse_fully_heteroscedastic_gp(
         σ_f     = pm.Deterministic("σ_f", pm.math.exp(0.5 * log_var))
 
         # -------- likelihood --------
-        nu = pm.Gamma("nu", alpha=2, beta=0.1)
-        y_obs = pm.StudentT("y", nu=nu, mu=μ_f, sigma=σ_f, observed=y) #for outlier robustness
+        y_obs = pm.StudentT("y", mu=μ_f, sigma=σ_f, observed=y) #for outlier robustness
 
     return model, μ_gp, log_var_gp, μ_trace, var_trace, Xu, Xu_var

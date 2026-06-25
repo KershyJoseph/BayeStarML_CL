@@ -244,7 +244,19 @@ if __name__ == "__main__":
     start_time_CPU = time.process_time()
     start_time_wall = time.perf_counter()
 
-    print("693ms R GP. 50_15_2000. Retake after accidentally deleting trace ;D")
+    print("""693ms R GP. 50_15_2000. No student-t. Retake after accidentally deleting trace ;D
+
+        log_ls = pm.Normal("log_ls", mu=0.4, sigma=0.4, shape=D)
+        ls = pm.Deterministic("ls", pm.math.exp(log_ls))
+        log_eta = pm.Normal("log_eta", mu=-0.1, sigma=0.3)
+        eta = pm.Deterministic("eta", pm.math.exp(log_eta))
+
+        log_ls_v = pm.Normal("log_ls_v", mu=-1, sigma=0.3, shape=D_var)
+        ls_v = pm.Deterministic("ls_v", pm.math.exp(log_ls_v))
+        log_eta_v = pm.Normal("log_eta_v", mu=-0.9, sigma=0.3)
+        eta_v = pm.Deterministic("eta_v", pm.math.exp(log_eta_v))
+
+          """)
     train_GP(
         "693ms", "R", 50, 15, draws=2000
     )
@@ -257,21 +269,33 @@ if __name__ == "__main__":
 
     print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
 
-    # start_time_CPU2 = time.process_time()
-    # start_time2 = time.time()
+    start_time_CPU2 = time.process_time()
+    start_time2 = time.time()
 
-    # print("693ms M NN, 8_2000, NUTPIE, priors are 0.2/0.45/0.3 He weight, 0.02/0.04/0.045 bias and exp lam=1 on omega. mu_X with sigma=0.2. Using pm.MvNormal. -1.2, 0.3 log_er")
-    # train_NN(
-    #     "693ms", "M", 8, draws=2000
-    # )
+    print("""693ms M GP. 50_15_2000.
 
-    # end_time_CPU2 = time.process_time()
-    # mem2 = process.memory_info().rss / 1024**2
-    # print(f"Peak Memory: {(mem2-mem1):.2f} MB")
-    # print(f"CPU time used: {(end_time_CPU2-start_time_CPU2):.5f} s")
-    # print(f"Total run time: {time.time()-start_time2:.5f} s")
+        log_ls = pm.Normal("log_ls", mu=0.4, sigma=0.4, shape=D)
+        ls = pm.Deterministic("ls", pm.math.exp(log_ls))
+        log_eta = pm.Normal("log_eta", mu=-0.1, sigma=0.3)
+        eta = pm.Deterministic("eta", pm.math.exp(log_eta))
 
-    # print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
+        log_ls_v = pm.Normal("log_ls_v", mu=-1, sigma=0.3, shape=D_var)
+        ls_v = pm.Deterministic("ls_v", pm.math.exp(log_ls_v))
+        log_eta_v = pm.Normal("log_eta_v", mu=-0.9, sigma=0.3)
+        eta_v = pm.Deterministic("eta_v", pm.math.exp(log_eta_v))
+
+          """)
+    train_GP(
+        "693ms", "M", 50, 15, draws=2000
+    )
+
+    end_time_CPU2 = time.process_time()
+    mem2 = process.memory_info().rss / 1024**2
+    print(f"Peak Memory: {(mem2-mem1):.2f} MB")
+    print(f"CPU time used: {(end_time_CPU2-start_time_CPU2):.5f} s")
+    print(f"Total run time: {time.time()-start_time2:.5f} s")
+
+    print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
 
     # start_time_CPU3 = time.process_time()
     # start_time3 = time.time()
