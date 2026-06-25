@@ -225,9 +225,10 @@ def HBNN_M4(X_train, Y, X_error, Y_error, n_hidden):
         er = pm.Deterministic('er', pm.math.exp(log_er))
         #er = pm.HalfCauchy('er', beta=1)
 
+        nu = pm.Gamma("nu", alpha=2.0, beta=0.1)
         out = pm.StudentT(
             "y",
-            nu=5,
+            nu=nu,
             mu=act_out,
             sigma=er,
             observed=ann_output,
@@ -310,11 +311,11 @@ def HBNN_M4_simpler(X_train, Y, X_error, Y_error, n_hidden=5):
 
         # Weights from input to hidden layer
         weights_in_1 = pm.Normal(
-            "w_in_1", 0, sigma=0.05*np.sqrt(2/4), shape=(n_hidden, 4)
+            "w_in_1", 0, sigma=0.04*np.sqrt(2/4), shape=(n_hidden, 4)
         )
 
         # Weights from hidden layer to output
-        weights_1_out = pm.Normal("w_1_out", 0, sigma=0.15*np.sqrt(2/n_hidden), shape=(n_hidden))
+        weights_1_out = pm.Normal("w_1_out", 0, sigma=0.12*np.sqrt(2/n_hidden), shape=(n_hidden))
 
         
         bias_1 = pm.Normal("bias_1", 0, sigma=0.01, shape=n_hidden)
@@ -334,9 +335,10 @@ def HBNN_M4_simpler(X_train, Y, X_error, Y_error, n_hidden=5):
         er = pm.Deterministic('er', pm.math.exp(log_er))
         #er = pm.HalfCauchy('er', beta=1)
 
+        nu = pm.Gamma("nu", alpha=2.0, beta=0.1)
         out = pm.StudentT(
             "y",
-            nu=5,
+            nu=nu,
             mu=act_out,
             sigma=er,
             observed=ann_output,
