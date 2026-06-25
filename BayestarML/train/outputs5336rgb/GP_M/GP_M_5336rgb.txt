@@ -1,0 +1,118 @@
+><><><><><><><><><><><><><><><><><><><><><><><><><><
+RGB M GP. 2000
+5336rgb M NN, 100_30_2000
+target_accept= 0.95
+Initializing NUTS using jitter+adapt_diag...
+Multiprocess sampling (4 chains in 4 jobs)
+NUTS: [log_ls, log_eta, u_rotated__, log_ls_v, log_eta_v, alpha_log_var, u_rotated_log_var_f]
+
+
+  Progress                         Draws   Divergences   Step size   Grad evals   Sampling Speed   Elapsed   Remaining
+ ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  ──────────────────────────────   5000    3             0.02        255          5.64 s/draws     7:49:53   0:00:00
+  ──────────────────────────────   5000    5             0.02        255          5.46 s/draws     7:34:52   0:00:00
+  ──────────────────────────────   5000    4             0.02        255          5.40 s/draws     7:29:43   0:00:00
+  ──────────────────────────────   5000    1             0.02        767          5.73 s/draws     7:57:07   0:00:00
+
+Sampling 4 chains for 3_000 tune and 2_000 draw iterations (12_000 + 8_000 draws total) took 28640 seconds.
+There were 13 divergences after tuning. Increase `target_accept` or reparameterize.
+AZ Stats for ESS Bulk < 400:
+ Empty DataFrame
+Columns: [mean, sd, hdi_3%, hdi_97%, mcse_mean, mcse_sd, ess_bulk, ess_tail, r_hat]
+Index: []
+rhats:  [('log_ls', 1.0058322009383505), ('log_eta', 1.0027144411322746), ('u_rotated__', 1.0060720306337705), ('log_ls_
+v', 1.0094797521188483), ('log_eta_v', 1.0018136443972865), ('alpha_log_var', 1.0009844700052974), ('u_rotated_log_var_f
+', 1.0034850156762447), ('ls', 1.0058322009383505), ('eta', 1.0027144411322746), ('u__', 1.0012568414745617), ('mu__', 1
+.0022926045246945), ('__f', 1.0022926045246945), ('ls_v', 1.0094797521188483), ('eta_v', 1.0018136443972865), ('u_log_va
+r_f', 1.0020828603971803), ('mu_log_var_f', 1.0030744844748603), ('log_var', 1.005967242016428), ('__f', 1.0059672420164
+28)]
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/pymc/model/fgraph.py:163: UserWarning: Detected variab
+les likely created by GP objects. Further use of these old GP objects should be avoided as it may reintroduce variables
+from the old model. See issue: https://github.com/pymc-devs/pymc/issues/6883
+  warnings.warn(
+Computing ... ──────────────────────────────────────── 100% 0:00:00
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape
+ parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust
+model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are v
+ery different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+loo trace:  Computed from 8000 posterior samples and 4268 observations log-likelihood matrix.
+
+         Estimate       SE
+elpd_loo -1186.00    76.37
+p_loo      123.19        -
+
+There has been a warning during the calculation. Please check the results.
+------
+
+Pareto k diagnostic values:
+                         Count   Pct.
+(-Inf, 0.70]   (good)     4262   99.9%
+   (0.70, 1]   (bad)         6    0.1%
+   (1, Inf)   (very bad)    0    0.0%
+
+log_ls: [4]
+log_eta: []
+u_rotated__: [102]
+log_ls_v: [4]
+log_eta_v: []
+alpha_log_var: []
+u_rotated_log_var_f: [32]
+Total parameters: 145
+Found 6 problematic data points.
+Indices of bad points: [1918 1923 2272 2606 2769 3233]
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape
+ parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust
+model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are v
+ery different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+Sampling: [X_new_latent, X_var_new_latent, f_mu_pred, log_var_pred_latent, y_pred]
+Sampling ... ──────────────────────────────────────── 100% 0:00:00 / 0:00:31
+
+M predictions
+means:  [1.36353344 0.98419119 1.44995327 ... 1.54940381 1.36771983 1.27513798]
+stdvs:  [0.06378674 0.08869481 0.04935278 ... 0.05427032 0.07581472 0.0846774 ]
+Unorm M:  ID
+KIC10213610      1.4504
+EPIC248548424    0.9470
+KIC4585010       1.5409
+KIC2299465       1.0907
+KIC7732255       1.3720
+                  ...
+KIC8479301       1.2377
+KIC8941196       1.2475
+KIC7200117       1.5974
+KIC10777816      1.3838
+KIC4078166       1.2323
+Name: M, Length: 1068, dtype: float64
+
+M accuracy stats
+MAE:  0.05436193555507565
+MARD:  4.3012227883598015
+MRD:  -0.4500462416405552
+
+Stars marked as feature extrapolation:
+Index(['KIC2716732', 'KIC2696115', 'KIC9029603', 'KIC9852625', 'EPIC229039250',
+       'EPIC248500731', 'EPIC206499039', 'KIC10815204', 'KIC5566078',
+       'KIC7880417', 'KIC5685682', 'KIC3936047', 'KIC9210141', 'EPIC210791216',
+       'KIC6620507', 'KIC7265189', 'KIC3658812', 'KIC8683589', 'KIC10610250',
+       'KIC7543672', 'KIC8984255', 'KIC11805876', 'KIC1718046', 'KIC4933782',
+       'KIC10198207', 'KIC12012758', 'KIC5773045', 'EPIC210870657',
+       'EPIC245964524', 'KIC11181345', 'KIC1572317', 'EPIC212121218',
+       'KIC7188156', 'KIC10318787', 'KIC8212479', 'KIC4345370', 'KIC11305377',
+       'KIC9965286', 'KIC9269081', 'KIC7835532', 'EPIC210856102',
+       'EPIC246001907', 'KIC10963918', 'KIC2297793', 'KIC2972876',
+       'KIC11046830', 'KIC12120144', 'KIC7743124', 'KIC8976283', 'KIC8461591',
+       'EPIC210446038', 'EPIC220300441', 'KIC4136835', 'KIC12251438',
+       'KIC8742874', 'EPIC206070627', 'KIC11298877', 'KIC7810708',
+       'KIC9002884', 'KIC7265649', 'KIC5795475', 'KIC8441160', 'KIC6129632',
+       'KIC5193386_A', 'KIC9458060', 'KIC7214916', 'KIC9530396', 'KIC11903733',
+       'KIC3936736', 'KIC7446011', 'KIC9009403', 'KIC1163114', 'KIC9116434',
+       'KIC8408920', 'EPIC246449074', 'KIC11147717', 'EPIC212533408',
+       'KIC11752358', 'KIC5623794', 'KIC5768075', 'KIC8474990'],
+      dtype='object', name='ID')
+Peak Memory: 3421.36 MB
+CPU time used: 1926.19071 s
+Total run time: 29084.47057 s
+><><><><><><><><><><><><><><><><><><><><><><><><><><
+Salve Regina

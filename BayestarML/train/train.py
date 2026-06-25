@@ -244,7 +244,7 @@ if __name__ == "__main__":
     start_time_CPU = time.process_time()
     start_time_wall = time.perf_counter()
 
-    print("693ms R NN, 8_2000, NUTPIE, priors are 0.04/0.1 He weight, 0.1/0.25 bias and exp lam=1 on omega. mu_X with sigma=0.2. Using pm.MvNormal. -1.2, 0.3 log_er")
+    print("693ms R NN, 8_2000, NUTPIE, priors are 0.05/0.15 He weight, 0.1/0.25 bias and exp lam=1 on omega. mu_X with sigma=0.2. Using pm.MvNormal. -1.2, 0.3 log_er")
     train_NN_1layer(
         "693ms", "R", 8, draws=2000, nutpie=True
     )
@@ -261,11 +261,11 @@ if __name__ == "__main__":
     start_time2 = time.time()
 
     print("""
-    693ms R GP. 50_15_2000. Priors below. StudentT for first time.
+    693ms M GP. 50_15_2000. Priors below. StudentT.
 
-        log_ls = pm.Normal("log_ls", mu=-0.8, sigma=0.2, shape=D)
+        log_ls = pm.Normal("log_ls", mu=0.4, sigma=0.4, shape=D)
         ls = pm.Deterministic("ls", pm.math.exp(log_ls))
-        log_eta = pm.Normal("log_eta", mu=-0.5, sigma=0.3)
+        log_eta = pm.Normal("log_eta", mu=-0.1, sigma=0.3)
         eta = pm.Deterministic("eta", pm.math.exp(log_eta))
 
         k_sq_exp = eta**2 * pm.gp.cov.ExpQuad(input_dim=D, ls=ls)
@@ -285,9 +285,9 @@ if __name__ == "__main__":
         X_var_data = pm.Data("X_var", X_var)
         D_var = X_var.shape[1]
 
-        log_ls_v = pm.Normal("log_ls_v", mu=0.0, sigma=0.2, shape=D_var)
+        log_ls_v = pm.Normal("log_ls_v", mu=-1, sigma=0.3, shape=D_var)
         ls_v = pm.Deterministic("ls_v", pm.math.exp(log_ls_v))
-        log_eta_v = pm.Normal("log_eta_v", mu=-0.9, sigma=0.2)
+        log_eta_v = pm.Normal("log_eta_v", mu=-0.9, sigma=0.3)
         eta_v = pm.Deterministic("eta_v", pm.math.exp(log_eta_v))
 
         cov_var = eta_v**2 * pm.gp.cov.ExpQuad(input_dim=D_var, ls=ls_v) \
@@ -299,9 +299,13 @@ if __name__ == "__main__":
         log_var = pm.Deterministic("log_var", alpha_log_var + log_var_latent)
         σ_f     = pm.Deterministic("σ_f", pm.math.exp(0.5 * log_var))
 
+        # -------- likelihood --------
+        nu = pm.Gamma("nu", alpha=2, beta=0.1)
+        y_obs = pm.StudentT("y", nu=nu, mu=μ_f, sigma=σ_f, observed=y) #for outlier robustness
+
     """)
     train_GP(
-        "693ms", "R", 50, 15, draws=2000
+        "693ms", "M", 50, 15, draws=2000
     )
 
     end_time_CPU2 = time.process_time()
@@ -315,7 +319,7 @@ if __name__ == "__main__":
     start_time_CPU3 = time.process_time()
     start_time3 = time.time()
 
-    print("693ms M NN, 8_2000, NUTPIE, priors are 0.3/0.45/0.4 He weight, 0.03/0.04/0.045 bias and exp lam=1 on omega. mu_X with sigma=0.2. Using pm.MvNormal. -1.2, 0.3 log_er")
+    print("693ms M NN, 8_2000, NUTPIE, priors are 0.25/0.45/0.35 He weight, 0.03/0.04/0.045 bias and exp lam=1 on omega. mu_X with sigma=0.2. Using pm.MvNormal. -1.2, 0.3 log_er")
     train_NN(
         "693ms", "M", 8, draws=2000, nutpie=True
     )
