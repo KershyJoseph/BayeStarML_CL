@@ -10,6 +10,7 @@ from BayestarML.src.train_utils import load_data, mard, mrd, get_results
 from BayestarML.src.predict_utils import prepare_pred_data, get_bhs_weights, plot_bhs_weights
 from BayestarML.src.pred_sampling import sample_pred_bart, posterior_predictive_GP, sample_post_pred_HBNN_para, SIMPLE_sample_post_pred_HBNN_para
 from BayestarML.src.models.bhs import run_stack
+from sklearn.metrics import mean_absolute_error
 import arviz as az
 
 def predict(x, x_er, interp_mask,
@@ -62,25 +63,33 @@ def predict(x, x_er, interp_mask,
     if y_compare: #get MARD and MRD for model vs y_compare values
         mard_BART = mard(y_compare, bart4_pred.mean(0))
         mrd_BART = mrd(y_compare, bart4_pred.mean(0))
+        mae_BART = mean_absolute_error(y_test, bart4_pred.mean(0))
 
+        print('MAE BART:', mae_BART)
         print('MARD BART:', mard_BART)
         print('MRD BART:', mrd_BART)
 
         mard_GP = mard(y_compare, gp4_pred.mean(0))
         mrd_GP = mrd(y_compare, gp4_pred.mean(0))
+        mae_GP = mean_absolute_error(y_test, gp4_pred.mean(0))
 
+        print('MAE GP:', mae_GP)
         print('MARD GP:', mard_GP)
         print('MRD GP:', mrd_GP)
 
         mard_HBNN = mard(y_compare, hbnn4_pred.mean(0))
         mrd_HBNN = mrd(y_compare, hbnn4_pred.mean(0))
+        mae_HBNN = mean_absolute_error(y_test, hbnn4_pred.mean(0))
 
+        print('MAE HBNN:', mae_HBNN)
         print('MARD HBNN:', mard_HBNN)
         print('MRD HBNN:', mrd_HBNN)
 
         mard_BHS = mard(y_compare, bhs_pred.mean(0))
         mrd_BHS = mrd(y_compare, bhs_pred.mean(0))
+        mae_BHS = mean_absolute_error(y_test, bhs_pred.mean(0))
 
+        print('MAE BHS:', mae_BHS)
         print('MARD BHS:', mard_BHS)
         print('MRD BHS:', mrd_BHS)
 
