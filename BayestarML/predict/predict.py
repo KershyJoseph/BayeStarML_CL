@@ -63,7 +63,7 @@ def predict(x, x_er, interp_mask,
     if y_compare: #get MARD and MRD for model vs y_compare values
         mard_BART = mard(y_compare, bart4_pred.mean(0))
         mrd_BART = mrd(y_compare, bart4_pred.mean(0))
-        mae_BART = mean_absolute_error(y_test, bart4_pred.mean(0))
+        mae_BART = mean_absolute_error(y_compare, bart4_pred.mean(0))
 
         print('MAE BART:', mae_BART)
         print('MARD BART:', mard_BART)
@@ -71,7 +71,7 @@ def predict(x, x_er, interp_mask,
 
         mard_GP = mard(y_compare, gp4_pred.mean(0))
         mrd_GP = mrd(y_compare, gp4_pred.mean(0))
-        mae_GP = mean_absolute_error(y_test, gp4_pred.mean(0))
+        mae_GP = mean_absolute_error(y_compare, gp4_pred.mean(0))
 
         print('MAE GP:', mae_GP)
         print('MARD GP:', mard_GP)
@@ -79,7 +79,7 @@ def predict(x, x_er, interp_mask,
 
         mard_HBNN = mard(y_compare, hbnn4_pred.mean(0))
         mrd_HBNN = mrd(y_compare, hbnn4_pred.mean(0))
-        mae_HBNN = mean_absolute_error(y_test, hbnn4_pred.mean(0))
+        mae_HBNN = mean_absolute_error(y_compare, hbnn4_pred.mean(0))
 
         print('MAE HBNN:', mae_HBNN)
         print('MARD HBNN:', mard_HBNN)
@@ -87,7 +87,7 @@ def predict(x, x_er, interp_mask,
 
         mard_BHS = mard(y_compare, bhs_pred.mean(0))
         mrd_BHS = mrd(y_compare, bhs_pred.mean(0))
-        mae_BHS = mean_absolute_error(y_test, bhs_pred.mean(0))
+        mae_BHS = mean_absolute_error(y_compare, bhs_pred.mean(0))
 
         print('MAE BHS:', mae_BHS)
         print('MARD BHS:', mard_BHS)
