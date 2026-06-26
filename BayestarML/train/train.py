@@ -248,7 +248,7 @@ if __name__ == "__main__":
 
         log_ls = pm.Normal("log_ls", mu=0.5, sigma=0.5, shape=D)
         ls = pm.Deterministic("ls", pm.math.exp(log_ls))
-        log_eta = pm.Normal("log_eta", mu=-0.1, sigma=0.4)
+        log_eta = pm.Normal("log_eta", mu=0.4, sigma=0.4)
         eta = pm.Deterministic("eta", pm.math.exp(log_eta))
 
         log_ls_v = pm.Normal("log_ls_v", mu=0.0, sigma=0.5, shape=D_var)
