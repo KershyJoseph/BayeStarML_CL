@@ -1,0 +1,163 @@
+<><><><><<><<><><><>><<><<><<><<<><><><<><<><><><><>                                                   15:43 [1009/1979]
+693ms R NN, 8_2000, NUTPIE, priors are 0.05/0.15 He weight, 0.1/0.25 bias and exp lam=1 on omega. mu_X with sigma=0.2. U
+sing pm.MvNormal. -1.2, 0.3 log_er
+target_accept= 0.95
+Initializing NUTS using jitter+adapt_diag...
+Multiprocess sampling (4 chains in 4 jobs)
+NUTS: [Omega, mu_X, X_latent, w_in_1, w_1_out, bias_1, bias_out, log_er, nu]
+
+  Progress                         Draws   Divergences   Step size   Grad evals   Sampling Speed   Elapsed   Remaining
+ ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  ──────────────────────────────   5000    0             0.01        511          3.36 draws/s     0:24:49   0:00:00
+  ──────────────────────────────   5000    0             0.01        511          3.33 draws/s     0:25:01   0:00:00
+  ──────────────────────────────   5000    0             0.01        511          3.34 draws/s     0:24:55   0:00:00
+  ──────────────────────────────   5000    0             0.01        511          3.32 draws/s     0:25:06   0:00:00
+
+Sampling 4 chains for 3_000 tune and 2_000 draw iterations (12_000 + 8_000 draws total) took 1518 seconds.
+The rhat statistic is larger than 1.01 for some parameters. This indicates problems during sampling. See https://arxiv.o
+rg/abs/1903.08008 for details
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/diagnostics.py:596: RuntimeWarning: invali
+d value encountered in scalar divide
+  (between_chain_variance / within_chain_variance + num_samples - 1) / (num_samples)
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/diagnostics.py:991: RuntimeWarning: invali
+d value encountered in scalar divide
+  varsd = varvar / evar / 4
+AZ Stats for ESS Bulk < 400:
+ Empty DataFrame
+Columns: [mean, sd, hdi_3%, hdi_97%, mcse_mean, mcse_sd, ess_bulk, ess_tail, r_hat]
+Index: []
+
+Index: []
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/diagnostics.py:596: RuntimeWarning: invali
+d value encountered in scalar divide
+  (between_chain_variance / within_chain_variance + num_samples - 1) / (num_samples)
+rhats:  [('mu_X', 1.0003183046481228), ('X_latent', 1.0028371276752976), ('w_in_1', 1.0146763551352918), ('w_1_out', 1.0
+147116189315875), ('bias_1', 1.0024492917388683), ('bias_out', 1.0003669299672233), ('log_er', 1.0003783777757775), ('Om
+ega', 1.0009417886329137), ('nu', 1.0008115490280438), ('Omega_corr', 1.0004521413228744), ('Omega_stds', 1.000392751329
+3163), ('ann_input', 1.0028371276752976), ('act_1', 1.0160825565088563), ('act_out', 1.0043133927986958), ('er', 1.00042
+89720340225)]
+Computing ... ──────────────────────────────────────── 100% 0:00:00
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape
+ parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust
+model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are v
+ery different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+loo trace:  Computed from 8000 posterior samples and 554 observations log-likelihood matrix.
+
+         Estimate       SE
+elpd_loo   348.73    25.21
+p_loo      221.36        -
+
+There has been a warning during the calculation. Please check the results.
+------
+
+Pareto k diagnostic values:
+                          Count   Pct.
+(-Inf, 0.70]   (good)      544   98.2%
+   (0.70, 1]   (bad)         8    1.4%
+   (1, Inf)   (very bad)    2    0.4%
+
+Omega: [10]
+mu_X: [4]
+X_latent: [554   4]
+w_in_1: [8 4]
+w_1_out: [8]
+bias_1: [8]
+bias_out: []
+log_er: []
+nu: []
+Total parameters: 2281
+Found 10 problematic data points.
+Indices of bad points: [ 50 106 127 199 200 236 371 428]
+Indices of very bad points: [ 38 146]
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape
+ parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust
+model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are v
+ery different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+starting parallel prediction on 32 worker(s)_
+finished chain 1/4
+finished chain 4/4
+finished chain 3/4
+finished chain 2/4
+
+R predictions
+means:  [2.00019282 1.7496824  1.43925412 1.100346   1.14861567 2.59786593
+ 1.75276933 2.00502193 1.43656825 1.44900252 2.48747848 2.12186351
+ 1.97419923 1.06485555 0.91003453 1.64760874 1.77084029 2.00076118
+ 1.201042   1.81005812 0.93107179 2.38641436 0.79146167 1.50996181
+ 1.23822602 1.55935706 1.95606661 1.74560857 1.91876444 1.9711016
+ 2.17603702 2.30792849 1.7360713  1.83687307 1.27870493 1.53532499
+ 1.42883413 1.228858   2.01550384 0.67884758 1.61296227 1.1671689
+ 1.65507977 1.3823131  2.1049885  1.58106207 1.65450042 2.57816428
+ 2.21085344 1.56536663 2.29400673 1.14128977 1.67881859 0.24111041
+ 2.46999985 2.21797875 1.28572    0.95760517 1.3713921  1.68698747
+ 1.7717634  2.46831318 1.7822711  1.65693847 1.80704932 1.61604556
+ 1.36848144 2.02633771 1.13813813 1.39806437 2.07757616 1.74456498
+ 1.57256286 1.99679067 1.58347199 2.31279522 1.70485832 1.21285085
+ 1.551688   0.37017945 2.0129636  1.2688063  1.40716561 2.03718013
+ 1.60397833 1.55987016 1.61259783 1.90946701 1.73950469 1.04280983
+ 1.04393473 0.86050062 2.33815459 1.55799362 1.18836111 1.73344465
+ 1.96958481 1.92866161 1.51486442 1.85596743 1.86815659 2.25958951
+ 1.48907179 1.71609047 2.15013798 1.43556023 1.9488267  1.10259687
+ 1.49175738 1.65344511 1.11825257 1.5245578  0.97125623 1.28118899
+ 1.38044207 0.37449704 1.87244954 1.14615497 1.36010164 1.03933044
+ 1.44376703 1.21879947 2.36836511 2.07038802 2.49738451 1.87581
+ 1.70979011 1.35521234 2.09213426 0.57991309 1.87522755 1.16798114
+ 1.83554045 1.53406111 1.08136137 1.98008035 1.18219365 1.22255564
+ 2.23840138]
+stdvs:  [0.04560236 0.08245507 0.04478069 0.01900169 0.0186039  0.0423433
+ 0.0398889  0.08612077 0.02904292 0.03328545 0.03310393 0.04786533
+ 0.03904099 0.02321534 0.02402176 0.0207767  0.0407491  0.04413561
+ 0.03704502 0.03632981 0.04520392 0.03612264 0.02508727 0.10518913
+ 0.02468804 0.0470015  0.04845027 0.01743517 0.05081608 0.04379444
+ 0.05671903 0.05164397 0.03969294 0.0425759  0.01604073 0.03894588
+ 0.04096138 0.01931835 0.03703396 0.02116624 0.06732484 0.01677769
+ 0.04898971 0.03481646 0.0305332  0.03550933 0.04389507 0.04045797
+ 0.04895267 0.04743095 0.05430164 0.02248324 0.03740109 0.03040691
+ 0.04737534 0.03223415 0.04528471 0.02308303 0.03043999 0.04087194
+ 0.03966123 0.02870793 0.21567084 0.05166241 0.02534494 0.05132238
+ 0.03969734 0.03265859 0.0143433  0.02451743 0.04452862 0.02060066
+ 0.05587102 0.04422031 0.02849129 0.04413108 0.04166582 0.02451588
+ 0.05622151 0.03427365 0.04110029 0.03127975 0.01895512 0.04191876
+ 0.03839855 0.02532878 0.04078104 0.05114989 0.02409115 0.01603566
+ 0.01857133 0.01370117 0.05047693 0.04190363 0.02970245 0.0351829
+ 0.0476624  0.04075137 0.03766642 0.03620414 0.0406035  0.04814599
+ 0.03109772 0.01906586 0.03613499 0.03714354 0.03280223 0.02053562
+ 0.03844608 0.03830358 0.00869595 0.04807479 0.02592306 0.0416741
+ 0.05774268 0.03450782 0.06194168 0.10169656 0.05336873 0.01921693
+ 0.20561206 0.0185716  0.03748672 0.06351942 0.04747866 0.03542531
+ 0.04550894 0.11289053 0.03859445 0.07215361 0.03806311 0.01002039
+ 0.02421433 0.04993973 0.02008082 0.02638936 0.02173033 0.02270572
+ 0.04495642]
+
+ Unorm R:  ID
+KIC9778067       1.9980
+V*_V714_And_B    1.7170
+KIC3534307       1.4400
+KIC3241581       1.0840
+KIC10215584      1.1390
+                  ...
+KIC12011630      0.9900
+KOI-126_A        1.9984
+KIC11453915      1.2200
+47_Tuc_E32_A     1.1830
+KIC3344897       2.3400
+Name: R, Length: 139, dtype: float64
+
+R accuracy stats
+MAE:  0.05596205080089826
+MARD:  3.6386432665010857
+MRD:  -0.021713722504769384
+
+Stars marked as feature extrapolation:
+Index(['KIC3230227_A', 'KIC8760414', 'KIC5683538', 'HW_CMa B', 'KIC6363365',
+       'NGC_2506_V5_B', '47_Tuc-V69 B', 'KIC10202294', 'EPIC204506926',
+       'KIC7019341', 'LINEAR_23079661_A', '47_Tuc_E32_A'],
+      dtype='object', name='ID')
+2026-06-25 15:45:17.297 python[26314:1304804] XType: Using static font registry.
+
+Peak Memory: 2985.77 MB
+CPU time accumulated: 233.66738 s
+Total wall clock time: 1736.10004 s
+><><><><><><><><><><><><><><><><><><><><><><><><><><
