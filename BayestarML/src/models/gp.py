@@ -303,9 +303,9 @@ def sparse_fully_heteroscedastic_gp(
         # ls = pm.InverseGamma("ls", mu=np.log(ls_mu_vec), sigma=ls_sd_vec, shape=D)
 
         #Try not having data-driven priors on lengthscale. Also LogNormal instead of InverseGamma. 
-        log_ls = pm.Normal("log_ls", mu=0.2, sigma=0.3, shape=D)
+        log_ls = pm.Normal("log_ls", mu=0.2, sigma=0.6, shape=D)
         ls = pm.Deterministic("ls", pm.math.exp(log_ls))
-        log_eta = pm.Normal("log_eta", mu=-0.1, sigma=0.5)
+        log_eta = pm.Normal("log_eta", mu=-0.2, sigma=0.5)
         eta = pm.Deterministic("eta", pm.math.exp(log_eta))
 
         k_sq_exp = eta**2 * pm.gp.cov.ExpQuad(input_dim=D, ls=ls)
@@ -338,7 +338,7 @@ def sparse_fully_heteroscedastic_gp(
 
         log_ls_v = pm.Normal("log_ls_v", mu=-0.8, sigma=0.3, shape=D_var)
         ls_v = pm.Deterministic("ls_v", pm.math.exp(log_ls_v))
-        log_eta_v = pm.Normal("log_eta_v", mu=-0.9, sigma=0.3)
+        log_eta_v = pm.Normal("log_eta_v", mu=-0.9, sigma=0.4)
         eta_v = pm.Deterministic("eta_v", pm.math.exp(log_eta_v))
 
         cov_var = eta_v**2 * pm.gp.cov.ExpQuad(input_dim=D_var, ls=ls_v) \
