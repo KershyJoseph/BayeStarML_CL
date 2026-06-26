@@ -244,21 +244,27 @@ if __name__ == "__main__":
     start_time_CPU = time.process_time()
     start_time_wall = time.perf_counter()
 
-    print("""693ms M GP. 50_20_2000. No student-t. 
+    print("""5336rgb logR GP. 100_30_2000. No student-t. 
 
-        log_ls = pm.Normal("log_ls", mu=0.5, sigma=0.5, shape=D)
+        log_ls = pm.Normal("log_ls", mu=-0.5, sigma=0.4, shape=D)
         ls = pm.Deterministic("ls", pm.math.exp(log_ls))
-        log_eta = pm.Normal("log_eta", mu=0.4, sigma=0.4)
+        log_eta = pm.Normal("log_eta", mu=-0.1, sigma=0.5)
         eta = pm.Deterministic("eta", pm.math.exp(log_eta))
 
-        log_ls_v = pm.Normal("log_ls_v", mu=0.0, sigma=0.5, shape=D_var)
+        if linear_mean_f:
+            beta0 = pm.Normal("beta0", mu=0.0, sigma=0.5)
+            beta = pm.Normal("beta", mu=0.0, sigma=0.5, shape=D)
+            linear_background = beta0 + pm.math.dot(X_mu, beta)
+            μ_f = pm.Deterministic("μ_f", μ_f_latent + linear_background)
+
+        log_ls_v = pm.Normal("log_ls_v", mu=0.0, sigma=0.4, shape=D_var)
         ls_v = pm.Deterministic("ls_v", pm.math.exp(log_ls_v))
-        log_eta_v = pm.Normal("log_eta_v", mu=-0.8, sigma=0.4)
+        log_eta_v = pm.Normal("log_eta_v", mu=-0.8, sigma=0.5)
         eta_v = pm.Deterministic("eta_v", pm.math.exp(log_eta_v))
 
         """)
     train_GP(
-        "693ms", "M", 50, 20, draws=2000
+        "5336rgb", "logR", 100, 30, draws=2000, linear_mean_f=True
     )
 
     end_time_CPU = time.process_time()

@@ -15,6 +15,7 @@ from sklearn.metrics import mean_absolute_error
 from matplotlib.ticker import MaxNLocator
 from matplotlib.lines import Line2D
 from matplotlib.colors import LogNorm
+from matplotlib.colors import to_hex
 from matplotlib.colors import LinearSegmentedColormap
 
 from BayestarML.src.data_utils import denormalise_err, denormalise_val
@@ -341,6 +342,7 @@ def model_pred_plotter(
     target: str,
     save_folder: str,
     hyperp_str: str,
+    colour: str,
     plot_density: bool = False
 ):
     """Plot predictions of a trained model against true values
@@ -356,28 +358,57 @@ def model_pred_plotter(
     df_all = pd.DataFrame({'y_true': y_true,
                            'y_true_err': y_true_err,
                            'y_pred': y_pred,
-                           'y_pred_err': y_pred_err})
-    df_all["pred_type"] = np.where(
-        interp_mask,
-        "Interpolation",
-        "Extrapolation"
-    )
-    colors = {
-        "Interpolation": 'blue',
-        "Extrapolation": 'magenta'
-    }
+                           'y_pred_err': y_pred_err,
+                           'pred_type': np.where(
+                                                interp_mask,
+                                                "Interpolation",
+                                                "Extrapolation"
+                                            )
+                            })
+    if colour == "test":
+        colors = {
+            "Interpolation": 'blue',
+            "Extrapolation": 'magenta'
+        }
+    if colour == "pred":
+        colors = {
+            "Interpolation": 'orange',
+            "Extrapolation": 'crimson'
+        }
 
     alphas = {
         "Interpolation": 0.5,
         "Extrapolation": 0.7
     }
 
+    # make legend - ChatGPT
+    legend_handles = [
+        Line2D(
+            [0], [0],
+            marker='o',
+            linestyle='',
+            color=colors["Interpolation"],
+            label='Interpolation',
+            markersize=5
+        ),
+        Line2D(
+            [0], [0],
+            marker='o',
+            linestyle='',
+            color=colors["Extrapolation"],
+            label='Extrapolation',
+            markersize=5
+        )
+    ]
+
+    df_all["point_color"] = df_all["pred_type"].map(colors)
+
     # do density calculations if wanted - credit GEMINI
     if plot_density:
         df_interp = df_all[df_all["pred_type"]=="Interpolation"]
 
         # 1. Define the grid resolution (e.g., 30x30 bins)
-        bins = [50, 50]
+        bins = [30, 30]
 
         # 2. Get the 2D histogram counts for the blue points
         counts, xedges, yedges = np.histogram2d(df_interp["y_true"], df_interp["y_pred"], bins=bins)
@@ -390,11 +421,19 @@ def model_pred_plotter(
         point_counts = counts[x_indices, y_indices]
 
         #make custom blues scale
-        new_blues = LinearSegmentedColormap.from_list(
-            "new_blues",
-            plt.cm.Blues(np.linspace(0.25, 1, 256))
-        )
-        point_colors = new_blues(point_counts)
+        if colour=="test":
+            new_blues = LinearSegmentedColormap.from_list(
+                "new_blues",
+                plt.cm.Blues(np.linspace(0.25, 1, 256))
+            )
+            point_colors = new_blues(point_counts)
+            cmap = new_blues
+        if colour=="pred":
+            point_colors = plt.cm.Oranges(point_counts)
+            cmap = plt.cm.Oranges  
+
+        hex_colors = [to_hex(c, keep_alpha=True) for c in point_colors]
+        df_all.loc[df_interp.index, "point_color"] = hex_colors
 
         #log scale color bar potentially
         # norm = LogNorm(
@@ -412,26 +451,6 @@ def model_pred_plotter(
     )
     plt.subplots_adjust(hspace=0.05)
 
-    # make legend - ChatGPT
-    legend_handles = [
-        Line2D(
-            [0], [0],
-            marker='o',
-            linestyle='',
-            color='blue',
-            label='Interpolation',
-            markersize=5
-        ),
-        Line2D(
-            [0], [0],
-            marker='o',
-            linestyle='',
-            color='magenta',
-            label='Extrapolation',
-            markersize=5
-        )
-    ]
-
     # top panel - predictions
     for status, group in df_all.groupby("pred_type"):
         fmt = 'o'
@@ -439,7 +458,7 @@ def model_pred_plotter(
         if plot_density:
             if status == "Interpolation":
                 # 5. Plot using the raw counts to drive transparency or color depth
-                sc_preds = ax_preds.scatter(group["y_true"], group["y_pred"], c=point_counts, cmap=new_blues, alpha=0.7, zorder=2, s=10)
+                sc_preds = ax_preds.scatter(group["y_true"], group["y_pred"], c=point_counts, cmap=cmap, alpha=0.7, zorder=2, s=10)
                 fmt = 'none'
 
             for x, y, xe, ye, col in zip(
@@ -447,12 +466,9 @@ def model_pred_plotter(
                 group["y_pred"],
                 group["y_true_err"],
                 group["y_pred_err"],
-                point_colors):
+                group["point_color"]):
 
                 zorder=1
-                if status == "Extrapolation":
-                    col = colors[status]
-                    zorder=1
 
                 ax_preds.errorbar(
                     x,
@@ -461,7 +477,7 @@ def model_pred_plotter(
                     yerr=ye,
                     fmt=fmt,
                     ecolor=col,
-                    color=colors[status],
+                    color=col,
                     alpha=alphas[status],
                     capsize=1.5,
                     zorder=zorder,
@@ -493,7 +509,7 @@ def model_pred_plotter(
 
         if plot_density: 
             if status=="Interpolation":
-                ax_res.scatter(group["y_true"], group["y_pred"] - group["y_true"], c=point_counts, cmap=new_blues, alpha=0.7, zorder=2, s=10)
+                ax_res.scatter(group["y_true"], group["y_pred"] - group["y_true"], c=point_counts, cmap=cmap, alpha=0.7, zorder=2, s=10)
                 fmt = 'none'
 
             for x, y, xe, ye, col in zip(
@@ -501,12 +517,9 @@ def model_pred_plotter(
                 group["y_pred"]-group["y_true"],
                 group["y_true_err"],
                 group["y_pred_err"],
-                point_colors):
+                group["point_color"]):
 
                 zorder=1
-                if status == "Extrapolation":
-                    col = colors[status]
-                    zorder=1
 
                 ax_res.errorbar(
                     x,
@@ -515,7 +528,7 @@ def model_pred_plotter(
                     yerr=ye,
                     fmt=fmt,
                     ecolor=col,
-                    color=colors[status],
+                    color=col,
                     alpha=alphas[status],
                     capsize=1.5,
                     zorder=zorder,
@@ -584,7 +597,7 @@ def get_results(
 
     if target.startswith("log"):
         target = target[3:]
-        hyperp_str = target + hyperp_str[8:]
+        hyperp_str = target + "_" + hyperp_str
         y_draws = 10 ** (posterior_draws)
         y_pred = y_draws.mean(0)
         y_pred_err = y_draws.std(0)
@@ -634,7 +647,7 @@ def get_results(
         )
 
 
-# n = 1000
+# n = 200
 # x_data = np.random.normal(1.2, 0.2, n)
 # y_data = x_data + np.random.normal(0, 0.05, n)
 # x_err = np.random.uniform(0.01, 0.05, n)
@@ -642,4 +655,4 @@ def get_results(
 # import random
 # interp_mask = random.choices([True, False], weights=[0.9, 0.1], k=n)
 
-# new_model_pred_plotter(x_data, x_err, y_data, y_err, interp_mask, "M", None, None, plot_density=False)
+# model_pred_plotter(x_data, x_err, y_data, y_err, interp_mask, "M", None, None, colour="pred", plot_density=True)
