@@ -10,6 +10,7 @@ from BayestarML.src.train_utils import load_data, mard, mrd, get_results
 from BayestarML.src.predict_utils import prepare_pred_data, get_bhs_weights, plot_bhs_weights
 from BayestarML.src.pred_sampling import sample_pred_bart, posterior_predictive_GP, sample_post_pred_HBNN_para, SIMPLE_sample_post_pred_HBNN_para
 from BayestarML.src.models.bhs import run_stack
+from sklearn.metrics import mean_absolute_error
 import arviz as az
 
 def predict(x, x_er, interp_mask,
@@ -67,25 +68,33 @@ def predict(x, x_er, interp_mask,
 
         mard_BART = mard(y_test, bart4_pred.mean(0))
         mrd_BART = mrd(y_test, bart4_pred.mean(0))
+        mae_BART = mean_absolute_error(y_test, bart4_pred.mean(0))
 
+        print('MAE BART:', mae_BART)
         print('MARD BART:', mard_BART)
         print('MRD BART:', mrd_BART)
 
         mard_GP = mard(y_test, gp4_pred.mean(0))
         mrd_GP = mrd(y_test, gp4_pred.mean(0))
+        mae_GP = mean_absolute_error(y_test, gp4_pred.mean(0))
 
+        print('MAE GP:', mae_GP)
         print('MARD GP:', mard_GP)
         print('MRD GP:', mrd_GP)
 
         mard_HBNN = mard(y_test, hbnn4_pred.mean(0))
         mrd_HBNN = mrd(y_test, hbnn4_pred.mean(0))
+        mae_HBNN = mean_absolute_error(y_test, hbnn4_pred.mean(0))
 
+        print('MAE HBNN:', mae_HBNN)
         print('MARD HBNN:', mard_HBNN)
         print('MRD HBNN:', mrd_HBNN)
 
         mard_BHS = mard(y_test, bhs_pred.mean(0))
         mrd_BHS = mrd(y_test, bhs_pred.mean(0))
+        mae_BHS = mean_absolute_error(y_test, bhs_pred.mean(0))
 
+        print('MAE BHS:', mae_BHS)
         print('MARD BHS:', mard_BHS)
         print('MRD BHS:', mrd_BHS)
 
@@ -104,7 +113,7 @@ if __name__ == "__main__":
     _, pred, ws = predict(x, x_er, interp_mask, target, dataset_key,
         gp_trace_path = "BayestarML/train/outputs693ms/GP_R/GP_R_693ms_50_15_2000_0.95.nc",
         nn_trace_path = "BayestarML/train/outputs693ms/NN_R/NN_1layer_R_693ms_8_2000_0.95.nc",
-        bart_m=500, m_mean=50, m_var=15, nn_nodes=8,
+        bart_m=600, m_mean=50, m_var=15, nn_nodes=8,
         y_compare="test_set", savename="BHS", NN_1layer=True)#, plot_density=True)
 
     df_weights = get_bhs_weights(ws, star_id, dataset_key+"_bhs_"+target+"_ws.txt")
