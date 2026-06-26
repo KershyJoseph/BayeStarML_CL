@@ -244,7 +244,7 @@ if __name__ == "__main__":
     start_time_CPU = time.process_time()
     start_time_wall = time.perf_counter()
 
-    print("""693ms M GP. 50_20_2000. No student-t. 
+    print("""693ms M GP. 50_25_2000. No student-t. 
 
         log_ls = pm.Normal("log_ls", mu=0.2, sigma=0.6, shape=D)
         ls = pm.Deterministic("ls", pm.math.exp(log_ls))
@@ -258,7 +258,7 @@ if __name__ == "__main__":
 
           """)
     train_GP(
-        "693ms", "M", 50, 20, draws=2000
+        "693ms", "M", 50, 25, draws=2000
     )
 
     end_time_CPU = time.process_time()
