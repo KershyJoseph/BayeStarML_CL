@@ -31,7 +31,8 @@ def prep_data(
     plot_t_f: bool = False,
     xgboost: bool = False,
 ):
-    """ """
+    """
+    """
     df = pd.read_csv("BayestarML/data/training_databases/" + filename, sep="\t", comment="#")
     df.set_index("ID", inplace=True)
 
