@@ -60,31 +60,26 @@ def predict(x, x_er, interp_mask,
     bhs_trace.to_netcdf(outputs_folder+"/"+hyperp_str+".nc")
 
     if y_compare: #get MARD and MRD for model vs y_compare values
-        if y_compare == "test_set": 
-            y_test = data["unorm_y_test"]
-        else:
-            y_test = y_compare
-
-        mard_BART = mard(y_test, bart4_pred.mean(0))
-        mrd_BART = mrd(y_test, bart4_pred.mean(0))
+        mard_BART = mard(y_compare, bart4_pred.mean(0))
+        mrd_BART = mrd(y_compare, bart4_pred.mean(0))
 
         print('MARD BART:', mard_BART)
         print('MRD BART:', mrd_BART)
 
-        mard_GP = mard(y_test, gp4_pred.mean(0))
-        mrd_GP = mrd(y_test, gp4_pred.mean(0))
+        mard_GP = mard(y_compare, gp4_pred.mean(0))
+        mrd_GP = mrd(y_compare, gp4_pred.mean(0))
 
         print('MARD GP:', mard_GP)
         print('MRD GP:', mrd_GP)
 
-        mard_HBNN = mard(y_test, hbnn4_pred.mean(0))
-        mrd_HBNN = mrd(y_test, hbnn4_pred.mean(0))
+        mard_HBNN = mard(y_compare, hbnn4_pred.mean(0))
+        mrd_HBNN = mrd(y_compare, hbnn4_pred.mean(0))
 
         print('MARD HBNN:', mard_HBNN)
         print('MRD HBNN:', mrd_HBNN)
 
-        mard_BHS = mard(y_test, bhs_pred.mean(0))
-        mrd_BHS = mrd(y_test, bhs_pred.mean(0))
+        mard_BHS = mard(y_compare, bhs_pred.mean(0))
+        mrd_BHS = mrd(y_compare, bhs_pred.mean(0))
 
         print('MARD BHS:', mard_BHS)
         print('MRD BHS:', mrd_BHS)
@@ -97,15 +92,15 @@ def predict(x, x_er, interp_mask,
 if __name__ == "__main__":
 
     features = ["Teff", "FeH", "logL", "logg"]
-    target = "R"
-    dataset_key = "693ms"
-    star_id, x, x_er, interp_mask = prepare_pred_data("test_set", dataset_key, features, target)
+    target = "M"
+    dataset_key = "5336rgb"
+    star_id, x, x_er, y_compare, interp_mask = prepare_pred_data("RGB_pred_stars_Yu18.txt", dataset_key, features, target)
 
     _, pred, ws = predict(x, x_er, interp_mask, target, dataset_key,
         gp_trace_path = "BayestarML/train/outputs693ms/GP_R/GP_R_693ms_50_15_2000_0.95.nc",
         nn_trace_path = "BayestarML/train/outputs693ms/NN_R/NN_1layer_R_693ms_8_2000_0.95.nc",
         bart_m=500, m_mean=50, m_var=15, nn_nodes=8,
-        y_compare="test_set", savename="BHS", NN_1layer=True)#, plot_density=True)
+        y_compare=y_compare, savename="BHS", NN_1layer=True)#, plot_density=True)
 
     df_weights = get_bhs_weights(ws, star_id, dataset_key+"_bhs_"+target+"_ws.txt")
 

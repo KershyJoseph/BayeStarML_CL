@@ -58,7 +58,7 @@ def add_symmetric_errs(df, errs1, errs2):
     return pd.concat([df, df_err], axis=1)
 
 
-def consistency_check(df, param, flag_col, savename: str, logscale=True):
+def consistency_check(df, param, savepath: str, symmetric_errs=False, flag_col=None, logscale=True):
     """
     """
     df_check = df.copy()
@@ -70,6 +70,14 @@ def consistency_check(df, param, flag_col, savename: str, logscale=True):
         x_label = "Recorded log(g) (dex)"
         y_label = "Calculated log(g) from M and R (dex)"
         x = df_check[x_col]
+        if symmetric_errs:
+            df_check["elogg1"] = df_check["elogg"]
+            df_check["elogg2"] = df_check["elogg"]
+            df_check["eR1"] = df_check["eR"]
+            df_check["eR2"] = df_check["eR"]
+            df_check["eM1"] = df_check["eM"]
+            df_check["eM2"] = df_check["eM"]
+
         xerr_up = df_check["elogg1"]
         xerr_down = df_check["elogg2"]
         print(f"Checking {len(df_check)} stars for logg consistency")
@@ -116,6 +124,14 @@ def consistency_check(df, param, flag_col, savename: str, logscale=True):
         x = df_check[x_col]
         print(f"Checking {len(df_check)} stars for L consistency")
 
+        if symmetric_errs:
+            df_check["eTeff1"] = df_check["eTeff"]
+            df_check["eTeff2"] = df_check["eTeff"]
+            df_check["eR1"] = df_check["eR"]
+            df_check["eR2"] = df_check["eR"]
+            df_check["eL1"] = df_check["eL"]
+            df_check["eL2"] = df_check["eL"]
+
         R = df_check["R"]
         Teff = df_check["Teff"]
         y = R ** 2 * (Teff / 5772) ** 4
@@ -141,8 +157,9 @@ def consistency_check(df, param, flag_col, savename: str, logscale=True):
 
         consistency_col = "L consistent with SB law"
         df_check[consistency_col] = np.where(df_check["L_sig_distance"] > 3, "deviation > 3 sigma", "within 3 sigma")
-        yerr = np.array([df_check["L_SB_-err"], df_check["L_SB_+err"]])
         xerr = np.array([df_check["eL2"], df_check["eL1"]])
+        yerr = np.array([df_check["L_SB_-err"], df_check["L_SB_+err"]])
+
 
     plt.close()
     plt.figure()
@@ -168,7 +185,7 @@ def consistency_check(df, param, flag_col, savename: str, logscale=True):
     if logscale:
         plt.xscale("log")
         plt.yscale("log")
-    plt.savefig("BayestarML/data/figures/lum_check/" + savename)
+    plt.savefig("BayestarML/" + savepath)
     plt.show()
 
     df_bad_stars = df_check[df_check[consistency_col]=='deviation > 3 sigma']

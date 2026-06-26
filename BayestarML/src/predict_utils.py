@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from scipy.spatial import Delaunay
 from sklearn.neighbors import NearestNeighbors
-from BayestarML.src.data_utils import select_clean_data, normalise
+from BayestarML.src.data_utils import select_clean_data, normalise, consistency_check
 from BayestarML.src.train_utils import load_data
 
 
@@ -35,30 +35,39 @@ def check_feature_extrapolation(x_train, x_pred, k=10, percentile=95):
 
 
 def prepare_pred_data(
-    filename: str, training_dataset_key: str, features: list, target: str, add_log_vars: list = None
+    filename: str, training_dataset_key: str, features: list, target: str, add_log_vars: list = None, check_consistency=False
 ):
-    """
+    """Prepare normalised data for predictions and check feature extrapolation.
+    Pass filename=="test_set" for predictions on test set.
     """
     if filename == "test_set": #prepare test set for prediction
         data, _ = load_data(training_dataset_key, target)
         x = data["x_test"]
         x_er = data["x_test_err"]
+        y_compare = data["unnorm_y_test"]
         star_id = data["test_ID"]
 
     else: #prepare new data for prediction
         df = pd.read_csv("BayestarML/predict/prediction_datasets/" + filename, sep="\t")
         # filter to stars with all training features present with err. Add symmetric err column and log vars if needed.
+        if check_consistency:
+            ts = ["M", "R"] #for logg and L check
         df_clean = select_clean_data(
             df,
             features,
-            targets=[],
+            targets=ts,
             add_logvars=add_log_vars,
             check_detached=False,
-            lum_check=False,
+            check_consistency=False,
         )
 
+        if check_consistency:
+            df_clean = consistency_check(df_clean, "logg", "predict/prediction_datasets/con_check/"+filename+"_"+target+".pdf", symmetric_errs=True)
+            df_clean = consistency_check(df_clean, "L", "predict/prediction_datasets/con_check/"+filename+"_"+target+".pdf", symmetric_errs=True)
+
         # normalise input data
-        x_norm = normalise(df_clean, None, training_dataset_key, x_only=True)
+        x_unorm, y_compare = df_clean[features+[f"e{f}" for f in features]], df_clean[target]
+        x_norm = normalise(x_unorm, None, training_dataset_key, x_only=True)
         x, x_er = x_norm[features], x_norm[[f"e{f}" for f in features]]  # might need modifying for scalar inputs?
         star_id = x_norm.index
 
@@ -66,7 +75,7 @@ def prepare_pred_data(
     interp_mask = check_feature_extrapolation(data["x_train"], x)
     print(f"{len(x[~interp_mask])} stars marked as extrapolating from training database.")
 
-    return star_id, x, x_er, interp_mask
+    return star_id, x, x_er, y_compare, interp_mask
 
 
 def get_bhs_weights(w_draws, star_id, savename:str):
