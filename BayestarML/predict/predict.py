@@ -93,7 +93,7 @@ def predict(x, x_er, interp_mask,
         print('MARD BHS:', mard_BHS)
         print('MRD BHS:', mrd_BHS)
 
-        model_pred_plotter(y_compare, y_comp_er, bhs_pred.mean(0), bhs_pred.std(0), interp_mask, target, outputs_folder, hyperp_str, color=color, plot_density=plot_density)
+        model_pred_plotter(y_compare, y_comp_er, bhs_pred.mean(0), bhs_pred.std(0), interp_mask, target, outputs_folder, hyperp_str, colour=color, plot_density=plot_density)
 
     return [bart4_pred, gp4_pred, hbnn4_pred], bhs_pred, bhs_w
 
@@ -137,8 +137,9 @@ def ms_R():
 
     plot_bhs_weights(df_weights, target, "BayestarML/data/"+dataset_key+".txt", dataset_key+"_bhs_"+target+"_ws_plot.pdf")
 
+
 if __name__ == '__main__':
-    ms_R()
+    rgb_M_predder()
 
 
 
