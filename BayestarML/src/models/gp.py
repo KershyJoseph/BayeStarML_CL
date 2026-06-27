@@ -303,10 +303,11 @@ def sparse_fully_heteroscedastic_gp(
         # ls = pm.InverseGamma("ls", mu=np.log(ls_mu_vec), sigma=ls_sd_vec, shape=D)
 
         #Try not having data-driven priors on lengthscale. Also LogNormal instead of InverseGamma. 
-        log_ls = pm.Normal("log_ls", mu=0.5, sigma=0.5, shape=D)
+        log_ls = pm.Normal("log_ls", mu=-0.7, sigma=0.2, shape=D)
         ls = pm.Deterministic("ls", pm.math.exp(log_ls))
-        log_eta = pm.Normal("log_eta", mu=0.4, sigma=0.4)
-        eta = pm.Deterministic("eta", pm.math.exp(log_eta))
+        # log_eta = pm.Normal("log_eta", mu=0.4, sigma=0.4)
+        # eta = pm.Deterministic("eta", pm.math.exp(log_eta))
+        eta = pm.HalfNormal("eta", sigma=0.2)
 
         k_sq_exp = eta**2 * pm.gp.cov.ExpQuad(input_dim=D, ls=ls)
         cov_mean = k_sq_exp + pm.gp.cov.WhiteNoise(sigma=1e-5)
@@ -315,8 +316,8 @@ def sparse_fully_heteroscedastic_gp(
         μ_f_latent, μ_trace = μ_gp.prior("μ", X_mu, Xu)
 
         if linear_mean_f:
-            beta0 = pm.Normal("beta0", mu=0.0, sigma=0.5)
-            beta = pm.Normal("beta", mu=0.0, sigma=0.5, shape=D)
+            beta0 = pm.Normal("beta0", mu=0.0, sigma=0.2)
+            beta = pm.Normal("beta", mu=0.0, sigma=0.3, shape=D)
             linear_background = beta0 + pm.math.dot(X_mu, beta)
             μ_f = pm.Deterministic("μ_f", μ_f_latent + linear_background)
         else:
@@ -336,10 +337,11 @@ def sparse_fully_heteroscedastic_gp(
         # ls_v_sd_vec = np.array(ls_v_sd_list)
         # ls_v = pm.InverseGamma("ls_v", mu=np.log(ls_v_mu_vec), sigma=ls_v_sd_vec, shape=D_err)
 
-        log_ls_v = pm.Normal("log_ls_v", mu=0.5, sigma=0.3, shape=D_var)
+        log_ls_v = pm.Normal("log_ls_v", mu=0.0, sigma=0.3, shape=D_var)
         ls_v = pm.Deterministic("ls_v", pm.math.exp(log_ls_v))
-        log_eta_v = pm.Normal("log_eta_v", mu=-1.0, sigma=0.3)
-        eta_v = pm.Deterministic("eta_v", pm.math.exp(log_eta_v))
+        # log_eta_v = pm.Normal("log_eta_v", mu=-1.0, sigma=0.3)
+        # eta_v = pm.Deterministic("eta_v", pm.math.exp(log_eta_v))
+        eta_v = pm.HalfNormal("eta_v", sigma=0.3)
 
         cov_var = eta_v**2 * pm.gp.cov.ExpQuad(input_dim=D_var, ls=ls_v) \
                 + pm.gp.cov.WhiteNoise(sigma=1e-5)

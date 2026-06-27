@@ -247,26 +247,10 @@ if __name__ == "__main__":
     start_time_CPU = time.process_time()
     start_time_wall = time.perf_counter()
 
-    print("""693ms M GP. 50_15_1000. No student-t. 
-          
-#########################################################
-Just a run to get plot from trace
-#########################################################
-
-        log_ls = pm.Normal("log_ls", mu=0.5, sigma=0.5, shape=D)
-        ls = pm.Deterministic("ls", pm.math.exp(log_ls))
-        log_eta = pm.Normal("log_eta", mu=0.4, sigma=0.4)
-        eta = pm.Deterministic("eta", pm.math.exp(log_eta))
-
-        log_ls_v = pm.Normal("log_ls_v", mu=0.5, sigma=0.3, shape=D_var)
-        ls_v = pm.Deterministic("ls_v", pm.math.exp(log_ls_v))
-        log_eta_v = pm.Normal("log_eta_v", mu=-1.0, sigma=0.3)
-        eta_v = pm.Deterministic("eta_v", pm.math.exp(log_eta_v))
-
+    print("""5336rgb logR GP. Priors in the file haha. 
         """)
     train_GP(
-        "693ms", "M", 50, 15, draws=1000,
-        trace_path="BayestarML/train/outputs693ms/GP_M/GP_M_693ms_50_15_1000_0.95.nc"
+        "5336rgb", "logR", 30, 10, draws=1000
     )
 
     end_time_CPU = time.process_time()
