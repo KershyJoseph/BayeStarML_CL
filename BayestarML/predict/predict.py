@@ -138,7 +138,7 @@ def ms_R():
     plot_bhs_weights(df_weights, target, "BayestarML/data/"+dataset_key+".txt", dataset_key+"_bhs_"+target+"_ws_plot.pdf")
 
 if __name__ == '__main__':
-    ms_R
+    ms_R()
 
 
 
