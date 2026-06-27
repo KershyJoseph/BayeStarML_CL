@@ -576,7 +576,7 @@ def model_pred_plotter(
         cbar.locator = MaxNLocator(integer=True)
         cbar.update_ticks()
     fig.align_ylabels()
-    plt.show()#fig.savefig(save_folder + "/predsres_" + hyperp_str + ".pdf")
+    fig.savefig(save_folder + "/predsres_" + hyperp_str + ".pdf")
     plt.close()
 
 
@@ -669,12 +669,12 @@ def get_results(
         )
 
 
-n = 1000
-x_data = np.random.normal(1.2, 0.2, n)
-y_data = x_data + np.random.normal(0, 0.05, n)
-x_err = np.random.uniform(0.01, 0.05, n)
-y_err = np.random.uniform(0.01, 0.05, n)
-import random
-interp_mask = random.choices([True, False], weights=[0.9, 0.1], k=n)
+# n = 1000
+# x_data = np.random.normal(1.2, 0.2, n)
+# y_data = x_data + np.random.normal(0, 0.05, n)
+# x_err = np.random.uniform(0.01, 0.05, n)
+# y_err = np.random.uniform(0.01, 0.05, n)
+# import random
+# interp_mask = random.choices([True, False], weights=[0.9, 0.1], k=n)
 
-model_pred_plotter(x_data, x_err, y_data, y_err, interp_mask, "M", None, None, colour="test", plot_density=True)
+# model_pred_plotter(x_data, x_err, y_data, y_err, interp_mask, "M", None, None, colour="test", plot_density=True)

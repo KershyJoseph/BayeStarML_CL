@@ -197,7 +197,7 @@ def consistency_check(df, param, savepath: str, symmetric_errs=False, flag_col=N
         plt.xscale("log")
         plt.yscale("log")
     plt.savefig("BayestarML/" + savepath)
-    plt.show()
+    #plt.show()
 
     df_bad_stars = df_check[df_check[consistency_col]=='deviation > 3 sigma']
     print(
