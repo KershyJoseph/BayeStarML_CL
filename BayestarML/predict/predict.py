@@ -17,7 +17,7 @@ def predict(x, x_er, interp_mask,
             target, training_dataset_key, 
             gp_trace_path, nn_trace_path,
             bart_m, m_mean, m_var, nn_nodes,
-            y_compare=None, savename="", NN_1layer=False,
+            y_compare=None, y_comp_er=None, savename="", NN_1layer=False,
             plot_density=False, color="test"):
     """Train BART and BHS and then make some predictions
     """
