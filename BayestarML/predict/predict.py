@@ -26,7 +26,7 @@ def predict(x, x_er, interp_mask,
     hyperp_str = savename+"_"+training_dataset_key+"_"+target+"_"+str(bart_m)+"_"+str(m_mean)+"_"+str(m_var)+"_"+str(nn_nodes)
 
     print("-------Start BART----------")
-    bart4_model = bart.BART_M(data["x_train"], data["x_train_err"], data["y_train"], data["y_train_err"], m=bart_m)
+    bart4_model = bart.BART(data["x_train"], data["x_train_err"], data["y_train"], data["y_train_err"], target=target, m=bart_m)
     bart4_pred, lpd_BART4 = sample_pred_bart(bart4_model,
                                     x,
                                     x_er, target, training_dataset_key,

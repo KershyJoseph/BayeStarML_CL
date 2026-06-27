@@ -10,7 +10,7 @@ Created on Tue Jul 15 15:27:50 2025
 import pymc as pm
 import pymc_bart as pmb
 
-def BART_M(x, x_er, y, y_er, m=250):
+def BART(x, x_er, y, y_er, target, m=250):
     """
     Build a BART model for predicting y with input uncertainty in X.
 
@@ -29,6 +29,8 @@ def BART_M(x, x_er, y, y_er, m=250):
         Observed target values.
     y_er : array-like
         Measurement errors for y (not used directly in the model).
+    target : str
+        'M' or 'R' - for 'R' BART struggles to learn sigma from data so we set it to 0.2 for MS
     m : int, optional
         Number of trees in the BART ensemble. Default is 250.
 
@@ -46,52 +48,12 @@ def BART_M(x, x_er, y, y_er, m=250):
         x_normal = pm.Normal('x_dist', mu=x_in, sigma=x_in_er, shape=x_in.shape)
 
         mu = pmb.BART('mu', x_normal, y.values, m=m)
-             
-        sig = pm.HalfCauchy('sig', beta=0.05)
+
+        if target == "M":
+            sig = pm.HalfCauchy('sig', beta=0.05)
+        elif target == "R":
+            sig = 0.2
 
         y = pm.Normal("y", mu=mu, sigma=sig, shape=x_in.shape[0], observed=y)
 
     return model_BART
-
-
-def BART_R(X, X_er, Y, Y_er, m=250):
-    """
-    Build a BART model with fixed output noise for predicting Y with input uncertainty.
-
-    Similar to `BART_M`, but uses a fixed standard deviation (0.3) for the
-    output noise instead of inferring it from the data.
-
-    Parameters
-    ----------
-    X : array-like
-        Input features.
-    X_er : array-like
-        Measurement errors for each input feature.
-    Y : array-like
-        Observed target values.
-    Y_er : array-like
-        Measurement errors for Y (not used directly in the model).
-    m : int, optional
-        Number of trees in the BART ensemble. Default is 250.
-
-    Returns
-    -------
-    pm.Model
-        PyMC model defining the BART regression with fixed noise parameter.
-    """
-    
-    with pm.Model() as model_BART:
-
-        X_in = pm.Data('X', X)
-        X_in_er = pm.Data('X_er', X_er)
-
-        X_normal = pm.Normal('X_dist', mu=X_in, sigma=X_in_er, shape=X_in.shape)
-        
-        mu = pmb.BART('mu', X_normal, Y.values, m=m)
-
-        sig = 0.3
-
-        y = pm.Normal("y", mu=mu, sigma=sig, shape=X_in.shape[0], observed=Y)
-
-    return model_BART
-
