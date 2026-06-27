@@ -52,7 +52,7 @@ def BART(x, x_er, y, y_er, target, m=250):
         if target == "M":
             sig = pm.HalfCauchy('sig', beta=0.05)
         elif target == "R":
-            sig = 0.3
+            sig = 0.5
 
         y = pm.Normal("y", mu=mu, sigma=sig, shape=x_in.shape[0], observed=y)
 
