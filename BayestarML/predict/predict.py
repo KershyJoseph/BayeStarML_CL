@@ -147,7 +147,7 @@ def ms_M():
     star_id, x, x_er, y_compare, y_comp_er, interp_mask = prepare_pred_data("test_set", dataset_key, features, target)
 
     _, pred, ws = predict(x, x_er, interp_mask, target, dataset_key,
-        gp_trace_path = "BayestarML/train/outputs693ms/GP_M/GP_M_693ms_50_15_2000_0.95.nc",
+        gp_trace_path = "BayestarML/train/outputs693ms/GP_M/GP_M_693ms_50_15_1000_0.95.nc",
         nn_trace_path = "BayestarML/train/outputs693ms/NN_M/NN_M_693ms_8_2000_0.95.nc ",
         bart_m=500, m_mean=50, m_var=15, nn_nodes=8,
         y_compare=y_compare, y_comp_er=y_comp_er, savename="BHS_", NN_1layer=False, color="test")
@@ -158,7 +158,7 @@ def ms_M():
 
 
 if __name__ == '__main__':
-    ms_R()
+    ms_M()
 
 
 
@@ -200,7 +200,7 @@ if __name__ == '__main__':
 # nn_trace_path = "BayestarML/train/outputs5336rgb/NN_M/NN_M_5336rgb_8_2000_0.95.nc",
 
 #693MS MASS 
-# gp_trace_path = "BayestarML/train/outputs693ms/GP_M/GP_M_693ms_50_15_2000_0.95.nc",
+# gp_trace_path = "BayestarML/train/outputs693ms/GP_M/GP_M_693ms_50_15_1000_0.95.nc",
 # nn_trace_path = "BayestarML/train/outputs693ms/NN_M/NN_M_693ms_8_2000_0.95.nc ",
 
 #693MS RADIUS
