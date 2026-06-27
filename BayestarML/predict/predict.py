@@ -130,7 +130,7 @@ def ms_R():
     _, pred, ws = predict(x, x_er, interp_mask, target, dataset_key,
         gp_trace_path = "BayestarML/train/outputs693ms/GP_R/GP_R_693ms_50_15_2000_0.95.nc",
         nn_trace_path = "BayestarML/train/outputs693ms/NN_R/NN_1layer_R_693ms_8_2000_0.95.nc",
-        bart_m=400, m_mean=50, m_var=15, nn_nodes=8,
+        bart_m=500, m_mean=50, m_var=15, nn_nodes=8,
         y_compare=y_compare, y_comp_er=y_comp_er, savename="BHS_", NN_1layer=True, color="test")
 
     df_weights = get_bhs_weights(ws, star_id, dataset_key+"_bhs_"+target+"_ws.txt")
@@ -139,7 +139,7 @@ def ms_R():
 
 
 if __name__ == '__main__':
-    rgb_M_predder()
+    ms_R()
 
 
 
