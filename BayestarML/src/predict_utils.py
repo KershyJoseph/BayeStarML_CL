@@ -45,6 +45,7 @@ def prepare_pred_data(
         x = data["x_test"]
         x_er = data["x_test_err"]
         y_compare = data["unnorm_y_test"]
+        y_comp_er = data["unorm_y_test_err"]
         star_id = data["test_ID"]
 
     else: #prepare new data for prediction
@@ -75,19 +76,17 @@ def prepare_pred_data(
             df_clean = consistency_check(df_clean, "L", "predict/prediction_datasets/con_check/"+filename+"_"+target+".pdf", symmetric_errs=True)
 
         # normalise input data
-        x_unorm, y_compare = df_clean[features+[f"e{f}" for f in features]], df_clean[target]
+        x_unorm = df_clean[features+[f"e{f}" for f in features]]
+        y_compare, y_comp_er = df_clean[target], df_clean[f"e{target}"]
         x_norm = normalise(x_unorm, None, training_dataset_key, x_only=True)
         x, x_er = x_norm[features], x_norm[[f"e{f}" for f in features]]  # might need modifying for scalar inputs?
         star_id = x_norm.index
-
-    print(data["x_train"])
-    print(x)
 
     #check extrapolation
     interp_mask = check_feature_extrapolation(data["x_train"], x)
     print(f"{len(x[~interp_mask])} stars marked as extrapolating from training database.")
 
-    return star_id, x, x_er, y_compare, interp_mask
+    return star_id, x, x_er, y_compare, y_comp_er, interp_mask
 
 
 def get_bhs_weights(w_draws, star_id, savename:str):

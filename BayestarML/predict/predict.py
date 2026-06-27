@@ -6,7 +6,7 @@ Created on Tue Jul 15 15:52:30 2025
 @author: LamirelFamily
 """
 from BayestarML.src.models import bart, gp
-from BayestarML.src.train_utils import load_data, mard, mrd, get_results
+from BayestarML.src.train_utils import load_data, mard, mrd, model_pred_plotter
 from BayestarML.src.predict_utils import prepare_pred_data, get_bhs_weights, plot_bhs_weights
 from BayestarML.src.pred_sampling import sample_pred_bart, posterior_predictive_GP, sample_post_pred_HBNN_para, SIMPLE_sample_post_pred_HBNN_para
 from BayestarML.src.models.bhs import run_stack
@@ -18,7 +18,7 @@ def predict(x, x_er, interp_mask,
             gp_trace_path, nn_trace_path,
             bart_m, m_mean, m_var, nn_nodes,
             y_compare=None, savename="", NN_1layer=False,
-            bhs_trace=None, plot_density=False, color="test"):
+            plot_density=False, color="test"):
     """Train BART and BHS and then make some predictions
     """
     outputs_folder = "BayestarML/predict/outputs_bhs"
@@ -93,7 +93,7 @@ def predict(x, x_er, interp_mask,
         print('MARD BHS:', mard_BHS)
         print('MRD BHS:', mrd_BHS)
 
-        get_results(bhs_pred, data, interp_mask, outputs_folder, training_dataset_key, target, hyperp_str, plot_density, color=color)
+        model_pred_plotter(y_compare, y_comp_er, bhs_pred.mean(0), bhs_pred.std(0), interp_mask, target, outputs_folder, hyperp_str, color=color, plot_density=plot_density)
 
     return [bart4_pred, gp4_pred, hbnn4_pred], bhs_pred, bhs_w
 
@@ -103,16 +103,16 @@ if __name__ == "__main__":
     features = ["Teff", "logg", "FeH", "L"]
     target = "M"
     dataset_key = "5336rgb"
-    star_id, x, x_er, y_compare, interp_mask = prepare_pred_data("RGB_pred_stars_Yu18.txt", dataset_key, features, target, add_log_vars=["L"], check_consistency=True, symmetric_errs=True)
+    star_id, x, x_er, y_compare, y_comp_er, interp_mask = prepare_pred_data("RGB_pred_stars_Yu18.txt", dataset_key, features, target, add_log_vars=["L"], check_consistency=True, symmetric_errs=True)
 
     #only use interpolated values for Yu18 pred
-    star_id, x, x_er, y_compare = star_id[interp_mask], x[interp_mask], x_er[interp_mask], y_compare[interp_mask]
+    star_id, x, x_er, y_compare, y_comp_er = star_id[interp_mask], x[interp_mask], x_er[interp_mask], y_compare[interp_mask], y_comp_er[interp_mask]
 
     _, pred, ws = predict(x, x_er, interp_mask, target, dataset_key,
         gp_trace_path = "BayestarML/train/outputs5336rgb/GP_M/GP_M_5336rgb_100_30_2000_0.95.nc",
         nn_trace_path = "BayestarML/train/outputs5336rgb/NN_M/NN_M_5336rgb_8_2000_0.95.nc",
         bart_m=2, m_mean=100, m_var=30, nn_nodes=8,
-        y_compare=y_compare, savename="BHS_YuMpred_", NN_1layer=False, plot_density=True, color="pred")
+        y_compare=y_compare, y_comp_er=y_comp_er, savename="BHS_YuMpred_", NN_1layer=False, plot_density=True, color="pred")
 
     df_weights = get_bhs_weights(ws, star_id, dataset_key+"_bhs_"+target+"_ws.txt")
 

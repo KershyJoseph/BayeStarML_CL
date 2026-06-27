@@ -381,15 +381,15 @@ def model_pred_plotter(
         "Extrapolation": 0.7
     }
 
-    formats = {
-        "Interpolation": 'o',
-        "Extrapolation": '^'
-    }
+    # formats = {
+    #     "Interpolation": 'o',
+    #     "Extrapolation": '^'
+    # }
 
-    marker_size = {
-        "Interpolation": 3.16,
-        "Extrapolation": 20
-    }
+    # marker_size = {
+    #     "Interpolation": 3.16,
+    #     "Extrapolation": 20
+    # }
 
     # make legend - ChatGPT
     legend_handles = [
@@ -587,6 +587,7 @@ def get_results(
     """
     stds = posterior_draws.std(0)
     means = posterior_draws.mean(0)
+
     print("\n" + target + " predictions")
     print("means: ", means)
     print("stdvs: ", stds)
@@ -597,7 +598,7 @@ def get_results(
     print("MARD: ", mard(data["unorm_y_test"], means))
     print("MRD: ", mrd(data["unorm_y_test"], means))
 
-    print("\n" + "Stars marked as feature extrapolation:")
+    print("\nStars marked as feature extrapolation:")
     print(data["test_ID"][~interp_mask])
 
     model_pred_plotter(
