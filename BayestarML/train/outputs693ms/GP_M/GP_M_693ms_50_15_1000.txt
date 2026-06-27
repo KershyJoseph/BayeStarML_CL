@@ -1,0 +1,161 @@
+<><><><><<><<><><><>><<><<><<><<<><><><<><<><><><><>
+693ms M GP. 50_15_1000. No student-t.
+
+        log_ls = pm.Normal("log_ls", mu=0.5, sigma=0.5, shape=D)
+        ls = pm.Deterministic("ls", pm.math.exp(log_ls))
+        log_eta = pm.Normal("log_eta", mu=0.4, sigma=0.4)
+        eta = pm.Deterministic("eta", pm.math.exp(log_eta))
+
+        log_ls_v = pm.Normal("log_ls_v", mu=0.5, sigma=0.3, shape=D_var)
+        ls_v = pm.Deterministic("ls_v", pm.math.exp(log_ls_v))
+        log_eta_v = pm.Normal("log_eta_v", mu=-1.0, sigma=0.3)
+        eta_v = pm.Deterministic("eta_v", pm.math.exp(log_eta_v))
+
+
+target_accept= 0.95
+Initializing NUTS using jitter+adapt_diag...
+Multiprocess sampling (4 chains in 4 jobs)
+NUTS: [log_ls, log_eta, u_rotated__, log_ls_v, log_eta_v, alpha_log_var, u_rotated_log_var_f]
+
+  Progress                         Draws   Divergences   Step size   Grad evals   Sampling Speed   Elapsed   Remaining
+ ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  ──────────────────────────────   2500    4             0.01        511          1.29 s/draws     0:53:55   0:00:00
+  ──────────────────────────────   2500    2             0.01        511          1.36 s/draws     0:56:37   0:00:00
+  ──────────────────────────────   2500    1             0.01        1023         1.42 s/draws     0:59:06   0:00:00
+  ──────────────────────────────   2500    2             0.01        511          1.27 s/draws     0:53:00   0:00:00
+                                                                                                        02:05 [293/1917]
+Sampling 4 chains for 1_500 tune and 1_000 draw iterations (6_000 + 4_000 draws total) took 3559 seconds.
+There were 9 divergences after tuning. Increase `target_accept` or reparameterize.
+AZ Stats for ESS Bulk < 400:
+ Empty DataFrame
+Columns: [mean, sd, hdi_3%, hdi_97%, mcse_mean, mcse_sd, ess_bulk, ess_tail, r_hat]
+Index: []
+rhats:  [('log_ls', 1.0052361300648465), ('log_eta', 1.0046372255222327), ('u_rotated__', 1.0050841755317783), ('log_ls_
+v', 1.0015477115778417), ('log_eta_v', 1.0012429809121697), ('alpha_log_var', 1.0003710598865336), ('u_rotated_log_var_f
+', 1.0025792664395443), ('ls', 1.0052361300648465), ('eta', 1.0046372255222327), ('u__', 1.0030003470576632), ('mu__', 1
+.0038594742812168), ('__f', 1.0038594742812168), ('ls_v', 1.0015477115778417), ('eta_v', 1.0010111551477239), ('u_log_va
+r_f', 1.0028011679787405), ('mu_log_var_f', 1.0021277369687691), ('log_var', 1.0025415321188806), ('__f', 1.002465303923
+5842)]
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/pymc/model/fgraph.py:163: UserWarning: Detected variab
+les likely created by GP objects. Further use of these old GP objects should be avoided as it may reintroduce variables
+from the old model. See issue: https://github.com/pymc-devs/pymc/issues/6883
+  warnings.warn(
+Computing ... ──────────────────────────────────────── 100% 0:00:00
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape
+ parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust
+model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are v
+ery different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+loo trace:  Computed from 4000 posterior samples and 554 observations log-likelihood matrix.
+
+         Estimate       SE
+elpd_loo    36.01    34.95
+p_loo       76.30        -
+
+There has been a warning during the calculation. Please check the results.
+------
+
+Pareto k diagnostic values:
+                         Count   Pct.
+(-Inf, 0.70]   (good)      542   97.8%
+   (0.70, 1]   (bad)         7    1.3%
+   (1, Inf)   (very bad)    5    0.9%
+
+log_ls: [4]
+log_eta: []
+u_rotated__: [51]
+log_ls_v: [4]
+log_eta_v: []
+alpha_log_var: []
+u_rotated_log_var_f: [17]
+Total parameters: 79
+Found 12 problematic data points.
+Indices of bad points: [ 75 139 220 268 349 430 503]
+Indices of very bad points: [ 57 187 323 362 396]
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape
+ parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust
+model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are v
+ery different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+Sampling: [X_new_latent, X_var_new_latent, f_mu_pred, log_var_pred_latent, y_pred]
+Sampling ... ──────────────────────────────────────── 100% 0:00:00 / 0:00:02
+
+M predictions
+means:  [1.17708143 1.38883746 0.98132039 1.03844821 1.11755307 1.53982582
+ 1.18852386 1.80544101 1.1106541  0.9946165  1.45095116 1.38881858
+ 1.42337514 0.84652986 0.85305762 1.13755281 1.31661872 1.2893039
+ 0.96078118 1.19167796 0.77468436 1.5309701  0.74010557 1.30619876
+ 1.1797938  1.44789477 1.42897221 1.25669137 1.30839484 1.45550812
+ 1.16241984 1.47401996 1.67696798 1.20716307 1.16836811 1.25062704
+ 1.17887803 1.20584808 1.25884103 0.69510226 1.14313704 1.16721771
+ 1.19736664 1.23220137 1.30907104 1.36753072 1.35214482 1.46295316
+ 1.43091506 1.0380342  1.4348748  0.98899639 1.16397919 0.26915685
+ 1.49974436 1.54013094 1.14083229 0.89740702 1.22388771 1.25145594
+ 1.23010475 1.69879409 1.20697003 1.25270638 1.42924189 1.11537935
+ 1.0943393  1.12758205 1.13015797 1.25780242 1.49720334 1.16565905
+ 1.20142707 1.24697162 1.10486621 1.53086681 1.2442197  1.21743955
+ 1.14464171 0.35362923 1.42865083 1.20408251 0.92988786 1.37996798
+ 1.40365296 1.16274588 1.01498691 1.20924436 1.20690529 0.90870817
+ 1.02123486 0.87620538 1.66647839 1.13702108 0.88000097 1.24173566
+ 1.29641576 1.20450737 1.26625316 1.25571796 1.21987581 1.54650813
+ 1.03196917 1.3137487  1.31282634 1.21444113 1.31731956 1.06882493
+ 1.15417551 1.17301268 1.00500936 1.16454143 0.91116595 1.12818556
+ 1.13267365 0.39967515 1.29784546 0.89420211 1.1632609  0.89271201
+ 1.14489063 1.02248768 1.43285136 1.6762824  1.40622245 1.1660763
+ 1.41081363 1.10421886 1.43175328 0.81751796 1.32825421 1.14636
+ 1.30509038 1.16306778 0.9775855  1.25718202 1.18067207 0.89755933
+ 1.5109314 ]
+stdvs:  [0.08388543 0.15337598 0.08193312 0.05572301 0.05947831 0.09136604
+ 0.07448689 0.16068672 0.06226646 0.07040083 0.07776414 0.08548806
+ 0.06785904 0.06282532 0.05053254 0.0578346  0.0687873  0.0853606
+ 0.0845022  0.08472839 0.13401119 0.07965257 0.03763802 0.19932248
+ 0.05274721 0.07972106 0.07979813 0.05455893 0.08850623 0.0691642
+ 0.10487736 0.10223179 0.10628565 0.0802949  0.05187411 0.06651865
+ 0.07106519 0.05106443 0.07807133 0.03837906 0.12811901 0.05616692
+ 0.07556604 0.06379332 0.06845476 0.06979454 0.06547777 0.08985032
+ 0.09666289 0.12948842 0.0959508  0.06846058 0.06787823 0.09840179
+ 0.08420024 0.06598843 0.06611941 0.05878747 0.0533304  0.06368912
+ 0.07457849 0.08154741 0.36683527 0.08296401 0.06028829 0.10127729
+ 0.06454188 0.07791036 0.04909298 0.05574421 0.07865985 0.08407146
+ 0.08942404 0.08019906 0.06327956 0.08203036 0.06778303 0.05269194
+ 0.09361541 0.01928356 0.07028537 0.04972741 0.07076326 0.07573294
+ 0.05716348 0.05794495 0.08500988 0.08964408 0.06563878 0.05764305
+ 0.04969411 0.03691643 0.08517693 0.06653798 0.05772086 0.06597741
+ 0.10261336 0.08319161 0.06088971 0.0651954  0.08147088 0.08122822
+ 0.06274566 0.06056597 0.07439709 0.06144001 0.06805099 0.06998751
+ 0.07372324 0.07180067 0.04993228 0.08576357 0.05004438 0.07071976
+ 0.08485321 0.02556583 0.10269894 0.24230007 0.07178341 0.05351209
+ 0.31755717 0.05766798 0.07784289 0.07446243 0.09656864 0.09380729
+ 0.07120141 0.20785527 0.07172268 0.11074331 0.06789919 0.04918018
+ 0.05981126 0.08839123 0.05655774 0.06846865 0.06150347 0.05490821
+ 0.07720486]
+
+ Unorm M:  ID
+KIC9778067       1.1890
+V*_V714_And_B    1.3440
+KIC3534307       0.9600
+KIC3241581       1.0620
+KIC10215584      1.0680
+                  ...
+KIC12011630      0.8500
+KOI-126_A        1.2713
+KIC11453915      1.2500
+47_Tuc_E32_A     0.8620
+KIC3344897       1.5500
+Name: M, Length: 139, dtype: float64
+
+M accuracy stats
+MAE:  0.057828468512852796
+MARD:  5.187496586798465
+MRD:  -1.717342777813086
+
+Stars marked as feature extrapolation:
+Index(['KIC3230227_A', 'KIC8760414', 'KIC5683538', 'HW_CMa B', 'KIC6363365',
+       'NGC_2506_V5_B', '47_Tuc-V69 B', 'KIC10202294', 'EPIC204506926',
+       'KIC7019341', 'LINEAR_23079661_A', '47_Tuc_E32_A'],
+      dtype='object', name='ID')
+
+Peak Memory: 548.28 MB
+CPU time accumulated: 8.07874 s
+Total wall clock time: 10.99454 s
+><><><><><><><><><><><><><><><><><><><><><><><><><><

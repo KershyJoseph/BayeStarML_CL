@@ -14,7 +14,7 @@ import pymc as pm
 from sklearn.metrics import mean_absolute_error
 from matplotlib.ticker import MaxNLocator
 from matplotlib.lines import Line2D
-from matplotlib.colors import LogNorm
+from matplotlib.colors import Normalize
 from matplotlib.colors import to_hex
 from matplotlib.colors import LinearSegmentedColormap
 
@@ -373,12 +373,22 @@ def model_pred_plotter(
     if colour == "pred":
         colors = {
             "Interpolation": 'orange',
-            "Extrapolation": 'crimson'
+            "Extrapolation": 'red'
         }
 
     alphas = {
         "Interpolation": 0.5,
         "Extrapolation": 0.7
+    }
+
+    formats = {
+        "Interpolation": 'o',
+        "Extrapolation": '^'
+    }
+
+    marker_size = {
+        "Interpolation": 3.16,
+        "Extrapolation": 20
     }
 
     # make legend - ChatGPT
@@ -419,17 +429,22 @@ def model_pred_plotter(
 
         # 4. Extract the physical count for each point
         point_counts = counts[x_indices, y_indices]
+        norm = Normalize(vmin=point_counts.min(), vmax=point_counts.max())
 
         #make custom blues scale
         if colour=="test":
             new_blues = LinearSegmentedColormap.from_list(
                 "new_blues",
-                plt.cm.Blues(np.linspace(0.25, 1, 256))
+                plt.cm.Blues(np.linspace(0.5, 1, 256))
             )
-            point_colors = new_blues(point_counts)
+            point_colors = new_blues(norm(point_counts))
             cmap = new_blues
         if colour=="pred":
-            point_colors = plt.cm.Oranges(point_counts)
+            new_oranges = LinearSegmentedColormap.from_list(
+                "new_oranges",
+                plt.cm.Oranges(np.linspace(0.5, 1, 256))
+            )
+            point_colors = new_oranges(norm(point_counts))
             cmap = plt.cm.Oranges  
 
         hex_colors = [to_hex(c, keep_alpha=True) for c in point_colors]
@@ -456,9 +471,10 @@ def model_pred_plotter(
         fmt = 'o'
 
         if plot_density:
+            # fmt = formats[status]
+            # ms = marker_size[status]
             if status == "Interpolation":
-                # 5. Plot using the raw counts to drive transparency or color depth
-                sc_preds = ax_preds.scatter(group["y_true"], group["y_pred"], c=point_counts, cmap=cmap, alpha=0.7, zorder=2, s=10)
+                sc_preds = ax_preds.scatter(group["y_true"], group["y_pred"], c=point_counts, marker=fmt, cmap=cmap, alpha=0.7, zorder=2, s=10)
                 fmt = 'none'
 
             for x, y, xe, ye, col in zip(
@@ -490,7 +506,7 @@ def model_pred_plotter(
                 group["y_pred"],
                 yerr=group["y_pred_err"],
                 xerr=group["y_true_err"],
-                fmt="o",
+                fmt=fmt,#formats[status],
                 alpha=alphas[status],
                 color=colors[status],
                 ecolor=colors[status],
@@ -508,8 +524,9 @@ def model_pred_plotter(
         fmt='o'
 
         if plot_density: 
+            # fmt = formats[status]
             if status=="Interpolation":
-                ax_res.scatter(group["y_true"], group["y_pred"] - group["y_true"], c=point_counts, cmap=cmap, alpha=0.7, zorder=2, s=10)
+                ax_res.scatter(group["y_true"], group["y_pred"] - group["y_true"], marker=fmt, c=point_counts, cmap=cmap, alpha=0.7, zorder=2, s=10)
                 fmt = 'none'
 
             for x, y, xe, ye, col in zip(
@@ -541,7 +558,7 @@ def model_pred_plotter(
                 group["y_pred"] - group["y_true"],
                 yerr=group["y_pred_err"],
                 xerr=group["y_true_err"],
-                fmt="o",
+                fmt=fmt,#formats[status],
                 alpha=alphas[status],
                 color=colors[status],
                 ecolor=colors[status],
@@ -559,7 +576,7 @@ def model_pred_plotter(
         cbar.locator = MaxNLocator(integer=True)
         cbar.update_ticks()
     fig.align_ylabels()
-    fig.savefig(save_folder + "/predsres_" + hyperp_str + ".pdf")
+    plt.show()#fig.savefig(save_folder + "/predsres_" + hyperp_str + ".pdf")
     plt.close()
 
 
@@ -652,12 +669,12 @@ def get_results(
         )
 
 
-# n = 200
-# x_data = np.random.normal(1.2, 0.2, n)
-# y_data = x_data + np.random.normal(0, 0.05, n)
-# x_err = np.random.uniform(0.01, 0.05, n)
-# y_err = np.random.uniform(0.01, 0.05, n)
-# import random
-# interp_mask = random.choices([True, False], weights=[0.9, 0.1], k=n)
+n = 1000
+x_data = np.random.normal(1.2, 0.2, n)
+y_data = x_data + np.random.normal(0, 0.05, n)
+x_err = np.random.uniform(0.01, 0.05, n)
+y_err = np.random.uniform(0.01, 0.05, n)
+import random
+interp_mask = random.choices([True, False], weights=[0.9, 0.1], k=n)
 
-# model_pred_plotter(x_data, x_err, y_data, y_err, interp_mask, "M", None, None, colour="pred", plot_density=True)
+model_pred_plotter(x_data, x_err, y_data, y_err, interp_mask, "M", None, None, colour="test", plot_density=True)

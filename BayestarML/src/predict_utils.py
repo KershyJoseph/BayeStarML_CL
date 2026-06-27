@@ -35,13 +35,13 @@ def check_feature_extrapolation(x_train, x_pred, k=10, percentile=95):
 
 
 def prepare_pred_data(
-    filename: str, training_dataset_key: str, features: list, target: str, add_log_vars: list = None, check_consistency=False
+    filename: str, training_dataset_key: str, features: list, target: str, add_log_vars: list = None, check_consistency=False, symmetric_errs=False
 ):
     """Prepare normalised data for predictions and check feature extrapolation.
     Pass filename=="test_set" for predictions on test set.
     """
+    data, _ = load_data(training_dataset_key, target)
     if filename == "test_set": #prepare test set for prediction
-        data, _ = load_data(training_dataset_key, target)
         x = data["x_test"]
         x_er = data["x_test_err"]
         y_compare = data["unnorm_y_test"]
@@ -50,6 +50,7 @@ def prepare_pred_data(
     else: #prepare new data for prediction
         df = pd.read_csv("BayestarML/predict/prediction_datasets/" + filename, sep="\t")
         # filter to stars with all training features present with err. Add symmetric err column and log vars if needed.
+        ts = []
         if check_consistency:
             ts = ["M", "R"] #for logg and L check
         df_clean = select_clean_data(
@@ -59,7 +60,15 @@ def prepare_pred_data(
             add_logvars=add_log_vars,
             check_detached=False,
             check_consistency=False,
+            symmetric_errs=symmetric_errs
         )
+
+        if add_log_vars:
+            for var in add_log_vars:
+                for list in [features, ts]:
+                    if var in list:
+                        list.remove(var)
+                        list.append("log" + var)
 
         if check_consistency:
             df_clean = consistency_check(df_clean, "logg", "predict/prediction_datasets/con_check/"+filename+"_"+target+".pdf", symmetric_errs=True)
@@ -70,6 +79,9 @@ def prepare_pred_data(
         x_norm = normalise(x_unorm, None, training_dataset_key, x_only=True)
         x, x_er = x_norm[features], x_norm[[f"e{f}" for f in features]]  # might need modifying for scalar inputs?
         star_id = x_norm.index
+
+    print(data["x_train"])
+    print(x)
 
     #check extrapolation
     interp_mask = check_feature_extrapolation(data["x_train"], x)

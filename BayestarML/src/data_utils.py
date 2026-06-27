@@ -28,11 +28,15 @@ def denormalise_err(y, dataset_key, var, train_tar: str = "targets"):
     return y * sig[var]
 
 
-def logomatic(df: pd.DataFrame, add_logvars: list):
+def logomatic(df: pd.DataFrame, add_logvars: list, symmetric_errs=False):
     """Add a log(var) column to df with bounds method
     var should be string key of existing column in df
     """
     for var in add_logvars:
+        if symmetric_errs:
+            df["e" + var + "1"] = df["e" + var]
+            df["e" + var + "2"] = df["e" + var]
+
         invalids = df["e" + var + "2"] >= df[var]
         print(
             f"< Removing {len(df[invalids])} star(s) with {var}(s) that couldn't be logged >"
@@ -45,6 +49,10 @@ def logomatic(df: pd.DataFrame, add_logvars: list):
         df["elog" + var + "2"] = df["log" + var] - np.log10(
             df[var] - df["e" + var + "2"]
         )
+
+        if symmetric_errs:
+            df["elog"+var] = (df["elog" + var + "1"] + df["elog" + var + "2"])/2
+
     return df
 
 
@@ -122,8 +130,6 @@ def consistency_check(df, param, savepath: str, symmetric_errs=False, flag_col=N
         x_label = "Recorded L (Lsol)"
         y_label = "Calculated L from SB Law (Lsol)"
         x = df_check[x_col]
-        print(f"Checking {len(df_check)} stars for L consistency")
-
         if symmetric_errs:
             df_check["eTeff1"] = df_check["eTeff"]
             df_check["eTeff2"] = df_check["eTeff"]
@@ -131,35 +137,40 @@ def consistency_check(df, param, savepath: str, symmetric_errs=False, flag_col=N
             df_check["eR2"] = df_check["eR"]
             df_check["eL1"] = df_check["eL"]
             df_check["eL2"] = df_check["eL"]
+        xerr_up = df_check["eL1"]
+        xerr_down = df_check["eL2"]
 
-        R = df_check["R"]
+        print(f"Checking {len(df_check)} stars for L consistency")
+
         Teff = df_check["Teff"]
-        y = R ** 2 * (Teff / 5772) ** 4
+        eTeff1 = df_check["eTeff1"]
+        eTeff2 = df_check["eTeff2"]
+        R = df_check["R"]
+        eR1 = df_check["eR1"]
+        eR2 = df_check["eR2"]
+        Teffsol = 5777 #Yu et al 2018 - 5772 from Prsa 2016
+
+        y = R ** 2 * (Teff / Teffsol) ** 4
         df_check[y_col] = y
-        df_check["L_SB_+err"] = np.sqrt(
-            (R**2 * ((Teff + df_check["eTeff1"]) / 5772) ** 4 - y) ** 2
-            + ((R + df_check["eR1"]) ** 2 * (Teff / 5772) ** 4 - y) ** 2
+        yerr_up = np.sqrt(
+            (R**2 * ((Teff + eTeff1) / Teffsol) ** 4 - y) ** 2
+            + ((R + eR1) ** 2 * (Teff / Teffsol) ** 4 - y) ** 2
         )
-        df_check["L_SB_-err"] = np.sqrt(
-            (R**2 * ((Teff - df_check["eTeff2"]) / 5772) ** 4 - y) ** 2
-            + ((R - df_check["eR2"]) ** 2 * (Teff / 5772) ** 4 - y) ** 2
+        yerr_down = np.sqrt(
+            (R**2 * ((Teff - eTeff2) / Teffsol) ** 4 - y) ** 2
+            + ((R - eR2) ** 2 * (Teff / Teffsol) ** 4 - y) ** 2
         )
 
-        # compute distance from recorded Ls
-        df_check["L_SB_avg_err"] = (df_check["L_SB_+err"] + df_check["L_SB_-err"]) / 2
-        df_check["total_L_err"] = np.sqrt(
-            df_check["L_SB_avg_err"] ** 2 + df_check["eL1"] ** 2
-        )
-        df_check["L_dist"] = y - x
-        df_check["L_sig_distance"] = (
-            np.abs(df_check["L_dist"]) / df_check["total_L_err"]
-        )
+        y_err_avg = (yerr_up + yerr_down)/2
+        x_err_avg = (xerr_up + xerr_down)/2
+        total_sig = np.sqrt(y_err_avg**2 + x_err_avg**2)
+        sig_discrepancy = np.abs(y - x)/total_sig 
 
         consistency_col = "L consistent with SB law"
-        df_check[consistency_col] = np.where(df_check["L_sig_distance"] > 3, "deviation > 3 sigma", "within 3 sigma")
-        xerr = np.array([df_check["eL2"], df_check["eL1"]])
-        yerr = np.array([df_check["L_SB_-err"], df_check["L_SB_+err"]])
+        df_check[consistency_col] = np.where(sig_discrepancy > 3, "deviation > 3 sigma", "within 3 sigma")
 
+        yerr = np.array([yerr_down, yerr_up])
+        xerr = np.array([xerr_down, xerr_up])
 
     plt.close()
     plt.figure()
@@ -207,6 +218,7 @@ def select_clean_data(
     add_logvars: list = None,
     check_detached=True,
     check_consistency=True,
+    symmetric_errs=False
 ):
     """ """
     df = df.copy()
@@ -221,9 +233,12 @@ def select_clean_data(
 
     all_params = training_fs + targets
     # check params are present based on whether both errors are
-    errs1 = [f"e{param}1" for param in all_params]
-    errs2 = [f"e{param}2" for param in all_params]
-    all_errs = errs1 + errs2
+    if symmetric_errs:
+        all_errs = [f"e{param}" for param in all_params]
+    else:
+        errs1 = [f"e{param}1" for param in all_params]
+        errs2 = [f"e{param}2" for param in all_params]
+        all_errs = errs1 + errs2
     df_allps = df[(df[all_errs].notna().all(axis=1)) & (df[all_errs].gt(0).all(axis=1))]
     print(
         f"{len(df_allps)} stars left after checking all training features and targets present with err>0 for each."
@@ -235,12 +250,16 @@ def select_clean_data(
 
     # make any vars log10 scale
     if add_logvars:
-        df_allps = logomatic(df_allps, add_logvars)
-        errs1 += [f"elog{var}1" for var in add_logvars]
-        errs2 += [f"elog{var}2" for var in add_logvars]
+        df_allps = logomatic(df_allps, add_logvars, symmetric_errs)
+        if not symmetric_errs:
+            errs1 += [f"elog{var}1" for var in add_logvars]
+            errs2 += [f"elog{var}2" for var in add_logvars]
 
     # make an avg symmetric err col for all vars, log or not
-    df_final = add_symmetric_errs(df_allps, errs1, errs2)
+    if symmetric_errs:
+        df_final = df_allps
+    else:
+        df_final = add_symmetric_errs(df_allps, errs1, errs2)
 
     return df_final
 
