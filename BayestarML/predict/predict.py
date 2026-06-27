@@ -114,12 +114,12 @@ def rgb_M_predder():
     _, pred, ws = predict(x, x_er, interp_mask, target, dataset_key,
         gp_trace_path = "BayestarML/train/outputs5336rgb/GP_M/GP_M_5336rgb_100_30_2000_0.95.nc",
         nn_trace_path = "BayestarML/train/outputs5336rgb/NN_M/NN_M_5336rgb_8_2000_0.95.nc",
-        bart_m=2, m_mean=100, m_var=30, nn_nodes=8,
+        bart_m=800, m_mean=100, m_var=30, nn_nodes=8,
         y_compare=y_compare, y_comp_er=y_comp_er, savename="BHS_YuMpred_", NN_1layer=False, plot_density=True, color="pred")
 
-    df_weights = get_bhs_weights(ws, star_id, dataset_key+"_bhs_"+target+"_ws.txt")
+    df_weights = get_bhs_weights(ws, star_id, "Yu18_rgb_m_preds_ws.txt")
 
-    plot_bhs_weights(df_weights, target, "BayestarML/data/"+dataset_key+".txt", dataset_key+"_bhs_"+target+"_ws_plot.pdf")
+    plot_bhs_weights(df_weights, target, "BayestarML/predict/prediction_datasets/RGB_pred_stars_Yu18.txt", "Yu18_rgb_m_preds_ws_plot.pdf")
 
     # print("M BHS predictions:\n", pred.mean(0), pred.std(0))
 
