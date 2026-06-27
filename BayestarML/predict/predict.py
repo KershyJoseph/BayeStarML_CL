@@ -12,6 +12,7 @@ from BayestarML.src.pred_sampling import sample_pred_bart, posterior_predictive_
 from BayestarML.src.models.bhs import run_stack
 from sklearn.metrics import mean_absolute_error
 import arviz as az
+import numpy as np
 
 def predict(x, x_er, interp_mask,
             target, training_dataset_key, 
@@ -108,7 +109,7 @@ def rgb_M_predder():
     #only use interpolated values for Yu18 pred
     star_id, x, x_er, y_compare, y_comp_er = star_id[interp_mask], x[interp_mask], x_er[interp_mask], y_compare[interp_mask], y_comp_er[interp_mask]
 
-    print(type(interp_mask))
+    interp_mask = np.repeat(True, interp_mask.sum()) #reset to all being interpolation
 
     _, pred, ws = predict(x, x_er, interp_mask, target, dataset_key,
         gp_trace_path = "BayestarML/train/outputs5336rgb/GP_M/GP_M_5336rgb_100_30_2000_0.95.nc",
@@ -158,7 +159,7 @@ def ms_M():
 
 
 if __name__ == '__main__':
-    ms_M()
+    rgb_M_predder()
 
 
 
