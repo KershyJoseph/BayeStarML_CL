@@ -159,7 +159,7 @@ def ms_M():
 
 
 if __name__ == '__main__':
-    ms_R()
+    rgb_M_predder()
 
 
 
