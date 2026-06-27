@@ -58,7 +58,7 @@ def predict(x, x_er, interp_mask,
     (bhs_trace, bhs_pred, bhs_w) = run_stack(bart4_pred, hbnn4_pred, gp4_pred,
                                         data["x_train"], x, lpd_BART4, lpd_HBNN4,
                                         lpd_GP4)
-    bhs_trace.to_netcdf(outputs_folder+"/"+hyperp_str+".nc")
+    #bhs_trace.to_netcdf(outputs_folder+"/"+hyperp_str+".nc")
 
     if y_compare: #get MARD and MRD for model vs y_compare values
         mard_BART = mard(y_compare, bart4_pred.mean(0))
@@ -109,9 +109,9 @@ if __name__ == "__main__":
     star_id, x, x_er, y_compare = star_id[interp_mask], x[interp_mask], x_er[interp_mask], y_compare[interp_mask]
 
     _, pred, ws = predict(x, x_er, interp_mask, target, dataset_key,
-        gp_trace_path = "BayestarML/train/outputs5438rgb/GP_M/GP_M_5336rgb_100_30_2000_0.95.nc",
+        gp_trace_path = "BayestarML/train/outputs5336rgb/GP_M/GP_M_5336rgb_100_30_2000_0.95.nc",
         nn_trace_path = "BayestarML/train/outputs5336rgb/NN_M/NN_M_5336rgb_8_2000_0.95.nc",
-        bart_m=800, m_mean=100, m_var=30, nn_nodes=8,
+        bart_m=2, m_mean=100, m_var=30, nn_nodes=8,
         y_compare=y_compare, savename="BHS_YuMpred_", NN_1layer=False, plot_density=True, color="pred")
 
     df_weights = get_bhs_weights(ws, star_id, dataset_key+"_bhs_"+target+"_ws.txt")
@@ -158,7 +158,7 @@ if __name__ == "__main__":
 # nn_trace_path= "BayestarML/train/outputs5438rgb/NN_M/NN_M_5438rgb_8_2000_0.95.nc",
 
 #5336 RGB MASS 
-# gp_trace_path = "BayestarML/train/outputs5438rgb/GP_M/GP_M_5336rgb_100_30_2000_0.95.nc",
+# gp_trace_path = "BayestarML/train/outputs5336rgb/GP_M/GP_M_5336rgb_100_30_2000_0.95.nc",
 # nn_trace_path = "BayestarML/train/outputs5336rgb/NN_M/NN_M_5336rgb_8_2000_0.95.nc",
 
 #693MS MASS 
