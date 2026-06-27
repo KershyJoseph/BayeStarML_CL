@@ -114,7 +114,7 @@ def plot_bhs_weights(ws, target, compare_file, savename):
     """
     """
     ws.set_index("ID", inplace=True)
-    all_masses = pd.read_csv(compare_file, usecols=[target, "ID"])
+    all_masses = pd.read_csv(compare_file, usecols=[target, "ID"], sep='\t')
     all_masses.set_index("ID", inplace=True)
     masses = all_masses.loc[ws.index]
 
@@ -128,6 +128,7 @@ def plot_bhs_weights(ws, target, compare_file, savename):
     ax.set_ylabel("BHS base model weight")
     ax.legend()
     fig.savefig("BayestarML/predict/outputs_bhs/"+savename)
+
 
 
 # with open("BayestarML/data/" + training_dataset_key + "_constants.json", "r") as f:
