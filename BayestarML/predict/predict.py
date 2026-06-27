@@ -60,7 +60,7 @@ def predict(x, x_er, interp_mask,
                                         lpd_GP4)
     #bhs_trace.to_netcdf(outputs_folder+"/"+hyperp_str+".nc")
 
-    if y_compare: #get MARD and MRD for model vs y_compare values
+    if y_compare is not None: #get MARD and MRD for model vs y_compare values
         mard_BART = mard(y_compare, bart4_pred.mean(0))
         mrd_BART = mrd(y_compare, bart4_pred.mean(0))
         mae_BART = mean_absolute_error(y_compare, bart4_pred.mean(0))
