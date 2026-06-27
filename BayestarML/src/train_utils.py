@@ -685,10 +685,10 @@ def get_results(
 
 # check stats in different zones of ms
 
-data, _ = load_data("693ms", "M")
+# data, _ = load_data("693ms", "M")
 
-m_true = data["unorm_y_test"]
+# m_true = data["unorm_y_test"]
 
-split = 0.62 #Msol
-print(f"MARD on stars less than {split} Msol:")
-print(mard(m_true[m_true<=split],))
+# split = 0.62 #Msol
+# print(f"MARD on stars less than {split} Msol:")
+# print(mard(m_true[m_true<=split],))
