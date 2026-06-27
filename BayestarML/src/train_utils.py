@@ -564,7 +564,7 @@ def model_pred_plotter(
 
 
 def get_results(
-    posterior_draws, data, interp_mask, outputs_folder_path, dataset_key, target, hyperp_str, plot_density=False
+    posterior_draws, data, interp_mask, outputs_folder_path, dataset_key, target, hyperp_str, plot_density=False, color="test"
 ):
     """
     """
@@ -592,6 +592,7 @@ def get_results(
         target,
         outputs_folder_path,
         hyperp_str,
+        color,
         plot_density
     )
 
@@ -623,7 +624,9 @@ def get_results(
             y_pred_err,
             target,
             outputs_folder_path,
-            hyperp_str
+            hyperp_str,
+            color,
+            plot_density
         )
 
         # Is median better??
@@ -643,7 +646,9 @@ def get_results(
             np.array([y_p50 - y_p16, y_p84 - y_p50]),
             target,
             outputs_folder_path,
-            hyperp_str + "MEDIAN"
+            hyperp_str + "MEDIAN",
+            color,
+            plot_density
         )
 
 

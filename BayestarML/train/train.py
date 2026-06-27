@@ -26,7 +26,8 @@ def train_GP(
     advi=False,
     nutpie=False,
     linear_mean_f=False,
-    plot_density=False
+    plot_density=False,
+    trace_path=None #pass trace if you already have it
 ):
     """Function to train GP"""
     hyperp_str = (
@@ -64,6 +65,8 @@ def train_GP(
         print("ELBO:\n", approx.hist)
         trace.extend(pm.compute_log_likelihood(trace, model=model, var_names="y"))
         # trace.to_netcdf(...)
+    elif trace_path:
+        trace = az.from_netcdf(trace_path)
     else:
         trace = train(
             model,
@@ -173,8 +176,8 @@ def train_NN(
     chains=4,
     advi=False,
     nutpie=False,
-    trace_path=None,
-    plot_density=False
+    plot_density=False,
+    trace_path=None
 ):
     """Function to train HBNN"""
     hyperp_str = (
@@ -211,7 +214,7 @@ def train_NN(
         print("ELBO:\n", approx.hist)
         trace.extend(pm.compute_log_likelihood(trace, model=model, var_names="y"))
         # trace.to_netcdf(...)
-    if trace_path:
+    elif trace_path:
         trace = az.from_netcdf(trace_path)
     else:
         trace = train(
@@ -245,6 +248,10 @@ if __name__ == "__main__":
     start_time_wall = time.perf_counter()
 
     print("""693ms M GP. 50_15_1000. No student-t. 
+          
+#########################################################
+Just a run to get plot from trace
+#########################################################
 
         log_ls = pm.Normal("log_ls", mu=0.5, sigma=0.5, shape=D)
         ls = pm.Deterministic("ls", pm.math.exp(log_ls))
@@ -258,7 +265,8 @@ if __name__ == "__main__":
 
         """)
     train_GP(
-        "693ms", "M", 50, 15, draws=1000
+        "693ms", "M", 50, 15, draws=1000,
+        trace_path="BayestarML/train/outputs693ms/GP_M/GP_M_693ms_50_15_1000_0.95.nc"
     )
 
     end_time_CPU = time.process_time()
