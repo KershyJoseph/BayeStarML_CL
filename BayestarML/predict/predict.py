@@ -59,7 +59,7 @@ def predict(x, x_er, interp_mask,
     (bhs_trace, bhs_pred, bhs_w) = run_stack(bart4_pred, hbnn4_pred, gp4_pred,
                                         data["x_train"], x, lpd_BART4, lpd_HBNN4,
                                         lpd_GP4)
-    #bhs_trace.to_netcdf(outputs_folder+"/"+hyperp_str+".nc")
+    bhs_trace.to_netcdf(outputs_folder+"/"+hyperp_str+".nc")
 
     if y_compare is not None: #get MARD and MRD for model vs y_compare values
         mard_BART = mard(y_compare, bart4_pred.mean(0))
@@ -108,8 +108,9 @@ def rgb_M_predder():
 
     #only use interpolated values for Yu18 pred
     star_id, x, x_er, y_compare, y_comp_er = star_id[interp_mask], x[interp_mask], x_er[interp_mask], y_compare[interp_mask], y_comp_er[interp_mask]
+    print(f"Only making predictions on the {len(x)} stars marked as feature interpolation.")
 
-    interp_mask = np.repeat(True, interp_mask.sum()) #reset to all being interpolation
+    interp_mask = interp_mask[interp_mask] #reset as well
 
     _, pred, ws = predict(x, x_er, interp_mask, target, dataset_key,
         gp_trace_path = "BayestarML/train/outputs5336rgb/GP_M/GP_M_5336rgb_100_30_2000_0.95.nc",

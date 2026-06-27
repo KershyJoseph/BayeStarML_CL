@@ -400,16 +400,19 @@ def model_pred_plotter(
             color=colors["Interpolation"],
             label='Interpolation',
             markersize=5
-        ),
-        Line2D(
-            [0], [0],
-            marker='o',
-            linestyle='',
-            color=colors["Extrapolation"],
-            label='Extrapolation',
-            markersize=5
         )
     ]
+    if not all(interp_mask):
+        legend_handles.append( 
+            Line2D(
+                [0], [0],
+                marker='o',
+                linestyle='',
+                color=colors["Extrapolation"],
+                label='Extrapolation',
+                markersize=5
+            )
+        )
 
     df_all["point_color"] = df_all["pred_type"].map(colors)
 

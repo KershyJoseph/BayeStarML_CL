@@ -5,6 +5,7 @@ from scipy.spatial import Delaunay
 from sklearn.neighbors import NearestNeighbors
 from BayestarML.src.data_utils import select_clean_data, normalise, consistency_check
 from BayestarML.src.train_utils import load_data
+import json
 
 
 def check_feature_extrapolation(x_train, x_pred, k=10, percentile=95):
@@ -82,9 +83,20 @@ def prepare_pred_data(
         x, x_er = x_norm[features], x_norm[[f"e{f}" for f in features]]  # might need modifying for scalar inputs?
         star_id = x_norm.index
 
-    #check extrapolation
+    #check feature extrapolation
     interp_mask = check_feature_extrapolation(data["x_train"], x)
-    print(f"{len(x[~interp_mask])} stars marked as extrapolating from training database.")
+    print(f"{len(x[~interp_mask])} stars marked as extrapolating from training database inputs.")
+
+    #check target extrapolation
+    with open("BayestarML/data/" + training_dataset_key + "_constants.json", "r") as f:
+        constants = json.load(f)
+    y_min = constants["targets"]["MIN"][target]
+    y_max = constants["targets"]["MAX"][target]
+    t_mask = (y_compare > y_min) & (y_compare < y_max)
+    print(f"Removing {len(x[~t_mask])} stars for being outside target training range.")
+
+    star_id, x, x_er = star_id[t_mask], x[t_mask], x_er[t_mask]
+    y_compare, y_comp_er, interp_mask = y_compare[t_mask], y_comp_er[t_mask], interp_mask[t_mask]
 
     return star_id, x, x_er, y_compare, y_comp_er, interp_mask
 
