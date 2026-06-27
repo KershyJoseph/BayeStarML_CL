@@ -44,7 +44,7 @@ def prepare_pred_data(
     if filename == "test_set": #prepare test set for prediction
         x = data["x_test"]
         x_er = data["x_test_err"]
-        y_compare = data["unnorm_y_test"]
+        y_compare = data["unorm_y_test"]
         y_comp_er = data["unorm_y_test_err"]
         star_id = data["test_ID"]
 
