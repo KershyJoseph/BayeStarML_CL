@@ -192,8 +192,29 @@ def ms_M_predder():
     bhs_preds.to_csv("BayestarML/predict/outputs_bhs/bhs_NExA_M_preds.txt", index=False)
 
 
+def ms_R_predder():
+    features = ["Teff", "logg", "FeH", "logL"]
+    target = "R"
+    dataset_key = "693ms"
+    star_id, x, x_er, y_compare, y_comp_er, interp_mask = prepare_pred_data("NASAexop_archive_stars_all6.txt", dataset_key, features, target, check_consistency=True)
+
+    _, pred, _ = predict(x, x_er, interp_mask, target, dataset_key,
+        gp_trace_path = "BayestarML/train/outputs693ms/GP_R/GP_R_693ms_50_15_2000_0.95.nc",
+        nn_trace_path = "BayestarML/train/outputs693ms/NN_R/NN_1layer_R_693ms_8_2000_0.95.nc",
+        bart_m=500, m_mean=50, m_var=15, nn_nodes=8,
+        y_compare=y_compare, y_comp_er=y_comp_er, savename="BHS_NExA_R", NN_1layer=True, color="pred", plot_density=True)
+
+    bhs_preds = pd.DataFrame({
+        "ID": star_id,
+        "bhs_R_pred": pred.mean(0),
+        "bhs_R_std": pred.std(0)
+    })
+
+    bhs_preds.to_csv("BayestarML/predict/outputs_bhs/bhs_NExA_R_preds.txt", index=False)
+
+
 if __name__ == '__main__':
-    ms_M_predder()
+    ms_R_predder()
 
 
 
