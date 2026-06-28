@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from scipy.spatial import Delaunay
 from sklearn.neighbors import NearestNeighbors
-from BayestarML.src.data_utils import select_clean_data, normalise, consistency_check
+from BayestarML.src.data_utils import select_clean_data, normalise, consistency_check, lineamatic
 from BayestarML.src.train_utils import load_data
 import json
 
@@ -55,6 +55,11 @@ def prepare_pred_data(
         ts = []
         if check_consistency:
             ts = ["M", "R"] #for logg and L check
+
+        if "L" not in features:
+            df = lineamatic(df, add_linvars=["logL"])
+            features.append("L")
+
         df_clean = select_clean_data(
             df,
             features,
@@ -75,6 +80,7 @@ def prepare_pred_data(
         if check_consistency:
             df_clean = consistency_check(df_clean, "logg", "predict/prediction_datasets/con_check/"+filename+"_"+target+".pdf", symmetric_errs=True)
             df_clean = consistency_check(df_clean, "L", "predict/prediction_datasets/con_check/"+filename+"_"+target+".pdf", symmetric_errs=True)
+            features.remove("L")
 
         # normalise input data
         x_unorm = df_clean[features+[f"e{f}" for f in features]]
@@ -93,7 +99,7 @@ def prepare_pred_data(
     y_min = constants["targets"]["MIN"][target]
     y_max = constants["targets"]["MAX"][target]
     t_mask = (y_compare > y_min) & (y_compare < y_max)
-    print(f"Removing {len(x[~t_mask])} stars for being outside target training range.")
+    print(f"Removing {len(x[~t_mask])} stars for being outside target training range: {df_clean[~t_mask]}")
 
     star_id, x, x_er = star_id[t_mask], x[t_mask], x_er[t_mask]
     y_compare, y_comp_er, interp_mask = y_compare[t_mask], y_comp_er[t_mask], interp_mask[t_mask]

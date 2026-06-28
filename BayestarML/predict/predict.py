@@ -12,6 +12,7 @@ from BayestarML.src.pred_sampling import sample_pred_bart, posterior_predictive_
 from BayestarML.src.models.bhs import run_stack
 from sklearn.metrics import mean_absolute_error
 import arviz as az
+import pandas as pd
 
 def predict(x, x_er, interp_mask,
             target, training_dataset_key, 
@@ -65,7 +66,7 @@ def predict(x, x_er, interp_mask,
         mrd_BART = mrd(y_compare, bart4_pred.mean(0))
         mae_BART = mean_absolute_error(y_compare, bart4_pred.mean(0))
 
-        print('MAE BART:', mae_BART)
+        print('\nMAE BART:', mae_BART)
         print('MARD BART:', mard_BART)
         print('MRD BART:', mrd_BART)
 
@@ -73,7 +74,7 @@ def predict(x, x_er, interp_mask,
         mrd_GP = mrd(y_compare, gp4_pred.mean(0))
         mae_GP = mean_absolute_error(y_compare, gp4_pred.mean(0))
 
-        print('MAE GP:', mae_GP)
+        print('\nMAE GP:', mae_GP)
         print('MARD GP:', mard_GP)
         print('MRD GP:', mrd_GP)
 
@@ -81,7 +82,7 @@ def predict(x, x_er, interp_mask,
         mrd_HBNN = mrd(y_compare, hbnn4_pred.mean(0))
         mae_HBNN = mean_absolute_error(y_compare, hbnn4_pred.mean(0))
 
-        print('MAE HBNN:', mae_HBNN)
+        print('\nMAE HBNN:', mae_HBNN)
         print('MARD HBNN:', mard_HBNN)
         print('MRD HBNN:', mrd_HBNN)
 
@@ -89,7 +90,7 @@ def predict(x, x_er, interp_mask,
         mrd_BHS = mrd(y_compare, bhs_pred.mean(0))
         mae_BHS = mean_absolute_error(y_compare, bhs_pred.mean(0))
 
-        print('MAE BHS:', mae_BHS)
+        print('\nMAE BHS:', mae_BHS)
         print('MARD BHS:', mard_BHS)
         print('MRD BHS:', mrd_BHS)
 
@@ -170,8 +171,29 @@ def rgb_M():
             800, 100, 30, 8, y_compare, y_comp_er, "bhs", plot_density=True)
 
 
+def ms_M_predder():
+    features = ["Teff", "logg", "FeH", "logL"]
+    target = "M"
+    dataset_key = "693ms"
+    star_id, x, x_er, y_compare, y_comp_er, interp_mask = prepare_pred_data("NASAexop_archive_stars_all6.txt", dataset_key, features, target, check_consistency=True)
+
+    _, pred, ws = predict(x, x_er, interp_mask, target, dataset_key,
+        gp_trace_path = "BayestarML/train/outputs693ms/GP_M/GP_M_693ms_50_15_1000_0.95.nc",
+        nn_trace_path = "BayestarML/train/outputs693ms/NN_M/NN_M_693ms_8_2000_0.95.nc",
+        bart_m=700, m_mean=50, m_var=15, nn_nodes=8,
+        y_compare=y_compare, y_comp_er=y_comp_er, savename="BHS_NExA_M", NN_1layer=False, color="pred")
+
+    bhs_preds = pd.DataFrame({
+        "ID": star_id,
+        "bhs_M_pred": pred.mean(0),
+        "bhs_M_std": pred.std(0)
+    })
+
+    bhs_preds.to_csv("BayestarML/predict/outputs_bhs/bhs_NExA_M_preds.txt", index=False)
+
+
 if __name__ == '__main__':
-    rgb_M()
+    ms_M_predder()
 
 
 

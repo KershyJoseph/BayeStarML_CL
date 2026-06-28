@@ -56,6 +56,30 @@ def logomatic(df: pd.DataFrame, add_logvars: list, symmetric_errs=False):
     return df
 
 
+def lineamatic(df: pd.DataFrame, add_linvars: list, symmetric_errs=False):
+    """Add a log(var) column to df with bounds method
+    var should be string key of existing column in df
+    """
+    for var in add_linvars:
+        if symmetric_errs:
+            df["e" + var + "1"] = df["e" + var]
+            df["e" + var + "2"] = df["e" + var]
+
+        lin = var[3:]
+        df[lin] = 10**(df[var])
+        df["e" + lin + "1"] = (
+            10**(df[var] + df["e" + var + "1"]) - df[lin]
+        )
+        df["e" + lin + "2"] = df[lin] - 10**(
+            df[var] - df["e" + var + "2"]
+        )
+
+        if symmetric_errs:
+            df["e"+lin] = (df["e" + lin + "1"] + df["e" + lin + "2"])/2
+
+    return df
+
+
 def add_symmetric_errs(df, errs1, errs2):
     """ """
     df1 = df[errs1].copy()
