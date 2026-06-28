@@ -1,3 +1,126 @@
+81 stars marked as extrapolating from training database inputs.
+Removing 0 stars for being outside target training range.
+-------Start BART----------
+-----------Start BART Sampling------------
+Multiprocess sampling (2 chains in 2 jobs)
+CompoundStep
+>NUTS: [x_dist, sig]
+>PGBART: [mu]
+
+  Progress                         Draws   Divergences   Step size   Grad evals   Sampling Speed   Elapsed   Remaining
+ ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  ──────────────────────────────   3000    0             0.16        31           1.99 draws/s     0:25:09   0:00:00
+  ──────────────────────────────   3000    0             0.15        31           1.97 draws/s     0:25:19   0:00:00
+
+Sampling 2 chains for 2_000 tune and 1_000 draw iterations (4_000 + 2_000 draws total) took 1525 seconds.
+We recommend running at least 4 chains for robust computation of convergence diagnostics
+The rhat statistic is larger than 1.01 for some parameters. This indicates problems during sampling. See https://arxiv.o
+rg/abs/1903.08008 for details
+The effective sample size per chain is smaller than 100 for some parameters.  A higher number is needed for reliable rha
+t and ess computation. See https://arxiv.org/abs/1903.08008 for details
+Computing ... ──────────────────────────────────────── 100% 0:00:00
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape
+ parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust
+model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are v
+ery different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+Rhats
+ [('x_dist', 1.0184697945083507), ('mu', 1.0387985674880202), ('sig', 1.0021125054169995)]
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape
+ parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust
+model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are v
+ery different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+LOO
+ Computed from 2000 posterior samples and 4268 observations log-likelihood matrix.
+
+         Estimate       SE
+elpd_loo -3004.03    74.06
+p_loo      219.63        -
+
+There has been a warning during the calculation. Please check the results.
+------
+
+Pareto k diagnostic values:
+                         Count   Pct.
+(-Inf, 0.70]   (good)     4267  100.0%
+   (0.70, 1]   (bad)         1    0.0%
+   (1, Inf)   (very bad)    0    0.0%
+
+Sampling: [mu, x_dist, y]
+Sampling ... ──────────────────────────────────────── 100% 0:00:00 / 0:05:32
+-------Start GP----------
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape
+ parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust
+model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are v
+ery different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+Sampling: [X_new_latent, X_var_new_latent, f_mu_pred, log_var_pred_latent, y_pred]
+Sampling ... ──────────────────────────────────────── 100% 0:00:00 / 0:00:33
+-------Start HBNN----------
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape
+ parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust
+model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are v
+ery different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+starting parallel prediction on 32 worker(s)_
+finished chain 1/4
+finished chain 4/4
+finished chain 3/4
+finished chain 2/4
+-------Start BHS----------
+Initializing NUTS using jitter+adapt_diag...
+Multiprocess sampling (4 chains in 4 jobs)
+NUTS: [mu, sigma, beta_con]
+  Progress                         Draws   Divergences   Step size   Grad evals   Sampling Speed   Elapsed   Remaining
+ ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  ──────────────────────────────   2500    0             0.07        31           24.51 draws/s    0:01:41   0:00:00
+  ──────────────────────────────   2500    0             0.14        63           22.84 draws/s    0:01:49   0:00:00
+  ──────────────────────────────   2500    0             0.10        63           24.42 draws/s    0:01:42   0:00:00
+  ──────────────────────────────   2500    0             0.09        31           22.95 draws/s    0:01:48   0:00:00
+
+Sampling 4 chains for 1_500 tune and 1_000 draw iterations (6_000 + 4_000 draws total) took 122 seconds.
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/diagnostics.py:596: RuntimeWarning: invali
+d value encountered in scalar divide
+  (between_chain_variance / within_chain_variance + num_samples - 1) / (num_samples)
+Rhats
+ [('mu', 1.0031152043211031), ('beta_con', 1.0038206512921217), ('sigma', 1.0017956511346893), ('beta', 1.00192085556012
+33), ('f', 1.0036875073591704), ('w', 1.0038921708366508), ('f_test', 1.0037105575596368), ('w_test', 1.0041812579816696
+)]
+MAE BART: 0.06864063223926391
+MARD BART: 5.453060806727312
+MRD BART: -0.9993414339141844
+
+MAE GP: 0.05436193555507565
+MARD GP: 4.3012227883598015
+MRD GP: -0.4500462416405552
+
+MAE HBNN: 0.05725598176524003
+MARD HBNN: 4.61444190068476
+MRD HBNN: -1.0107901338947303
+
+MAE BHS: 0.0538373705127183
+MARD BHS: 4.281054560207525
+MRD BHS: -0.663354797730427
+
+^BART 800
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BART 700 MARD 5.44 MRD -1.07
+
 81 stars marked as extrapolating from training database.
 -------Start BART----------
 -----------Start BART Sampling------------

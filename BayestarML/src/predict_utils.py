@@ -78,8 +78,8 @@ def prepare_pred_data(
                         list.append("log" + var)
 
         if check_consistency:
-            df_clean = consistency_check(df_clean, "logg", "predict/prediction_datasets/con_check/"+filename+"_"+target+".pdf", symmetric_errs=True)
-            df_clean = consistency_check(df_clean, "L", "predict/prediction_datasets/con_check/"+filename+"_"+target+".pdf", symmetric_errs=True)
+            df_clean = consistency_check(df_clean, "logg", "predict/prediction_datasets/con_check/"+filename[:-4]+"_logg_"+target+".pdf", symmetric_errs=True)
+            df_clean = consistency_check(df_clean, "L", "predict/prediction_datasets/con_check/"+filename[:-4]+"_L_"+target+".pdf", symmetric_errs=True)
             features.remove("L")
 
         # normalise input data

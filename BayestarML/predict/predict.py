@@ -180,8 +180,8 @@ def ms_M_predder():
     _, pred, ws = predict(x, x_er, interp_mask, target, dataset_key,
         gp_trace_path = "BayestarML/train/outputs693ms/GP_M/GP_M_693ms_50_15_1000_0.95.nc",
         nn_trace_path = "BayestarML/train/outputs693ms/NN_M/NN_M_693ms_8_2000_0.95.nc",
-        bart_m=700, m_mean=50, m_var=15, nn_nodes=8,
-        y_compare=y_compare, y_comp_er=y_comp_er, savename="BHS_NExA_M", NN_1layer=False, color="pred")
+        bart_m=500, m_mean=50, m_var=15, nn_nodes=8,
+        y_compare=y_compare, y_comp_er=y_comp_er, savename="BHS_NExA_M", NN_1layer=False, color="pred", plot_density=True)
 
     bhs_preds = pd.DataFrame({
         "ID": star_id,
