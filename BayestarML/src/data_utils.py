@@ -269,8 +269,8 @@ def select_clean_data(
     )
 
     if check_consistency:
-        df_allps = consistency_check(df_allps, "logg", "logg_from_M,R", s_class + "_logg_check.pdf")
-        df_allps = consistency_check(df_allps, "L", "L_from_SB", s_class + "_lum_check.pdf")
+        df_allps = consistency_check(df_allps, "logg", flag_col="logg_from_M,R", savepath=s_class + "_logg_check.pdf")
+        #df_allps = consistency_check(df_allps, "L", flag_col="L_from_SB", savepath=s_class + "_lum_check.pdf")
 
     # make any vars log10 scale
     if add_logvars:

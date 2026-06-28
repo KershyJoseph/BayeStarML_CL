@@ -82,7 +82,7 @@ def prep_data(
             "logL": [0.1, "dex"],
             "Teff": [100, "K"],
             "logg": [0.05, "dex"],
-            "FeH": [0.1, "dex"],  # 0.1 for RGB
+            "FeH": [0.15, "dex"],  # 0.1 for RGB
         }
     df = error_filter(
         df,
@@ -152,21 +152,21 @@ if __name__ == "__main__":
 
     training_fs = ["Teff", "logg", "FeH", "L"]
     targets = ["M", "R"]
-    s_class = "rgb"
-    add_logvars = ["L", "R"]  # add a log column with errs for these variables
+    s_class = "ms"
+    add_logvars = ["L"]#, "R"]  # add a log column with errs for these variables
 
     # 700ms 
-    # abs_err_lims = {"elogL": 0.5}
-    # percent_err_lims = {"eM": 100, "eR": 100}
-    # target_lims = {"M": [0, 2]} #skip the target range cutting step if you already know the limits you want
+    abs_err_lims = {"elogL": 0.5}
+    percent_err_lims = {"eM": 200, "eR": 200}
+    target_lims = {"M": [0, 2]} #skip the target range cutting step if you already know the limits you want
 
     # 5436rgb
-    abs_err_lims = {"elogL": 0.05, "eTeff": 100, "elogg": 0.05, "eFeH": 0.1}
-    percent_err_lims = {"eM": 7, "eR": 7}
-    target_lims = {
-        "logR": [0, 1.6],
-        "M": [0.75, 2.25],
-    }
+    # abs_err_lims = {"elogL": 0.05, "eTeff": 100, "elogg": 0.05, "eFeH": 0.1}
+    # percent_err_lims = {"eM": 7, "eR": 7}
+    # target_lims = {
+    #     "logR": [0, 1.6],
+    #     "M": [0.75, 2.25],
+    # }
 
     # prepare data
     prep_data(
@@ -177,11 +177,11 @@ if __name__ == "__main__":
         add_logvars,
         abs_err_lims=abs_err_lims,
         percent_err_lims=percent_err_lims,
-        target_lims=target_lims,
-        #check_detached=False,
+        #target_lims=target_lims,
+        check_detached=True,
         check_consistency=True,
         plot_errs=True,
-        xgboost=True,
-        plot_hr=True,
+        xgboost=False,
+        plot_hr=False,
         plot_t_f=True
     )

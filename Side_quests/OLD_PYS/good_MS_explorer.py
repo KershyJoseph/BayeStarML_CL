@@ -6,16 +6,16 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 
-# df = pd.read_csv("DataExploring/good_MS.txt", sep='\t')
-# df.set_index("ID", inplace=True)
+df = pd.read_csv("BayestarML/data/693ms.txt", sep=',')
+df.set_index("ID", inplace=True)
 
-# #histogram of detection modes
+#histogram of detection modes
 # plt.figure()
 # modes = df["mode"]
 # pd.Series(modes).value_counts(dropna=False).plot(kind='bar')
 # plt.xlabel("Detection Mode")
 # plt.ylabel("Frequency")
-# plt.savefig("DataExploring/modes_hist_MS.pdf")
+# plt.savefig("Side_quests/DataExploring/modes_hist_MS.pdf")
 
 # #histogram of spectral types
 # plt.figure()
@@ -25,7 +25,7 @@ import numpy as np
 # sns.countplot(data=df, x='type', hue='mode', alpha=0.7)
 # plt.xlabel("Spectral Type")
 # plt.ylabel("Frequency")
-# plt.savefig("DataExploring/types_hist_MS.pdf")
+# plt.savefig("Side_quests/DataExploring/types_hist_MS.pdf")
 
 #spread of data in mass range on goodMS
 def plot_target_spread(df, target, multiple="stack"):
@@ -57,6 +57,23 @@ def plot_feature_target(df:pd.DataFrame, dataset_key:str, feature:str, target:st
     plt.savefig("figures/feature_target_figs/"+dataset_key+"_"+feature+"_"+target+".pdf")
     plt.close()
 
+def diagnostics(df, name):
+    print("Diagnostics on ", name)
 
-df = pd.read_csv("BayestarML/data/5336rgb.txt")
-plot_target_spread(df, "M")
+    print(df["mode"].value_counts())
+
+    print("Old stars: ", len(df[(df["database"]==1)]))
+
+    print("New (and revised) stars: ", len(df[(df["database"]!=1)]), "out of ", len(df))
+
+    print("New, new stars: ", len(df[(df["database"]==3)]), "out of ", len(df))
+
+    print("New range stars: ", len(df[(df["M"]<=0.8) | (df["M"]>=1.4)]), "out of ", len(df))
+
+    print("New stars AND new range stars: ", len(df[((df["M"]<=0.8) | (df["M"]>=1.4)) & (df["database"]!=1)]), "out of ", len(df))
+
+    print("Low mass stars: ", len(df[(df["M"]<=0.8)]), "out of ", len(df))
+
+    print("New/revised stars AND low mass stars: ", len(df[(df["M"]<=0.8) & (df["database"]!=1)]), "out of ", len(df))
+
+diagnostics(df, "693ms")

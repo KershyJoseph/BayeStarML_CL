@@ -247,10 +247,10 @@ if __name__ == "__main__":
     start_time_CPU = time.process_time()
     start_time_wall = time.perf_counter()
 
-    print("""5336rgb logR GP. Priors in the file haha. 
+    print("""5336rgb logR NN 1layer. Priors in the file haha. 
         """)
-    train_GP(
-        "5336rgb", "logR", 30, 10, draws=1000
+    train_NN_1layer(
+        "5336rgb", "logR", 8, draws=1000
     )
 
     end_time_CPU = time.process_time()
