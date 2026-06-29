@@ -268,7 +268,7 @@ if __name__ == "__main__":
 Check MARD etc interp_mask works
           """)
     train_GP(
-        "693ms", "R", 50, 15, trace_path="BayestarML/train/outputs693ms/GP_M/GP_M_693ms_50_15_1000_0.95.nc"
+        "693ms", "M", 50, 15, trace_path="BayestarML/train/outputs693ms/GP_M/GP_M_693ms_50_15_1000_0.95.nc"
     )
 
     # end_time_CPU2 = time.process_time()
