@@ -67,7 +67,6 @@ def train_GP(
         # trace.to_netcdf(...)
     elif trace_path:
         trace = az.from_netcdf(trace_path)
-        trace.extend(pm.compute_log_likelihood(trace, model=model, var_names="y"))
         loo = az.loo(trace)
         print("loo trace: ", loo)
     else:
@@ -149,7 +148,6 @@ def train_NN_1layer(
         # trace.to_netcdf(...)
     elif trace_path:
         trace = az.from_netcdf(trace_path)
-        trace.extend(pm.compute_log_likelihood(trace, model=model, var_names="y"))
         loo = az.loo(trace)
         print("loo trace: ", loo)
     else:
@@ -225,7 +223,6 @@ def train_NN(
         # trace.to_netcdf(...)
     elif trace_path:
         trace = az.from_netcdf(trace_path)
-        trace.extend(pm.compute_log_likelihood(trace, model=model, var_names="y"))
         loo = az.loo(trace)
         print("loo trace: ", loo)
     else:
