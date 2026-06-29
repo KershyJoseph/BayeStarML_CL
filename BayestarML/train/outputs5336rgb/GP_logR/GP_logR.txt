@@ -1,0 +1,135 @@
+5336rgb logR GP. Priors in the file haha.
+target_accept= 0.95
+
+Initializing NUTS using jitter+adapt_diag...
+Multiprocess sampling (4 chains in 4 jobs)
+NUTS: [log_ls, eta, u_rotated__, log_ls_v, eta_v, alpha_log_var, u_rotated_log_var_f]
+
+  Progress                         Draws   Divergences   Step size   Grad evals   Sampling Speed   Elapsed   Remaining
+ ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  ──────────────────────────────   2500    0             0.01        1023         5.14 s/draws     3:34:13   0:00:00
+  ──────────────────────────────   2500    0             0.01        511          5.67 s/draws     3:56:14   0:00:00
+  ──────────────────────────────   2500    0             0.01        511          5.43 s/draws     3:45:57   0:00:00
+  ──────────────────────────────   2500    0             0.01        511          5.03 s/draws     3:29:20   0:00:00
+
+Sampling 4 chains for 1_500 tune and 1_000 draw iterations (6_000 + 4_000 draws total) took 14187 seconds.
+AZ Stats for ESS Bulk < 400:
+ Empty DataFrame
+Columns: [mean, sd, hdi_3%, hdi_97%, mcse_mean, mcse_sd, ess_bulk, ess_tail, r_hat]
+Index: []
+rhats:  [('log_ls', 1.0033628536803234), ('u_rotated__', 1.0066638722333754), ('log_ls_v', 1.0014105979469066), ('alpha_
+log_var', 1.0011413070339539), ('u_rotated_log_var_f', 1.0020247186212954), ('eta', 1.0053646529731177), ('eta_v', 1.001
+7634198983507), ('ls', 1.0033628536803234), ('u__', 1.0026506478023378), ('mu__', 1.0035721884767603), ('__f', 1.0035721
+884767603), ('ls_v', 1.001565443246553), ('u_log_var_f', 1.0013453596281514), ('mu_log_var_f', 1.0015532312051614), ('lo
+g_var', 1.003093703979288), ('__f', 1.003122348492889)]
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/pymc/model/fgraph.py:163: UserWarning: Detected variab
+les likely created by GP objects. Further use of these old GP objects should be avoided as it may reintroduce variables
+from the old model. See issue: https://github.com/pymc-devs/pymc/issues/6883
+  warnings.warn(
+Computing ... ──────────────────────────────────────── 100% 0:00:00
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape
+ parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust
+model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are v
+ery different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+loo trace:  Computed from 4000 posterior samples and 4268 observations log-likelihood matrix.
+
+         Estimate       SE
+elpd_loo  5492.25    69.83
+p_loo       54.62        -
+
+There has been a warning during the calculation. Please check the results.
+------
+
+Pareto k diagnostic values:
+                         Count   Pct.
+(-Inf, 0.70]   (good)     4267  100.0%
+   (0.70, 1]   (bad)         1    0.0%
+   (1, Inf)   (very bad)    0    0.0%
+
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape
+ parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust
+model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are v
+ery different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+Sampling: [X_new_latent, X_var_new_latent, f_mu_pred, log_var_pred_latent, y_pred]
+Sampling ... ──────────────────────────────────────── 100% 0:00:00 / 0:00:06
+
+logR predictions
+means:  [0.92253083 0.83997748 0.90797775 ... 0.97984521 0.66386259 1.02240443]
+stdvs:  [0.01258566 0.01418594 0.01023083 ... 0.01038269 0.01430251 0.01598328]
+Unorm logR:  ID
+KIC10213610      0.941521
+EPIC248548424    0.836704
+KIC4585010       0.928954
+KIC2299465       0.793413
+KIC7732255       0.938705
+                   ...
+KIC8479301       0.756781
+KIC8941196       0.913734
+KIC7200117       0.985709
+KIC10777816      0.665581
+KIC4078166       1.019233
+Name: logR, Length: 1068, dtype: float64
+
+logR accuracy stats on feature interpolation predictions
+MAE:  0.008666808651971234
+MARD:  0.9395457331354539
+MRD:  -0.05465589591101149
+
+Stars marked as feature extrapolation:
+Index(['KIC2716732', 'KIC2696115', 'KIC9029603', 'KIC9852625', 'EPIC229039250',
+       'EPIC248500731', 'EPIC206499039', 'KIC10815204', 'KIC5566078',
+       'KIC7880417', 'KIC5685682', 'KIC3936047', 'KIC9210141', 'EPIC210791216',
+       'KIC6620507', 'KIC7265189', 'KIC3658812', 'KIC8683589', 'KIC10610250',
+       'KIC7543672', 'KIC8984255', 'KIC11805876', 'KIC1718046', 'KIC4933782',
+       'KIC10198207', 'KIC12012758', 'KIC5773045', 'EPIC210870657',
+       'EPIC245964524', 'KIC11181345', 'KIC1572317', 'EPIC212121218',
+       'KIC7188156', 'KIC10318787', 'KIC8212479', 'KIC4345370', 'KIC11305377',
+       'KIC9965286', 'KIC9269081', 'KIC7835532', 'EPIC210856102',
+       'EPIC246001907', 'KIC10963918', 'KIC2297793', 'KIC2972876',
+       'KIC11046830', 'KIC12120144', 'KIC7743124', 'KIC8976283', 'KIC8461591',
+       'EPIC210446038', 'EPIC220300441', 'KIC4136835', 'KIC12251438',
+       'KIC8742874', 'EPIC206070627', 'KIC11298877', 'KIC7810708',
+       'KIC9002884', 'KIC7265649', 'KIC5795475', 'KIC8441160', 'KIC6129632',
+       'KIC5193386_A', 'KIC9458060', 'KIC7214916', 'KIC9530396', 'KIC11903733',
+       'KIC3936736', 'KIC7446011', 'KIC9009403', 'KIC1163114', 'KIC9116434',
+       'KIC8408920', 'EPIC246449074', 'KIC11147717', 'EPIC212533408',
+       'KIC11752358', 'KIC5623794', 'KIC5768075', 'KIC8474990'],
+      dtype='object', name='ID')
+2026-06-29 22:17:47.297 python[89201:3641576] XType: Using static font registry.
+
+R predictions
+means:  [ 8.36976386  6.92164092  8.09279082 ...  9.54925077  4.61421816
+ 10.53655417]
+stdvs:  [0.24263563 0.22600364 0.19080197 ... 0.2282693  0.15202584 0.3880307 ]
+
+Unorm R:  ID
+KIC10213610       8.7402
+EPIC248548424     6.8660
+KIC4585010        8.4909
+KIC2299465        6.2146
+KIC7732255        8.6837
+                  ...
+KIC8479301        5.7119
+KIC8941196        8.1985
+KIC7200117        9.6763
+KIC10777816       4.6300
+KIC4078166       10.4528
+Name: R, Length: 1068, dtype: float64
+
+R accuracy stats on feature interpolation predictions
+MAE:  0.20084000453819467
+MARD:  1.9991210970820084
+MRD:  -0.14559362665833203
+
+R accuracy stats on median (interpolated) preds
+MAE:  0.20151070662604662
+MARD:  2.0026350530618537
+MRD:  -0.09159968823109578
+Median down err 1.5x up err on avg
+Peak Memory: 1802.50 MB
+CPU time accumulated: 41.06284 s
+Total wall clock time: 44.09666 s
+><><><><><><><><><><><><><><><><><><><><><><><><><><
+Salve Regina
