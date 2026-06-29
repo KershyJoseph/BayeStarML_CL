@@ -214,7 +214,7 @@ def ms_R_predder():
 
 
 if __name__ == '__main__':
-    ms_R_predder()
+    rgb_M_predder()
 
 
 

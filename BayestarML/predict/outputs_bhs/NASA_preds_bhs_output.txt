@@ -1,0 +1,330 @@
+############################
+Bart 500 MS Nasa M prediction
+###############################
+
+1125 stars left after checking all training features and targets present with err>0 for each.
+Checking 1125 stars for logg consistency
+2026-06-28 19:48:43.750 python[79400:2973135] XType: Using static font registry.
+Removing 18 stars that do not have log(g) consistent with M and R to 3 sigma:
+      loc_rowid  default_flag    Teff  eTeff1  ...     eM     eR  logg_from_M,R  log(g) consistent with M and R
+32          272             1  3130.0    51.0  ...  0.010  0.006       5.158817             deviation > 3 sigma
+46          607             1  5033.8    85.7  ...  0.024  0.022       4.514823             deviation > 3 sigma
+96          935             1  3688.0    86.0  ...  0.049  0.022       4.792181             deviation > 3 sigma
+97          938             1  3688.0    86.0  ...  0.049  0.022       4.792181             deviation > 3 sigma
+98          939             1  3688.0    86.0  ...  0.049  0.022       4.792181             deviation > 3 sigma
+99          940             1  3688.0    86.0  ...  0.049  0.022       4.792181             deviation > 3 sigma
+314        3320             1  3803.0    10.0  ...  0.011  0.003       4.795603             deviation > 3 sigma
+315        3323             1  3803.0    10.0  ...  0.011  0.003       4.795603             deviation > 3 sigma
+357        3879             1  5783.0    19.0  ...  0.025  0.012       4.205023             deviation > 3 sigma
+358        3880             1  5783.0    19.0  ...  0.025  0.012       4.205023             deviation > 3 sigma
+372        4049             1  5033.8    85.7  ...  0.024  0.022       4.514823             deviation > 3 sigma
+640       36147             1  4041.0    69.0  ...  0.024  0.020       4.689019             deviation > 3 sigma
+730       36579             1  6255.0    90.0  ...  0.032  0.012       4.201614             deviation > 3 sigma
+799       36907             1  4426.0    85.0  ...  0.034  0.029       4.584769             deviation > 3 sigma
+800       36908             1  4426.0    85.0  ...  0.034  0.029       4.584769             deviation > 3 sigma
+862       37135             1  4026.0    14.0  ...  0.032  0.014       4.661271             deviation > 3 sigma
+1011      37754             1  5615.0    25.0  ...  0.040  0.006       4.498548             deviation > 3 sigma
+1012      37757             1  5615.0    25.0  ...  0.040  0.006       4.498548             deviation > 3 sigma
+                                                                                                        19:48 [108/1801]
+[18 rows x 41 columns]
+1125
+1107
+Checking 1107 stars for L consistency
+Removing 11 stars that do not have L consistent with SB law to 3 sigma:
+     loc_rowid  default_flag    Teff  eTeff1  eTeff2  ...        eL       eM     eR  L_from_SB  L consistent with SB law
+237       2471             1  4153.0    83.0    83.0  ...  1.000201  0.10000  0.400  70.091973       deviation > 3 sigma
+239       2540             1  4850.0    88.0    88.0  ...  0.070406  0.02000  0.013   0.257527       deviation > 3 sigma
+387       4230             1  4640.0   100.0   100.0  ...  0.035666  0.05000  0.030   0.192433       deviation > 3 sigma
+388       4231             1  4640.0   100.0   100.0  ...  0.035666  0.05000  0.030   0.192433       deviation > 3 sigma
+661      36260             1  5635.0    62.0    62.0  ...  0.009998  0.02000  0.030   0.998033       deviation > 3 sigma
+662      36262             1  5635.0    62.0    62.0  ...  0.009998  0.02000  0.030   0.998033       deviation > 3 sigma
+663      36263             1  5635.0    62.0    62.0  ...  0.009998  0.02000  0.030   0.998033       deviation > 3 sigma
+790      36854             1  3297.0    21.0    21.0  ...  0.002650  0.03325  0.004   0.011365       deviation > 3 sigma
+791      36856             1  3297.0    21.0    21.0  ...  0.002650  0.03325  0.004   0.011365       deviation > 3 sigma
+896      37257             1  4969.0    45.0    45.0  ...  0.098492  0.02000  0.013   0.282960       deviation > 3 sigma
+994      37665             1  5700.0    80.0    80.0  ...  2.460440  0.04350  0.036   1.060868       deviation > 3 sigma
+
+[11 rows x 41 columns]
+1107
+1096
+
+[11 rows x 41 columns]
+1107
+1096
+323 stars marked as extrapolating from training database inputs.
+Removing 11 stars for being outside target training range:      loc_rowid  default_flag     Teff  eTeff1  eTeff2  st_tef
+flim  ...  elogg  eFeH     elogL          eL     eM      eR
+19         229             1   4500.0   250.0   250.0         0.0  ...  0.500  0.16  0.280000  477.589342  0.860  28.970
+207       1982             1   4990.0    39.0    39.0         0.0  ...  0.090  0.03  0.010940    1.039870  0.060   0.170
+233       2373             1   4815.0   100.0   100.0         0.0  ...  0.100  0.08  0.066500   12.001433  0.200   1.100
+238       2512             1   4909.0    32.0    32.0         0.0  ...  0.010  0.05  0.011280    0.989860  0.030   0.050
+251       2702             1   4683.0   100.0   100.0         0.0  ...  0.100  0.09  0.056000    9.990944  0.300   0.900
+256       2749             1   4917.0   100.0   100.0         0.0  ...  0.100  0.09  0.071710    7.199910  0.300   0.400
+313       3316             1   4766.0    49.0    38.0         0.0  ...  0.085  0.10  0.028755    5.834872  0.480   0.560
+368       4002             1   4989.0    46.0    46.0         0.0  ...  0.100  0.04  0.008940    0.930323  0.100   0.190
+369       4003             1   4989.0    46.0    46.0         0.0  ...  0.100  0.04  0.008940    0.930323  0.100   0.190
+380       4144             1   4945.0   100.0   100.0         0.0  ...  0.200  0.10  0.055000    9.305477  0.270   1.400
+483       6350             1  10170.0   450.0   450.0         0.0  ...  0.014  0.20  0.098150   12.000427  0.225   0.069
+                                                                                                         19:58 [72/1801]
+[11 rows x 39 columns]
+-------Start BART----------
+-----------Start BART Sampling------------
+Multiprocess sampling (2 chains in 2 jobs)
+CompoundStep
+>NUTS: [x_dist, sig]
+>PGBART: [mu]
+
+  Progress                         Draws   Divergences   Step size   Grad evals   Sampling Speed   Elapsed   Remaining
+ ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  ──────────────────────────────   3000    0             0.31        15           5.20 draws/s     0:09:36   0:00:00
+  ──────────────────────────────   3000    0             0.28        15           5.24 draws/s     0:09:32   0:00:00
+
+Sampling 2 chains for 2_000 tune and 1_000 draw iterations (4_000 + 2_000 draws total) took 583 seconds.
+We recommend running at least 4 chains for robust computation of convergence diagnostics
+The rhat statistic is larger than 1.01 for some parameters. This indicates problems during sampling. See https://arxiv.o
+rg/abs/1903.08008 for details
+The effective sample size per chain is smaller than 100 for some parameters.  A higher number is needed for reliable rha
+t and ess computation. See https://arxiv.org/abs/1903.08008 for details
+Computing ... ──────────────────────────────────────── 100% 0:00:00
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape
+ parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust
+model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are v
+ery different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+Rhats
+ [('x_dist', 1.0140255683798736), ('mu', 1.030992899632151), ('sig', 1.0000069900175272)]
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape
+ parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust
+model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are v
+ery different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+LOO
+ Computed from 2000 posterior samples and 554 observations log-likelihood matrix.
+
+         Estimate       SE
+elpd_loo  -160.96    37.33
+p_loo       58.93        -
+
+There has been a warning during the calculation. Please check the results.
+------
+
+Pareto k diagnostic values:
+                         Count   Pct.
+(-Inf, 0.70]   (good)      550   99.3%
+   (0.70, 1]   (bad)         3    0.5%
+   (1, Inf)   (very bad)    1    0.2%
+                                                                                                        20:09 [24/1801]
+Sampling: [mu, x_dist, y]
+Sampling ... ──────────────────────────────────────── 100% 0:00:00 / 0:03:31
+-------Start GP----------
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape
+ parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust
+model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are v
+ery different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+Sampling: [X_new_latent, X_var_new_latent, f_mu_pred, log_var_pred_latent, y_pred]
+Sampling ... ──────────────────────────────────────── 100% 0:00:00 / 0:00:09
+-------Start HBNN----------
+starting parallel prediction on 32 worker(s)_
+^[[?61;4;6;7;14;21;22;23;24;28;32;42;52c^[[>0;10;1finished chain 1/4
+finished chain 3/4
+finished chain 2/4
+finished chain 4/4
+-------Start BHS----------
+Initializing NUTS using jitter+adapt_diag...
+Multiprocess sampling (4 chains in 4 jobs)
+NUTS: [mu, sigma, beta_con]
+
+  Progress                         Draws   Divergences   Step size   Grad evals   Sampling Speed   Elapsed   Remaining
+ ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  ──────────────────────────────   2500    0             0.16        31           181.42 draws/s   0:00:13   0:00:00
+  ──────────────────────────────   2500    0             0.22        31           169.93 draws/s   0:00:14   0:00:00
+  ──────────────────────────────   2500    0             0.19        31           162.73 draws/s   0:00:15   0:00:00
+  ──────────────────────────────   2500    0             0.15        15           129.57 draws/s   0:00:19   0:00:00
+
+Sampling 4 chains for 1_500 tune and 1_000 draw iterations (6_000 + 4_000 draws total) took 32 seconds.
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/diagnostics.py:596: RuntimeWarning: invali
+d value encountered in scalar divide
+  (between_chain_variance / within_chain_variance + num_samples - 1) / (num_samples)
+Rhats
+ [('mu', 1.0009797885476257), ('beta_con', 1.0024995834212675), ('sigma', 1.001299031213393), ('beta', 1.002404150696097
+), ('f', 1.003223025069409), ('w', 1.0030598553503918), ('f_test', 1.0026101507604859), ('w_test', 1.0032759379671485)]
+
+MAE BART: 0.05668150255984858
+MARD BART: 7.492420456617281
+MRD BART: -1.1526016382247921
+
+MAE GP: 0.0490850360252223
+MARD GP: 5.923005404618938
+MRD GP: -0.9501370708816311
+
+MAE HBNN: 0.046290615985574476
+MARD HBNN: 5.89013036882858
+MRD HBNN: 0.9900209037322591
+
+MAE BHS: 0.04563985445558673
+MARD BHS: 5.463841005107108
+MRD BHS: -0.12789268428657413
+
+
+
+
+
+
+
+##############################################################
+Bart 500 MS NASA R prediction
+##############################################################
+
+1125 stars left after checking all training features and targets present with err>0 for each.
+Checking 1125 stars for logg consistency
+2026-06-28 19:52:31.226 python[79546:2974871] XType: Using static font registry.
+Removing 18 stars that do not have log(g) consistent with M and R to 3 sigma:
+      loc_rowid  default_flag    Teff  eTeff1  ...     eM     eR  logg_from_M,R  log(g) consistent with M and R
+32          272             1  3130.0    51.0  ...  0.010  0.006       5.158817             deviation > 3 sigma
+46          607             1  5033.8    85.7  ...  0.024  0.022       4.514823             deviation > 3 sigma
+96          935             1  3688.0    86.0  ...  0.049  0.022       4.792181             deviation > 3 sigma
+97          938             1  3688.0    86.0  ...  0.049  0.022       4.792181             deviation > 3 sigma
+98          939             1  3688.0    86.0  ...  0.049  0.022       4.792181             deviation > 3 sigma
+99          940             1  3688.0    86.0  ...  0.049  0.022       4.792181             deviation > 3 sigma
+314        3320             1  3803.0    10.0  ...  0.011  0.003       4.795603             deviation > 3 sigma
+315        3323             1  3803.0    10.0  ...  0.011  0.003       4.795603             deviation > 3 sigma
+357        3879             1  5783.0    19.0  ...  0.025  0.012       4.205023             deviation > 3 sigma
+358        3880             1  5783.0    19.0  ...  0.025  0.012       4.205023             deviation > 3 sigma
+372        4049             1  5033.8    85.7  ...  0.024  0.022       4.514823             deviation > 3 sigma
+640       36147             1  4041.0    69.0  ...  0.024  0.020       4.689019             deviation > 3 sigma
+730       36579             1  6255.0    90.0  ...  0.032  0.012       4.201614             deviation > 3 sigma
+799       36907             1  4426.0    85.0  ...  0.034  0.029       4.584769             deviation > 3 sigma
+800       36908             1  4426.0    85.0  ...  0.034  0.029       4.584769             deviation > 3 sigma
+862       37135             1  4026.0    14.0  ...  0.032  0.014       4.661271             deviation > 3 sigma
+1011      37754             1  5615.0    25.0  ...  0.040  0.006       4.498548             deviation > 3 sigma
+1012      37757             1  5615.0    25.0  ...  0.040  0.006       4.498548             deviation > 3 sigma
+
+[18 rows x 41 columns]
+1125
+1107
+Checking 1107 stars for L consistency
+Removing 11 stars that do not have L consistent with SB law to 3 sigma:
+     loc_rowid  default_flag    Teff  eTeff1  eTeff2  ...        eL       eM     eR  L_from_SB  L consistent with SB law
+237       2471             1  4153.0    83.0    83.0  ...  1.000201  0.10000  0.400  70.091973       deviation > 3 sigma
+239       2540             1  4850.0    88.0    88.0  ...  0.070406  0.02000  0.013   0.257527       deviation > 3 sigma
+387       4230             1  4640.0   100.0   100.0  ...  0.035666  0.05000  0.030   0.192433       deviation > 3 sigma
+388       4231             1  4640.0   100.0   100.0  ...  0.035666  0.05000  0.030   0.192433       deviation > 3 sigma
+661      36260             1  5635.0    62.0    62.0  ...  0.009998  0.02000  0.030   0.998033       deviation > 3 sigma
+662      36262             1  5635.0    62.0    62.0  ...  0.009998  0.02000  0.030   0.998033       deviation > 3 sigma
+663      36263             1  5635.0    62.0    62.0  ...  0.009998  0.02000  0.030   0.998033       deviation > 3 sigma
+790      36854             1  3297.0    21.0    21.0  ...  0.002650  0.03325  0.004   0.011365       deviation > 3 sigma
+791      36856             1  3297.0    21.0    21.0  ...  0.002650  0.03325  0.004   0.011365       deviation > 3 sigma
+896      37257             1  4969.0    45.0    45.0  ...  0.098492  0.02000  0.013   0.282960       deviation > 3 sigma
+994      37665             1  5700.0    80.0    80.0  ...  2.460440  0.04350  0.036   1.060868       deviation > 3 sigma
+
+[11 rows x 41 columns]
+1107
+1096
+323 stars marked as extrapolating from training database inputs.
+Removing 72 stars for being outside target training range:       loc_rowid  default_flag    Teff  eTeff1  eTeff2  st_tef
+flim  ...  elogg  eFeH     elogL         eL     eM     eR
+0            25             1  4157.0    11.0    10.0         0.0  ...  0.050  0.10  0.024885  10.325140  0.135  0.760
+1            35             1  5098.0    44.0    44.0         0.0  ...  0.100  0.04  0.003000   0.100772  0.080  0.080
+2            36             1  5098.0    44.0    44.0         0.0  ...  0.100  0.04  0.003000   0.100772  0.080  0.080
+8           161             1  4826.0    45.0    55.0         0.0  ...  0.065  0.10  0.009545   0.255013  0.115  0.155
+9           165             1  4826.0    45.0    55.0         0.0  ...  0.065  0.10  0.009545   0.255013  0.115  0.155
+...         ...           ...     ...     ...     ...         ...  ...    ...   ...       ...        ...    ...    ...
+1084      38117             1  4776.0    10.0    10.0         0.0  ...  0.040  0.06  0.110000   4.151854  0.140  1.000
+1085      38118             1  5130.0    24.0    24.0         0.0  ...  0.090  0.05  0.100000   5.572455  0.170  0.860
+1086      38119             1  4300.0    50.0    50.0         0.0  ...  0.200  0.16  0.180000  34.661849  0.030  4.010
+1121      39781             1  4504.0    62.0    62.0         0.0  ...  0.010  0.08  0.017285   2.099543  0.090  0.240
+1122      39784             1  4504.0    62.0    62.0         0.0  ...  0.010  0.08  0.017285   2.099543  0.090  0.240
+
+[72 rows x 39 columns]
+-------Start BART----------
+-----------Start BART Sampling------------
+Multiprocess sampling (2 chains in 2 jobs)
+CompoundStep
+>NUTS: [x_dist]
+>PGBART: [mu]
+
+  Progress                         Draws   Divergences   Step size   Grad evals   Sampling Speed   Elapsed   Remaining
+ ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  ──────────────────────────────   3000    0             0.33        15           5.35 draws/s     0:09:20   0:00:00
+  ──────────────────────────────   3000    0             0.31        15           5.35 draws/s     0:09:20   0:00:00
+
+Sampling 2 chains for 2_000 tune and 1_000 draw iterations (4_000 + 2_000 draws total) took 567 seconds.
+We recommend running at least 4 chains for robust computation of convergence diagnostics
+The rhat statistic is larger than 1.01 for some parameters. This indicates problems during sampling. See https://arxiv.o
+rg/abs/1903.08008 for details
+The effective sample size per chain is smaller than 100 for some parameters.  A higher number is needed for reliable rha
+t and ess computation. See https://arxiv.org/abs/1903.08008 for details
+Computing ... ──────────────────────────────────────── 100% 0:00:00
+Rhats
+ [('x_dist', 1.0187044035559205), ('mu', 1.0400894530296312)]
+LOO
+ Computed from 2000 posterior samples and 554 observations log-likelihood matrix.
+
+         Estimate       SE
+elpd_loo  -162.20     4.12
+p_loo        2.63        -
+------
+
+Pareto k diagnostic values:
+                         Count   Pct.
+(-Inf, 0.70]   (good)      554  100.0%
+   (0.70, 1]   (bad)         0    0.0%
+   (1, Inf)   (very bad)    0    0.0%
+
+Sampling: [mu, x_dist, y]
+Sampling ... ──────────────────────────────────────── 100% 0:00:00 / 0:03:47
+-------Start GP----------
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape
+ parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust
+model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are v
+ery different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+Sampling: [X_new_latent, X_var_new_latent, f_mu_pred, log_var_pred_latent, y_pred]
+Sampling ... ──────────────────────────────────────── 100% 0:00:00 / 0:00:17
+-------Start HBNN----------
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape
+ parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust
+model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are v
+ery different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+starting parallel prediction on 32 worker(s)_
+finished chain 4/4
+finished chain 3/4
+finished chain 1/4
+finished chain 2/4
+-------Start BHS----------
+Initializing NUTS using jitter+adapt_diag...
+Multiprocess sampling (4 chains in 4 jobs)
+NUTS: [mu, sigma, beta_con]
+
+  Progress                         Draws   Divergences   Step size   Grad evals   Sampling Speed   Elapsed   Remaining
+ ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  ──────────────────────────────   2500    0             0.25        15           271.22 draws/s   0:00:09   0:00:00
+  ──────────────────────────────   2500    0             0.32        15           275.19 draws/s   0:00:09   0:00:00
+  ──────────────────────────────   2500    0             0.27        15           232.17 draws/s   0:00:10   0:00:00
+  ──────────────────────────────   2500    0             0.30        15           180.60 draws/s   0:00:13   0:00:00
+
+Sampling 4 chains for 1_500 tune and 1_000 draw iterations (6_000 + 4_000 draws total) took 27 seconds.
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/diagnostics.py:596: RuntimeWarning: invali
+d value encountered in scalar divide
+  (between_chain_variance / within_chain_variance + num_samples - 1) / (num_samples)
+Rhats
+ [('mu', 1.0011638344529148), ('beta_con', 1.0029698493165302), ('sigma', 1.001920128389614), ('beta', 1.002554000174770
+6), ('f', 1.0041207979809332), ('w', 1.0038176968355474), ('f_test', 1.003990050580646), ('w_test', 1.0036111996942083)]
+
+MAE BART: 0.045400968638345945
+MARD BART: 6.190551130497064
+MRD BART: -1.335930240938081
+
+MAE GP: 0.022720492229471926
+MARD GP: 2.5433331082618396
+MRD GP: -0.1312467439731136
+
+MAE HBNN: 0.06569389048411804
+MARD HBNN: 11.180514434339385
+MRD HBNN: -0.7252078182838257
+
+MAE BHS: 0.0225994953160581
+MARD BHS: 2.541067334354948
+MRD BHS: -0.13179245526333028

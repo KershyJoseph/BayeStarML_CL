@@ -591,15 +591,21 @@ def get_results(
     stds = posterior_draws.std(0)
     means = posterior_draws.mean(0)
 
+    print(type(means), len(means), len(data["unorm_y_test"]))
+    #use interpolated values for accuracy stats
+    y_true = data["unorm_y_test"].loc[interp_mask]
+    y_interp = means[interp_mask]
+    print(len(y_interp), len(y_true))
+
     print("\n" + target + " predictions")
     print("means: ", means)
     print("stdvs: ", stds)
     print("Unorm " + target + ": ", data["unorm_y_test"])
 
     print("\n" + target + " accuracy stats")
-    print("MAE: ", mean_absolute_error(data["unorm_y_test"], means))
-    print("MARD: ", mard(data["unorm_y_test"], means))
-    print("MRD: ", mrd(data["unorm_y_test"], means))
+    print("MAE: ", mean_absolute_error(y_true, y_interp))
+    print("MARD: ", mard(y_true, y_interp))
+    print("MRD: ", mrd(y_true, y_interp))
 
     print("\nStars marked as feature extrapolation:")
     print(data["test_ID"][~interp_mask])

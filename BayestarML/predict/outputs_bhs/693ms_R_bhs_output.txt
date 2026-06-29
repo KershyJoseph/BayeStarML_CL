@@ -1,0 +1,89 @@
+12 stars marked as extrapolating from training database.
+-------Start BART---------- bart=700
+-----------Start BART Sampling------------
+Multiprocess sampling (2 chains in 2 jobs)
+CompoundStep
+>NUTS: [x_dist]
+>PGBART: [mu]
+
+  Progress                         Draws   Divergences   Step size   Grad evals   Sampling Speed   Elapsed   Remaining
+ ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  ──────────────────────────────   3000    0             0.24        15           4.01 draws/s     0:12:28   0:00:00
+  ──────────────────────────────   3000    0             0.28        15           4.01 draws/s     0:12:28   0:00:00
+
+Sampling 2 chains for 2_000 tune and 1_000 draw iterations (4_000 + 2_000 draws total) took 754 seconds.
+We recommend running at least 4 chains for robust computation of convergence diagnostics
+The rhat statistic is larger than 1.01 for some parameters. This indicates problems during sampling. See https://arxiv.o
+rg/abs/1903.08008 for details
+Computing ... ──────────────────────────────────────── 100% 0:00:00
+Rhats
+ [('x_dist', 1.012981292761299), ('mu', 1.027616811293153)]
+LOO
+ Computed from 2000 posterior samples and 554 observations log-likelihood matrix.
+
+         Estimate       SE
+elpd_loo  -165.45     5.84
+p_loo        2.97        -
+------
+
+Pareto k diagnostic values:
+                         Count   Pct.
+(-Inf, 0.70]   (good)      554  100.0%
+   (0.70, 1]   (bad)         0    0.0%
+   (1, Inf)   (very bad)    0    0.0%
+
+Sampling: [mu, x_dist, y]
+Sampling ... ──────────────────────────────────────── 100% 0:00:00 / 0:04:37
+-------Start GP----------
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape
+ parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust
+model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are v
+ery different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+Sampling: [X_new_latent, X_var_new_latent, f_mu_pred, log_var_pred_latent, y_pred]
+Sampling ... ──────────────────────────────────────── 100% 0:00:00 / 0:00:05
+-------Start HBNN----------
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/stats.py:797: UserWarning: Estimated shape
+ parameter of Pareto distribution is greater than 0.70 for one or more samples. You should consider using a more robust
+model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are v
+ery different. This is more likely to happen with a non-robust model and highly influential observations.
+  warnings.warn(
+starting parallel prediction on 32 worker(s)_
+finished chain 3/4
+finished chain 1/4
+finished chain 2/4
+finished chain 4/4
+-------Start BHS----------
+Initializing NUTS using jitter+adapt_diag...
+Multiprocess sampling (4 chains in 4 jobs)
+NUTS: [mu, sigma, beta_con]
+
+  Progress                         Draws   Divergences   Step size   Grad evals   Sampling Speed   Elapsed   Remaining
+ ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  ──────────────────────────────   2500    0             0.27        31           285.56 draws/s   0:00:08   0:00:00
+  ──────────────────────────────   2500    0             0.33        15           288.61 draws/s   0:00:08   0:00:00
+  ──────────────────────────────   2500    0             0.29        15           243.61 draws/s   0:00:10   0:00:00
+  ──────────────────────────────   2500    0             0.28        15           193.52 draws/s   0:00:12   0:00:00
+
+Sampling 4 chains for 1_500 tune and 1_000 draw iterations (6_000 + 4_000 draws total) took 24 seconds.
+/Users/user1/miniforge3/envs/bhs_env/lib/python3.11/site-packages/arviz/stats/diagnostics.py:596: RuntimeWarning: invali
+d value encountered in scalar divide
+  (between_chain_variance / within_chain_variance + num_samples - 1) / (num_samples)
+Rhats
+ [('mu', 1.0013921591434884), ('beta_con', 1.0027566648501454), ('sigma', 1.0013159577683626), ('beta', 1.00179157874157
+72), ('f', 1.0039528045498667), ('w', 1.0032047294152624), ('f_test', 1.0032317823184569), ('w_test', 1.0029373460212083
+)]
+MAE BART: 0.04827459492020234
+MARD BART: 3.35558453289531
+MRD BART: -0.15563927863117066
+MAE GP: 0.03839054143496761
+MARD GP: 2.345642584834251
+MRD GP: -0.3036404438812661
+MAE HBNN: 0.05600643984925122
+MARD HBNN: 3.6405620294670262
+MRD HBNN: -0.017265224764194547
+
+MAE BHS: 0.03954708258559927
+MARD BHS: 2.421906375269778
+MRD BHS: -0.21423793267406388
+2026-06-27 16:21:26.258 python[74217:2669445] XType: Using static font registry.

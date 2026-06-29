@@ -147,7 +147,7 @@ def prep_data(
 
 if __name__ == "__main__":
     # choose database to select data from for training
-    filename = "datos_todos_v20261905.txt"
+    filename = "all6_2018_data.txt"
     # col headings should be 'col' for value and 'ecol1', 'ecol2' for corresponding errors
 
     training_fs = ["Teff", "logg", "FeH", "L"]
@@ -158,7 +158,7 @@ if __name__ == "__main__":
     # 700ms 
     abs_err_lims = {"elogL": 0.5}
     percent_err_lims = {"eM": 200, "eR": 200}
-    target_lims = {"M": [0, 2]} #skip the target range cutting step if you already know the limits you want
+    target_lims = {"M": [0, 100]} #skip the target range cutting step if you already know the limits you want
 
     # 5436rgb
     # abs_err_lims = {"elogL": 0.05, "eTeff": 100, "elogg": 0.05, "eFeH": 0.1}
@@ -175,11 +175,11 @@ if __name__ == "__main__":
         targets,
         s_class,
         add_logvars,
-        abs_err_lims=abs_err_lims,
+        #abs_err_lims=abs_err_lims,
         percent_err_lims=percent_err_lims,
-        #target_lims=target_lims,
-        check_detached=True,
-        check_consistency=True,
+        target_lims=target_lims,
+        check_detached=False,
+        #check_consistency=True,
         plot_errs=True,
         xgboost=False,
         plot_hr=False,

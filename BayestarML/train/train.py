@@ -241,45 +241,35 @@ def train_NN(
 
 
 if __name__ == "__main__":
-    print("<><><><><<><<><><><>><<><<><<><<<><><><<><<><><><><>")
+    # print("<><><><><<><<><><><>><<><<><<><<<><><><<><<><><><><>")
 
-    process = psutil.Process()
-    start_time_CPU = time.process_time()
-    start_time_wall = time.perf_counter()
+    # process = psutil.Process()
+    # start_time_CPU = time.process_time()
+    # start_time_wall = time.perf_counter()
 
-    print("""5336rgb logR NN 1layer. Priors in the file haha. 
-        """)
-    train_NN_1layer(
-        "5336rgb", "logR", 8, draws=1000
-    )
+    # print("""5336rgb logR NN 1layer. Priors in the file haha. 
+    #     """)
+    # train_NN_1layer(
+    #     "5336rgb", "logR", 8, draws=1000
+    # )
 
-    end_time_CPU = time.process_time()
-    mem1 = process.memory_info().rss / 1024**2
-    print(f"Peak Memory: {mem1:.2f} MB")
-    print(f"CPU time accumulated: {(end_time_CPU - start_time_CPU):.5f} s")
-    print(f"Total wall clock time: {time.perf_counter() - start_time_wall:.5f} s")
+    # end_time_CPU = time.process_time()
+    # mem1 = process.memory_info().rss / 1024**2
+    # print(f"Peak Memory: {mem1:.2f} MB")
+    # print(f"CPU time accumulated: {(end_time_CPU - start_time_CPU):.5f} s")
+    # print(f"Total wall clock time: {time.perf_counter() - start_time_wall:.5f} s")
 
-    print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
+    # print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
 
     # start_time_CPU2 = time.process_time()
     # start_time2 = time.time()
 
-    # print("""693ms R GP. 50_15_2000.
-
-    #     log_ls = pm.Normal("log_ls", mu=0.2, sigma=0.3, shape=D)
-    #     ls = pm.Deterministic("ls", pm.math.exp(log_ls))
-    #     log_eta = pm.Normal("log_eta", mu=-0.1, sigma=0.5)
-    #     eta = pm.Deterministic("eta", pm.math.exp(log_eta))
-
-    #     log_ls_v = pm.Normal("log_ls_v", mu=-0.8, sigma=0.3, shape=D_var)
-    #     ls_v = pm.Deterministic("ls_v", pm.math.exp(log_ls_v))
-    #     log_eta_v = pm.Normal("log_eta_v", mu=-0.9, sigma=0.3)
-    #     eta_v = pm.Deterministic("eta_v", pm.math.exp(log_eta_v))
-
-    #       """)
-    # train_GP(
-    #     "693ms", "R", 50, 15, draws=2000
-    # )
+    print("""
+Check MARD etc interp_mask works
+          """)
+    train_GP(
+        "693ms", "R", 50, 15, trace_path="BayestarML/train/outputs693ms/GP_M/GP_M_693ms_50_15_1000_0.95.nc"
+    )
 
     # end_time_CPU2 = time.process_time()
     # mem2 = process.memory_info().rss / 1024**2
