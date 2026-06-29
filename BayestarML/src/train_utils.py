@@ -358,7 +358,7 @@ def model_pred_plotter(
 
     if target[:3]=="log":
         t = target[3:]
-        x_label = fr"True {"log"+target} [$\mathrm{{{t}}}_{{\odot}}$]"
+        x_label = fr"True log{target} [$\mathrm{{{t}}}_{{\odot}}$]"
         y_pred_label = fr"Predicted {target} [$\mathrm{{{t}}}_{{\odot}}$]"
         y_res_label = fr"Residual [$\mathrm{{{t}}}_{{\odot}}$]"
 
