@@ -99,7 +99,8 @@ def prepare_pred_data(
     y_min = constants["targets"]["MIN"][target]
     y_max = constants["targets"]["MAX"][target]
     t_mask = (y_compare > y_min) & (y_compare < y_max)
-    print(f"Removing {len(x[~t_mask])} stars for being outside target training range: {df_clean[~t_mask]}")
+    if filename != "test_set":
+        print(f"Removing {len(x[~t_mask])} stars for being outside target training range: {df_clean[~t_mask]}")
 
     star_id, x, x_er = star_id[t_mask], x[t_mask], x_er[t_mask]
     y_compare, y_comp_er, interp_mask = y_compare[t_mask], y_comp_er[t_mask], interp_mask[t_mask]
