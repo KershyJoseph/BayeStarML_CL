@@ -259,7 +259,7 @@ if __name__ == "__main__":
     print("""5336rgb logR GP. Get plot. 
         """)
     train_GP(
-        "5336rgb", "logR", 100, 30, trace_path="BayestarML/train/outputs5336rgb/GP_logR/GP_logR_5336rgb_30_10_1000_0.95.nc"
+        "5336rgb", "logR", 30, 10, trace_path="BayestarML/train/outputs5336rgb/GP_logR/GP_logR_5336rgb_30_10_1000_0.95.nc"
     )
 
     end_time_CPU = time.process_time()
