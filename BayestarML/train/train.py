@@ -67,6 +67,9 @@ def train_GP(
         # trace.to_netcdf(...)
     elif trace_path:
         trace = az.from_netcdf(trace_path)
+        trace.extend(pm.compute_log_likelihood(trace, model=model, var_names="y"))
+        loo = az.loo(trace)
+        print("loo trace: ", loo)
     else:
         trace = train(
             model,
@@ -106,7 +109,8 @@ def train_NN_1layer(
     chains=4,
     advi=False,
     nutpie=False,
-    plot_density=False
+    plot_density=False,
+    trace_path=None
 ):
     """Function to train HBNN"""
     hyperp_str = (
@@ -143,6 +147,11 @@ def train_NN_1layer(
         print("ELBO:\n", approx.hist)
         trace.extend(pm.compute_log_likelihood(trace, model=model, var_names="y"))
         # trace.to_netcdf(...)
+    elif trace_path:
+        trace = az.from_netcdf(trace_path)
+        trace.extend(pm.compute_log_likelihood(trace, model=model, var_names="y"))
+        loo = az.loo(trace)
+        print("loo trace: ", loo)
     else:
         trace = train(
             model,
@@ -216,6 +225,9 @@ def train_NN(
         # trace.to_netcdf(...)
     elif trace_path:
         trace = az.from_netcdf(trace_path)
+        trace.extend(pm.compute_log_likelihood(trace, model=model, var_names="y"))
+        loo = az.loo(trace)
+        print("loo trace: ", loo)
     else:
         trace = train(
             model,
@@ -270,7 +282,22 @@ Check MARD etc interp_mask works
     train_GP(
         "693ms", "M", 50, 15, trace_path="BayestarML/train/outputs693ms/GP_M/GP_M_693ms_50_15_1000_0.95.nc"
     )
+    print(" ^ That was GP M")
 
+    train_NN(
+        "693ms", "M", 8, trace_path="BayestarML/train/outputs693ms/NN_M/NN_M_693ms_8_2000_0.95.nc"
+    )
+    print(" ^ That was NN M")
+
+    train_GP(
+        "693ms", "R", 50, 15, trace_path="BayestarML/train/outputs693ms/GP_R/GP_R_693ms_50_15_2000_0.95.nc"
+    )
+    print(" ^ That was GP R")
+
+    train_NN_1layer(
+        "693ms", "R", 8, trace_path="BayestarML/train/outputs693ms/NN_R/NN_1layer_R_693ms_8_2000_0.95.nc"
+    )
+    print(" ^ That was NN R")
     # end_time_CPU2 = time.process_time()
     # mem2 = process.memory_info().rss / 1024**2
     # print(f"Peak Memory: {(mem2-mem1):.2f} MB")
