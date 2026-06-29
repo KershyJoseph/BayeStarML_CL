@@ -671,16 +671,26 @@ def get_results(
         y_p84 = np.percentile(y_draws, 84, axis=0)
 
         print("\n" + target + " accuracy stats on median (interpolated) preds")
-        y_p50_interp = y_pred[interp_mask]
+        y_p50_interp = y_p50[interp_mask]
         print("MAE: ", mean_absolute_error(y_true_interp, y_p50_interp))
         print("MARD: ", mard(y_true_interp, y_p50_interp))
         print("MRD: ", mrd(y_true_interp, y_p50_interp))
+
+        sig1 = y_p84 - y_p50
+        sig2 = y_p50 - y_p16
+        y_pred_err = (sig1+sig2)/2
+        if np.average(sig1/sig2) > 1.5:
+            print("Median up err 1.5x down err on avg")
+        elif np.average(sig1/sig2) > 0.6666:
+            print("Median down err 1.5x up err on avg")
+        else:
+            print("Median errs more or less symmetric")
 
         model_pred_plotter(
             y_true,
             y_true_err,
             y_pred,
-            np.array([y_p50 - y_p16, y_p84 - y_p50]),
+            y_pred_err,
             interp_mask,
             target,
             outputs_folder_path,
