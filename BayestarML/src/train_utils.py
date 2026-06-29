@@ -352,8 +352,15 @@ def model_pred_plotter(
         target = "Radius"
     elif target=="M":
         target = "Mass"
-    else:
-        raise Exception("Not sure how to do that yet...")
+    x_label = fr"True {target} ($\mathrm{{{target[0]}}}_{{\odot}}$)"
+    y_pred_label = fr"Predicted {target} ($\mathrm{{{target[0]}}}_{{\odot}}$)"
+    y_res_label = fr"Residual ($\mathrm{{{target[0]}}}_{{\odot}}$)"
+
+    if target[:3]=="log":
+        t = target[3:]
+        x_label = fr"True {"log"+target} [$\mathrm{{{t}}}_{{\odot}}$]"
+        y_pred_label = fr"Predicted {target} [$\mathrm{{{t}}}_{{\odot}}$]"
+        y_res_label = fr"Residual [$\mathrm{{{t}}}_{{\odot}}$]"
 
     df_all = pd.DataFrame({'y_true': y_true,
                            'y_true_err': y_true_err,
@@ -518,7 +525,7 @@ def model_pred_plotter(
 
     frame_width = ax_res.spines["bottom"].get_linewidth()
     ax_preds.plot([y_true.min()-0.1, y_true.max()+0.1], [y_true.min()-0.1, y_true.max()+0.1], linestyle="--", color='k', linewidth=frame_width)
-    ax_preds.set_ylabel(fr"Predicted {target} ($\mathrm{{{target[0]}}}_{{\odot}}$)")
+    ax_preds.set_ylabel(y_pred_label)
     ax_preds.legend(handles=legend_handles)
     ax_preds.grid(True, alpha=0.3)
 
@@ -569,8 +576,8 @@ def model_pred_plotter(
             )
 
     ax_res.axhline(0, color='k', linewidth=frame_width)
-    ax_res.set_xlabel(fr"True {target} ($\mathrm{{{target[0]}}}_{{\odot}}$)")
-    ax_res.set_ylabel(fr"Residual ($\mathrm{{{target[0]}}}_{{\odot}}$)")
+    ax_res.set_xlabel(x_label)
+    ax_res.set_ylabel(y_res_label)
     ax_res.grid(True, alpha=0.3)
 
     if plot_density:
@@ -591,18 +598,16 @@ def get_results(
     stds = posterior_draws.std(0)
     means = posterior_draws.mean(0)
 
-    print(type(means), len(means), len(data["unorm_y_test"]))
     #use interpolated values for accuracy stats
     y_true = data["unorm_y_test"].loc[interp_mask]
     y_interp = means[interp_mask]
-    print(len(y_interp), len(y_true))
 
     print("\n" + target + " predictions")
     print("means: ", means)
     print("stdvs: ", stds)
     print("Unorm " + target + ": ", data["unorm_y_test"])
 
-    print("\n" + target + " accuracy stats")
+    print("\n" + target + " accuracy stats on feature interpolation predictions")
     print("MAE: ", mean_absolute_error(y_true, y_interp))
     print("MARD: ", mard(y_true, y_interp))
     print("MRD: ", mrd(y_true, y_interp))
@@ -639,10 +644,13 @@ def get_results(
         print("stdvs: ", y_pred_err)
         print("Unorm " + target + ": ", y_true)
 
-        print("\n" + target + " accuracy stats")
-        print("MAE: ", mean_absolute_error(y_true, y_pred))
-        print("MARD: ", mard(y_true, y_pred))
-        print("MRD: ", mrd(y_true, y_pred))
+        #use interpolated values for accuracy stats
+        y_true_interp = y_true[interp_mask]
+        y_pred_interp = y_pred[interp_mask]
+        print("\n" + target + " accuracy stats on feature interpolation predictions")
+        print("MAE: ", mean_absolute_error(y_true_interp, y_pred_interp))
+        print("MARD: ", mard(y_true_interp, y_pred_interp))
+        print("MRD: ", mrd(y_true_interp, y_pred_interp))
 
         model_pred_plotter(
             y_true,
@@ -661,10 +669,11 @@ def get_results(
         y_p50 = np.percentile(y_draws, 50, axis=0)
         y_p84 = np.percentile(y_draws, 84, axis=0)
 
-        print("\n" + target + " accuracy stats on median pred")
-        print("MAE: ", mean_absolute_error(y_true, y_p50))
-        print("MARD: ", mard(y_true, y_p50))
-        print("MRD: ", mrd(y_true, y_p50))
+        print("\n" + target + " accuracy stats on median (interpolated) preds")
+        y_p50_interp = y_pred[interp_mask]
+        print("MAE: ", mean_absolute_error(y_true_interp, y_p50_interp))
+        print("MARD: ", mard(y_true_interp, y_p50_interp))
+        print("MRD: ", mrd(y_true_interp, y_p50_interp))
 
         model_pred_plotter(
             y_true,

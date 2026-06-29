@@ -250,51 +250,30 @@ def train_NN(
 
 
 if __name__ == "__main__":
-    # print("<><><><><<><<><><><>><<><<><<><<<><><><<><<><><><><>")
+    print("<><><><><<><<><><><>><<><<><<><<<><><><<><<><><><><>")
 
-    # process = psutil.Process()
-    # start_time_CPU = time.process_time()
-    # start_time_wall = time.perf_counter()
+    process = psutil.Process()
+    start_time_CPU = time.process_time()
+    start_time_wall = time.perf_counter()
 
-    # print("""5336rgb logR NN 1layer. Priors in the file haha. 
-    #     """)
-    # train_NN_1layer(
-    #     "5336rgb", "logR", 8, draws=1000
-    # )
+    print("""5336rgb logR GP. Get plot. 
+        """)
+    train_GP(
+        "5336rgb", "logR", 100, 30, trace_path="BayestarML/train/outputs5336rgb/GP_logR/GP_logR_5336rgb_30_10_1000_0.95.nc"
+    )
 
-    # end_time_CPU = time.process_time()
-    # mem1 = process.memory_info().rss / 1024**2
-    # print(f"Peak Memory: {mem1:.2f} MB")
-    # print(f"CPU time accumulated: {(end_time_CPU - start_time_CPU):.5f} s")
-    # print(f"Total wall clock time: {time.perf_counter() - start_time_wall:.5f} s")
+    end_time_CPU = time.process_time()
+    mem1 = process.memory_info().rss / 1024**2
+    print(f"Peak Memory: {mem1:.2f} MB")
+    print(f"CPU time accumulated: {(end_time_CPU - start_time_CPU):.5f} s")
+    print(f"Total wall clock time: {time.perf_counter() - start_time_wall:.5f} s")
 
-    # print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
+    print("><><><><><><><><><><><><><><><><><><><><><><><><><><")
 
     # start_time_CPU2 = time.process_time()
     # start_time2 = time.time()
 
-    print("""
-Check MARD etc interp_mask works
-          """)
-    train_GP(
-        "693ms", "M", 50, 15, trace_path="BayestarML/train/outputs693ms/GP_M/GP_M_693ms_50_15_1000_0.95.nc"
-    )
-    print(" ^ That was GP M")
 
-    train_NN(
-        "693ms", "M", 8, trace_path="BayestarML/train/outputs693ms/NN_M/NN_M_693ms_8_2000_0.95.nc"
-    )
-    print(" ^ That was NN M")
-
-    train_GP(
-        "693ms", "R", 50, 15, trace_path="BayestarML/train/outputs693ms/GP_R/GP_R_693ms_50_15_2000_0.95.nc"
-    )
-    print(" ^ That was GP R")
-
-    train_NN_1layer(
-        "693ms", "R", 8, trace_path="BayestarML/train/outputs693ms/NN_R/NN_1layer_R_693ms_8_2000_0.95.nc"
-    )
-    print(" ^ That was NN R")
     # end_time_CPU2 = time.process_time()
     # mem2 = process.memory_info().rss / 1024**2
     # print(f"Peak Memory: {(mem2-mem1):.2f} MB")
