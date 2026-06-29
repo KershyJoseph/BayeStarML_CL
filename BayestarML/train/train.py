@@ -256,10 +256,10 @@ if __name__ == "__main__":
     start_time_CPU = time.process_time()
     start_time_wall = time.perf_counter()
 
-    print("""5336rgb logR GP. Get plot. 
+    print("""5336rgb logR NN. Priors in file
         """)
-    train_GP(
-        "5336rgb", "logR", 30, 10, trace_path="BayestarML/train/outputs5336rgb/GP_logR/GP_logR_5336rgb_30_10_1000_0.95.nc"
+    train_NN_1layer(
+        "5336rgb", "logR", 8, draws=2000
     )
 
     end_time_CPU = time.process_time()
