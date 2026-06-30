@@ -607,13 +607,31 @@ def get_results(
     print("stdvs: ", stds)
     print("Unorm " + target + ": ", data["unorm_y_test"])
 
-    print("\n" + target + " accuracy stats on feature interpolation predictions")
+    print("\n" + target + " point metrics on feature interpolation predictions")
     print("MAE: ", mean_absolute_error(y_true, y_interp))
     print("MARD: ", mard(y_true, y_interp))
     print("MRD: ", mrd(y_true, y_interp))
 
     print("\nStars marked as feature extrapolation:")
     print(data["test_ID"][~interp_mask])
+
+    if dataset_key=="693ms" and target=="M":
+        #get accuracy stats on ranges
+        max_range=[0.8,1.4]
+        y_true_max = y_true[(y_true>max_range[0]) & (y_true<max_range[1])]
+        y_interp_max = y_interp[(y_true>max_range[0]) & (y_true<max_range[1])]
+        print("\n" + target + " point metrics on feature interpolation predictions for range " + max_range)
+        print("MAE: ", mean_absolute_error(y_true_max, y_interp_max))
+        print("MARD: ", mard(y_true_max, y_interp_max))
+        print("MRD: ", mrd(y_true_max, y_interp_max))
+
+        low_range=[0,0.625]
+        y_true_low = y_true[(y_true>low_range[0]) & (y_true<low_range[1])]
+        y_interp_low = y_interp[(y_true>low_range[0]) & (y_true<low_range[1])]
+        print("\n" + target + " point metrics on feature interpolation predictions for range " + low_range)
+        print("MAE: ", mean_absolute_error(y_true_low, y_interp_low))
+        print("MARD: ", mard(y_true_low, y_interp_low))
+        print("MRD: ", mrd(y_true_low, y_interp_low))
 
     model_pred_plotter(
         data["unorm_y_test"],

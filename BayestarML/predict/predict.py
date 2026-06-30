@@ -139,8 +139,6 @@ def ms_R():
 
     df_weights = get_bhs_weights(ws, star_id, dataset_key+"_bhs_"+target+"_ws.txt")
 
-    plot_bhs_weights(df_weights, target, "BayestarML/data/"+dataset_key+".txt", dataset_key+"_bhs_"+target+"_ws_plot.pdf")
-
 
 def ms_M():
     features = ["Teff", "logg", "FeH", "logL"]
@@ -156,7 +154,6 @@ def ms_M():
 
     df_weights = get_bhs_weights(ws, star_id, dataset_key+"_bhs_"+target+"_ws.txt")
 
-    plot_bhs_weights(df_weights, target, "BayestarML/data/"+dataset_key+".txt", dataset_key+"_bhs_"+target+"_ws_plot.pdf")
 
 
 def rgb_M():

@@ -8,6 +8,7 @@ import pandas as pd
 import seaborn as sns
 from sklearn.model_selection import train_test_split
 from scipy.stats import gaussian_kde
+from matplotlib.ticker import MaxNLocator
 
 RANDOM_SEED = 5732
 
@@ -485,7 +486,7 @@ def hr_plot(df, savename: str, hue: str = None, density_plot: bool = False, mass
     plt.close()
 
 
-def plot_feature_target(df: pd.DataFrame, savename: str, feature: str, target: str, density_plot: bool = False, mass_plot = False, bad_paretos=None):
+def plot_feature_target(df: pd.DataFrame, savename: str, feature: str, target: str, density_plot: bool = False, mass_plot = False, weights_file : bool = False, bad_paretos=None):
     """Plot target as a function of feature - should be keys in df
     """
     x = df[feature]
@@ -493,7 +494,21 @@ def plot_feature_target(df: pd.DataFrame, savename: str, feature: str, target: s
     y = df[target]
     y_err = df["e" + target]
     fmt="o"
-    fig, ax = plt.subplots(figsize=(8,6))
+
+    x_labels = {
+        "logL": r"log $L$ [$\mathrm{L_{\odot}}$]",
+        "L": r"$L$ ($\mathrm{L_{\odot}}$)",
+        "Teff": r"$T_{eff}$ (K)",
+        "FeH": r"$[Fe/H]$ (dex)",
+        "logg": r"$\log g$ (dex)"
+    }
+
+    y_labels = {
+        "M": r"$M$ ($\mathrm{M_{\odot}}$)",
+        "R": r"$R$ ($\mathrm{R_{\odot}}$)"
+    }
+
+    fig, ax = plt.subplots(figsize=(4,4))
     if density_plot:
         stack = np.vstack([x, y])
         density = gaussian_kde(stack)(stack)
@@ -506,25 +521,37 @@ def plot_feature_target(df: pd.DataFrame, savename: str, feature: str, target: s
     elif mass_plot:
         scatter = ax.scatter(x, y, c=df["M"], cmap='plasma', s=5, zorder=3)
         fig.colorbar(scatter, ax=ax, label="Mass (Msol)")
-    ax.errorbar(x, y, y_err, x_err, fmt=fmt, alpha=0.5, zorder=2)
+    elif weights_file:
+        df_ws = pd.read_csv(weights_file)
+        ws = df_ws[["BART_weight", "HBNN_weight", "GP_weight"]].to_numpy()
+        ax.scatter(x, y, c=ws, s=50, edgecolor='gray', alpha=0.7, zorder=3)
+
+    ax.errorbar(x, y, y_err, x_err, fmt=fmt, ecolor='gray', alpha=0.5, zorder=2)
+
     if bad_paretos:
         df_bad = df.iloc[bad_paretos]
         plt.plot(df_bad[feature], df_bad[target], 'rx', zorder=4)
         print(df_bad[[feature, "e"+feature]])
-    ax.set_xlabel(feature)
-    ax.set_ylabel(target + " (" + target[0] + "sol)")
-    fig.savefig("BayestarML/data/figures/feature_target_figs/" + savename)
+
+    ax.set_xlabel(x_labels[feature])
+    ax.set_ylabel(y_labels[target])
+    ax.grid(True, alpha=0.3, color="gray")
+    ax.xaxis.set_major_locator(MaxNLocator(nbins=5))  # Max 5 ticks on X-axis
+    ax.yaxis.set_major_locator(MaxNLocator(nbins=5))
+    fig.savefig("BayestarML/data/figures/feature_target_figs/w_plots" + savename)
     plt.close()
 
-# df = pd.read_csv("BayestarML/data/693ms.txt")
-# training_fs = ["Teff", "logg", "FeH", "logL"]
-# targets = ["M", "R"]
-# dataset_key = "693ms"
-# (x_train, x_test, y_train, y_test) = return_train_test(df, training_fs, targets, dataset_key)
-# df_train = pd.concat([x_train, y_train], axis=1)
+df = pd.read_csv("BayestarML/data/693ms.txt")
+training_fs = ["Teff", "logg", "FeH", "logL"]
+targets = ["M", "R"]
+dataset_key = "693ms"
+(x_train, x_test, y_train, y_test) = return_train_test(df, training_fs, targets, dataset_key)
+df_test = pd.concat([x_test, y_test], axis=1)
 
-# for f in training_fs:
-#     plot_feature_target(df_train, "bad_paretos/paretos_GP_M_"+f+"_693ms.pdf", f, "M", bad_paretos=[57, 75, 139, 187, 216, 268, 275, 282, 323, 343, 349, 362, 430, 446, 499])
+
+for f in training_fs:
+    for t in targets:
+        plot_feature_target(df_test, f+"_"+t+"_bhs_ws.pdf", f, t, weights_file="BayestarML/predict/outputs_bhs/693ms_bhs_"+t+"_ws.txt")
 
 
 #HR PLOTTING
