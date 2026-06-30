@@ -95,8 +95,8 @@ def predict(x, x_er, interp_mask,
         mrd_HBNN = mrd(y_comp_interp, hbnn4_pred.mean(0)[interp_mask])
         mae_HBNN = mean_absolute_error(y_comp_interp, hbnn4_pred.mean(0)[interp_mask])
 
-        print("HBNN interp point metrics:")
-        print('\nMAE HBNN:', mae_HBNN)
+        print("\nHBNN interp point metrics:")
+        print('MAE HBNN:', mae_HBNN)
         print('MARD HBNN:', mard_HBNN)
         print('MRD HBNN:', mrd_HBNN)
 
@@ -108,8 +108,8 @@ def predict(x, x_er, interp_mask,
         mrd_BHS = mrd(y_comp_interp, bhs_pred.mean(0)[interp_mask])
         mae_BHS = mean_absolute_error(y_comp_interp, bhs_pred.mean(0)[interp_mask])
 
-        print("BHS interp point metrics:")
-        print('\nMAE BHS:', mae_BHS)
+        print("\nBHS interp point metrics:")
+        print('MAE BHS:', mae_BHS)
         print('MARD BHS:', mard_BHS)
         print('MRD BHS:', mrd_BHS)
 
@@ -222,7 +222,7 @@ def ms_R_predder():
         gp_trace_path = "BayestarML/train/outputs693ms/GP_R/GP_R_693ms_50_15_2000_0.95.nc",
         nn_trace_path = "BayestarML/train/outputs693ms/NN_R/NN_1layer_R_693ms_8_2000_0.95.nc",
         bart_m=500, m_mean=50, m_var=15, nn_nodes=8,
-        y_compare=y_compare, y_comp_er=y_comp_er, savename="BHS_NExA_R", NN_1layer=True, color="pred", plot_density=True)
+        y_compare=y_compare, y_comp_er=y_comp_er, savename="BHS_NExA_R", NN_1layer=True, color="pred", plot_density=False)
 
     bhs_preds = pd.DataFrame({
         "ID": star_id,
@@ -234,7 +234,7 @@ def ms_R_predder():
 
 
 if __name__ == '__main__':
-    ms_M_predder()
+    ms_R_predder()
 
     # ms_M()
     # print("^ That was ms M, bart 500")
