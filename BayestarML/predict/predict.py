@@ -216,7 +216,7 @@ def ms_R_predder():
     features = ["Teff", "logg", "FeH", "logL"]
     target = "R"
     dataset_key = "693ms"
-    star_id, x, x_er, y_compare, y_comp_er, interp_mask = prepare_pred_data("NASAexop_archive_stars_all6.txt", dataset_key, features, target, check_consistency=True)
+    star_id, x, x_er, y_compare, y_comp_er, interp_mask = prepare_pred_data("NASAexop_archive_stars_all6ms.txt", dataset_key, features, target, check_consistency=True)
 
     _, pred, _ = predict(x, x_er, interp_mask, target, dataset_key,
         gp_trace_path = "BayestarML/train/outputs693ms/GP_R/GP_R_693ms_50_15_2000_0.95.nc",
