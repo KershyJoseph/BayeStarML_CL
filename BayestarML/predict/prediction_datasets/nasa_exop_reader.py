@@ -3,6 +3,8 @@ Convert NASA exoplanet archive data into format used for Bayestar
 """
 import pandas as pd
 import numpy as np
+from matplotlib.path import Path
+import matplotlib.pyplot as plt
 
 def logomatic(df, var):
     """Add a log(var) column to df with bounds method 
@@ -16,7 +18,7 @@ def logomatic(df, var):
     df["elog"+var+"2"] = df["log"+var] - np.log10(df[var] - df["e"+var+"2"])
     return df
 
-df = pd.read_csv("Datasets/PS_2026.06.03_04.08.32.tab", sep="\t", comment="#")
+df = pd.read_csv("BayestarML/predict/prediction_datasets/PS_2026.06.03_04.08.32.tab", sep="\t", comment="#")
 print(f"Starting number of stars: {len(df)}")
 
 col_names_change = {
@@ -54,4 +56,34 @@ df_all6 = df[((df[limits_flag]==0).all(axis=1)) &
 print(f"All 6 stars: {len(df_all6)}")
 
 df_all6 = logomatic(df_all6, "Teff")
-df_all6.to_csv("Datasets/NASAexop_archive_stars.txt", sep='\t', na_rep='NA', index=False)
+
+#remove duplicates! (Same star for many planets)
+df_all6.drop_duplicates(inplace=True, subset=["Teff", "R"]) #subset anything but row id
+
+#add MS/RG distinction 
+rg_vertices = np.array([
+    [3.8, 1.4],
+    [3.7, 4.0],
+    [3.5, 3.0],
+    [3.65, -0.5],
+    [3.67, -0.3],
+])
+rg_mesh = Path(rg_vertices)
+hr_points = df_all6[["logTeff", "logL"]].values
+rg_mask = rg_mesh.contains_points(hr_points)
+
+x = df_all6["logTeff"]
+y = df_all6["logL"]
+plt.plot(x, y, 'x')
+plt.plot(x[rg_mask], y[rg_mask], 'o', alpha=0.5)
+plt.gca().xaxis.set_inverted(True)
+#plt.show()
+
+print(str(len(df_all6))+" stars total")
+print(str(len(df_all6[~rg_mask]))+" ms stars")
+print(str(len(df_all6[rg_mask]))+" rgb stars")
+
+df_all6 = df_all6[~rg_mask]
+
+df_all6.to_csv("BayestarML/predict/prediction_datasets/NASAexop_archive_stars_all6ms.txt", sep='\t', na_rep='NA', index=False)
+

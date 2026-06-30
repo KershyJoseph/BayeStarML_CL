@@ -63,11 +63,11 @@ def predict(x, x_er, interp_mask,
 
     if y_compare is not None: #get MARD and MRD for model vs y_compare values
         #interpolated vals
-        y_compare = y_compare[interp_mask]
+        y_comp_interp = y_compare[interp_mask]
 
-        mard_BART = mard(y_compare, bart4_pred.mean(0)[interp_mask])
-        mrd_BART = mrd(y_compare, bart4_pred.mean(0)[interp_mask])
-        mae_BART = mean_absolute_error(y_compare, bart4_pred.mean(0)[interp_mask])
+        mard_BART = mard(y_comp_interp, bart4_pred.mean(0)[interp_mask])
+        mrd_BART = mrd(y_comp_interp, bart4_pred.mean(0)[interp_mask])
+        mae_BART = mean_absolute_error(y_comp_interp, bart4_pred.mean(0)[interp_mask])
 
         print("\nBART interp point metrics:")
         print('MAE BART:', mae_BART)
@@ -75,12 +75,12 @@ def predict(x, x_er, interp_mask,
         print('MRD BART:', mrd_BART)
 
         # print("\nBART ranges:")
-        # get_ranges_point_metrics(bart4_pred.mean(0)[interp_mask], y_compare, target, [0.8, 1.4])
-        # get_ranges_point_metrics(bart4_pred.mean(0)[interp_mask], y_compare, target, [0.0, 0.625])
+        # get_ranges_point_metrics(bart4_pred.mean(0)[interp_mask], y_comp_interp, target, [0.8, 1.4])
+        # get_ranges_point_metrics(bart4_pred.mean(0)[interp_mask], y_comp_interp, target, [0.0, 0.625])
 
-        mard_GP = mard(y_compare, gp4_pred.mean(0)[interp_mask])
-        mrd_GP = mrd(y_compare, gp4_pred.mean(0)[interp_mask])
-        mae_GP = mean_absolute_error(y_compare, gp4_pred.mean(0)[interp_mask])
+        mard_GP = mard(y_comp_interp, gp4_pred.mean(0)[interp_mask])
+        mrd_GP = mrd(y_comp_interp, gp4_pred.mean(0)[interp_mask])
+        mae_GP = mean_absolute_error(y_comp_interp, gp4_pred.mean(0)[interp_mask])
 
         print("\nGP interp point metrics:")
         print('MAE GP:', mae_GP)
@@ -88,12 +88,12 @@ def predict(x, x_er, interp_mask,
         print('MRD GP:', mrd_GP)
 
         # print("\nGP ranges:")
-        # get_ranges_point_metrics(gp4_pred.mean(0)[interp_mask], y_compare, target, [0.8, 1.4])
-        # get_ranges_point_metrics(gp4_pred.mean(0)[interp_mask], y_compare, target, [0.0, 0.625])
+        # get_ranges_point_metrics(gp4_pred.mean(0)[interp_mask], y_comp_interp, target, [0.8, 1.4])
+        # get_ranges_point_metrics(gp4_pred.mean(0)[interp_mask], y_comp_interp, target, [0.0, 0.625])
 
-        mard_HBNN = mard(y_compare, hbnn4_pred.mean(0)[interp_mask])
-        mrd_HBNN = mrd(y_compare, hbnn4_pred.mean(0)[interp_mask])
-        mae_HBNN = mean_absolute_error(y_compare, hbnn4_pred.mean(0)[interp_mask])
+        mard_HBNN = mard(y_comp_interp, hbnn4_pred.mean(0)[interp_mask])
+        mrd_HBNN = mrd(y_comp_interp, hbnn4_pred.mean(0)[interp_mask])
+        mae_HBNN = mean_absolute_error(y_comp_interp, hbnn4_pred.mean(0)[interp_mask])
 
         print("HBNN interp point metrics:")
         print('\nMAE HBNN:', mae_HBNN)
@@ -101,12 +101,12 @@ def predict(x, x_er, interp_mask,
         print('MRD HBNN:', mrd_HBNN)
 
         # print("\nHBNN ranges:")
-        # get_ranges_point_metrics(hbnn4_pred.mean(0)[interp_mask], y_compare, target, [0.8, 1.4])
-        # get_ranges_point_metrics(hbnn4_pred.mean(0)[interp_mask], y_compare, target, [0.0, 0.625])
+        # get_ranges_point_metrics(hbnn4_pred.mean(0)[interp_mask], y_comp_interp, target, [0.8, 1.4])
+        # get_ranges_point_metrics(hbnn4_pred.mean(0)[interp_mask], y_comp_interp, target, [0.0, 0.625])
 
-        mard_BHS = mard(y_compare, bhs_pred.mean(0)[interp_mask])
-        mrd_BHS = mrd(y_compare, bhs_pred.mean(0)[interp_mask])
-        mae_BHS = mean_absolute_error(y_compare, bhs_pred.mean(0)[interp_mask])
+        mard_BHS = mard(y_comp_interp, bhs_pred.mean(0)[interp_mask])
+        mrd_BHS = mrd(y_comp_interp, bhs_pred.mean(0)[interp_mask])
+        mae_BHS = mean_absolute_error(y_comp_interp, bhs_pred.mean(0)[interp_mask])
 
         print("BHS interp point metrics:")
         print('\nMAE BHS:', mae_BHS)
@@ -114,8 +114,8 @@ def predict(x, x_er, interp_mask,
         print('MRD BHS:', mrd_BHS)
 
         # print("\nBHS ranges:")
-        # get_ranges_point_metrics(bhs_pred.mean(0)[interp_mask], y_compare, target, [0.8, 1.4])
-        # get_ranges_point_metrics(bhs_pred.mean(0)[interp_mask], y_compare, target, [0.0, 0.625])
+        # get_ranges_point_metrics(bhs_pred.mean(0)[interp_mask], y_comp_interp, target, [0.8, 1.4])
+        # get_ranges_point_metrics(bhs_pred.mean(0)[interp_mask], y_comp_interp, target, [0.0, 0.625])
 
         model_pred_plotter(y_compare, y_comp_er, bhs_pred.mean(0), bhs_pred.std(0), interp_mask, target, outputs_folder, hyperp_str, colour=color, plot_density=plot_density)
 
@@ -195,13 +195,13 @@ def ms_M_predder():
     features = ["Teff", "logg", "FeH", "logL"]
     target = "M"
     dataset_key = "693ms"
-    star_id, x, x_er, y_compare, y_comp_er, interp_mask = prepare_pred_data("NASAexop_archive_stars_all6.txt", dataset_key, features, target, check_consistency=True)
+    star_id, x, x_er, y_compare, y_comp_er, interp_mask = prepare_pred_data("NASAexop_archive_stars_all6ms.txt", dataset_key, features, target, check_consistency=True)
 
     _, pred, ws = predict(x, x_er, interp_mask, target, dataset_key,
         gp_trace_path = "BayestarML/train/outputs693ms/GP_M/GP_M_693ms_50_15_1000_0.95.nc",
         nn_trace_path = "BayestarML/train/outputs693ms/NN_M/NN_M_693ms_8_2000_0.95.nc",
         bart_m=500, m_mean=50, m_var=15, nn_nodes=8,
-        y_compare=y_compare, y_comp_er=y_comp_er, savename="BHS_NExA_M", NN_1layer=False, color="pred", plot_density=True)
+        y_compare=y_compare, y_comp_er=y_comp_er, savename="BHS_NExA_M_ms", NN_1layer=False, color="pred", plot_density=True)
 
     bhs_preds = pd.DataFrame({
         "ID": star_id,
@@ -234,14 +234,16 @@ def ms_R_predder():
 
 
 if __name__ == '__main__':
-    ms_M()
-    print("^ That was ms M, bart 500")
+    ms_M_predder()
+
+    # ms_M()
+    # print("^ That was ms M, bart 500")
     
-    ms_R()
-    print("^ That was ms R, bart 500")
+    # ms_R()
+    # print("^ That was ms R, bart 500")
     
-    rgb_M()
-    print("^ That was rgb M, bart 800")
+    # rgb_M()
+    # print("^ That was rgb M, bart 800")
 
 
 
