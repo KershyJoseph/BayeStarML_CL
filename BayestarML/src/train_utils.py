@@ -705,7 +705,7 @@ def get_ranges_point_metrics(y_pred, y_true, target, range):
     """
     y_true_cut = y_true[(y_true>range[0]) & (y_true<range[1])]
     y_pred_cut = y_pred[(y_true>range[0]) & (y_true<range[1])]
-    print("\n" + target + " point metrics on feature interpolation predictions for range " + range)
+    print("\n" + target + " point metrics on feature interpolation predictions for range " + str(range))
     print("MAE: ", mean_absolute_error(y_true_cut, y_pred_cut))
     print("MARD: ", mard(y_true_cut, y_pred_cut))
     print("MRD: ", mrd(y_true_cut, y_pred_cut))
