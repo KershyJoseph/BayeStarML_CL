@@ -9,6 +9,7 @@ Created on Sat Sep  7 15:10:27 2024
 import arviz as az
 import numpy as np
 import pymc as pm
+import xarray as xr
 
 RANDOM_SEED = 5732
 rng = np.random.default_rng(RANDOM_SEED)
@@ -126,8 +127,8 @@ def stacking_continuous(
 
 
         # Log probability of LOO training scores weighted by stacking weights
-        logp = pm.math.logsumexp(lpd_point + log_w, axis=1)
-        
+        logp = pm.Deterministic("log_lik", pm.math.logsumexp(lpd_point + log_w, axis=1))
+
         pot = pm.Potential("logp", pm.math.sum(logp))
 
 
@@ -271,9 +272,15 @@ def run_stack(
         all_rhats.append((var, max_rhat))
     print("Rhats\n", all_rhats)
 
-    trace.extend(pm.compute_log_likelihood(trace, model=model, var_names="y"))
-    loo = az.loo(trace)
-    print("loo trace: ", loo)
+    #GEMINI 
+    log_lik_samples = trace.posterior["log_lik"]
+    
+    # Inject it into a new log_likelihood group under a dummy variable name 'y'
+    trace.add_groups({"log_likelihood": xr.Dataset({"y": log_lik_samples})})
+    
+    # Compute LOO
+    loo = az.loo(trace, var_name="y")
+    print("\nLOO-ELPD Results:\n", loo)
 
     # Extract posterior draws of weights 
     # trace.posterior["w_test"] has dims (chain, draw, N_test, K)
