@@ -74,9 +74,9 @@ def predict(x, x_er, interp_mask,
         print('MARD BART:', mard_BART)
         print('MRD BART:', mrd_BART)
 
-        print("\nBART ranges:")
-        get_ranges_point_metrics(bart4_pred.mean(0)[interp_mask], y_compare, target, [0.8, 1.4])
-        get_ranges_point_metrics(bart4_pred.mean(0)[interp_mask], y_compare, target, [0.0, 0.625])
+        # print("\nBART ranges:")
+        # get_ranges_point_metrics(bart4_pred.mean(0)[interp_mask], y_compare, target, [0.8, 1.4])
+        # get_ranges_point_metrics(bart4_pred.mean(0)[interp_mask], y_compare, target, [0.0, 0.625])
 
         mard_GP = mard(y_compare, gp4_pred.mean(0)[interp_mask])
         mrd_GP = mrd(y_compare, gp4_pred.mean(0)[interp_mask])
@@ -87,9 +87,9 @@ def predict(x, x_er, interp_mask,
         print('MARD GP:', mard_GP)
         print('MRD GP:', mrd_GP)
 
-        print("\nGP ranges:")
-        get_ranges_point_metrics(gp4_pred.mean(0)[interp_mask], y_compare, target, [0.8, 1.4])
-        get_ranges_point_metrics(gp4_pred.mean(0)[interp_mask], y_compare, target, [0.0, 0.625])
+        # print("\nGP ranges:")
+        # get_ranges_point_metrics(gp4_pred.mean(0)[interp_mask], y_compare, target, [0.8, 1.4])
+        # get_ranges_point_metrics(gp4_pred.mean(0)[interp_mask], y_compare, target, [0.0, 0.625])
 
         mard_HBNN = mard(y_compare, hbnn4_pred.mean(0)[interp_mask])
         mrd_HBNN = mrd(y_compare, hbnn4_pred.mean(0)[interp_mask])
@@ -100,9 +100,9 @@ def predict(x, x_er, interp_mask,
         print('MARD HBNN:', mard_HBNN)
         print('MRD HBNN:', mrd_HBNN)
 
-        print("\nHBNN ranges:")
-        get_ranges_point_metrics(hbnn4_pred.mean(0)[interp_mask], y_compare, target, [0.8, 1.4])
-        get_ranges_point_metrics(hbnn4_pred.mean(0)[interp_mask], y_compare, target, [0.0, 0.625])
+        # print("\nHBNN ranges:")
+        # get_ranges_point_metrics(hbnn4_pred.mean(0)[interp_mask], y_compare, target, [0.8, 1.4])
+        # get_ranges_point_metrics(hbnn4_pred.mean(0)[interp_mask], y_compare, target, [0.0, 0.625])
 
         mard_BHS = mard(y_compare, bhs_pred.mean(0)[interp_mask])
         mrd_BHS = mrd(y_compare, bhs_pred.mean(0)[interp_mask])
@@ -113,9 +113,9 @@ def predict(x, x_er, interp_mask,
         print('MARD BHS:', mard_BHS)
         print('MRD BHS:', mrd_BHS)
 
-        print("\nBHS ranges:")
-        get_ranges_point_metrics(bhs_pred.mean(0)[interp_mask], y_compare, target, [0.8, 1.4])
-        get_ranges_point_metrics(bhs_pred.mean(0)[interp_mask], y_compare, target, [0.0, 0.625])
+        # print("\nBHS ranges:")
+        # get_ranges_point_metrics(bhs_pred.mean(0)[interp_mask], y_compare, target, [0.8, 1.4])
+        # get_ranges_point_metrics(bhs_pred.mean(0)[interp_mask], y_compare, target, [0.0, 0.625])
 
         model_pred_plotter(y_compare, y_comp_er, bhs_pred.mean(0), bhs_pred.std(0), interp_mask, target, outputs_folder, hyperp_str, colour=color, plot_density=plot_density)
 
@@ -234,12 +234,6 @@ def ms_R_predder():
 
 
 if __name__ == '__main__':
-    ms_M()
-    print("^ That was ms M, bart 500")
-
-    ms_R()
-    print("^ That was ms R, bart 500")
-
     rgb_M()
     print("^ That was rgb M, bart 800")
 
