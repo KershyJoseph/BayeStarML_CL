@@ -234,6 +234,12 @@ def ms_R_predder():
 
 
 if __name__ == '__main__':
+    ms_M()
+    print("^ That was ms M, bart 500")
+    
+    ms_R()
+    print("^ That was ms R, bart 500")
+    
     rgb_M()
     print("^ That was rgb M, bart 800")
 

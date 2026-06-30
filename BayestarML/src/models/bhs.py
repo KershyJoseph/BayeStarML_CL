@@ -9,7 +9,6 @@ Created on Sat Sep  7 15:10:27 2024
 import arviz as az
 import numpy as np
 import pymc as pm
-import pandas as pd
 
 RANDOM_SEED = 5732
 rng = np.random.default_rng(RANDOM_SEED)
@@ -271,6 +270,10 @@ def run_stack(
         max_rhat = r_hat_values[var].max().values.item()
         all_rhats.append((var, max_rhat))
     print("Rhats\n", all_rhats)
+
+    trace.extend(pm.compute_log_likelihood(trace, model=model, var_names="y"))
+    loo = az.loo(trace)
+    print("loo trace: ", loo)
 
     # Extract posterior draws of weights 
     # trace.posterior["w_test"] has dims (chain, draw, N_test, K)

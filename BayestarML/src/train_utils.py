@@ -699,6 +699,7 @@ def get_results(
             plot_density
         )
 
+
 def get_ranges_point_metrics(y_pred, y_true, target, range):
     """get accuracy stats on ranges
     make sure its all interpolated before passing it here
@@ -721,15 +722,3 @@ def get_ranges_point_metrics(y_pred, y_true, target, range):
 
 # model_pred_plotter(x_data, x_err, y_data, y_err, interp_mask, "M", None, None, colour="test", plot_density=True)
 
-
-
-
-# check stats in different zones of ms
-
-# data, _ = load_data("693ms", "M")
-
-# m_true = data["unorm_y_test"]
-
-# split = 0.62 #Msol
-# print(f"MARD on stars less than {split} Msol:")
-# print(mard(m_true[m_true<=split],))
