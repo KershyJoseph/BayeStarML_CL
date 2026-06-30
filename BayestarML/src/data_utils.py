@@ -541,17 +541,17 @@ def plot_feature_target(df: pd.DataFrame, savename: str, feature: str, target: s
     fig.savefig("BayestarML/data/figures/feature_target_figs/w_plots" + savename)
     plt.close()
 
-df = pd.read_csv("BayestarML/data/693ms.txt")
-training_fs = ["Teff", "logg", "FeH", "logL"]
-targets = ["M", "R"]
-dataset_key = "693ms"
-(x_train, x_test, y_train, y_test) = return_train_test(df, training_fs, targets, dataset_key)
-df_test = pd.concat([x_test, y_test], axis=1)
+# df = pd.read_csv("BayestarML/data/693ms.txt")
+# training_fs = ["Teff", "logg", "FeH", "logL"]
+# targets = ["M", "R"]
+# dataset_key = "693ms"
+# (x_train, x_test, y_train, y_test) = return_train_test(df, training_fs, targets, dataset_key)
+# df_test = pd.concat([x_test, y_test], axis=1)
 
 
-for f in training_fs:
-    for t in targets:
-        plot_feature_target(df_test, f+"_"+t+"_bhs_ws.pdf", f, t, weights_file="BayestarML/predict/outputs_bhs/693ms_bhs_"+t+"_ws.txt")
+# for f in training_fs:
+#     for t in targets:
+#         plot_feature_target(df_test, f+"_"+t+"_bhs_ws.pdf", f, t, weights_file="BayestarML/predict/outputs_bhs/693ms_bhs_"+t+"_ws.txt")
 
 
 #HR PLOTTING
