@@ -6,6 +6,38 @@ from sklearn.neighbors import NearestNeighbors
 from BayestarML.src.data_utils import select_clean_data, normalise, consistency_check, lineamatic
 from BayestarML.src.train_utils import load_data
 import json
+from mpl_toolkits.mplot3d.art3d import Poly3DCollection
+from scipy.spatial import ConvexHull
+
+def plot_convex(x_train):
+    hull = ConvexHull(x_train)
+
+    fig = plt.figure(figsize=(8, 6))
+    ax = fig.add_subplot(111, projection="3d")
+
+    # 2. Extract and format the 3D surface facets for plotting
+    faces = []
+    for simplex in hull.simplices:
+        # Get the 3D coordinates for the vertices of this facet
+        facet_vertices = x_train[simplex]
+        faces.append(facet_vertices)
+
+    # Create a 3D polygon collection for the hull shell
+    hull_surface = Poly3DCollection(faces, alpha=0.15, edgecolor="k", linewidths=0.5)
+    hull_surface.set_facecolor("cyan")  # Gives the hull a translucent "glass" look
+    ax.add_collection3d(hull_surface)
+
+    ax.plot(7000, -2, 4, 'rx')
+    ax.set_xlabel(r"$T_{eff}$ (K)")
+    ax.set_ylabel(r"$\log L$ [L$_{\odot}$]")
+    ax.set_zlabel(r"$\log g$ (dex)")
+    ax.legend()
+
+    # Dynamic viewing angle adjustment so it looks good out of the box
+    ax.view_init(elev=20, azim=45)
+
+    plt.show()
+    plt.savefig("convex_hull.pdf")
 
 
 def check_feature_extrapolation(x_train, x_pred, k=10, percentile=95):

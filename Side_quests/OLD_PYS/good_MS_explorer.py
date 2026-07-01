@@ -77,3 +77,7 @@ def diagnostics(df, name):
     print("New/revised stars AND low mass stars: ", len(df[(df["M"]<=0.8) & (df["database"]!=1)]), "out of ", len(df))
 
 diagnostics(df, "693ms")
+
+
+df_everything = pd.read_csv("BayestarML/data/training_databases/datos_todos_v20261905.txt", sep='\t', comment='#')
+print(df_everything["source"].unique())

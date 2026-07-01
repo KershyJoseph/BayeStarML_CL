@@ -6,8 +6,9 @@ Created on Tue Jul 15 15:52:30 2025
 @author: LamirelFamily
 """
 from BayestarML.src.models import bart, gp
+from BayestarML.src.data_utils import denormalise_val
 from BayestarML.src.train_utils import load_data, mard, mrd, model_pred_plotter, get_ranges_point_metrics
-from BayestarML.src.predict_utils import prepare_pred_data, get_bhs_weights, plot_bhs_weights
+from BayestarML.src.predict_utils import prepare_pred_data, get_bhs_weights, plot_bhs_weights, plot_convex
 from BayestarML.src.pred_sampling import sample_pred_bart, posterior_predictive_GP, sample_post_pred_HBNN_para, SIMPLE_sample_post_pred_HBNN_para
 from BayestarML.src.models.bhs import run_stack
 from sklearn.metrics import mean_absolute_error
@@ -201,7 +202,7 @@ def ms_M_predder():
         gp_trace_path = "BayestarML/train/outputs693ms/GP_M/GP_M_693ms_50_15_1000_0.95.nc",
         nn_trace_path = "BayestarML/train/outputs693ms/NN_M/NN_M_693ms_8_2000_0.95.nc",
         bart_m=500, m_mean=50, m_var=15, nn_nodes=8,
-        y_compare=y_compare, y_comp_er=y_comp_er, savename="BHS_NExA_M_ms", NN_1layer=False, color="pred", plot_density=True)
+        y_compare=y_compare, y_comp_er=y_comp_er, savename="BHS_NExA_M_ms", NN_1layer=False, color="pred", plot_density=False)
 
     bhs_preds = pd.DataFrame({
         "ID": star_id,
@@ -222,7 +223,7 @@ def ms_R_predder():
         gp_trace_path = "BayestarML/train/outputs693ms/GP_R/GP_R_693ms_50_15_2000_0.95.nc",
         nn_trace_path = "BayestarML/train/outputs693ms/NN_R/NN_1layer_R_693ms_8_2000_0.95.nc",
         bart_m=500, m_mean=50, m_var=15, nn_nodes=8,
-        y_compare=y_compare, y_comp_er=y_comp_er, savename="BHS_NExA_R", NN_1layer=True, color="pred", plot_density=False)
+        y_compare=y_compare, y_comp_er=y_comp_er, savename="BHS_NExA_R_ms", NN_1layer=True, color="pred", plot_density=False)
 
     bhs_preds = pd.DataFrame({
         "ID": star_id,
@@ -233,8 +234,20 @@ def ms_R_predder():
     bhs_preds.to_csv("BayestarML/predict/outputs_bhs/bhs_NExA_R_preds.txt", index=False)
 
 
+def convex():
+    features = ["Teff", "logL", "logg"]
+    x_train_norm = pd.read_csv("BayestarML/data/693ms_norm_train.txt", usecols=features)
+    x_train = pd.DataFrame()
+    for f in features:
+        x_train[f] = denormalise_val(x_train_norm[f], "693ms", f, "training_fs")
+
+    plot_convex(x_train.to_numpy())
+
+
 if __name__ == '__main__':
-    ms_R_predder()
+    # convex()
+
+    ms_M_predder()
 
     # ms_M()
     # print("^ That was ms M, bart 500")
