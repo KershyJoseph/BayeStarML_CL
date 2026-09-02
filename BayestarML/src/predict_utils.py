@@ -47,6 +47,7 @@ def check_feature_extrapolation(x_train, x_pred, k=10, percentile=95):
     """
     #convex hull check
     triangulation = Delaunay(x_train)
+    print(x_pred)
     is_inside = triangulation.find_simplex(x_pred) >= 0 #find_simplex returns index of simplex point or -1 if x_pred point not in convex hull
 
     #avg distance of each training point to nearest k training points
