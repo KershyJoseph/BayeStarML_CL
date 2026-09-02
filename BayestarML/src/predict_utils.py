@@ -48,6 +48,7 @@ def check_feature_extrapolation(x_train, x_pred, k=10, percentile=95):
     #convex hull check
     triangulation = Delaunay(x_train)
     is_inside = triangulation.find_simplex(x_pred) >= 0 #find_simplex returns index of simplex point or -1 if x_pred point not in convex hull
+    print(is_inside)
 
     #avg distance of each training point to nearest k training points
     nn_t = NearestNeighbors(n_neighbors=k+1) #+1 to ignore distance to self
@@ -63,6 +64,7 @@ def check_feature_extrapolation(x_train, x_pred, k=10, percentile=95):
     avg_dists_p = np.mean(distances, axis=1) #shape (n_pred,)
 
     interpolation_mask = is_inside & (avg_dists_p < dist_threshold)
+    print(interpolation_mask)
 
     return interpolation_mask
 
