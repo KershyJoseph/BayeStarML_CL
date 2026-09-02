@@ -179,7 +179,6 @@ def ms_M():
     df_weights = get_bhs_weights(ws, star_id, dataset_key+"_bhs_"+target+"_ws.txt")
 
 
-
 def rgb_M():
     features = ["Teff", "logg", "FeH", "L"]
     target = "M"
@@ -196,13 +195,13 @@ def ms_M_predder():
     features = ["Teff", "logg", "FeH", "logL"]
     target = "M"
     dataset_key = "693ms"
-    star_id, x, x_er, y_compare, y_comp_er, interp_mask = prepare_pred_data("NASAexop_archive_stars_all6ms.txt", dataset_key, features, target, check_consistency=True)
+    star_id, x, x_er, y_compare, y_comp_er, interp_mask = prepare_pred_data("estrellas_anfitrionas.txt", dataset_key, features, target, check_consistency=False)
 
     _, pred, ws = predict(x, x_er, interp_mask, target, dataset_key,
         gp_trace_path = "BayestarML/train/outputs693ms/GP_M/GP_M_693ms_50_15_1000_0.95.nc",
         nn_trace_path = "BayestarML/train/outputs693ms/NN_M/NN_M_693ms_8_2000_0.95.nc",
         bart_m=500, m_mean=50, m_var=15, nn_nodes=8,
-        y_compare=y_compare, y_comp_er=y_comp_er, savename="BHS_NExA_M_ms", NN_1layer=False, color="pred", plot_density=False)
+        y_compare=y_compare, y_comp_er=y_comp_er, savename="BHS_estr_anf_mass", NN_1layer=False, color="pred", plot_density=False)
 
     bhs_preds = pd.DataFrame({
         "ID": star_id,
@@ -210,20 +209,20 @@ def ms_M_predder():
         "bhs_M_std": pred.std(0)
     })
 
-    bhs_preds.to_csv("BayestarML/predict/outputs_bhs/bhs_NExA_M_preds.txt", index=False)
+    bhs_preds.to_csv("BayestarML/predict/outputs_bhs/bhs_mass_estr_anf.txt", index=False)
 
 
 def ms_R_predder():
     features = ["Teff", "logg", "FeH", "logL"]
     target = "R"
     dataset_key = "693ms"
-    star_id, x, x_er, y_compare, y_comp_er, interp_mask = prepare_pred_data("NASAexop_archive_stars_all6ms.txt", dataset_key, features, target, check_consistency=True)
+    star_id, x, x_er, y_compare, y_comp_er, interp_mask = prepare_pred_data("estrellas_anfitrionas.txt", dataset_key, features, target, check_consistency=False)
 
     _, pred, _ = predict(x, x_er, interp_mask, target, dataset_key,
         gp_trace_path = "BayestarML/train/outputs693ms/GP_R/GP_R_693ms_50_15_2000_0.95.nc",
         nn_trace_path = "BayestarML/train/outputs693ms/NN_R/NN_1layer_R_693ms_8_2000_0.95.nc",
         bart_m=500, m_mean=50, m_var=15, nn_nodes=8,
-        y_compare=y_compare, y_comp_er=y_comp_er, savename="BHS_NExA_R_ms", NN_1layer=True, color="pred", plot_density=False)
+        y_compare=y_compare, y_comp_er=y_comp_er, savename="BHS_estr_anf_rad", NN_1layer=True, color="pred", plot_density=False)
 
     bhs_preds = pd.DataFrame({
         "ID": star_id,
@@ -245,18 +244,11 @@ def convex():
 
 
 if __name__ == '__main__':
-    # convex()
 
+    #get preds on estrellas anfiltrionas
     ms_M_predder()
 
-    # ms_M()
-    # print("^ That was ms M, bart 500")
-    
-    # ms_R()
-    # print("^ That was ms R, bart 500")
-    
-    # rgb_M()
-    # print("^ That was rgb M, bart 800")
+    ms_R_predder()
 
 
 
