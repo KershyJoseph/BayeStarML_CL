@@ -68,7 +68,7 @@ def check_feature_extrapolation(x_train, x_pred, k=10, percentile=95):
 
 
 def prepare_pred_data(
-    filename: str, training_dataset_key: str, features: list, target: str, add_log_vars: list = None, check_consistency=False, symmetric_errs=False
+    filename: str, training_dataset_key: str, features: list, target: str, add_log_vars: list = None, check_consistency=False, symmetric_errs=False, y_comp=True
 ):
     """Prepare normalised data for predictions and check feature extrapolation.
     Pass filename=="test_set" for predictions on test set.
@@ -116,7 +116,8 @@ def prepare_pred_data(
 
         # normalise input data
         x_unorm = df_clean[features+[f"e{f}" for f in features]]
-        y_compare, y_comp_er = df_clean[target], df_clean[f"e{target}"]
+        if y_comp:
+            y_compare, y_comp_er = df_clean[target], df_clean[f"e{target}"]
         x_norm = normalise(x_unorm, None, training_dataset_key, x_only=True)
         x, x_er = x_norm[features], x_norm[[f"e{f}" for f in features]]  # might need modifying for scalar inputs?
         star_id = x_norm.index
@@ -125,19 +126,22 @@ def prepare_pred_data(
     interp_mask = check_feature_extrapolation(data["x_train"], x)
     print(f"{len(x[~interp_mask])} stars marked as extrapolating from training database inputs.")
 
-    #check target extrapolation
-    with open("BayestarML/data/" + training_dataset_key + "_constants.json", "r") as f:
-        constants = json.load(f)
-    y_min = constants["targets"]["MIN"][target]
-    y_max = constants["targets"]["MAX"][target]
-    t_mask = (y_compare > y_min) & (y_compare < y_max)
-    if filename != "test_set":
-        print(f"Removing {len(x[~t_mask])} stars for being outside target training range: {df_clean[~t_mask]}")
+    if y_comp:
+        #check target extrapolation
+        with open("BayestarML/data/" + training_dataset_key + "_constants.json", "r") as f:
+            constants = json.load(f)
+        y_min = constants["targets"]["MIN"][target]
+        y_max = constants["targets"]["MAX"][target]
+        t_mask = (y_compare > y_min) & (y_compare < y_max)
+        if filename != "test_set":
+            print(f"Removing {len(x[~t_mask])} stars for being outside target training range: {df_clean[~t_mask]}")
 
-    star_id, x, x_er = star_id[t_mask], x[t_mask], x_er[t_mask]
-    y_compare, y_comp_er, interp_mask = y_compare[t_mask], y_comp_er[t_mask], interp_mask[t_mask]
-
-    return star_id, x, x_er, y_compare, y_comp_er, interp_mask
+    star_id, x, x_er, interp_mask = star_id[t_mask], x[t_mask], x_er[t_mask], interp_mask[t_mask]
+    if y_comp:
+        y_compare, y_comp_er = y_compare[t_mask], y_comp_er[t_mask]
+        return star_id, x, x_er, y_compare, y_comp_er, interp_mask
+    else:
+        return star_id, x, x_er, interp_mask
 
 
 def get_bhs_weights(w_draws, star_id, savename:str):
