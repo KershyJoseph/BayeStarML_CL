@@ -47,7 +47,6 @@ def check_feature_extrapolation(x_train, x_pred, k=10, percentile=95):
     """
     #convex hull check
     triangulation = Delaunay(x_train)
-    print(x_pred)
     is_inside = triangulation.find_simplex(x_pred) >= 0 #find_simplex returns index of simplex point or -1 if x_pred point not in convex hull
 
     #avg distance of each training point to nearest k training points
@@ -137,10 +136,11 @@ def prepare_pred_data(
         if filename != "test_set":
             print(f"Removing {len(x[~t_mask])} stars for being outside target training range: {df_clean[~t_mask]}")
 
-    star_id, x, x_er, interp_mask = star_id[t_mask], x[t_mask], x_er[t_mask], interp_mask[t_mask]
-    if y_comp:
+        star_id, x, x_er, interp_mask = star_id[t_mask], x[t_mask], x_er[t_mask], interp_mask[t_mask]
         y_compare, y_comp_er = y_compare[t_mask], y_comp_er[t_mask]
+
         return star_id, x, x_er, y_compare, y_comp_er, interp_mask
+    
     else:
         return star_id, x, x_er, interp_mask
 
